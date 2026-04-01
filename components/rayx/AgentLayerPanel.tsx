@@ -1,0 +1,37 @@
+"use client";
+
+import { getProductById } from "@/data/products";
+import { getAgentSurface } from "@/lib/agentSurface";
+import { formatBRL } from "@/lib/utils";
+import type { ShopperProfileId } from "@/types";
+
+export function AgentLayerPanel({ skuId, profile }: { skuId: string | null; profile: ShopperProfileId }) {
+  const p = skuId ? getProductById(skuId) : getProductById("tv-aurora-oled-65");
+  if (!p) return null;
+  const a = getAgentSurface(p, profile);
+
+  const rows: { k: string; v: string }[] = [
+    { k: "sku", v: a.sku },
+    { k: "title", v: a.title },
+    { k: "price", v: formatBRL(a.price) },
+    { k: "availability", v: String(a.availability) },
+    { k: "deliveryPromise", v: a.deliveryPromise },
+    { k: "returns", v: a.returns },
+    { k: "warranty", v: p.warrantyShort },
+    { k: "compatibility", v: a.compatibility.join(", ") },
+    { k: "bundleEligible", v: a.bundleEligible ? "true" : "false" },
+    { k: "confidenceScore", v: a.confidenceScore.toFixed(2) },
+  ];
+
+  return (
+    <div className="rounded-2xl border border-white/[0.1] bg-white/[0.03] p-4 font-mono text-[11px] text-[#c5ccdf]">
+      <pre className="overflow-x-auto whitespace-pre-wrap">
+        {JSON.stringify(
+          Object.fromEntries(rows.map((r) => [r.k, r.v])),
+          null,
+          2
+        )}
+      </pre>
+    </div>
+  );
+}

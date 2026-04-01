@@ -1,0 +1,28 @@
+import type { ShopperProfile } from "@/types";
+
+export const profiles: Record<"marina" | "ricardo", ShopperProfile> = {
+  marina: {
+    id: "marina",
+    name: "Marina",
+    device: "desktop",
+    segment: "premium-researcher",
+    returning: true,
+    source: "Organic · home theater research",
+    tone: "editorial",
+    proofPreference: "technical",
+    merchandisingBias: "premium",
+    interests: ["OLED calibration", "eARC sound", "3m viewing distance"],
+  },
+  ricardo: {
+    id: "ricardo",
+    name: "Ricardo",
+    device: "mobile",
+    segment: "price-first",
+    returning: false,
+    source: "Paid · weekend TV deals",
+    tone: "direct",
+    proofPreference: "volume",
+    merchandisingBias: "cost-benefit",
+    interests: ["Installments", "Popular sizes", "Fast delivery"],
+  },
+};
