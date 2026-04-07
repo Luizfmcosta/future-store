@@ -9,9 +9,12 @@ import { useRef } from "react";
 
 const ease = [0.76, 0, 0.24, 1] as const;
 
-/** Player embed: largura compatível com o TikTok; altura generosa para não cortar UI interna. */
-const EMBED_W = 300;
-const EMBED_H = 680;
+/**
+ * oEmbed TikTok: min-width 325px (docs). Altura ~708px é o chrome típico do embed v2
+ * (abaixo disso o iframe ganha scroll interno).
+ */
+const EMBED_W = 325;
+const EMBED_H = 708;
 
 /** Mobile: cartão mais estreito que o iframe; escala uniforme (altura do shell = iframe × scale). */
 const CARD_W_MOBILE = 240;
@@ -23,17 +26,23 @@ function TikTokFrame({ videoId, title }: { videoId: string; title: string }) {
   return (
     <div
       className={cn(
-        "relative shrink-0 overflow-hidden rounded-xl",
-        "w-[240px] md:w-[300px]",
-        "h-[var(--shell)] md:h-[680px]",
+        "relative shrink-0 overflow-hidden rounded-xl bg-[#0f0f0f]",
+        "ring-0 outline-none",
+        "w-[240px] md:w-[325px]",
+        "h-[var(--shell)] md:h-[var(--embed-h)]",
       )}
-      style={{ ["--shell" as string]: `${MOBILE_SHELL_H}px` }}
+      style={{
+        ["--shell" as string]: `${MOBILE_SHELL_H}px`,
+        ["--embed-h" as string]: `${EMBED_H}px`,
+        ["--mobile-scale" as string]: String(MOBILE_SCALE),
+      }}
     >
-      {/* Mobile: escala para largura CARD_W_MOBILE; md: iframe 1:1 no cartão */}
+      {/* Mobile: escala = CARD_W_MOBILE / EMBED_W; md: iframe 1:1 no cartão */}
       <div
         className={cn(
-          "absolute left-1/2 top-0 origin-top -translate-x-1/2 max-md:scale-[0.8]",
-          "md:relative md:left-0 md:top-0 md:translate-x-0 md:scale-100",
+          "absolute left-1/2 top-0 origin-top",
+          "max-md:[transform:translateX(-50%)_scale(var(--mobile-scale))]",
+          "md:relative md:left-0 md:top-0 md:translate-x-0 md:scale-100 md:transform-none",
         )}
       >
         <iframe
@@ -41,7 +50,7 @@ function TikTokFrame({ videoId, title }: { videoId: string; title: string }) {
           src={src}
           width={EMBED_W}
           height={EMBED_H}
-          className="block border-0"
+          className="block border-0 bg-transparent outline-none ring-0"
           loading="lazy"
           referrerPolicy="strict-origin-when-cross-origin"
           allow="fullscreen"
@@ -76,7 +85,7 @@ export function RicardoTikTokCarousel() {
           <div
             className={cn(
               "overflow-x-auto overflow-y-hidden overscroll-x-contain",
-              "scroll-smooth touch-pan-x pb-1 pl-5 pr-6 sm:pl-0 sm:pr-0",
+              "scroll-smooth touch-pan-x pl-5 pr-6 sm:pl-0 sm:pr-0",
               "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
             )}
           >
