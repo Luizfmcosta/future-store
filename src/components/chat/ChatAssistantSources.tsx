@@ -2,14 +2,16 @@
 
 import { Source, SourceContent, SourceTrigger } from "@/components/ui/source";
 import type { AssistantSource } from "@/lib/chatAssistant";
+import { useT } from "@/lib/useT";
 import { cn } from "@/lib/utils";
 
 export function ChatAssistantSources({ sources }: { sources: AssistantSource[] }) {
+  const t = useT();
   if (sources.length === 0) return null;
 
   return (
     <div className="mt-3 border-t border-stone-200/90 pt-3">
-      <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-500">Sources</p>
+      <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-500">{t("searchAiPanel.sourcesLabel")}</p>
       <div className="flex flex-wrap gap-1.5">
         {sources.map((s) => (
           <Source key={s.href} href={s.href}>

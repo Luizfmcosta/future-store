@@ -4,13 +4,28 @@ import { Card } from "@/components/shared/Card";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { HorizontalScroll } from "@/components/shared/HorizontalScroll";
 import { SectionTitle } from "@/components/shared/SectionTitle";
-import type { ComparisonCardModel } from "@/lib/recommendations";
+import { useLocale } from "@/context/LocaleContext";
+import type { ComparisonCardModel, ComparisonFitKey } from "@/lib/recommendations";
+import { localizeProduct } from "@/lib/product-i18n";
+import { useT } from "@/lib/useT";
 import { hasMediaUrl } from "@/lib/utils";
 import type { ShopperProfileId } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 
+const FIT_KEY_TO_MSG: Record<ComparisonFitKey, string> = {
+  marina_flagship: "searchSerp.compareFitMarinaFlagship",
+  marina_portable: "searchSerp.compareFitMarinaPortable",
+  marina_balanced: "searchSerp.compareFitMarinaBalanced",
+  ricardo_budget: "searchSerp.compareFitRicardoBudget",
+  ricardo_mid: "searchSerp.compareFitRicardoMid",
+};
+
 function ComparisonCard({ row }: { row: ComparisonCardModel }) {
+  const { locale } = useLocale();
+  const t = useT();
+  const p = localizeProduct(row.product, locale);
+
   return (
     <Link href={`/product/${row.product.id}`} className="block h-full min-w-0">
       <Card className="flex h-full flex-col overflow-hidden p-0 transition hover:border-stone-300/90 hover:shadow-[0_16px_40px_-24px_rgba(0,0,0,0.14)]">
@@ -29,8 +44,8 @@ function ComparisonCard({ row }: { row: ComparisonCardModel }) {
           )}
         </div>
         <div className="flex flex-1 flex-col p-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">{row.fit}</p>
-          <p className="mt-2 text-[15px] font-semibold leading-snug text-stone-900">{row.product.title}</p>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">{t(FIT_KEY_TO_MSG[row.fitKey])}</p>
+          <p className="mt-2 text-[15px] font-semibold leading-snug text-stone-900">{p.title}</p>
           <ul className="mt-3 space-y-1.5 text-[12px] leading-relaxed text-stone-600">
             {row.pros.map((x) => (
               <li key={x}>+ {x}</li>
@@ -48,16 +63,12 @@ function ComparisonCard({ row }: { row: ComparisonCardModel }) {
 }
 
 export function ComparisonStrip({ items, profile }: { items: ComparisonCardModel[]; profile: ShopperProfileId }) {
-  const title =
-    profile === "marina" ? "Three lenses — pick your tradeoff" : "Three picks — fastest path";
+  const t = useT();
+  const title = profile === "marina" ? t("searchSerp.compareTitleMarina") : t("searchSerp.compareTitleRicardo");
 
   return (
-    <section aria-label={`Compare — ${title}`} className="min-w-0">
-      <SectionTitle variant="editorial" eyebrow="Compare" title={title} />
-      {/*
-        Always a horizontal carousel (not viewport md:grid). The storefront column is often narrow
-        while the window is wide — Tailwind md:* would wrongly show a squeezed grid instead of scroll.
-      */}
+    <section aria-label={`${t("searchSerp.compareEyebrow")} — ${title}`} className="min-w-0">
+      <SectionTitle variant="editorial" eyebrow={t("searchSerp.compareEyebrow")} title={title} />
       <HorizontalScroll className="pb-0.5">
         {items.map((row) => (
           <div

@@ -14,8 +14,6 @@ import { getRecentProductIds } from "@/lib/shopperSignalsStorage";
 /** Resolved funnel segment — drives module order, copy keys, and catalog bias. */
 export type HomeSegmentId = "marina_research" | "marina_explore" | "ricardo_speed" | "ricardo_value";
 
-export type SocialProofMode = "technical" | "volume" | "none";
-
 export type CuratedSortMode = "price_desc" | "price_asc" | "profile_default";
 
 export type HomeExperienceConfig = {
@@ -31,13 +29,9 @@ export type HomeExperienceConfig = {
     merchEyebrow: string;
     merchLine1: string;
     merchLine2: string;
-    socialHeadline: string;
-    socialBody: string;
-    socialCta: string;
   };
   curatedSort: CuratedSortMode;
   merchSort: MerchSortMode;
-  socialProofMode: SocialProofMode;
   tone: "consultative" | "action";
 };
 
@@ -64,13 +58,13 @@ export function resolveHomeSegment(profile: ShopperProfileId, signals: ShopperSi
 function moduleOrderForSegment(segment: HomeSegmentId): HomeModuleKey[] {
   switch (segment) {
     case "marina_research":
-      return ["hero", "continue", "compare", "proof", "curated", "spotlight", "strip"];
+      return ["hero", "continue", "compare", "curated", "spotlight", "strip"];
     case "marina_explore":
-      return ["hero", "compare", "curated", "continue", "spotlight", "proof", "strip"];
+      return ["hero", "compare", "curated", "continue", "spotlight", "strip"];
     case "ricardo_speed":
-      return ["hero", "strip", "curated", "spotlight", "compare", "continue", "proof"];
+      return ["hero", "strip", "curated", "spotlight", "compare", "continue"];
     case "ricardo_value":
-      return ["hero", "continue", "strip", "curated", "spotlight", "compare", "proof"];
+      return ["hero", "continue", "strip", "curated", "spotlight", "compare"];
     default:
       return DEFAULT_MODULES;
   }
@@ -96,9 +90,6 @@ function copyForSegment(segment: HomeSegmentId): HomeExperienceConfig["copy"] {
     merchEyebrow: `${base}.merchEyebrow`,
     merchLine1: `${base}.merchLine1`,
     merchLine2: `${base}.merchLine2`,
-    socialHeadline: `${base}.socialHeadline`,
-    socialBody: `${base}.socialBody`,
-    socialCta: `${base}.socialCta`,
   };
 }
 
@@ -112,12 +103,6 @@ function merchSortForSegment(segment: HomeSegmentId): MerchSortMode {
   if (segment === "ricardo_speed" || segment === "ricardo_value") return "price_asc";
   if (segment === "marina_research") return "price_desc";
   return "default";
-}
-
-function socialModeForSegment(segment: HomeSegmentId): SocialProofMode {
-  if (segment === "marina_research" || segment === "marina_explore") return "technical";
-  if (segment === "ricardo_speed" || segment === "ricardo_value") return "volume";
-  return "none";
 }
 
 function toneForSegment(segment: HomeSegmentId): "consultative" | "action" {
@@ -135,7 +120,6 @@ export function buildHomeExperience(
     copy: copyForSegment(segment),
     curatedSort: curatedSortForSegment(segment),
     merchSort: merchSortForSegment(segment),
-    socialProofMode: socialModeForSegment(segment),
     tone: toneForSegment(segment),
   };
 }
@@ -145,19 +129,23 @@ export function getContinueProductId(profile: ShopperProfileId, segment: HomeSeg
   const recent = getRecentProductIds();
   if (recent[0]) return recent[0];
   if (profile === "marina") {
-    return segment === "marina_explore" ? "sp-era-300" : "sp-era-300";
+    return segment === "marina_explore" ? "sp-five" : "sp-era-300";
   }
   return segment === "ricardo_speed" ? "sp-era-100" : "sp-roam-2";
 }
 
 export function getCompareProductId(profile: ShopperProfileId, segment: HomeSegmentId): string {
-  if (profile === "marina") return "sp-home-theater";
-  return segment === "ricardo_speed" ? "sp-roam-2" : "sp-era-100";
+  if (profile === "marina") {
+    return segment === "marina_explore" ? "sp-home-theater" : "sb-arc-ultra";
+  }
+  return segment === "ricardo_speed" ? "sb-ray" : "sp-era-100";
 }
 
 export function getSpotlightProductId(profile: ShopperProfileId, segment: HomeSegmentId): string {
-  if (profile === "marina") return segment === "marina_explore" ? "sp-era-300" : "sp-move-2";
-  return segment === "ricardo_speed" ? "sp-era-100" : "sp-era-100";
+  if (profile === "marina") {
+    return segment === "marina_explore" ? "sp-five" : "sp-move-2";
+  }
+  return segment === "ricardo_speed" ? "sb-ray" : "sp-era-100";
 }
 
 /** @deprecated Use buildHomeExperience + config.moduleOrder */

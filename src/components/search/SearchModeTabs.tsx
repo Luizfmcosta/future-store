@@ -1,6 +1,7 @@
 "use client";
 
 import type { SearchView } from "@/components/search/SearchViewTabs";
+import { useT } from "@/lib/useT";
 import { cn } from "@/lib/utils";
 import { LayoutGrid, Sparkles } from "lucide-react";
 import Link from "next/link";
@@ -11,11 +12,18 @@ type SearchModeTabsProps = {
   className?: string;
 };
 
-/**
- * Google-style mode switcher: Regular Search vs AI Mode (`?view=ai`).
- */
+const tabBase =
+  "flex min-h-10 flex-1 items-center justify-center gap-2 rounded-full px-3 py-2 text-center text-[12px] font-medium transition-[color,background-color,box-shadow] duration-200 sm:min-h-11 sm:gap-2.5 sm:px-4 sm:text-[13px]";
+
+const tabInactive =
+  "text-white/70 hover:bg-white/[0.08] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-white/35";
+
+const tabActive =
+  "bg-white text-stone-900 shadow-[0_2px_12px_rgba(0,0,0,0.12)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-stone-400/45";
+
 export function SearchModeTabs({ active, className }: SearchModeTabsProps) {
   const searchParams = useSearchParams();
+  const t = useT();
 
   const hrefFor = (view: SearchView) => {
     const p = new URLSearchParams(searchParams.toString());
@@ -31,8 +39,11 @@ export function SearchModeTabs({ active, className }: SearchModeTabsProps) {
   return (
     <nav
       role="tablist"
-      aria-label="Search mode"
-      className={cn("flex w-full gap-0 border-b border-stone-200/90", className)}
+      aria-label={t("searchSerp.modeAria")}
+      className={cn(
+        "flex w-full gap-0.5 rounded-full bg-[#2a2a2a]/75 p-1 shadow-[0_8px_32px_rgba(0,0,0,0.1)] backdrop-blur-xl",
+        className,
+      )}
     >
       <Link
         href={hrefFor("results")}
@@ -42,15 +53,14 @@ export function SearchModeTabs({ active, className }: SearchModeTabsProps) {
         aria-controls="search-panel-regular"
         aria-selected={active === "results"}
         tabIndex={active === "results" ? 0 : -1}
-        className={cn(
-          "relative flex min-h-9 min-w-0 flex-1 items-center justify-center gap-2 border-b-2 border-transparent px-3 py-1.5 text-[13px] font-medium transition-colors sm:min-h-10 sm:gap-2.5 sm:px-4 sm:py-2",
-          active === "results"
-            ? "border-stone-900 text-stone-900"
-            : "border-transparent text-stone-500 hover:text-stone-700"
-        )}
+        className={cn(tabBase, active === "results" ? tabActive : tabInactive)}
       >
-        <LayoutGrid className="size-4 shrink-0 opacity-90" strokeWidth={2} aria-hidden />
-        <span className="truncate">Regular Search</span>
+        <LayoutGrid
+          className={cn("size-4 shrink-0", active === "results" ? "text-stone-600" : "text-white/75")}
+          strokeWidth={2}
+          aria-hidden
+        />
+        <span className="truncate">{t("searchSerp.modeRegular")}</span>
       </Link>
       <Link
         href={hrefFor("ai")}
@@ -60,15 +70,14 @@ export function SearchModeTabs({ active, className }: SearchModeTabsProps) {
         aria-controls="search-panel-ai"
         aria-selected={active === "ai"}
         tabIndex={active === "ai" ? 0 : -1}
-        className={cn(
-          "relative flex min-h-9 min-w-0 flex-1 items-center justify-center gap-2 border-b-2 border-transparent px-3 py-1.5 text-[13px] font-medium transition-colors sm:min-h-10 sm:gap-2.5 sm:px-4 sm:py-2",
-          active === "ai"
-            ? "border-stone-900 text-stone-900"
-            : "border-transparent text-stone-500 hover:text-stone-700"
-        )}
+        className={cn(tabBase, active === "ai" ? tabActive : tabInactive)}
       >
-        <Sparkles className="size-4 shrink-0 text-violet-600" strokeWidth={2} aria-hidden />
-        <span className="truncate">AI Mode</span>
+        <Sparkles
+          className={cn("size-4 shrink-0", active === "ai" ? "text-violet-600" : "text-violet-300/95")}
+          strokeWidth={2}
+          aria-hidden
+        />
+        <span className="truncate">{t("searchSerp.modeAi")}</span>
       </Link>
     </nav>
   );

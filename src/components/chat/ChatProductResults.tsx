@@ -2,6 +2,9 @@
 
 import { Card } from "@/components/shared/Card";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
+import { useLocale } from "@/context/LocaleContext";
+import { localizeProduct } from "@/lib/product-i18n";
+import { useT } from "@/lib/useT";
 import { ui } from "@/lib/ui-tokens";
 import { cn, formatBRL, hasMediaUrl } from "@/lib/utils";
 import type { Product } from "@/types";
@@ -16,6 +19,8 @@ export function ChatProductResults({
   products: Product[];
   profile: ShopperProfileId;
 }) {
+  const { locale } = useLocale();
+  const t = useT();
   if (products.length === 0) return null;
 
   const shown = products.slice(0, 4);
@@ -26,7 +31,7 @@ export function ChatProductResults({
         id="chat-top-matches-heading"
         className="text-[11px] font-semibold uppercase tracking-[0.16em] text-stone-500 sm:text-xs sm:tracking-[0.18em]"
       >
-        Top matches
+        {t("searchAiPanel.topMatches")}
       </p>
       <div
         role="group"
@@ -34,14 +39,17 @@ export function ChatProductResults({
         className="snap-x snap-mandatory w-full min-w-0 overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch] [scrollbar-width:thin] [scrollbar-color:rgba(120,113,108,0.35)_transparent]"
       >
         <ul className="flex w-max list-none items-stretch gap-3 pb-1 pr-1 pt-0.5">
-          {shown.map((p) => (
-            <li
-              key={p.id}
-              className="flex w-[118px] shrink-0 snap-start snap-always self-stretch sm:w-[132px]"
-            >
-              <ProductRowCard product={p} profile={profile} />
-            </li>
-          ))}
+          {shown.map((raw) => {
+            const p = localizeProduct(raw, locale);
+            return (
+              <li
+                key={p.id}
+                className="flex w-[118px] shrink-0 snap-start snap-always self-stretch sm:w-[132px]"
+              >
+                <ProductRowCard product={p} profile={profile} />
+              </li>
+            );
+          })}
         </ul>
       </div>
     </div>

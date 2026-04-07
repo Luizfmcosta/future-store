@@ -7,7 +7,7 @@ import type { ShopperProfileId } from "@/types";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-const DEFAULT_QUERY = "TV for a 3m living room, best value, up to 5000";
+const DEFAULT_QUERY = "Caixa sem fio para sala de ~3 m, melhor custo-benefício, até R$ 5000";
 
 export type ColorMode = "dark" | "light";
 

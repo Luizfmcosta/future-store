@@ -1,6 +1,6 @@
 import type { SearchIntent } from "@/types";
 
-/** Deterministic NL → intent parsing for demo (rule-based). */
+/** Deterministic NL → intent parsing for demo (rule-based), speaker-first catalog. */
 export function parseIntent(rawQuery: string): SearchIntent {
   const q = rawQuery.trim();
   const lower = q.toLowerCase();
@@ -15,36 +15,89 @@ export function parseIntent(rawQuery: string): SearchIntent {
   }
   if (!intent.budget && lower.match(/\b5000\b/)) intent.budget = 5000;
 
-  if (lower.includes("3m") || lower.includes("3 m") || lower.includes("three meter")) {
-    intent.roomDistance = "~3m viewing distance";
-  }
-  if (lower.includes("living room") || lower.includes("sala")) {
-    intent.roomType = "Living room";
+  if (
+    lower.includes("3m") ||
+    lower.includes("3 m") ||
+    lower.includes("three meter") ||
+    lower.includes("3 metros")
+  ) {
+    intent.roomDistanceKey = "3m_listening";
   }
 
-  if (lower.includes("best value") || lower.includes("custo") || lower.includes("value")) {
+  if (lower.includes("living room") || lower.includes("sala")) {
+    intent.roomTypeKey = "living_room";
+  }
+
+  if (
+    lower.includes("best value") ||
+    lower.includes("custo-benefício") ||
+    lower.includes("custo beneficio") ||
+    lower.includes("melhor custo") ||
+    lower.includes("best-value") ||
+    (lower.includes("valor") && !lower.includes("sob"))
+  ) {
     intent.priority = "best-value";
-  } else if (lower.includes("premium") || lower.includes("flagship")) {
+  } else if (lower.includes("premium") || lower.includes("referência") || lower.includes("referencia") || lower.includes("flagship")) {
     intent.priority = "premium";
-  } else if (lower.includes("cinema") || lower.includes("movie")) {
+  } else if (
+    lower.includes("cinema") ||
+    lower.includes("filme") ||
+    lower.includes("home theater") ||
+    lower.includes("home-theater") ||
+    lower.includes("imersão") ||
+    lower.includes("imersao")
+  ) {
     intent.priority = "cinema";
-  } else if (lower.includes("sport")) {
+  } else if (lower.includes("sport") || lower.includes("esporte") || lower.includes("futebol")) {
     intent.priority = "sports";
   }
 
-  if (lower.includes("oled")) intent.useCase = [...(intent.useCase ?? []), "OLED preference"];
-  if (lower.includes("qled")) intent.useCase = [...(intent.useCase ?? []), "QLED preference"];
-
-  if (intent.budget && intent.budget <= 3500) {
-    intent.sizePreference = "55\" class or smaller for best fit";
-  } else if (intent.roomDistance) {
-    intent.sizePreference = "55–65\" sweet spot at ~3m";
-  } else {
-    intent.sizePreference = "Flexible — ranked by intent";
+  if (
+    lower.includes("atmos") ||
+    lower.includes("espacial") ||
+    lower.includes("dolby") ||
+    lower.includes("surround")
+  ) {
+    intent.useCase = [...(intent.useCase ?? []), "spatial_audio"];
+  }
+  if (
+    lower.includes("soundbar") ||
+    lower.includes("barra de som") ||
+    lower.includes("barradesom") ||
+    /\btv\b/i.test(lower) ||
+    lower.includes("televisão") ||
+    lower.includes("televisao")
+  ) {
+    intent.useCase = [...(intent.useCase ?? []), "tv_audio"];
+  }
+  if (
+    lower.includes("portátil") ||
+    lower.includes("portatil") ||
+    lower.includes("portable") ||
+    lower.includes("externo") ||
+    lower.includes("outdoor") ||
+    lower.includes("varanda")
+  ) {
+    intent.useCase = [...(intent.useCase ?? []), "portable"];
   }
 
-  if (lower.includes("fast") || lower.includes("rápida") || lower.includes("urgent")) {
-    intent.deliveryNeed = "Sooner delivery preferred";
+  if (intent.budget && intent.budget <= 3500) {
+    intent.sizePreferenceKey = "compact_under_budget";
+  } else if (intent.roomDistanceKey) {
+    intent.sizePreferenceKey = "room_3m_speakers";
+  } else {
+    intent.sizePreferenceKey = "flexible";
+  }
+
+  if (
+    lower.includes("fast") ||
+    lower.includes("rápida") ||
+    lower.includes("rápido") ||
+    lower.includes("rapido") ||
+    lower.includes("urgent") ||
+    lower.includes("urgente")
+  ) {
+    intent.deliveryNeedKey = "sooner";
   }
 
   if (!intent.priority) intent.priority = "best-value";

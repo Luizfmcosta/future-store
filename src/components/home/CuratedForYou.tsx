@@ -2,7 +2,7 @@
 
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { useLocale } from "@/context/LocaleContext";
-import { getSpeakers } from "@/data/products";
+import { getSpeakersAndSoundbars } from "@/data/products";
 import { localizeProducts } from "@/lib/product-i18n";
 import { useT } from "@/lib/useT";
 import { formatBRL, hasMediaUrl } from "@/lib/utils";
@@ -151,18 +151,18 @@ export function CuratedForYou() {
   const t = useT();
 
   const pair = useMemo(() => {
-    const speakers = getSpeakers();
+    const catalog = getSpeakersAndSoundbars();
     const mode = experienceCtx?.experience.curatedSort ?? "profile_default";
-    let sorted: typeof speakers;
+    let sorted: typeof catalog;
     if (mode === "price_desc") {
-      sorted = [...speakers].sort((a, b) => b.price - a.price || a.id.localeCompare(b.id));
+      sorted = [...catalog].sort((a, b) => b.price - a.price || a.id.localeCompare(b.id));
     } else if (mode === "price_asc") {
-      sorted = [...speakers].sort((a, b) => a.price - b.price || a.id.localeCompare(b.id));
+      sorted = [...catalog].sort((a, b) => a.price - b.price || a.id.localeCompare(b.id));
     } else {
       sorted =
         profile === "marina"
-          ? [...speakers].sort((a, b) => b.price - a.price || a.id.localeCompare(b.id))
-          : [...speakers].sort((a, b) => a.price - b.price || a.id.localeCompare(b.id));
+          ? [...catalog].sort((a, b) => b.price - a.price || a.id.localeCompare(b.id))
+          : [...catalog].sort((a, b) => a.price - b.price || a.id.localeCompare(b.id));
     }
     return localizeProducts(sorted.slice(0, 2), locale);
   }, [profile, locale, experienceCtx?.experience.curatedSort]);

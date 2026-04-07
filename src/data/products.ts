@@ -33,8 +33,9 @@ export const products: Product[] = [
     bestFor: ["Kitchens", "Desks", "Stereo pairs in small rooms"],
     marginTier: "mid",
     sponsored: true,
-    heroImage: media("ba7417c9ec5d2dcf54f46a4b3481eb1d5d55d1b5-2000x2000.avif"),
+    heroImage: media("sonos-era-100-lifestyle.png"),
     gallery: [
+      media("ba7417c9ec5d2dcf54f46a4b3481eb1d5d55d1b5-2000x2000.avif"),
       media("0d3373d97722b8b9728b95026895d089f9241ae8-1920x1920.avif"),
       media("82ce8697780924b067d289793981db85c83b2b00-2000x2000.avif"),
     ],
@@ -92,8 +93,9 @@ export const products: Product[] = [
     compatibilityTags: ["Bluetooth", "WiFi", "Line-in", "USB-C"],
     bestFor: ["Patio", "Portable parties", "Room-to-room listening"],
     marginTier: "high",
-    heroImage: media("87e816c0a480d8a27c1d379e02e84d84f6db5041-1280x1280.avif"),
+    heroImage: media("sonos-move-2-lifestyle.png"),
     gallery: [
+      media("87e816c0a480d8a27c1d379e02e84d84f6db5041-1280x1280.avif"),
       media("110a711ffb1d9ec82743734ef7477a7d400c8d11-2400x2400.avif"),
       media("a2481284c5700c238a123168458f74c2b19e1bed-2379x2379.avif"),
     ],
@@ -248,6 +250,143 @@ export const products: Product[] = [
       media("87e816c0a480d8a27c1d379e02e84d84f6db5041-1280x1280.avif"),
     ],
   },
+  {
+    id: "sb-arc-ultra",
+    sku: "FS-SB-ARCULTRA-BLK",
+    category: "soundbar",
+    title: "Sonos Arc Ultra — Premium smart soundbar with Sound Motion™",
+    brand: "Sonos",
+    price: 10999,
+    installmentText: "18x R$ 611,06 sem juros",
+    deliveryETA: "5–7 business days",
+    stock: 14,
+    reviewStrengths: [
+      "Immersive Dolby Atmos with Sound Motion architecture",
+      "eARC and HDMI for modern TVs",
+      "Designed to pair with Sub 4 and Era surrounds",
+    ],
+    reviewWeaknesses: ["Wide footprint — measure your media console first"],
+    returnPolicyShort: "30 days",
+    warrantyShort: "24 months manufacturer",
+    compatibilityTags: ["Dolby Atmos", "eARC", "HDMI", "WiFi"],
+    bestFor: ["Living room TV", "Cinema nights", "Console gaming"],
+    marginTier: "high",
+    sponsored: true,
+    heroImage: media("fe8be07f006292560731a3bfb4481f9758bd44dc-2000x1020.avif"),
+    gallery: [
+      media("63597b504e8affad7de8e6c7d440011016fe1ff3-2000x1341.avif"),
+      media("3cb78a6f04f3125c38ee0c37dfa78c4591916da1-2480x2480.avif"),
+    ],
+  },
+  {
+    id: "sb-beam-g2",
+    sku: "FS-SB-BEAMG2-BLK",
+    category: "soundbar",
+    title: "Sonos Beam (Gen 2) — Compact smart soundbar",
+    brand: "Sonos",
+    price: 4999,
+    installmentText: "12x R$ 416,58 sem juros",
+    deliveryETA: "3–5 business days",
+    stock: 31,
+    reviewStrengths: [
+      "Atmos height virtualization in a small bar",
+      "Great for bedrooms and mid-size TVs",
+      "Voice control and Sonos multi-room",
+    ],
+    reviewWeaknesses: ["For large open plans, consider Arc Ultra"],
+    returnPolicyShort: "30 days",
+    warrantyShort: "24 months manufacturer",
+    compatibilityTags: ["Dolby Atmos", "eARC", "HDMI", "WiFi"],
+    bestFor: ["Bedroom TV", "Apartments", "Everyday streaming"],
+    marginTier: "mid",
+    heroImage: media("e12ba440b45fc67e970049734783d6fb0b6b20d1-2480x2480.avif"),
+    gallery: [
+      media("af5c86024d32b2fa5c41cbb81dd909d02878ea12-1510x959.avif"),
+      media("b38c2b390ddf8576df36f50a3b9d69774d65a1ef-2000x2000.avif"),
+    ],
+  },
+  {
+    id: "sb-ray",
+    sku: "FS-SB-RAY-BLK",
+    category: "soundbar",
+    title: "Sonos Ray — Essential compact soundbar",
+    brand: "Sonos",
+    price: 2299,
+    installmentText: "10x R$ 229,90 sem juros",
+    deliveryETA: "3–5 business days",
+    stock: 52,
+    reviewStrengths: [
+      "Clear dialogue boost on a budget",
+      "Fits tight consoles and wall mounts easily",
+      "Expands into a full Sonos system later",
+    ],
+    reviewWeaknesses: ["No Atmos — upgrade path is Beam or Arc"],
+    returnPolicyShort: "30 days",
+    warrantyShort: "24 months manufacturer",
+    compatibilityTags: ["Optical", "HDMI ARC", "WiFi"],
+    bestFor: ["Small TVs", "First soundbar", "Offices"],
+    marginTier: "mid",
+    sponsored: true,
+    heroImage: media("b11fda58212ffc54736af5412c8be6e52d976e84-701x509.avif"),
+    gallery: [
+      media("47a0e60ac5d697e707fcda68c77d9e460c1d5233-732x481.avif"),
+      media("ed86978e2f4d10e9a1044cf9d023cd21418f43a7-1920x345.avif"),
+    ],
+  },
+  {
+    id: "sp-five",
+    sku: "FS-SP-FIVE-WHT",
+    category: "speaker",
+    title: "Sonos Five — Premium hi-fi wireless speaker",
+    brand: "Sonos",
+    price: 6499,
+    installmentText: "12x R$ 541,58 sem juros",
+    deliveryETA: "3–5 business days",
+    stock: 22,
+    reviewStrengths: [
+      "Stereo pair capable for serious listening rooms",
+      "Line-in for turntable or DJ gear",
+      "Deep, clean output without a separate sub",
+    ],
+    reviewWeaknesses: ["Larger than Era — plan shelf depth"],
+    returnPolicyShort: "30 days",
+    warrantyShort: "24 months manufacturer",
+    compatibilityTags: ["Line-in", "WiFi", "AirPlay 2", "Trueplay"],
+    bestFor: ["Hi-fi stacks", "Turntable rigs", "Large kitchens"],
+    marginTier: "high",
+    heroImage: media("66e3cfe30d0b259876278d17a526295d43f044e5-2480x2480.avif"),
+    gallery: [
+      media("72e9843281b069391d73240660b11acb66ccdac3-2000x2000.avif"),
+      media("a57b2c8d90c191d435490e8bc636b5a582adac03-2000x2000.avif"),
+    ],
+  },
+  {
+    id: "sp-sub-4",
+    sku: "FS-SP-SUB4-BLK",
+    category: "speaker",
+    title: "Sonos Sub 4 — Premium wireless subwoofer",
+    brand: "Sonos",
+    price: 9999,
+    installmentText: "18x R$ 555,50 sem juros",
+    deliveryETA: "5–7 business days",
+    stock: 16,
+    reviewStrengths: [
+      "Transforms Arc Ultra and Beam with real sub-bass",
+      "Dual force-canceling drivers, minimal vibration",
+      "Wireless pairing — hide it beside the sofa",
+    ],
+    reviewWeaknesses: ["Premium investment — Sub Mini covers smaller rooms"],
+    returnPolicyShort: "30 days",
+    warrantyShort: "24 months manufacturer",
+    compatibilityTags: ["WiFi", "Trueplay", "Pairs with Arc", "Pairs with Beam"],
+    bestFor: ["Arc Ultra sets", "Action movies", "Electronic music"],
+    marginTier: "high",
+    heroImage: media("64e817c257b5ed55e7809343c628082a64ea1a7e-2000x2000.avif"),
+    gallery: [
+      media("15eb79929a07495b06be5ed9c60c2293bc4df9d9-568x1087.avif"),
+      media("3a521e77055da0268f5a2ae72a52bab268d40e5a-2480x2480.avif"),
+    ],
+  },
 ];
 
 export function getProductById(id: string): Product | undefined {
@@ -257,6 +396,11 @@ export function getProductById(id: string): Product | undefined {
 /** Primary catalog: wireless speakers (replaces former TV grid). */
 export function getSpeakers(): Product[] {
   return products.filter((p) => p.category === "speaker");
+}
+
+/** Speakers + soundbars for grids that should mirror the full Sonos-style lineup. */
+export function getSpeakersAndSoundbars(): Product[] {
+  return products.filter((p) => p.category === "speaker" || p.category === "soundbar");
 }
 
 /** @deprecated Use getSpeakers — kept for legacy imports during refactors */

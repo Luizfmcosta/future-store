@@ -25,7 +25,7 @@ export function MerchStrip() {
     const sorted = experienceCtx
       ? sortProducts(base, experienceCtx.experience.merchSort)
       : base;
-    return localizeProducts(sorted.slice(0, 7), locale);
+    return localizeProducts(sorted.slice(0, 10), locale);
   }, [locale, experienceCtx?.experience.merchSort]);
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.08 });

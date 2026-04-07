@@ -15,8 +15,9 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
+import { ABOUT_HERO_VIDEO_SRC } from "@/lib/storefrontHeroVideo";
 import { useRouter } from "next/navigation";
-import { useCallback, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, type ReactNode } from "react";
 
 const ease = [0.76, 0, 0.24, 1] as const;
 
@@ -30,7 +31,10 @@ function Section({
   id?: string;
 }) {
   return (
-    <section id={id} className={cn("border-t border-stone-100 px-4 py-10 sm:px-6 sm:py-12", className)}>
+    <section
+      id={id}
+      className={cn("border-t border-stone-100 px-4 py-9 sm:px-5 sm:py-12 md:px-6", className)}
+    >
       {children}
     </section>
   );
@@ -87,7 +91,15 @@ export function AboutPage() {
   const t = useT();
   const router = useRouter();
   const setAiMode = useDemoStore((s) => s.setAiMode);
-  const [heroPreview, setHeroPreview] = useState<"marina" | "ricardo">("marina");
+  const heroVideoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const el = heroVideoRef.current;
+    if (!el) return;
+    el.play().catch(() => {
+      /* autoplay policy */
+    });
+  }, []);
 
   const activateAiAndGoHome = useCallback(() => {
     setAiMode(true);
@@ -96,82 +108,65 @@ export function AboutPage() {
 
   return (
     <div className="flex flex-col bg-white pb-8">
-      {/* Hero */}
-      <div className="px-4 pt-2 sm:px-6 sm:pt-3">
-        <div className="overflow-hidden rounded-2xl bg-[#0c0c0c] px-5 py-10 sm:px-8 sm:py-12">
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, ease }}
-            className="mx-auto max-w-xl"
+      {/* Hero: full bleed in the storefront column, tall first screen (like home) */}
+      <section
+        id="about-hero"
+        className="relative flex w-full min-h-[100svh] flex-col overflow-hidden rounded-none bg-[#0c0c0c]"
+      >
+        {/* Same motion language as home hero: loop + gradient scrim */}
+        <div className="pointer-events-none absolute inset-0 min-h-full">
+          <video
+            ref={heroVideoRef}
+            key={ABOUT_HERO_VIDEO_SRC}
+            className="absolute inset-0 h-full w-full object-cover opacity-[0.45]"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
           >
-            <p className="text-center font-[family-name:var(--font-display)] text-[13px] font-medium text-white/55 sm:text-[14px]">
-              {t("aboutPage.centralLine")}
-            </p>
-            <h1 className="mt-4 text-center font-[family-name:var(--font-display)] text-[clamp(1.5rem,5vw,2.1rem)] font-medium leading-[1.15] tracking-[-0.02em] text-white">
-              {t("aboutPage.heroTitle")}
-            </h1>
-            <p className="mx-auto mt-4 max-w-[40ch] text-center text-[12px] font-light leading-relaxed text-white/60 sm:text-[13px]">
-              {t("aboutPage.heroSubtitle")}
-            </p>
-
-            <div className="mt-8 flex flex-col items-center justify-center gap-2.5 sm:flex-row sm:gap-3">
-              <Link
-                href="/"
-                className="inline-flex h-11 w-full max-w-xs items-center justify-center rounded-full bg-white px-6 text-[12px] font-medium text-[#0c0c0c] transition-transform hover:scale-[1.02] active:scale-[0.98] sm:w-auto"
-              >
-                {t("aboutPage.ctaExplore")}
-              </Link>
-              <button
-                type="button"
-                onClick={activateAiAndGoHome}
-                className="inline-flex h-11 w-full max-w-xs items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-6 text-[12px] font-medium text-white backdrop-blur-sm transition hover:bg-white/15 sm:w-auto"
-              >
-                <Sparkles className="size-3.5 opacity-90" aria-hidden />
-                {t("aboutPage.ctaAi")}
-              </button>
-            </div>
-
-            <div className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <button
-                type="button"
-                onClick={() => setHeroPreview("marina")}
-                className={cn(
-                  "rounded-xl border px-4 py-3 text-left transition sm:py-4",
-                  heroPreview === "marina"
-                    ? "border-white/35 bg-white/10"
-                    : "border-white/10 bg-white/[0.03] hover:bg-white/[0.06]",
-                )}
-              >
-                <span className="text-[11px] font-medium text-white/50">{t("aboutPage.labelMarina")}</span>
-                <p className="mt-2 text-[11px] font-light leading-relaxed text-white/75">{t("aboutPage.compareHeroMarina")}</p>
-              </button>
-              <button
-                type="button"
-                onClick={() => setHeroPreview("ricardo")}
-                className={cn(
-                  "rounded-xl border px-4 py-3 text-left transition sm:py-4",
-                  heroPreview === "ricardo"
-                    ? "border-white/35 bg-white/10"
-                    : "border-white/10 bg-white/[0.03] hover:bg-white/[0.06]",
-                )}
-              >
-                <span className="text-[11px] font-medium text-white/50">{t("aboutPage.labelRicardo")}</span>
-                <p className="mt-2 text-[11px] font-light leading-relaxed text-white/75">{t("aboutPage.compareHeroRicardo")}</p>
-              </button>
-            </div>
-            <motion.p
-              key={heroPreview}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, ease }}
-              className="mt-4 rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-center text-[11px] font-light leading-relaxed text-white/65 sm:text-[12px]"
-            >
-              {heroPreview === "marina" ? t("aboutPage.compareToneMarina") : t("aboutPage.compareToneRicardo")}
-            </motion.p>
-          </motion.div>
+            <source src={ABOUT_HERO_VIDEO_SRC} type="video/mp4" />
+          </video>
+          <div
+            className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/[0.12] to-black/20"
+            aria-hidden
+          />
         </div>
-      </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, ease }}
+          className="relative z-10 mx-auto flex w-full max-w-xl flex-1 flex-col justify-end px-4 pb-6 pt-[calc(3.25rem+0.75rem)] sm:px-6 sm:pb-10 sm:pt-[calc(3.75rem+1rem)] -translate-y-3 sm:-translate-y-5"
+        >
+          <p className="text-center font-[family-name:var(--font-display)] text-[13px] font-normal text-white/70 sm:text-[15px]">
+            {t("aboutPage.centralLine")}
+          </p>
+          <h1 className="mt-3 text-center font-[family-name:var(--font-display)] text-[clamp(1.85rem,6.2vw,2.65rem)] font-medium leading-[1.08] tracking-[-0.02em] text-white">
+            {t("aboutPage.heroTitle")}
+          </h1>
+          <p className="mx-auto mt-4 max-w-[42ch] text-center text-[12px] font-light leading-relaxed text-white/65 sm:text-[14px]">
+            {t("aboutPage.heroSubtitle")}
+          </p>
+
+          <div className="mt-10 flex flex-col items-center justify-center gap-2.5 sm:flex-row sm:gap-3">
+            <Link
+              href="/"
+              className="inline-flex h-11 w-full max-w-xs items-center justify-center rounded-full bg-white px-6 text-[12px] font-medium text-[#0c0c0c] shadow-[0_12px_40px_-16px_rgba(0,0,0,0.35)] transition-transform hover:scale-[1.02] active:scale-[0.98] sm:w-auto"
+            >
+              {t("aboutPage.ctaExplore")}
+            </Link>
+            <button
+              type="button"
+              onClick={activateAiAndGoHome}
+              className="inline-flex h-11 w-full max-w-xs items-center justify-center gap-2 rounded-full border border-white/25 bg-white/[0.12] px-6 text-[12px] font-medium text-white backdrop-blur-md transition hover:bg-white/[0.18] sm:w-auto"
+            >
+              <Sparkles className="size-3.5 opacity-90" aria-hidden />
+              {t("aboutPage.ctaAi")}
+            </button>
+          </div>
+        </motion.div>
+      </section>
 
       <Section>
         <h2 className="max-w-[22rem] font-[family-name:var(--font-display)] text-[clamp(1.15rem,3.2vw,1.5rem)] font-medium leading-[1.2] tracking-[-0.015em] text-[#1a1a1a]">
@@ -326,7 +321,7 @@ export function AboutPage() {
       </Section>
 
       <Section className="border-b border-stone-100">
-        <div className="rounded-2xl border border-stone-200/90 bg-[#fafafa] px-5 py-8 text-center sm:px-8 sm:py-10">
+        <div className="rounded-2xl border border-stone-200/90 bg-[#fafafa] px-4 py-8 text-center sm:px-8 sm:py-10">
           <h2 className="mx-auto max-w-[20rem] font-[family-name:var(--font-display)] text-[clamp(1.2rem,3.5vw,1.65rem)] font-medium leading-[1.2] tracking-[-0.015em] text-[#1a1a1a]">
             {t("aboutPage.finalTitle")}
           </h2>

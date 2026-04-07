@@ -73,7 +73,8 @@ export default function ProductPage() {
             <FitInsightWidget title={insights.idealTitle} body={insights.idealBody} />
           ) : (
             <div className="rounded-[1.75rem] border border-stone-200/90 bg-stone-50/90 p-5 text-[14px] text-stone-600">
-              {product.bestFor[0]}
+              <span className="font-medium text-stone-800">{t("pdp.recommendedFor")}</span>{" "}
+              {product.bestFor[0] ?? "—"}
             </div>
           )}
 

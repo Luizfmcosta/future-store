@@ -117,7 +117,6 @@ function formatModuleOrder(locale: AppLocale, order: string[]): string {
     compare: ["Comparativo", "Compare"],
     curated: ["Curado para você", "Curated"],
     spotlight: ["Destaque do produto", "Spotlight"],
-    proof: ["Prova social", "Social proof"],
     strip: ["Faixa de produtos", "Merch strip"],
   };
   const pretty = order

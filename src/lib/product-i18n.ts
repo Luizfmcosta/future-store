@@ -110,6 +110,71 @@ const ptBrOverrides: Partial<Record<string, Partial<Product>>> = {
     warrantyShort: "24 meses fabricante",
     bestFor: ["Externo", "Dupla viagem", "Estúdios compactos"],
   },
+  "sb-arc-ultra": {
+    title: "Sonos Arc Ultra — Soundbar smart premium com Sound Motion™",
+    deliveryETA: "5–7 dias úteis",
+    reviewStrengths: [
+      "Dolby Atmos imersivo com arquitetura Sound Motion",
+      "eARC e HDMI para TVs atuais",
+      "Combina com Sub 4 e Era como surround",
+    ],
+    reviewWeaknesses: ["Barra larga — meça o rack antes"],
+    returnPolicyShort: "30 dias",
+    warrantyShort: "24 meses fabricante",
+    bestFor: ["TV na sala", "Cinema em casa", "Games no console"],
+  },
+  "sb-beam-g2": {
+    title: "Sonos Beam (Gen 2) — Soundbar smart compacta",
+    deliveryETA: "3–5 dias úteis",
+    reviewStrengths: [
+      "Atmos virtualizado em formato pequeno",
+      "Ideal para quartos e TVs médias",
+      "Voz e multiambiente Sonos",
+    ],
+    reviewWeaknesses: ["Salas muito abertas pedem Arc Ultra"],
+    returnPolicyShort: "30 dias",
+    warrantyShort: "24 meses fabricante",
+    bestFor: ["TV no quarto", "Apartamentos", "Streaming do dia a dia"],
+  },
+  "sb-ray": {
+    title: "Sonos Ray — Soundbar compacta essencial",
+    deliveryETA: "3–5 dias úteis",
+    reviewStrengths: [
+      "Diálogos mais claros com investimento acessível",
+      "Encaixa em racks estreitos e parede",
+      "Cresce para um sistema Sonos completo",
+    ],
+    reviewWeaknesses: ["Sem Atmos — upgrade natural é Beam ou Arc"],
+    returnPolicyShort: "30 dias",
+    warrantyShort: "24 meses fabricante",
+    bestFor: ["TVs menores", "Primeira soundbar", "Escritórios"],
+  },
+  "sp-five": {
+    title: "Sonos Five — Caixa wireless hi-fi premium",
+    deliveryETA: "3–5 dias úteis",
+    reviewStrengths: [
+      "Aceita par estéreo para sala de audição séria",
+      "Entrada line-in para toca-discos ou mesa",
+      "Graves limpos sem sub separado na maioria das salas",
+    ],
+    reviewWeaknesses: ["Maior que Era — confira profundidade do móvel"],
+    returnPolicyShort: "30 dias",
+    warrantyShort: "24 meses fabricante",
+    bestFor: ["Hi-fi", "Setup com vinil", "Cozinhas amplas"],
+  },
+  "sp-sub-4": {
+    title: "Sonos Sub 4 — Subwoofer wireless premium",
+    deliveryETA: "5–7 dias úteis",
+    reviewStrengths: [
+      "Transforma Arc Ultra e Beam com graves de verdade",
+      "Drivers force-canceling, pouca vibração no móvel",
+      "Pareamento wireless — esconde atrás do sofá",
+    ],
+    reviewWeaknesses: ["Investimento alto — Sub Mini atende salas menores"],
+    returnPolicyShort: "30 dias",
+    warrantyShort: "24 meses fabricante",
+    bestFor: ["Sets com Arc", "Filmes de ação", "Música eletrônica"],
+  },
 };
 
 export function localizeProduct(product: Product, locale: AppLocale): Product {

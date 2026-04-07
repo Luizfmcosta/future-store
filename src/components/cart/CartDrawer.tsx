@@ -31,7 +31,7 @@ export function CartDrawer() {
   const product = productRaw ? localizeProduct(productRaw, locale) : undefined;
   const bundles =
     product && (product.category === "tv" || product.category === "speaker")
-      ? getBundleOptions(profile, product)
+      ? getBundleOptions(profile, product, locale)
       : null;
 
   useEffect(() => {

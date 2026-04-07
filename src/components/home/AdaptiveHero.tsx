@@ -2,12 +2,10 @@
 
 import { useLocale } from "@/context/LocaleContext";
 import { heroCopy } from "@/lib/copy";
+import { STOREFRONT_HERO_VIDEO_SRC } from "@/lib/storefrontHeroVideo";
 import { useDemoStore } from "@/store/demoStore";
 import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
-
-/** Distinct filename avoids stale `/media/home-hero.mp4` cache when the asset is replaced. */
-const HERO_VIDEO_SRC = "/media/hero-bc3d.mp4";
 
 const ease = [0.76, 0, 0.24, 1] as const;
 const stagger = { staggerChildren: 0.14, delayChildren: 1.5 };
@@ -35,7 +33,7 @@ export function AdaptiveHero() {
       <div className="relative flex h-[95svh] min-h-[500px] items-end justify-center overflow-hidden bg-[#0c0c0c]">
         <video
           ref={videoRef}
-          key={HERO_VIDEO_SRC}
+          key={STOREFRONT_HERO_VIDEO_SRC}
           className="absolute inset-0 h-full w-full object-cover opacity-90"
           autoPlay
           muted
@@ -43,7 +41,7 @@ export function AdaptiveHero() {
           playsInline
           preload="auto"
         >
-          <source src={HERO_VIDEO_SRC} type="video/mp4" />
+          <source src={STOREFRONT_HERO_VIDEO_SRC} type="video/mp4" />
         </video>
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/28 via-black/[0.06] to-black/10" aria-hidden />

@@ -24,7 +24,7 @@ export function CompareModule() {
   const experienceCtx = useShopperExperienceOptional();
   const { locale } = useLocale();
   const t = useT();
-  const id = experienceCtx?.compareProductId ?? (profile === "marina" ? "sp-home-theater" : "sp-era-100");
+  const id = experienceCtx?.compareProductId ?? (profile === "marina" ? "sb-arc-ultra" : "sb-ray");
   const product = getProductByIdLocalized(id, locale);
   if (!product) return null;
 

@@ -8,7 +8,6 @@ import { HomeFooter } from "@/components/home/HomeFooter";
 import { HomeLoadingReveal } from "@/components/home/HomeLoadingReveal";
 import { MerchStrip } from "@/components/home/MerchStrip";
 import { ProductSpotlight } from "@/components/home/ProductSpotlight";
-import { SocialProofModule } from "@/components/home/SocialProofModule";
 import { useShopperExperience } from "@/context/ShopperExperienceContext";
 import type { HomeModuleKey } from "@/types";
 import type { ReactNode } from "react";
@@ -19,7 +18,6 @@ const map: Record<HomeModuleKey, ReactNode> = {
   curated: <CuratedForYou key="curated" />,
   compare: <CompareModule key="compare" />,
   spotlight: <ProductSpotlight key="spotlight" />,
-  proof: <SocialProofModule key="proof" />,
   strip: <MerchStrip key="strip" />,
 };
 

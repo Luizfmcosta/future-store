@@ -2,12 +2,15 @@
 
 import { Card } from "@/components/shared/Card";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
+import { useT } from "@/lib/useT";
 import { formatBRL, hasMediaUrl } from "@/lib/utils";
 import type { BundleOption } from "@/lib/bundles";
 import Image from "next/image";
 import Link from "next/link";
 
 export function CheaperOptionCard({ option }: { option: BundleOption }) {
+  const t = useT();
+
   return (
     <Card className="overflow-hidden bg-stone-50/50 p-0">
       <div className="flex gap-4 p-4">
@@ -19,11 +22,11 @@ export function CheaperOptionCard({ option }: { option: BundleOption }) {
           )}
         </div>
         <div className="min-w-0">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">Leaner add-on</p>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">{t("cart.leanerAddOn")}</p>
           <p className="mt-1 text-[14px] font-semibold text-stone-900">{option.title}</p>
           <p className="mt-1 text-[18px] font-semibold tabular-nums text-stone-900">{formatBRL(option.comboPrice)}</p>
           <Link href={`/product/${option.soundbar.id}`} className="mt-2 inline-block text-[12px] font-semibold text-stone-600 transition hover:text-stone-900">
-            Details
+            {t("cart.details")}
           </Link>
         </div>
       </div>

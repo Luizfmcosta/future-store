@@ -45,6 +45,7 @@ const STOREFRONT_DEFAULT = 440;
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const isAboutRoute = pathname === "/about";
   const aiMode = useDemoStore((s) => s.aiMode);
   const setScreen = useDemoStore((s) => s.setCurrentScreen);
   const storefrontRef = useRef<HTMLDivElement>(null);
@@ -90,7 +91,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       <NarrativeChrome className="hidden md:block" />
 
-      <div className="flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-x-visible p-3 sm:p-6 md:p-8">
+      <div
+        className={cn(
+          "flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-x-visible sm:p-6 md:p-8",
+          isAboutRoute ? "p-2" : "p-3",
+        )}
+      >
         <div
           className={cn(
             "relative mx-auto w-full max-w-[440px] overflow-visible",

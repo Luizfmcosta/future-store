@@ -1,5 +1,8 @@
 import { bundles as bundleDefs } from "@/data/bundles";
 import { getProductById } from "@/data/products";
+import { formatMessage, getMessage } from "@/lib/messages";
+import type { AppLocale } from "@/lib/locale-types";
+import { localizeProduct } from "@/lib/product-i18n";
 import type { Product } from "@/types";
 import type { ShopperProfileId } from "@/types";
 
@@ -12,7 +15,26 @@ export type BundleOption = {
   comboPrice: number;
 };
 
-export function getBundleOptions(profile: ShopperProfileId, tv: Product): {
+const BUNDLE_DEF_I18N: Record<string, { titleKey: string; bodyKey: string }> = {
+  "bnd-era-roam": { titleKey: "cart.bundleDefBndEraRoamTitle", bodyKey: "cart.bundleDefBndEraRoamBody" },
+  "bnd-era-pair-roam": { titleKey: "cart.bundleDefBndEraPairRoamTitle", bodyKey: "cart.bundleDefBndEraPairRoamBody" },
+  "bnd-move-roam": { titleKey: "cart.bundleDefBndMoveRoamTitle", bodyKey: "cart.bundleDefBndMoveRoamBody" },
+  "bnd-era-move": { titleKey: "cart.bundleDefBndEraMoveTitle", bodyKey: "cart.bundleDefBndEraMoveBody" },
+  "bnd-arc-sub": { titleKey: "cart.bundleDefBndArcSubTitle", bodyKey: "cart.bundleDefBndArcSubBody" },
+  "bnd-beam-roam": { titleKey: "cart.bundleDefBndBeamRoamTitle", bodyKey: "cart.bundleDefBndBeamRoamBody" },
+  "bnd-five-era300": { titleKey: "cart.bundleDefBndFiveEra300Title", bodyKey: "cart.bundleDefBndFiveEra300Body" },
+};
+
+function T(locale: AppLocale, path: string, params?: Record<string, string | number>): string {
+  const raw = getMessage(locale, path) ?? "";
+  return params ? formatMessage(raw, params) : raw;
+}
+
+export function getBundleOptions(
+  profile: ShopperProfileId,
+  tv: Product,
+  locale: AppLocale,
+): {
   primary: BundleOption | null;
   premium: BundleOption | null;
   cheaper: BundleOption | null;
@@ -23,14 +45,17 @@ export function getBundleOptions(profile: ShopperProfileId, tv: Product): {
   const sbEcho = getProductById("sp-era-100");
   const sbPulse = getProductById("sp-roam-2");
 
-  const make = (def: typeof bundleDefs[0] | undefined, sb: Product | undefined): BundleOption | null => {
+  const make = (def: (typeof bundleDefs)[0] | undefined, sb: Product | undefined): BundleOption | null => {
     if (!def || !sb) return null;
+    const keys = BUNDLE_DEF_I18N[def.id];
+    const title = keys ? T(locale, keys.titleKey) : def.title;
+    const blurb = keys ? T(locale, keys.bodyKey) : def.blurb;
     return {
       bundleId: def.id,
-      title: def.title,
+      title,
       soundbar: sb,
       savings: def.savings,
-      blurb: def.blurb,
+      blurb,
       comboPrice: tv.price + sb.price - def.savings,
     };
   };
@@ -46,32 +71,37 @@ export function getBundleOptions(profile: ShopperProfileId, tv: Product): {
     profile === "marina" && sbPremium
       ? ({
           bundleId: "virtual-premium",
-          title: "Spatial upgrade — Era 300",
+          title: T(locale, "cart.virtualPremiumMarinaTitle"),
           soundbar: sbPremium,
           savings: Math.min(400, Math.round(tv.price * 0.04)),
-          blurb: "Add flagship spatial audio to your setup",
+          blurb: T(locale, "cart.virtualPremiumMarinaBlurb"),
           comboPrice: tv.price + sbPremium.price - Math.min(400, Math.round(tv.price * 0.04)),
         } satisfies BundleOption)
       : sbPremium
         ? ({
             bundleId: "virtual-premium",
-            title: "Upgrade path — Era 300",
+            title: T(locale, "cart.virtualPremiumRicardoTitle"),
             soundbar: sbPremium,
             savings: 280,
-            blurb: "Step-up clarity for open rooms",
+            blurb: T(locale, "cart.virtualPremiumRicardoBlurb"),
             comboPrice: tv.price + sbPremium.price - 280,
           } satisfies BundleOption)
         : null;
 
   const cheaperSb = profile === "ricardo" ? sbPulse ?? sbEcho : sbEcho ?? sbPulse;
+  const cheaperSbLoc = cheaperSb ? localizeProduct(cheaperSb, locale) : undefined;
+  const cheaperName = cheaperSbLoc?.title.split("—")[0].trim() ?? "Roam 2";
   const cheaperOpt =
     cheaperSb && cheaperSb.id !== primaryOpt?.soundbar.id
       ? ({
           bundleId: "virtual-value",
-          title: "Lean add-on — Roam 2",
+          title: T(locale, "cart.virtualCheaperTitle", { name: cheaperName }),
           soundbar: cheaperSb,
           savings: 120,
-          blurb: profile === "ricardo" ? "Keeps monthly payment lower" : "Portable speaker to extend your system",
+          blurb: T(
+            locale,
+            profile === "ricardo" ? "cart.virtualCheaperBlurbRicardo" : "cart.virtualCheaperBlurbMarina",
+          ),
           comboPrice: tv.price + cheaperSb.price - 120,
         } satisfies BundleOption)
       : null;
