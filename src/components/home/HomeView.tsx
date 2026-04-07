@@ -4,10 +4,11 @@ import { AdaptiveHero } from "@/components/home/AdaptiveHero";
 import { CompareModule } from "@/components/home/CompareModule";
 import { ContinueJourney } from "@/components/home/ContinueJourney";
 import { CuratedForYou } from "@/components/home/CuratedForYou";
+import { HomeFooter } from "@/components/home/HomeFooter";
+import { HomeLoadingReveal } from "@/components/home/HomeLoadingReveal";
 import { MerchStrip } from "@/components/home/MerchStrip";
-import { SocialProofModule } from "@/components/home/SocialProofModule";
-import { getHomeModules } from "@/lib/personalization";
-import { useDemoStore } from "@/store/demoStore";
+import { ProductSpotlight } from "@/components/home/ProductSpotlight";
+import { useShopperExperience } from "@/context/ShopperExperienceContext";
 import type { HomeModuleKey } from "@/types";
 import type { ReactNode } from "react";
 
@@ -16,19 +17,22 @@ const map: Record<HomeModuleKey, ReactNode> = {
   continue: <ContinueJourney key="continue" />,
   curated: <CuratedForYou key="curated" />,
   compare: <CompareModule key="compare" />,
-  proof: <SocialProofModule key="proof" />,
+  spotlight: <ProductSpotlight key="spotlight" />,
   strip: <MerchStrip key="strip" />,
 };
 
 export function HomeView() {
-  const profile = useDemoStore((s) => s.activeProfile);
-  const order = getHomeModules(profile);
+  const { experience } = useShopperExperience();
+  const order = experience.moduleOrder;
 
   return (
-    <div className="flex flex-col gap-10 sm:gap-14">
-      {order.map((key) => (
-        <div key={key}>{map[key]}</div>
-      ))}
+    <div className="relative flex flex-col">
+      <HomeLoadingReveal />
+      {order.map((key) => {
+        const node = map[key];
+        return node ? <div key={key}>{node}</div> : null;
+      })}
+      <HomeFooter />
     </div>
   );
 }

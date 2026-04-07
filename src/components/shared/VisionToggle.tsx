@@ -1,13 +1,14 @@
 "use client";
 
 import { narrativeSidebarText, sidebarRailSurfaceClass } from "@/lib/narrativeSidebar";
+import { useT } from "@/lib/useT";
 import { cn } from "@/lib/utils";
 import { useDemoStore } from "@/store/demoStore";
 
 function visionButtonClass(active: boolean, light: boolean) {
   return cn(
     narrativeSidebarText,
-    "flex min-h-10 w-full items-center justify-center rounded-[10px] px-2 transition",
+    "flex min-h-9 w-full items-center justify-center px-2 text-[11px] transition",
     sidebarRailSurfaceClass(active, light),
   );
 }
@@ -16,16 +17,17 @@ function visionButtonClass(active: boolean, light: boolean) {
 export function VisionToggle({ light = false }: { light?: boolean }) {
   const aiMode = useDemoStore((s) => s.aiMode);
   const setAiMode = useDemoStore((s) => s.setAiMode);
+  const t = useT();
 
   return (
-    <div className="flex flex-col gap-1.5" role="group" aria-label="Vision">
+    <div className="flex flex-col gap-1" role="group" aria-label={t("narrative.vision")}>
       <button
         type="button"
         onClick={() => setAiMode(false)}
         className={visionButtonClass(!aiMode, light)}
         aria-pressed={!aiMode}
       >
-        Human
+        {t("narrative.visionHuman")}
       </button>
       <button
         type="button"
@@ -33,7 +35,7 @@ export function VisionToggle({ light = false }: { light?: boolean }) {
         className={visionButtonClass(aiMode, light)}
         aria-pressed={aiMode}
       >
-        AI
+        {t("narrative.visionAi")}
       </button>
     </div>
   );

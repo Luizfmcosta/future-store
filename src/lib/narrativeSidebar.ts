@@ -14,12 +14,13 @@ export const shopperNameText =
  */
 export function sidebarRailSurfaceClass(active: boolean, light: boolean) {
   return cn(
+    "rounded-xl",
     light
       ? active
         ? "border border-slate-400 bg-white text-slate-900 shadow-sm"
         : "border border-slate-200/55 bg-white/[0.65] text-slate-500 hover:border-slate-300/80 hover:bg-slate-50/90"
       : active
-        ? "border border-white/[0.34] bg-white/[0.075] text-[#f2f4f8]"
-        : "border border-white/[0.06] bg-white/[0.035] text-[#8b93a7] hover:border-white/[0.12] hover:bg-white/[0.055] hover:text-[#c8d0dc]",
+        ? "border border-white/[0.14] bg-white/[0.08] text-[#f4f6fa] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
+        : "border border-white/[0.06] bg-white/[0.04] text-[#9aa3b0] hover:border-white/[0.1] hover:bg-white/[0.06] hover:text-[#c8d0dc]",
   );
 }

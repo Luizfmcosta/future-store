@@ -5,8 +5,9 @@ import type { SearchIntent } from "@/types";
 import type { ScreenId } from "@/types";
 import type { ShopperProfileId } from "@/types";
 import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
-const DEFAULT_QUERY = "TV for a 3m living room, best value, up to 5000";
+const DEFAULT_QUERY = "Caixa sem fio para sala de ~3 m, melhor custo-benefício, até R$ 5000";
 
 export type ColorMode = "dark" | "light";
 
@@ -48,7 +49,9 @@ type DemoState = {
   presetSearch: () => void;
 };
 
-export const useDemoStore = create<DemoState>((set, get) => ({
+export const useDemoStore = create<DemoState>()(
+  persist(
+    (set, get) => ({
   activeProfile: "marina",
   aiMode: false,
   rayXMode: false,
@@ -118,4 +121,11 @@ export const useDemoStore = create<DemoState>((set, get) => ({
       currentScreen: "search",
     });
   },
-}));
+}),
+    {
+      name: "future-store-demo",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ aiMode: state.aiMode }),
+    },
+  ),
+);

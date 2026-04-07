@@ -3,24 +3,33 @@ import type { Product } from "@/types";
 import type { SearchIntent } from "@/types";
 import type { ShopperProfileId } from "@/types";
 
-function scoreTv(p: Product, intent: SearchIntent, profile: ShopperProfileId): number {
-  if (p.category !== "tv") return -1e9;
+function scoreAudioProduct(p: Product, intent: SearchIntent, profile: ShopperProfileId): number {
+  if (p.category !== "speaker" && p.category !== "soundbar") return -1e9;
   let s = 0;
   const budget = intent.budget ?? 8000;
   const premiumBias = profile === "marina" ? 1.15 : 0.92;
   const valueBias = profile === "ricardo" ? 1.2 : 1;
+  const tvOrTheater =
+    intent.priority === "cinema" ||
+    intent.useCase?.includes("tv_audio") ||
+    intent.useCase?.includes("spatial_audio");
 
-  if (p.technology === "OLED") s += 40 * premiumBias;
-  if (p.technology === "QLED") s += 28 * premiumBias;
-  if (p.technology === "LED") s += 18 * valueBias;
+  if (p.category === "soundbar") {
+    if (tvOrTheater) s += 44;
+    else if (intent.priority === "sports") s += 26;
+    else s += 6;
+  }
+
+  if (p.marginTier === "high") s += 35 * premiumBias;
+  if (p.marginTier === "mid") s += 22 * premiumBias;
+  if (p.marginTier === "low") s += 14 * valueBias;
 
   if (p.price <= budget) s += 50;
   else s -= Math.min(80, (p.price - budget) / 50);
 
-  const inches = p.inches ?? 55;
-  if (intent.roomDistance?.includes("3m")) {
-    if (inches >= 55 && inches <= 65) s += profile === "marina" ? 35 : 45;
-    if (inches >= 75) s += profile === "marina" ? 25 : 5;
+  if (intent.roomDistanceKey === "3m_listening") {
+    s += profile === "marina" ? 20 : 28;
+    if (p.category === "soundbar") s += 12;
   }
 
   if (intent.priority === "best-value") {
@@ -44,7 +53,9 @@ function scoreTv(p: Product, intent: SearchIntent, profile: ShopperProfileId): n
 }
 
 export function getSearchResults(profile: ShopperProfileId, intent: SearchIntent): Product[] {
-  const tvs = products.filter((p) => p.category === "tv");
-  const ranked = [...tvs].sort((a, b) => scoreTv(b, intent, profile) - scoreTv(a, intent, profile));
+  const audio = products.filter((p) => p.category === "speaker" || p.category === "soundbar");
+  const ranked = [...audio].sort(
+    (a, b) => scoreAudioProduct(b, intent, profile) - scoreAudioProduct(a, intent, profile),
+  );
   return ranked;
 }

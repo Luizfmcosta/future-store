@@ -6,7 +6,7 @@ import { formatBRL } from "@/lib/utils";
 import type { ShopperProfileId } from "@/types";
 
 export function AgentLayerPanel({ skuId, profile }: { skuId: string | null; profile: ShopperProfileId }) {
-  const p = skuId ? getProductById(skuId) : getProductById("tv-aurora-oled-65");
+  const p = skuId ? getProductById(skuId) : getProductById("sp-era-300");
   if (!p) return null;
   const a = getAgentSurface(p, profile);
 

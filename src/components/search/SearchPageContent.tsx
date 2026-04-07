@@ -9,14 +9,14 @@ import { SearchAiPanel } from "@/components/search/SearchAiPanel";
 import { SearchModeTabs } from "@/components/search/SearchModeTabs";
 import { getSearchViewParam } from "@/components/search/SearchViewTabs";
 import { parseIntent } from "@/lib/parseIntent";
-import { getComparisonCards, getBestMatch, getLearningWidget } from "@/lib/recommendations";
+import { getComparisonCards, getBestMatch, getLearningWidgetVariant } from "@/lib/recommendations";
 import { getSearchResults } from "@/lib/search";
 import { useDemoStore } from "@/store/demoStore";
 import { motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo } from "react";
 
-const DEFAULT_QUERY = "TV for a 3m living room, best value, up to 5000";
+const DEFAULT_QUERY = "Caixa sem fio para sala de ~3 m, melhor custo-benefício, até R$ 5000";
 
 export function SearchPageContent() {
   const router = useRouter();
@@ -30,6 +30,7 @@ export function SearchPageContent() {
   const setQuery = useDemoStore((s) => s.setQuery);
   const runSearch = useDemoStore((s) => s.runSearch);
   const profile = useDemoStore((s) => s.activeProfile);
+  const aiMode = useDemoStore((s) => s.aiMode);
 
   useEffect(() => {
     if (!parsedIntent) {
@@ -51,7 +52,7 @@ export function SearchPageContent() {
   const displayResults = useMemo(() => results, [results]);
   const best = getBestMatch(profile, results, intent);
   const compare = getComparisonCards(profile, results);
-  const learn = getLearningWidget(intent);
+  const learningVariant = getLearningWidgetVariant(intent);
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-6">
@@ -66,13 +67,13 @@ export function SearchPageContent() {
         hidden={view !== "results"}
         className="space-y-8"
       >
-        <IntentSummary intent={intent} profile={profile} aiMode />
+        <IntentSummary intent={intent} profile={profile} aiMode={aiMode} />
 
-        <BestMatchCard product={best} profile={profile} aiMode />
+        <BestMatchCard product={best} profile={profile} aiMode={aiMode} />
 
         <ComparisonStrip items={compare} profile={profile} />
 
-        <LearningWidget title={learn.title} body={learn.body} tag={learn.tag} />
+        {aiMode ? <LearningWidget variant={learningVariant} /> : null}
 
         <ResultsGrid products={displayResults} profile={profile} />
       </div>

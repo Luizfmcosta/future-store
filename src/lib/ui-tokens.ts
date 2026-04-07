@@ -21,6 +21,10 @@ export const ui = {
   searchBar:
     "rounded-full border border-white/[0.06] bg-[#14161c]/90 backdrop-blur-xl transition-[border-color,background-color] duration-200 ease-out hover:border-white/[0.08] hover:bg-[#161922]/95 focus-within:border-white/[0.09] focus-within:bg-[#161922]/95",
 
+  /** Floating composer / fields on white (search AI, etc.) */
+  searchBarOnLight:
+    "rounded-full border border-stone-200/90 bg-white/95 backdrop-blur-xl transition-[border-color,background-color] duration-200 ease-out hover:border-stone-300/90 hover:bg-white focus-within:border-stone-300 focus-within:bg-white shadow-[0_8px_32px_rgba(0,0,0,0.06)]",
+
   narrativeSectionLabel: (light: boolean) =>
     light
       ? "mb-1.5 text-[9px] font-semibold uppercase tracking-[0.26em] text-slate-500"
@@ -31,4 +35,17 @@ export const ui = {
 
   toggleOnDark: "border-white/[0.12] bg-white/[0.08] text-[#f0f4fa]",
   toggleOnLight: "border-slate-300 bg-slate-100 text-slate-900",
+
+  /** Warm editorial home (Saki-like light storefront) */
+  home: {
+    eyebrow: "text-[10px] font-semibold uppercase tracking-[0.22em] text-stone-500",
+    sectionTitle: "text-lg font-semibold leading-tight tracking-tight text-stone-900 sm:text-xl",
+    label: "text-[12px] font-medium text-stone-600",
+    cardTitle: "text-[14px] font-semibold leading-snug text-stone-900",
+    body: "text-[13px] leading-relaxed text-stone-600",
+    price: "text-[15px] font-semibold tabular-nums text-stone-900",
+    priceMuted: "text-[12px] font-medium text-stone-400 line-through",
+    hairline: "border border-stone-200/90",
+    focusRing: "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-stone-400/40",
+  },
 };

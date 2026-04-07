@@ -13,7 +13,7 @@ export type ShopperProfile = {
   interests: string[];
 };
 
-export type ProductCategory = "tv" | "soundbar" | "accessory";
+export type ProductCategory = "tv" | "soundbar" | "speaker" | "accessory";
 
 export type DisplayTechnology = "OLED" | "QLED" | "LED";
 
@@ -42,14 +42,25 @@ export type Product = {
   gallery: string[];
 };
 
+/** Semantic keys for SERP / assistant — labels come from `messages` by locale. */
+export type SearchIntentRoomDistanceKey = "3m_listening";
+export type SearchIntentRoomTypeKey = "living_room";
+export type SearchIntentSizePreferenceKey =
+  | "flexible"
+  | "compact_under_budget"
+  | "room_3m_speakers";
+export type SearchIntentDeliveryKey = "sooner";
+
 export type SearchIntent = {
   rawQuery: string;
   budget?: number;
-  roomDistance?: string;
-  roomType?: string;
-  sizePreference?: string;
+  /** Listening context (~3 m from seating) */
+  roomDistanceKey?: SearchIntentRoomDistanceKey;
+  roomTypeKey?: SearchIntentRoomTypeKey;
+  sizePreferenceKey?: SearchIntentSizePreferenceKey;
   priority?: "best-value" | "premium" | "cinema" | "sports";
-  deliveryNeed?: string;
+  deliveryNeedKey?: SearchIntentDeliveryKey;
+  /** e.g. spatial / Atmos interest */
   useCase?: string[];
 };
 
@@ -70,7 +81,7 @@ export type HomeModuleKey =
   | "continue"
   | "curated"
   | "compare"
-  | "proof"
+  | "spotlight"
   | "strip";
 
 export type ScreenId = "home" | "search" | "pdp";
