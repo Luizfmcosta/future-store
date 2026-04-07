@@ -1,4 +1,4 @@
-export type ShopperProfileId = "marina" | "ricardo";
+export type ShopperProfileId = "marina" | "ricardo" | "joana";
 
 export type ShopperProfile = {
   id: ShopperProfileId;
@@ -82,6 +82,7 @@ export type HomeModuleKey =
   | "curated"
   | "compare"
   | "spotlight"
-  | "strip";
+  | "strip"
+  | "tiktok";
 
 export type ScreenId = "home" | "search" | "pdp";

@@ -85,7 +85,7 @@ export function IntentSummary({
   return (
     <Card className="p-5 sm:p-6">
       <div className="flex items-start justify-between gap-3">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-stone-500">{t("searchSerp.intentSummaryTitle")}</p>
+        <p className={cn(ui.home.eyebrow)}>{t("searchSerp.intentSummaryTitle")}</p>
         <IntentEditButton ariaLabel={t("searchSerp.editIntentAria")} />
       </div>
       <dl className="mt-4 grid gap-3 text-[13px] sm:grid-cols-2">

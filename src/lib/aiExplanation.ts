@@ -1,6 +1,7 @@
 import { buildHomeExperience, type HomeSegmentId } from "@/lib/personalization";
 import type { AppLocale } from "@/lib/locale-types";
 import type { Product } from "@/types";
+import { shopperDisplayName } from "@/lib/shopperPortraits";
 import type { ShopperProfileId } from "@/types";
 import type { ShopperSignals } from "@/types/shopperSignals";
 import type { AIExplanation } from "@/types/aiExplanation";
@@ -202,8 +203,8 @@ export function generateAIExplanation(
       description: p
         ? L(
             locale,
-            `Ficha do produto prioriza hero, fit para o perfil “${profile === "marina" ? "Marina" : "Ricardo"}”, avaliações e políticas — ordem ajustada ao estágio de consideração.`,
-            `PDP stacks hero, ${profile === "marina" ? "Marina" : "Ricardo"}-aware fit, reviews, and policies — ordered for consideration stage.`,
+            `Ficha do produto prioriza hero, fit para o perfil “${shopperDisplayName(profile)}”, avaliações e políticas — ordem ajustada ao estágio de consideração.`,
+            `PDP stacks hero, ${shopperDisplayName(profile)}-aware fit, reviews, and policies — ordered for consideration stage.`,
           )
         : L(
             locale,
@@ -255,11 +256,11 @@ export function generateAIExplanation(
       description: L(
         locale,
         b
-          ? `“Melhor correspondência” combina perfil ${profile === "marina" ? "Marina" : "Ricardo"}, intenção parseada e teto de R$ ${b.toLocaleString(locale === "pt-BR" ? "pt-BR" : "en-US")}.`
-          : `Ranking prioriza compatibilidade com o perfil ${profile === "marina" ? "Marina" : "Ricardo"} e economia declarada na busca.`,
+          ? `“Melhor correspondência” combina perfil ${shopperDisplayName(profile)}, intenção parseada e teto de R$ ${b.toLocaleString(locale === "pt-BR" ? "pt-BR" : "en-US")}.`
+          : `Ranking prioriza compatibilidade com o perfil ${shopperDisplayName(profile)} e economia declarada na busca.`,
         b
-          ? `Best match blends ${profile === "marina" ? "Marina" : "Ricardo"} profile, parsed intent, and a budget cap of ${b.toLocaleString(locale === "pt-BR" ? "pt-BR" : "en-US")}.`
-          : `Ranking weights ${profile === "marina" ? "Marina" : "Ricardo"} fit and savings signals from the query.`,
+          ? `Best match blends ${shopperDisplayName(profile)} profile, parsed intent, and a budget cap of ${b.toLocaleString(locale === "pt-BR" ? "pt-BR" : "en-US")}.`
+          : `Ranking weights ${shopperDisplayName(profile)} fit and savings signals from the query.`,
       ),
     });
   } else {

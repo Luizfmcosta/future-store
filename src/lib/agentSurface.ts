@@ -4,7 +4,14 @@ import type { ShopperProfileId } from "@/types";
 
 export function getAgentSurface(product: Product, profile: ShopperProfileId): AgentSurface {
   const base = 0.78;
-  const profileBoost = profile === "marina" && product.marginTier === "high" ? 0.07 : profile === "ricardo" && product.sponsored ? 0.05 : 0;
+  const profileBoost =
+    profile === "marina" && product.marginTier === "high"
+      ? 0.07
+      : profile === "ricardo" && product.sponsored
+        ? 0.05
+        : profile === "joana" && product.marginTier === "mid"
+          ? 0.045
+          : 0;
   const stockBoost = Math.min(0.1, product.stock / 500);
 
   return {

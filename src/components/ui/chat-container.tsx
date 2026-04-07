@@ -6,7 +6,12 @@ import { StickToBottom } from "use-stick-to-bottom"
 export type ChatContainerRootProps = {
   children: React.ReactNode
   className?: string
-} & React.HTMLAttributes<HTMLDivElement>
+  /**
+   * StickToBottom initial scroll: `false` starts at the top (read from the start of the thread).
+   * `"instant"` / `"smooth"` keep the classic chat behavior (pinned to the latest message).
+   */
+  stickInitial?: false | "instant" | "smooth"
+} & Omit<React.HTMLAttributes<HTMLDivElement>, "initial">
 
 export type ChatContainerContentProps = {
   children: React.ReactNode
@@ -21,13 +26,14 @@ export type ChatContainerScrollAnchorProps = {
 function ChatContainerRoot({
   children,
   className,
+  stickInitial = "instant",
   ...props
 }: ChatContainerRootProps) {
   return (
     <StickToBottom
       className={cn("flex overflow-y-auto", className)}
       resize="smooth"
-      initial="instant"
+      initial={stickInitial}
       role="log"
       {...props}
     >

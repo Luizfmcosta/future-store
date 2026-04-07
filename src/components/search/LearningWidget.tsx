@@ -2,6 +2,8 @@
 
 import { Card } from "@/components/shared/Card";
 import type { LearningWidgetVariant } from "@/lib/recommendations";
+import { ui } from "@/lib/ui-tokens";
+import { cn } from "@/lib/utils";
 import { useT } from "@/lib/useT";
 
 export function LearningWidget({ variant }: { variant: LearningWidgetVariant }) {
@@ -12,7 +14,7 @@ export function LearningWidget({ variant }: { variant: LearningWidgetVariant }) 
     <Card className="p-5 sm:p-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-stone-500">{t("searchSerp.learningCompact")}</p>
+          <p className={cn(ui.home.eyebrow)}>{t("searchSerp.learningCompact")}</p>
           <h3 className="mt-2 text-lg font-semibold text-stone-900">
             {isSurround ? t("searchSerp.learningSurroundTitle") : t("searchSerp.learningPortableTitle")}
           </h3>

@@ -2,22 +2,24 @@
 
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { RefineDrawer } from "@/components/search/RefineDrawer";
-import { NarrativeChrome } from "@/components/shared/NarrativeChrome";
 import { PresenterPanel } from "@/components/shared/PresenterPanel";
 import { RayXOverlay } from "@/components/rayx/RayXOverlay";
 import { ResizeEdgeHandle } from "@/components/shared/ResizeEdgeHandle";
 import { FloatingSearchDock } from "@/components/search/FloatingSearchDock";
+import { SearchResultsFloatingTabs } from "@/components/search/SearchResultsFloatingTabs";
 import { StorefrontMain } from "@/components/shared/StorefrontMain";
 import { StorefrontPortalProvider } from "@/components/shared/StorefrontPortalContext";
+import { ProfileSwitcher } from "@/components/shared/ProfileSwitcher";
 import { TopBar } from "@/components/shared/TopBar";
 import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
 import { useT } from "@/lib/useT";
+import { clampStorefrontWidth, STOREFRONT_WIDTH } from "@/lib/storefrontViewport";
 import { cn } from "@/lib/utils";
 import { useDemoStore } from "@/store/demoStore";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
-import { Minimize2 } from "lucide-react";
+import { Minimize2, Monitor, Smartphone } from "lucide-react";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 
 const AIVisionOverlay = dynamic(
@@ -39,10 +41,6 @@ async function exitFullscreenDoc() {
   if (d.webkitExitFullscreen) await d.webkitExitFullscreen();
 }
 
-const STOREFRONT_MIN = 280;
-const STOREFRONT_MAX = 800;
-const STOREFRONT_DEFAULT = 440;
-
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAboutRoute = pathname === "/about";
@@ -52,7 +50,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [storefrontPortalMount, setStorefrontPortalMount] = useState<HTMLDivElement | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const isMd = useMediaQuery("(min-width: 768px)");
-  const [storefrontWidth, setStorefrontWidth] = useState(STOREFRONT_DEFAULT);
+  const [storefrontWidth, setStorefrontWidth] = useState<number>(STOREFRONT_WIDTH.default);
   const t = useT();
 
   useEffect(() => {
@@ -85,12 +83,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const mobilePresetActive =
+    isMd && Math.abs(storefrontWidth - STOREFRONT_WIDTH.presetMobile) < 14;
+  const desktopPresetActive =
+    isMd && Math.abs(storefrontWidth - STOREFRONT_WIDTH.presetDesktop) < 18;
+  const presetHighlightVisible = mobilePresetActive || desktopPresetActive;
+
   return (
-    <div className="flex min-h-dvh flex-col overflow-x-visible bg-[var(--app-canvas)] md:h-dvh md:max-h-dvh md:flex-row md:overflow-hidden">
-      <NarrativeChrome compact className="md:hidden" />
-
-      <NarrativeChrome className="hidden md:block" />
-
+    <div className="flex min-h-dvh flex-col overflow-x-visible bg-[var(--app-canvas)] md:h-dvh md:max-h-dvh md:overflow-hidden">
       <div
         className={cn(
           "flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-x-visible sm:p-6 md:p-8",
@@ -99,9 +99,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       >
         <div
           className={cn(
-            "relative mx-auto w-full max-w-[440px] overflow-visible",
-            "h-[min(100dvh-7rem,880px)] max-h-[880px] md:h-[min(100dvh-4rem,880px)]",
-            "md:min-w-[280px] md:max-w-[800px]"
+            "flex w-full max-w-[440px] flex-col items-stretch overflow-visible md:max-w-none",
+          )}
+        >
+        <div
+          className={cn(
+            "@container relative mx-auto w-full max-w-[440px] overflow-visible",
+            "h-[min(100dvh-2rem,880px)] max-h-[880px] md:h-[min(100dvh-4rem,880px)]",
+            "md:min-w-[340px] md:max-w-[960px]",
           )}
           style={
             isMd && !isFullscreen
@@ -165,6 +170,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     <AnimatePresence>{aiMode ? <AIVisionOverlay key="ai-vision" /> : null}</AnimatePresence>
                   </div>
                   <Suspense fallback={null}>
+                    <SearchResultsFloatingTabs />
+                  </Suspense>
+                  <Suspense fallback={null}>
                     <FloatingSearchDock />
                   </Suspense>
                 </div>
@@ -178,14 +186,89 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
 
           <ResizeEdgeHandle
+            edge="left"
+            visual="none"
             theme="window-light"
             disabled={isFullscreen || !isMd}
-            onDelta={(dx) =>
-              setStorefrontWidth((w) =>
-                Math.min(STOREFRONT_MAX, Math.max(STOREFRONT_MIN, w + dx))
-              )
-            }
+            ariaLabel={t("appShell.resizeHandle")}
+            onDelta={(dx) => setStorefrontWidth((w) => clampStorefrontWidth(w + dx))}
           />
+          <ResizeEdgeHandle
+            edge="right"
+            visual="none"
+            theme="window-light"
+            disabled={isFullscreen || !isMd}
+            ariaLabel={t("appShell.resizeHandle")}
+            onDelta={(dx) => setStorefrontWidth((w) => clampStorefrontWidth(w + dx))}
+          />
+        </div>
+        </div>
+      </div>
+
+      <div
+        className="pointer-events-auto fixed left-4 top-4 z-[60] flex items-center"
+        role="group"
+        aria-label={t("appShell.profileSwitcherGroup")}
+      >
+        <ProfileSwitcher variant="topBar" />
+      </div>
+
+      <div
+        className={cn(
+          "fixed right-4 top-4 z-[60] hidden md:flex",
+          "items-center",
+        )}
+        role="group"
+        aria-label={t("appShell.widthPresetsGroup")}
+      >
+        <div className="relative inline-flex h-9 min-w-[5.25rem] rounded-full bg-zinc-900/95 p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-sm">
+          <motion.div
+            className="pointer-events-none absolute left-1 top-1 bottom-1 rounded-full bg-zinc-600 shadow-[0_1px_2px_rgba(0,0,0,0.35)]"
+            style={{ width: "calc((100% - 8px) / 2)" }}
+            initial={false}
+            animate={{
+              x: mobilePresetActive ? 0 : "100%",
+              opacity: presetHighlightVisible ? 1 : 0,
+              scale: presetHighlightVisible ? 1 : 0.92,
+            }}
+            transition={{
+              type: "spring",
+              stiffness: 520,
+              damping: 34,
+              mass: 0.7,
+              opacity: { duration: 0.2 },
+            }}
+          />
+          <button
+            type="button"
+            onClick={() => setStorefrontWidth(clampStorefrontWidth(STOREFRONT_WIDTH.presetMobile))}
+            className={cn(
+              "relative z-10 flex flex-1 items-center justify-center rounded-full outline-none transition-colors duration-200",
+              "focus-visible:ring-2 focus-visible:ring-zinc-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--app-canvas)]",
+              mobilePresetActive
+                ? "text-white"
+                : "text-zinc-400 hover:text-zinc-200",
+            )}
+            aria-label={t("appShell.widthPresetMobile")}
+            aria-pressed={mobilePresetActive}
+          >
+            <Smartphone className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
+          </button>
+          <button
+            type="button"
+            onClick={() => setStorefrontWidth(clampStorefrontWidth(STOREFRONT_WIDTH.presetDesktop))}
+            className={cn(
+              "relative z-10 flex flex-1 items-center justify-center rounded-full outline-none transition-colors duration-200",
+              "focus-visible:ring-2 focus-visible:ring-zinc-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--app-canvas)]",
+              desktopPresetActive
+                ? "text-white"
+                : "text-zinc-400 hover:text-zinc-200",
+            )}
+            aria-label={t("appShell.widthPresetDesktop")}
+            aria-pressed={desktopPresetActive}
+          >
+            <Monitor className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
+          </button>
         </div>
       </div>
 

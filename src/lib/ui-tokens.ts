@@ -2,7 +2,8 @@
  * Cool neutrals + white alpha. Borders: one hairline — no inset shadow + border stacks.
  */
 export const ui = {
-  eyebrow: "text-[10px] font-semibold uppercase tracking-[0.2em] text-[#8b96a8]",
+  /** Muted line on dark chrome — sentence case, no wide tracking */
+  eyebrow: "text-[13px] font-medium leading-snug text-[#9ca8b8] tracking-normal",
   sectionTitle:
     "text-lg font-semibold leading-tight tracking-tight text-[#eef1f6] sm:text-xl",
   label: "text-[12px] font-medium text-[#9ca8b8]",
@@ -25,10 +26,25 @@ export const ui = {
   searchBarOnLight:
     "rounded-full border border-stone-200/90 bg-white/95 backdrop-blur-xl transition-[border-color,background-color] duration-200 ease-out hover:border-stone-300/90 hover:bg-white focus-within:border-stone-300 focus-within:bg-white shadow-[0_8px_32px_rgba(0,0,0,0.06)]",
 
+  /**
+   * Bottom spacing for floating search row (`FloatingSearchDock` + IA follow-up). Same Y as tabs/dock.
+   */
+  floatingSearchBarRowPad: "pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2",
+
+  /** 13px / leading normal / 70% white — floating search pill + modo IA (incl. `md:text-[13px]` vs `Textarea`). */
+  floatingSearchPillText: "text-[13px] leading-normal text-white/70 md:text-[13px]",
+
+  /**
+   * Bottom floating search pill — matches `FloatingSearchDock` trigger (no search icon).
+   * AI follow-up adds send on the right inside the same shell.
+   */
+  floatingSearchPill:
+    "flex w-full max-w-xl min-h-10 items-center gap-2.5 rounded-full border-0 bg-[#2a2a2a]/75 px-3.5 text-left shadow-[0_8px_32px_rgba(0,0,0,0.25)] backdrop-blur-xl transition-colors hover:bg-[#2a2a2a]/85 focus-within:bg-[#2a2a2a]/85",
+
   narrativeSectionLabel: (light: boolean) =>
     light
-      ? "mb-1.5 text-[9px] font-semibold uppercase tracking-[0.26em] text-slate-500"
-      : "mb-1.5 text-[9px] font-semibold uppercase tracking-[0.26em] text-[#6b7688]",
+      ? "mb-1.5 text-[13px] font-medium leading-snug text-slate-600 tracking-normal"
+      : "mb-1.5 text-[13px] font-medium leading-snug text-[#9ca8bb] tracking-normal",
 
   focusRing: "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-white/20",
   focusRingInset: "ring-2 ring-white/15 ring-offset-2 ring-offset-[#060708]",
@@ -38,7 +54,8 @@ export const ui = {
 
   /** Warm editorial home (Saki-like light storefront) */
   home: {
-    eyebrow: "text-[10px] font-semibold uppercase tracking-[0.22em] text-stone-500",
+    /** Section kicker / card label on white — prefer over all-caps eyebrows */
+    eyebrow: "text-[13px] font-medium leading-snug text-stone-600 tracking-normal",
     sectionTitle: "text-lg font-semibold leading-tight tracking-tight text-stone-900 sm:text-xl",
     label: "text-[12px] font-medium text-stone-600",
     cardTitle: "text-[14px] font-semibold leading-snug text-stone-900",

@@ -5,7 +5,8 @@ import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { useLocale } from "@/context/LocaleContext";
 import { localizeProduct } from "@/lib/product-i18n";
 import { useT } from "@/lib/useT";
-import { formatBRL, hasMediaUrl } from "@/lib/utils";
+import { ui } from "@/lib/ui-tokens";
+import { cn, formatBRL, hasMediaUrl } from "@/lib/utils";
 import type { Product } from "@/types";
 import type { ShopperProfileId } from "@/types";
 import { motion } from "framer-motion";
@@ -31,6 +32,10 @@ export function BestMatchCard({
       ? `${p.technology} · ${p.inches}" · ${p.compatibilityTags.slice(0, 2).join(" · ")}`
       : p.compatibilityTags.slice(0, 3).join(" · ");
   const detailRicardo = `${p.installmentText} · ${p.deliveryETA}`;
+  const detailJoana =
+    p.technology && p.inches
+      ? `${p.technology} · ${p.inches}" · ${p.installmentText}`
+      : `${p.bestFor[0] ?? p.compatibilityTags[0]} · ${p.deliveryETA}`;
 
   return (
     <motion.div layout>
@@ -55,13 +60,13 @@ export function BestMatchCard({
             </div>
             <div className="flex flex-col items-start justify-center border-t border-stone-200/90 p-5 @md:border-t-0 @md:border-l @md:p-7">
               {aiMode ? (
-                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-stone-500">{t("searchSerp.bestMatchAiEyebrow")}</p>
+                <p className={cn(ui.home.eyebrow)}>{t("searchSerp.bestMatchAiEyebrow")}</p>
               ) : (
-                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-stone-500">{t("searchSerp.bestMatchSerpEyebrow")}</p>
+                <p className={cn(ui.home.eyebrow)}>{t("searchSerp.bestMatchSerpEyebrow")}</p>
               )}
               <h3 className="mt-2 text-lg font-semibold leading-tight text-stone-900 sm:text-xl">{p.title}</h3>
               <p className="mt-3 text-[13px] leading-relaxed text-stone-600 sm:text-[14px]">
-                {profile === "marina" ? detailMarina : detailRicardo}
+                {profile === "marina" ? detailMarina : profile === "joana" ? detailJoana : detailRicardo}
               </p>
               <div className="mt-4 flex flex-wrap items-baseline gap-3 sm:mt-5">
                 <span className="text-xl font-semibold text-stone-900 sm:text-2xl">{formatBRL(p.price)}</span>

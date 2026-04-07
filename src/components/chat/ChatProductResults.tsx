@@ -26,11 +26,8 @@ export function ChatProductResults({
   const shown = products.slice(0, 4);
 
   return (
-    <div className="mt-3 w-full min-w-0 space-y-2 border-t border-stone-200/90 pt-3">
-      <p
-        id="chat-top-matches-heading"
-        className="text-[11px] font-semibold uppercase tracking-[0.16em] text-stone-500 sm:text-xs sm:tracking-[0.18em]"
-      >
+    <div className="w-full min-w-0 space-y-2">
+      <p id="chat-top-matches-heading" className={cn(ui.home.eyebrow)}>
         {t("searchAiPanel.topMatches")}
       </p>
       <div
@@ -57,7 +54,12 @@ export function ChatProductResults({
 }
 
 function ProductRowCard({ product: p, profile }: { product: Product; profile: ShopperProfileId }) {
-  const meta = profile === "marina" ? p.bestFor[0] : p.deliveryETA;
+  const meta =
+    profile === "marina"
+      ? p.bestFor[0]
+      : profile === "joana"
+        ? `${p.bestFor[0]} · ${p.deliveryETA}`
+        : p.deliveryETA;
   const label = [p.title, "—", p.brand, "—", formatBRL(p.price), "—", "view product details"].join(" ");
 
   return (

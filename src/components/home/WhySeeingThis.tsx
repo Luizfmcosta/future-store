@@ -49,7 +49,9 @@ export function WhySeeingThis() {
             <p className={cn(ui.home.body, "mt-3 text-[12px] leading-relaxed")}>
               {profile === "marina"
                 ? "Your profile prioritizes premium assortments, technical proof, and compare-first modules — with OLED-forward ranking."
-                : "Your profile prioritizes campaign value, popular sizes, and direct proof signals — with price-forward ranking."}
+                : profile === "joana"
+                  ? "Your profile balances curated picks, clear comparisons, and mid-tier highlights — ranking blends proof of use with sensible value."
+                  : "Your profile prioritizes campaign value, popular sizes, and direct proof signals — with price-forward ranking."}
             </p>
           </motion.div>
         ) : null}

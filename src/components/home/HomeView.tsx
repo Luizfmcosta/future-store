@@ -8,6 +8,7 @@ import { HomeFooter } from "@/components/home/HomeFooter";
 import { HomeLoadingReveal } from "@/components/home/HomeLoadingReveal";
 import { MerchStrip } from "@/components/home/MerchStrip";
 import { ProductSpotlight } from "@/components/home/ProductSpotlight";
+import { RicardoTikTokCarousel } from "@/components/home/RicardoTikTokCarousel";
 import { useShopperExperience } from "@/context/ShopperExperienceContext";
 import type { HomeModuleKey } from "@/types";
 import type { ReactNode } from "react";
@@ -19,6 +20,7 @@ const map: Record<HomeModuleKey, ReactNode> = {
   compare: <CompareModule key="compare" />,
   spotlight: <ProductSpotlight key="spotlight" />,
   strip: <MerchStrip key="strip" />,
+  tiktok: <RicardoTikTokCarousel key="tiktok" />,
 };
 
 export function HomeView() {
