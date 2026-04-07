@@ -2,10 +2,10 @@
 
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { useLocale } from "@/context/LocaleContext";
-import { getSpeakersAndSoundbars } from "@/data/products";
+import { getPromoTvsUnder, getSpeakersAndSoundbars } from "@/data/products";
 import { localizeProducts } from "@/lib/product-i18n";
 import { useT } from "@/lib/useT";
-import { formatBRL, hasMediaUrl } from "@/lib/utils";
+import { cn, formatBRL, hasMediaUrl } from "@/lib/utils";
 import { useShopperExperienceOptional } from "@/context/ShopperExperienceContext";
 import { useDemoStore } from "@/store/demoStore";
 import type { Product } from "@/types";
@@ -39,56 +39,52 @@ function MarinaCompareCard({
   return (
     <motion.article
       variants={fadeUp}
-      className="overflow-hidden rounded-2xl border border-stone-200/90 bg-white shadow-[0_8px_28px_-18px_rgba(0,0,0,0.12)]"
+      className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-2xl border border-stone-200/90 bg-white shadow-[0_8px_28px_-18px_rgba(0,0,0,0.12)]"
     >
-      <div className="border-b border-stone-100 bg-stone-50/90 px-3 py-2 sm:px-4">
-        <p className="text-[12px] font-medium leading-snug text-stone-600">{tierLabel}</p>
+      <div className="border-b border-stone-100 bg-stone-50/90 px-3 py-2.5 sm:px-4 sm:py-3">
+        <p className="text-[13px] font-semibold leading-snug text-stone-700 sm:text-[14px]">{tierLabel}</p>
       </div>
 
-      <div className="p-3 sm:p-4">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch sm:gap-4">
-        <div className="relative mx-auto h-36 w-full max-w-[220px] shrink-0 overflow-hidden rounded-xl bg-[#f5f5f5] sm:mx-0 sm:h-[7.5rem] sm:w-[7.5rem] sm:max-w-none">
-          {heroSrc ? (
-            <Image
-              src={heroSrc}
-              alt=""
-              fill
-              className="object-contain p-3"
-              sizes="(max-width: 480px) 220px, 120px"
-              unoptimized
-            />
-          ) : (
-            <EmptyMediaSlot className="absolute inset-0" variant="light" />
-          )}
-        </div>
+      <div className="relative aspect-[5/4] w-full shrink-0 overflow-hidden bg-[#f5f5f5]">
+        {heroSrc ? (
+          <Image
+            src={heroSrc}
+            alt=""
+            fill
+            className="object-contain p-4 sm:p-5"
+            sizes="(max-width: 480px) 45vw, 400px"
+            unoptimized
+          />
+        ) : (
+          <EmptyMediaSlot className="absolute inset-0" variant="light" />
+        )}
+      </div>
 
-        <div className="flex min-w-0 flex-1 flex-col justify-between gap-3">
-          <div className="min-w-0">
-            <div className="flex items-start justify-between gap-2">
-              <h3 className="min-w-0 flex-1 text-[13px] font-medium leading-snug text-[#1a1a1a]">
-                {shortTitle(product)}
-              </h3>
-              <span className="shrink-0 text-[13px] font-semibold tabular-nums text-stone-900">
-                {formatBRL(product.price)}
-              </span>
-            </div>
-            <p className="mt-1.5 text-[11px] font-light leading-relaxed text-stone-500 line-clamp-3">{blurb}</p>
-          </div>
-          <div className="flex gap-2">
-            <Link
-              href={`/product/${product.id}`}
-              className="flex h-9 min-h-0 flex-1 items-center justify-center rounded-full border border-stone-200/90 text-[10px] font-medium text-stone-800 transition-colors hover:border-stone-400 hover:bg-stone-50"
-            >
-              {t("common.explore")}
-            </Link>
-            <Link
-              href={`/product/${product.id}`}
-              className="flex h-9 min-h-0 flex-1 items-center justify-center rounded-full bg-[#1a1a1a] text-[10px] font-medium text-white transition-transform hover:scale-[1.02] active:scale-[0.98]"
-            >
-              {t("common.buyNow")}
-            </Link>
-          </div>
+      <div className="flex min-h-0 flex-1 flex-col gap-4 p-3.5 sm:p-4">
+        <div className="min-w-0 space-y-2">
+          <h3 className="text-[15px] font-semibold leading-snug text-[#1a1a1a] sm:text-[16px]">
+            {shortTitle(product)}
+          </h3>
+          <p className="text-[15px] font-semibold tabular-nums tracking-tight text-stone-900 sm:text-[16px]">
+            {formatBRL(product.price)}
+          </p>
+          <p className="text-[13px] font-normal leading-relaxed text-stone-600 line-clamp-3 sm:text-[14px]">
+            {blurb}
+          </p>
         </div>
+        <div className="mt-auto flex flex-col gap-2.5 @sm:flex-row">
+          <Link
+            href={`/product/${product.id}`}
+            className="flex h-10 min-h-0 flex-1 items-center justify-center rounded-full border border-stone-200/90 text-[12px] font-medium text-stone-800 transition-colors hover:border-stone-400 hover:bg-stone-50 sm:text-[13px]"
+          >
+            {t("common.explore")}
+          </Link>
+          <Link
+            href={`/product/${product.id}`}
+            className="flex h-10 min-h-0 flex-1 items-center justify-center rounded-full bg-[#1a1a1a] text-[12px] font-medium text-white transition-transform hover:scale-[1.02] active:scale-[0.98] sm:text-[13px]"
+          >
+            {t("common.buyNow")}
+          </Link>
         </div>
       </div>
     </motion.article>
@@ -150,7 +146,15 @@ export function CuratedForYou() {
   const { locale } = useLocale();
   const t = useT();
 
+  const isRicardoPromoFirstVisit =
+    profile === "ricardo" &&
+    experienceCtx?.experience.segment === "ricardo_speed" &&
+    !experienceCtx.signals.isReturning;
+
   const pair = useMemo(() => {
+    if (isRicardoPromoFirstVisit) {
+      return localizeProducts(getPromoTvsUnder(5000).slice(0, 2), locale);
+    }
     const catalog = getSpeakersAndSoundbars();
     const mode = experienceCtx?.experience.curatedSort ?? "profile_default";
     let sorted: typeof catalog;
@@ -160,12 +164,12 @@ export function CuratedForYou() {
       sorted = [...catalog].sort((a, b) => a.price - b.price || a.id.localeCompare(b.id));
     } else {
       sorted =
-        profile === "marina"
+        profile === "marina" || profile === "joana"
           ? [...catalog].sort((a, b) => b.price - a.price || a.id.localeCompare(b.id))
           : [...catalog].sort((a, b) => a.price - b.price || a.id.localeCompare(b.id));
     }
     return localizeProducts(sorted.slice(0, 2), locale);
-  }, [profile, locale, experienceCtx?.experience.curatedSort]);
+  }, [profile, locale, experienceCtx?.experience.curatedSort, isRicardoPromoFirstVisit]);
 
   return (
     <section className="flex flex-col bg-white">
@@ -176,11 +180,23 @@ export function CuratedForYou() {
         transition={{ duration: 0.65, ease }}
         className="flex flex-col items-center px-4 pb-6 pt-8 text-center sm:px-6 sm:pb-7 sm:pt-9"
       >
-        <h2 className="max-w-[min(100%,22rem)] whitespace-pre-line font-[family-name:var(--font-display)] text-[clamp(1.15rem,3.2vw,1.5rem)] font-medium leading-[1.2] tracking-[-0.015em] text-[#1a1a1a]">
-          {profile === "marina" ? t("curated.marinaHeadline") : t("curated.ricardoHeadline")}
+        <h2 className="max-w-[min(100%,22rem)] whitespace-pre-line font-[family-name:var(--font-display)] text-[clamp(1.35rem,3.5vw,1.8rem)] font-medium leading-[1.2] tracking-[-0.015em] text-[#1a1a1a]">
+          {isRicardoPromoFirstVisit
+            ? t("curated.ricardoPromoHeadline")
+            : profile === "marina"
+              ? t("curated.marinaHeadline")
+              : profile === "joana"
+                ? t("curated.joanaHeadline")
+                : t("curated.ricardoHeadline")}
         </h2>
-        <p className="mt-2.5 max-w-[min(100%,26rem)] text-[11.5px] font-light leading-[1.65] text-stone-500 sm:text-[12px]">
-          {profile === "marina" ? t("curated.marinaBody") : t("curated.ricardoBody")}
+        <p className="mt-2.5 max-w-[min(100%,26rem)] text-[13px] font-light leading-[22px] text-[#888]">
+          {isRicardoPromoFirstVisit
+            ? t("curated.ricardoPromoBody")
+            : profile === "marina"
+              ? t("curated.marinaBody")
+              : profile === "joana"
+                ? t("curated.joanaBody")
+                : t("curated.ricardoBody")}
         </p>
       </motion.div>
 
@@ -189,15 +205,28 @@ export function CuratedForYou() {
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, amount: 0.08 }}
-        className="flex flex-col gap-3 px-4 pb-9 sm:px-6 sm:pb-10"
+        className={cn(
+          "px-4 pb-9 sm:px-6 sm:pb-10",
+          profile === "marina" || profile === "joana"
+            ? "grid grid-cols-1 gap-3 @md:grid-cols-2 sm:gap-4"
+            : "flex flex-col gap-4",
+        )}
       >
-        {profile === "marina" ? (
+        {profile === "marina" || profile === "joana" ? (
           <>
             {pair.map((p, i) => (
               <MarinaCompareCard
                 key={p.id}
                 product={p}
-                tierLabel={i === 0 ? t("curated.marinaTierA") : t("curated.marinaTierB")}
+                tierLabel={
+                  profile === "joana"
+                    ? i === 0
+                      ? t("curated.joanaTierA")
+                      : t("curated.joanaTierB")
+                    : i === 0
+                      ? t("curated.marinaTierA")
+                      : t("curated.marinaTierB")
+                }
               />
             ))}
           </>

@@ -49,10 +49,28 @@ export const messages: Record<
         cta: "Conheça a Future Store",
         featuredEyebrow: "Esta semana",
       },
+      joana: {
+        kicker: "Inspirado por você",
+        titleLine1: "Adaptado ao",
+        titleLine2: "seu contexto",
+        subtitle:
+          "Na Future Store, equilibramos som envolvente e decisão tranquila — curadoria clara, comparações úteis e produtos que fazem sentido no seu ritmo.",
+        cta: "Conheça a Future Store",
+        featuredEyebrow: "Para você",
+      },
+      ricardoPromo: {
+        kicker: "Oferta do fim de semana",
+        headline: "Caixas de som com até 30% OFF",
+        subhead:
+          "Portáteis e para sala, Wi‑Fi e Bluetooth, até 12x. Estoque limitado — modelos selecionados.",
+        fromLabel: "A partir de",
+        cta: "Ver ofertas",
+      },
     },
     proof: {
       marina: "O que donos citam nas avaliações",
       ricardo: "Mais escolhidos agora",
+      joana: "Destaques que combinam valor e experiência",
     },
     continueJourney: {
       exploreBrand: "Explorar {brand}",
@@ -60,7 +78,13 @@ export const messages: Record<
       marinaBody:
         "Retomamos sua pesquisa por som de referência: o mesmo modelo em destaque para o seu perfil, com acabamentos para combinar com o ambiente — refine a última milha antes de decidir.",
       ricardoBody:
-        "Seguimos da onde você parou: uma escolha prática com bom custo-benefício, pronta para levar som melhor para o dia a dia.",
+        "Uma escolha prática com bom custo-benefício para trazer som melhor ao dia a dia.",
+      joanaBody:
+        "Retomamos no meio termo: som forte e design que combina com a sala — com espaço para comparar e decidir sem pressa.",
+      ricardoEntryHeadline: "Comece por um modelo\ncom ótimo custo-benefício",
+      ricardoEntryBody:
+        "Uma entrada leve e portátil da linha: som nítido, uso simples e preço que faz sentido como primeiro passo.",
+      ricardoEntryCta: "Ver produto",
     },
     compare: {
       marinaHeadline: "Cinema em casa\npremium",
@@ -69,6 +93,9 @@ export const messages: Record<
         "Experimente o equilíbrio perfeito entre precisão e imersão em cada cena. Som frontal nítido, surrounds que fecham o palco e profundidade digna de sala dedicada — tudo no mesmo tom acústico.",
       ricardoBody:
         "Experimente som nítido e presente pelo melhor custo-benefício. Configuração simples, desempenho confiável e preço que faz sentido para quem quer evoluir sem complicação.",
+      joanaHeadline: "Som que preenche\na sala com equilíbrio",
+      joanaBody:
+        "Experimente presença sonora e versatilidade no ponto certo entre referência e praticidade — para ambientes que pedem presença sem excesso.",
       cta: "Explorar",
     },
     curated: {
@@ -78,16 +105,36 @@ export const messages: Record<
         "Explore o contraste entre áudio espacial e som que preenche a sala. Duas filosofias moldadas pela acústica, refinadas para o seu ambiente — como você pesquisa, antes de fechar o carrinho.",
       ricardoBody:
         "Explore nossas opções com melhor custo-benefício e as mais populares da faixa média. Dois caminhos para um som melhor, pensados para orçamentos reais.",
+      joanaHeadline: "Feito para ouvir bem,\nsem complicar",
+      joanaBody:
+        "Duas rotas que equilibram performance e uso real: uma com mais corpo para a sala, outra mais enxuta — você escolhe o que combina com o momento.",
       marinaTierA: "Referência de imersão",
       marinaTierB: "Alternativa sólida",
+      joanaTierA: "Presença na sala",
+      joanaTierB: "Opção enxuta",
+      ricardoPromoHeadline: "Mais vendidos\nna faixa de entrada",
+      ricardoPromoBody:
+        "Seleção direta: o que mais sai para salas como a sua — sem texto longo, com preço e estoque visíveis.",
     },
     merch: {
       headlineLine1: "Som em cada ambiente,",
       headlineLine2: "sem fio",
+      ricardoVolumeLine: "2.340 unidades vendidas este mês em modelos em promoção",
+    },
+    ricardoTiktok: {
+      eyebrow: "Na rede",
+      title: "O que outros clientes comentam",
+      subline: "Experiências compartilhadas que ajudam você a decidir com mais segurança.",
+      clipTitle1: "Vídeo — TechRadar",
+      clipCaption1: "Impressões e análise no ar editorial que a galera acompanha no feed.",
+      clipTitle2: "Vídeo — Smart Home Sounds",
+      clipCaption2: "Conteúdo de som em casa — dicas e uso real de quem vive o setup.",
+      clipTitle3: "Vídeo — Ochre Home",
+      clipCaption3: "Lifestyle e ambiente — inspiração para combinar som com a casa.",
     },
     spotlight: {},
     floatingSearch: {
-      placeholder: "Pergunte qualquer coisa",
+      placeholder: "Pergunte o que quiser",
     },
     narrative: {
       shopper: "Comprador",
@@ -207,9 +254,12 @@ export const messages: Record<
       virtualPremiumMarinaBlurb: "Acrescente som espacial de referência ao que você já escolheu.",
       virtualPremiumRicardoTitle: "Caminho de upgrade — Era 300",
       virtualPremiumRicardoBlurb: "Mais clareza e presença sonora em salas amplas.",
+      virtualPremiumJoanaTitle: "Upgrade equilibrado — Era 300",
+      virtualPremiumJoanaBlurb: "Mais corpo e detalhe para a sala, sem exagerar no pacote.",
       virtualCheaperTitle: "Complemento portátil — {name}",
       virtualCheaperBlurbMarina: "Caixa para levar e estender seu sistema para outros ambientes.",
       virtualCheaperBlurbRicardo: "Mantém a parcela mais acessível com um extra útil.",
+      virtualCheaperBlurbJoana: "Complemento prático que equilibra custo e versatilidade.",
       bundleDefBndEraRoamTitle: "Prateleira + portátil — Era 100 + Roam 2",
       bundleDefBndEraRoamBody: "Caixa inteligente para a sala e ultra portátil para o resto do dia",
       bundleDefBndEraPairRoamTitle: "Kit multiambiente — 2 salas Era + Roam",
@@ -227,6 +277,11 @@ export const messages: Record<
     },
     appShell: {
       exitFullscreen: "Sair da tela cheia",
+      resizeHandle: "Arrastar para ajustar a largura da vitrine",
+      profileSwitcherGroup: "Perfil do comprador",
+      widthPresetsGroup: "Largura rápida da vitrine",
+      widthPresetMobile: "Mobile",
+      widthPresetDesktop: "Desktop",
     },
     searchOverlay: {
       placeholder: "Pergunte sobre caixas sem fio, portáteis ou acessórios…",
@@ -242,7 +297,7 @@ export const messages: Record<
       quickSearches: "Buscas rápidas",
       searchButton: "Buscar",
       shortcutHint: "para abrir · Enter para buscar",
-      placeholderSearch: "Buscar na Future Store…",
+      placeholderSearch: "Pergunte o que quiser",
       placeholderPdpBrand: "Pergunte sobre {brand}…",
       onThisPage: "Nesta página · ",
       srSearchTitle: "Buscar na Future Store",
@@ -302,6 +357,7 @@ export const messages: Record<
       compareEyebrow: "Comparar",
       compareTitleMarina: "Três jeitos de equipar — escolha o equilíbrio",
       compareTitleRicardo: "Três opções — caminho mais rápido",
+      compareTitleJoana: "Três caminhos — som claro, decisão no seu tempo",
       resultsAllMatches: "Todas as correspondências",
       refineGridButton: "Refinar",
       refineGridAria: "Refinar resultados da busca",
@@ -317,6 +373,7 @@ export const messages: Record<
       compareFitMarinaBalanced: "Som equilibrado para sala",
       compareFitRicardoBudget: "Custo-benefício",
       compareFitRicardoMid: "Faixa média popular",
+      compareFitJoanaBalanced: "Equilíbrio sala e valor",
       learningSurroundTitle: "Surround vs estéreo",
       learningSurroundBody:
         "Um kit home theater traz canais traseiros; pares estéreo brilham em música no mesmo ambiente.",
@@ -365,12 +422,10 @@ export const messages: Record<
         "Digite uma pergunta no campo abaixo ou faça uma busca pela barra superior. Baseamos as sugestões em reviews de confiança e mostramos produtos compatíveis.",
       reasoning: "Raciocínio",
       matchingLine: "Cruzando intenção com produtos e fontes editoriais",
-      assistant: "Assistente",
       placeholderReasoning: "Raciocinando…",
       placeholderAsk: "Faça um complemento…",
       ariaMessage: "Mensagem para o modo IA",
       sendAria: "Enviar mensagem",
-      hints: "Enter envia · Shift+Enter nova linha · ⌘K foca este campo",
       topMatches: "Principais resultados",
       sourcesLabel: "Fontes",
     },
@@ -392,10 +447,13 @@ export const messages: Record<
       club: "Future Store Club",
       marinaHeadline: "Clube para\napaixonados por\ncinema em casa",
       ricardoHeadline: "Clube para\ncompradores\ninteligentes",
+      joanaHeadline: "Clube para\nquem quer o melhor\nsem pressa",
       marinaBody:
         "Acesso antecipado a lançamentos, guias exclusivos de calibração e preços só para membros em painéis premium e sistemas de som.",
       ricardoBody:
         "Receba alertas de ofertas relâmpago, combos exclusivos e cupons para membros. Sem spam — só economia na sua caixa de entrada.",
+      joanaBody:
+        "Conteúdos que conectam especificação e uso real, ofertas selecionadas e lembretes úteis — menos ruído, mais clareza na escolha.",
     },
     experience: {
       marinaResearch: {
@@ -444,10 +502,10 @@ export const messages: Record<
         socialCta: "Ver mais vendidos",
       },
       ricardoValue: {
-        continueHeadline: "Continue com\no melhor preço",
+        continueHeadline: "Melhor custo-benefício\nem destaque",
         continueBody:
-          "Retomamos da onde você parou: opções com bom custo-benefício e entrega sem complicação.",
-        continueCta: "Comprar agora",
+          "Seleção com preço claro, modelos populares e entrega objetiva — para decidir rápido sem complicação.",
+        continueCta: "Ver produto",
         compareCta: "Ver oferta",
         spotlightCta: "Ver oferta",
         merchEyebrow: "Melhor custo-benefício",
@@ -501,10 +559,28 @@ export const messages: Record<
         cta: "Meet Future Store",
         featuredEyebrow: "This week",
       },
+      joana: {
+        kicker: "Inspired by You",
+        titleLine1: "Designed by",
+        titleLine2: "Intelligence",
+        subtitle:
+          "At Future Store, we balance immersive sound with a calm path to decide — clear curation, helpful comparisons, and products that fit your pace.",
+        cta: "Meet Future Store",
+        featuredEyebrow: "For you",
+      },
+      ricardoPromo: {
+        kicker: "Weekend deal",
+        headline: "Speakers with up to 30% OFF",
+        subhead:
+          "Portable and room speakers, Wi‑Fi & Bluetooth, up to 12 installments. Limited stock — selected models.",
+        fromLabel: "Starting at",
+        cta: "View offers",
+      },
     },
     proof: {
       marina: "What owners cite in reviews",
       ricardo: "Most chosen right now",
+      joana: "Highlights that blend value and experience",
     },
     continueJourney: {
       exploreBrand: "Explore {brand}",
@@ -512,7 +588,13 @@ export const messages: Record<
       marinaBody:
         "We picked up your research thread: the same model highlighted for your profile, with finishes that match your space — refine the last mile before you decide.",
       ricardoBody:
-        "Picking up where you left off: a practical, value-smart choice ready to bring better sound to everyday listening.",
+        "A practical, value-smart pick for better everyday sound.",
+      joanaBody:
+        "We meet you in the middle: powerful sound and design that fits the living room — room to compare and decide without rush.",
+      ricardoEntryHeadline: "Start with a standout\nvalue pick",
+      ricardoEntryBody:
+        "A light, portable entry in the range — clear sound, simple setup, and pricing that works as a first step.",
+      ricardoEntryCta: "View product",
     },
     compare: {
       marinaHeadline: "Premium\nhome cinema",
@@ -521,6 +603,9 @@ export const messages: Record<
         "Experience the perfect balance of precision and immersion in every scene. Crisp front sound, matched surrounds, and depth worthy of a dedicated room — all tuned to the same sonic signature.",
       ricardoBody:
         "Experience clear, engaging sound at the best value. Simple setup, reliable performance, and a price that makes sense when you want more without the fuss.",
+      joanaHeadline: "Sound that fills\nthe room — in balance",
+      joanaBody:
+        "Feel room-filling presence and versatility between reference and everyday practicality — for spaces that want impact without excess.",
       cta: "Explore",
     },
     curated: {
@@ -530,16 +615,36 @@ export const messages: Record<
         "Explore the depth of spatial audio and the punch of room-filling sound. Two philosophies shaped by acoustics, refined for your room — the way you research before you buy.",
       ricardoBody:
         "Explore our best-value picks and the most popular mid-range options. Two paths to better sound, shaped for real budgets.",
+      joanaHeadline: "Made to sound great,\nwithout the noise",
+      joanaBody:
+        "Two routes that balance performance and real life: one with more body for the room, one leaner — you pick what fits the moment.",
       marinaTierA: "Immersion flagship",
       marinaTierB: "Strong alternative",
+      joanaTierA: "Presence in the room",
+      joanaTierB: "Leaner option",
+      ricardoPromoHeadline: "Top sellers\nin the entry range",
+      ricardoPromoBody:
+        "Straight picks: what moves fastest for rooms like yours — clear price and stock, no long reads.",
     },
     merch: {
       headlineLine1: "Sound in every room,",
       headlineLine2: "without wires",
+      ricardoVolumeLine: "2,340 units sold this month on promo models",
+    },
+    ricardoTiktok: {
+      eyebrow: "On social",
+      title: "What other shoppers are saying",
+      subline: "Shared experiences that help you decide with more confidence.",
+      clipTitle1: "Video — TechRadar",
+      clipCaption1: "Hands-on takes from the editorial feed people already follow.",
+      clipTitle2: "Video — Smart Home Sounds",
+      clipCaption2: "Home-audio content — real setup tips from a specialist retailer.",
+      clipTitle3: "Video — Ochre Home",
+      clipCaption3: "Lifestyle and space — inspiration for pairing sound with your home.",
     },
     spotlight: {},
     floatingSearch: {
-      placeholder: "Ask anything",
+      placeholder: "Ask anything you want",
     },
     narrative: {
       shopper: "Shopper",
@@ -660,9 +765,12 @@ export const messages: Record<
       virtualPremiumMarinaBlurb: "Add flagship spatial audio to your setup",
       virtualPremiumRicardoTitle: "Upgrade path — Era 300",
       virtualPremiumRicardoBlurb: "Step-up clarity for open rooms",
+      virtualPremiumJoanaTitle: "Balanced upgrade — Era 300",
+      virtualPremiumJoanaBlurb: "More body and detail for the room without overbuilding the bundle.",
       virtualCheaperTitle: "Lean add-on — {name}",
       virtualCheaperBlurbMarina: "Portable speaker to extend your system",
       virtualCheaperBlurbRicardo: "Keeps monthly payment lower",
+      virtualCheaperBlurbJoana: "Practical add-on that balances cost and versatility.",
       bundleDefBndEraRoamTitle: "Shelf + portable — Era 100 + Roam 2",
       bundleDefBndEraRoamBody: "Room-filling smart speaker plus an ultra-portable for everywhere else",
       bundleDefBndEraPairRoamTitle: "Whole-home starter — 2-Room Era + Roam",
@@ -680,6 +788,11 @@ export const messages: Record<
     },
     appShell: {
       exitFullscreen: "Exit fullscreen",
+      resizeHandle: "Drag to resize storefront width",
+      profileSwitcherGroup: "Shopper profile",
+      widthPresetsGroup: "Quick storefront width",
+      widthPresetMobile: "Mobile",
+      widthPresetDesktop: "Desktop",
     },
     searchOverlay: {
       placeholder: "Ask about wireless speakers, portables, or accessories…",
@@ -695,7 +808,7 @@ export const messages: Record<
       quickSearches: "Quick searches",
       searchButton: "Search",
       shortcutHint: "to open · Enter to search",
-      placeholderSearch: "Search Future Store…",
+      placeholderSearch: "Ask anything you want",
       placeholderPdpBrand: "Ask about {brand}…",
       onThisPage: "On this page · ",
       srSearchTitle: "Search Future Store",
@@ -755,6 +868,7 @@ export const messages: Record<
       compareEyebrow: "Compare",
       compareTitleMarina: "Three setups — pick your tradeoff",
       compareTitleRicardo: "Three picks — fastest path",
+      compareTitleJoana: "Three paths — clear sound, your pace",
       resultsAllMatches: "All matches",
       refineGridButton: "Refine",
       refineGridAria: "Refine search results",
@@ -770,6 +884,7 @@ export const messages: Record<
       compareFitMarinaBalanced: "Balanced room sound",
       compareFitRicardoBudget: "Budget-smart",
       compareFitRicardoMid: "Popular mid tier",
+      compareFitJoanaBalanced: "Balanced room & value",
       learningSurroundTitle: "Surround vs stereo",
       learningSurroundBody:
         "A home theater set adds rear channels; stereo pairs shine for music in one room.",
@@ -818,12 +933,10 @@ export const messages: Record<
         "Type a question in the composer below, or run a search from the top bar. We ground picks in trusted reviews and surface matching products.",
       reasoning: "Reasoning",
       matchingLine: "Matching intent to products and editorial sources",
-      assistant: "Assistant",
       placeholderReasoning: "Reasoning…",
       placeholderAsk: "Ask a follow-up…",
       ariaMessage: "AI mode message",
       sendAria: "Send message",
-      hints: "Enter to send · Shift+Enter for a new line · ⌘K focuses this field",
       topMatches: "Top matches",
       sourcesLabel: "Sources",
     },
@@ -845,10 +958,13 @@ export const messages: Record<
       club: "Future Store Club",
       marinaHeadline: "Club For Home\nCinema Enthusiasts",
       ricardoHeadline: "Club For Smart\nShoppers",
+      joanaHeadline: "Club For\nThoughtful\nListeners",
       marinaBody:
         "Get early access to new releases, exclusive calibration guides, and member-only pricing on premium panels and sound systems.",
       ricardoBody:
         "Get notified about flash deals, exclusive bundles, and member-only coupons. No spam, just savings delivered to your inbox.",
+      joanaBody:
+        "Content that connects specs with real use, curated offers, and helpful nudges — less noise, more clarity in every choice.",
     },
     experience: {
       marinaResearch: {
@@ -897,10 +1013,10 @@ export const messages: Record<
         socialCta: "See best sellers",
       },
       ricardoValue: {
-        continueHeadline: "Keep the best\nprice path",
+        continueHeadline: "Standout value\non display",
         continueBody:
-          "We’ll pick up where you stopped: strong value picks with straightforward delivery.",
-        continueCta: "Buy now",
+          "Popular picks with transparent pricing and straightforward delivery — decide quickly with no fuss.",
+        continueCta: "View product",
         compareCta: "See offer",
         spotlightCta: "See offer",
         merchEyebrow: "Best value",

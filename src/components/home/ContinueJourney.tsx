@@ -25,67 +25,99 @@ export function ContinueJourney() {
   const { locale } = useLocale();
   const t = useT();
   const id =
-    experienceCtx?.continueProductId ?? (profile === "marina" ? "sp-era-300" : "sp-roam-2");
+    experienceCtx?.continueProductId ??
+    (profile === "marina" ? "sp-era-300" : profile === "joana" ? "sp-move-2" : "sp-roam-2");
   const product = getProductByIdLocalized(id, locale);
   if (!product) return null;
 
   const heroSrc = hasMediaUrl(product.heroImage) ? product.heroImage : null;
 
+  const isReturning = experienceCtx?.signals.isReturning ?? false;
+  const useRicardoEntryCopy = profile === "ricardo" && (!experienceCtx || !isReturning);
+
+  const headline = useRicardoEntryCopy
+    ? t("continueJourney.ricardoEntryHeadline")
+    : experienceCtx
+      ? t(experienceCtx.experience.copy.continueHeadline)
+      : t("continueJourney.headline");
+
+  const body =
+    useRicardoEntryCopy
+      ? t("continueJourney.ricardoEntryBody")
+      : experienceCtx
+        ? t(experienceCtx.experience.copy.continueBody)
+        : profile === "marina"
+          ? t("continueJourney.marinaBody")
+          : profile === "joana"
+            ? t("continueJourney.joanaBody")
+            : t("continueJourney.ricardoBody");
+
+  const cta = useRicardoEntryCopy
+    ? t("continueJourney.ricardoEntryCta")
+    : experienceCtx
+      ? t(experienceCtx.experience.copy.continueCta)
+      : t("continueJourney.exploreBrand", { brand: product.brand });
+
   return (
-    <motion.section
-      variants={{ hidden: {}, show: stagger }}
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, amount: 0.1 }}
-      className="flex flex-col bg-white"
-    >
-      <motion.div variants={fadeUp} className="px-5 pt-10 sm:px-6">
-        <EyebrowPill>
-          {product.category === "speaker" ? t("common.speakers") : t("common.audio")}
-        </EyebrowPill>
-      </motion.div>
-
-      <motion.div variants={fadeUp} className="px-5 pt-3.5 sm:px-6">
-        <h2 className="whitespace-pre-line font-[family-name:var(--font-display)] text-[clamp(1.35rem,4.2vw,1.85rem)] font-medium leading-[1.12] tracking-[-0.02em] text-[#1a1a1a]">
-          {experienceCtx ? t(experienceCtx.experience.copy.continueHeadline) : t("continueJourney.headline")}
-        </h2>
-        <p className="mt-2.5 font-[family-name:var(--font-display)] text-[clamp(1.05rem,3.2vw,1.25rem)] font-medium leading-snug tracking-[-0.015em] text-[#444]">
-          {product.title.split("—")[0].trim()}
-        </p>
-      </motion.div>
-
+    <section className="bg-white">
       <motion.div
-        variants={{
-          hidden: { opacity: 0, scale: 0.97 },
-          show: { opacity: 1, scale: 1, transition: { duration: 0.8, ease } },
-        }}
-        className="px-5 pt-5 sm:px-6"
+        variants={{ hidden: {}, show: stagger }}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.12 }}
+        className="mx-auto flex max-w-[1200px] flex-col gap-8 px-5 py-10 sm:px-6 sm:py-12 @lg:flex-row @lg:items-center @lg:gap-10 @lg:py-14"
       >
-        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-[#f5f5f5]">
-          {heroSrc ? (
-            <Image src={heroSrc} alt="" fill className="object-contain p-5" sizes="100vw" unoptimized />
-          ) : (
-            <EmptyMediaSlot className="absolute inset-0" variant="light" />
-          )}
+        <div className="flex min-w-0 flex-1 flex-col items-start @lg:basis-1/2">
+          <motion.div variants={fadeUp}>
+            <EyebrowPill>
+              {product.category === "speaker" ? t("common.speakers") : t("common.audio")}
+            </EyebrowPill>
+          </motion.div>
+
+          <motion.div variants={fadeUp} className="mt-3.5 w-full">
+            <h2 className="whitespace-pre-line text-left font-[family-name:var(--font-display)] text-[clamp(1.35rem,4.2vw,1.85rem)] font-medium leading-[1.12] tracking-[-0.02em] text-[#1a1a1a]">
+              {headline}
+            </h2>
+            <p className="mt-2.5 font-[family-name:var(--font-display)] text-[clamp(1.05rem,3.2vw,1.25rem)] font-medium leading-snug tracking-[-0.015em] text-[#444]">
+              {product.title.split("—")[0].trim()}
+            </p>
+          </motion.div>
+
+          <motion.div variants={fadeUp} className="mt-5 w-full">
+            <p className="max-w-[42ch] text-left text-[12px] font-light leading-[1.7] text-[#888] sm:text-[13px]">{body}</p>
+
+            <Link
+              href={`/product/${product.id}`}
+              className="mt-5 inline-flex h-10 w-fit items-center justify-center rounded-full bg-[#1a1a1a] px-6 text-[11px] font-medium text-white transition-transform duration-300 hover:scale-[1.03] active:scale-[0.97] sm:text-[12px]"
+            >
+              {cta}
+            </Link>
+          </motion.div>
         </div>
-      </motion.div>
 
-      <motion.div variants={fadeUp} className="flex flex-col px-5 pb-10 pt-4 sm:px-6">
-        <p className="max-w-[42ch] text-[12px] font-light leading-[1.7] text-[#888]">
-          {experienceCtx
-            ? t(experienceCtx.experience.copy.continueBody)
-            : profile === "marina"
-              ? t("continueJourney.marinaBody")
-              : t("continueJourney.ricardoBody")}
-        </p>
-
-        <Link
-          href={`/product/${product.id}`}
-          className="mt-5 inline-flex h-10 w-fit items-center justify-center rounded-full bg-[#1a1a1a] px-6 text-[11px] font-medium text-white transition-transform duration-300 hover:scale-[1.03] active:scale-[0.97]"
+        <motion.div
+          variants={{
+            hidden: { opacity: 0, scale: 1.04 },
+            show: { opacity: 1, scale: 1, transition: { duration: 0.8, ease } },
+          }}
+          className="w-full min-w-0 flex-1 @lg:basis-1/2"
         >
-          {experienceCtx ? t(experienceCtx.experience.copy.continueCta) : t("continueJourney.exploreBrand", { brand: product.brand })}
-        </Link>
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-[#f5f5f5]">
+            {heroSrc ? (
+              <Image
+                src={heroSrc}
+                alt=""
+                fill
+                className="object-contain p-5 sm:p-6"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                unoptimized
+              />
+            ) : (
+              <EmptyMediaSlot className="absolute inset-0" variant="light" />
+            )}
+          </div>
+        </motion.div>
       </motion.div>
-    </motion.section>
+    </section>
   );
 }

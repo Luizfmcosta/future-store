@@ -93,7 +93,7 @@ export const products: Product[] = [
     compatibilityTags: ["Bluetooth", "WiFi", "Line-in", "USB-C"],
     bestFor: ["Patio", "Portable parties", "Room-to-room listening"],
     marginTier: "high",
-    heroImage: media("sonos-move-2-lifestyle.png"),
+    heroImage: media("87e816c0a480d8a27c1d379e02e84d84f6db5041-1280x1280.avif"),
     gallery: [
       media("87e816c0a480d8a27c1d379e02e84d84f6db5041-1280x1280.avif"),
       media("110a711ffb1d9ec82743734ef7477a7d400c8d11-2400x2400.avif"),
@@ -250,6 +250,98 @@ export const products: Product[] = [
       media("87e816c0a480d8a27c1d379e02e84d84f6db5041-1280x1280.avif"),
     ],
   },
+  /** TVs — entry / mid tier for promo funnels (Ricardo). */
+  {
+    id: "tv-samsung-crystal-50",
+    sku: "FS-TV-SAM-C50",
+    category: "tv",
+    title: "Samsung Crystal UHD 50\" — Smart TV LED 4K",
+    brand: "Samsung",
+    price: 2799,
+    oldPrice: 3999,
+    installmentText: "12x R$ 233,25 sem juros",
+    deliveryETA: "5–10 dias úteis",
+    stock: 128,
+    inches: 50,
+    technology: "LED",
+    reviewStrengths: [
+      "Painel 4K com bom contraste em salas iluminadas",
+      "Tizen com apps de streaming e espelhamento",
+      "3 HDMI — ideal para console e soundbar",
+    ],
+    reviewWeaknesses: ["Sem zona local dimming avançada dos modelos QLED superiores"],
+    returnPolicyShort: "7 dias (lacrado)",
+    warrantyShort: "12 meses fabricante",
+    compatibilityTags: ["4K", "HDR10+", "WiFi", "Bluetooth"],
+    bestFor: ["Salas compactas", "Séries e filmes", "Primeiro 4K"],
+    marginTier: "mid",
+    sponsored: true,
+    heroImage:
+      "https://images.unsplash.com/photo-1593784991095-a205069470b6?w=1200&h=800&fit=crop&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1593784991095-a205069470b6?w=800&h=600&fit=crop&q=80",
+    ],
+  },
+  {
+    id: "tv-tcl-led-50",
+    sku: "FS-TV-TCL-50",
+    category: "tv",
+    title: "TCL P755 50\" — Google TV LED 4K",
+    brand: "TCL",
+    price: 3199,
+    installmentText: "12x R$ 266,58 sem juros",
+    deliveryETA: "4–8 dias úteis",
+    stock: 94,
+    inches: 50,
+    technology: "LED",
+    reviewStrengths: [
+      "Google TV com busca por voz em português",
+      "Boa relação polegada/preço para salas médias",
+      "Modo jogo com baixa latência",
+    ],
+    reviewWeaknesses: ["Alto-falantes básicos — combine com soundbar para filmes"],
+    returnPolicyShort: "7 dias (lacrado)",
+    warrantyShort: "12 meses fabricante",
+    compatibilityTags: ["4K", "Dolby Vision", "WiFi", "Bluetooth"],
+    bestFor: ["Streaming diário", "Games casuais", "Quarto grande"],
+    marginTier: "mid",
+    heroImage:
+      "https://images.unsplash.com/photo-1461158534919-315852b3bc76?w=1200&h=800&fit=crop&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1461158534919-315852b3bc76?w=800&h=600&fit=crop&q=80",
+    ],
+  },
+  {
+    id: "tv-lg-uhd-55",
+    sku: "FS-TV-LG-55",
+    category: "tv",
+    title: "LG UHD 55\" — Smart TV LED 4K",
+    brand: "LG",
+    price: 3649,
+    oldPrice: 4599,
+    installmentText: "12x R$ 304,08 sem juros",
+    deliveryETA: "5–10 dias úteis",
+    stock: 76,
+    inches: 55,
+    technology: "LED",
+    reviewStrengths: [
+      "WebOS rápido e controle mágico incluso",
+      "55\" confortável a ~2,5 m de distância",
+      "Filmmaker Mode para séries com cor natural",
+    ],
+    reviewWeaknesses: ["Painel IPS — contraste menor que OLED em salas escuras"],
+    returnPolicyShort: "7 dias (lacrado)",
+    warrantyShort: "12 meses fabricante",
+    compatibilityTags: ["4K", "HDR10", "WiFi", "Bluetooth"],
+    bestFor: ["Sala de estar", "Esportes", "Famílias"],
+    marginTier: "mid",
+    sponsored: true,
+    heroImage:
+      "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=1200&h=800&fit=crop&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=800&h=600&fit=crop&q=80",
+    ],
+  },
   {
     id: "sb-arc-ultra",
     sku: "FS-SB-ARCULTRA-BLK",
@@ -403,9 +495,26 @@ export function getSpeakersAndSoundbars(): Product[] {
   return products.filter((p) => p.category === "speaker" || p.category === "soundbar");
 }
 
-/** @deprecated Use getSpeakers — kept for legacy imports during refactors */
 export function getTvs(): Product[] {
-  return getSpeakers();
+  return products.filter((p) => p.category === "tv");
+}
+
+/** TVs destacados em oferta (até R$ 5.000) — vitrine Ricardo / campanhas. */
+export function getPromoTvsUnder(maxPrice = 5000): Product[] {
+  return products
+    .filter((p) => p.category === "tv" && p.price <= maxPrice)
+    .sort((a, b) => a.price - b.price || a.id.localeCompare(b.id));
+}
+
+export function getCheapestPromoTv(): Product | undefined {
+  return getPromoTvsUnder()[0];
+}
+
+/** Menor preço entre caixas (vitrine / heróis promocionais). */
+export function getCheapestPromoSpeaker(): Product | undefined {
+  const speakers = getSpeakers();
+  if (speakers.length === 0) return undefined;
+  return [...speakers].sort((a, b) => a.price - b.price || a.id.localeCompare(b.id))[0];
 }
 
 export function getSoundbars(): Product[] {

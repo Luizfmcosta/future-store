@@ -2,6 +2,7 @@
 
 import { SearchCommandOverlay } from "@/components/search/SearchCommandOverlay";
 import { useT } from "@/lib/useT";
+import { ui } from "@/lib/ui-tokens";
 import { cn } from "@/lib/utils";
 import { useDemoStore } from "@/store/demoStore";
 import { motion, useAnimationControls } from "framer-motion";
@@ -80,21 +81,27 @@ export function FloatingSearchDock() {
         <motion.div
           initial={{ y: 0, opacity: 1 }}
           animate={controls}
-          className="pointer-events-none absolute bottom-0 left-0 right-0 z-[60] flex justify-center px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2"
+          className={cn(
+            "pointer-events-none absolute bottom-0 left-0 right-0 z-[60] flex justify-center px-4 sm:px-6",
+            ui.floatingSearchBarRowPad,
+          )}
         >
           <button
             type="button"
             onClick={() => setOpen(true)}
             className={cn(
-              "pointer-events-auto flex h-10 w-full max-w-xl items-center gap-2.5 rounded-full px-3.5 text-left transition-all duration-200",
-              "bg-[#2a2a2a]/75 shadow-[0_8px_32px_rgba(0,0,0,0.25)] backdrop-blur-xl hover:bg-[#2a2a2a]/85",
+              "pointer-events-auto flex h-10 w-full transition-all duration-200",
+              ui.floatingSearchPill,
+              ui.floatingSearchPillText,
               "focus-visible:outline focus-visible:outline-2 focus-visible:outline-stone-400/40",
             )}
             aria-haspopup="dialog"
             aria-expanded={open}
           >
-            <Search className="size-4 shrink-0 text-white/50" strokeWidth={1.75} aria-hidden />
-            <span className="truncate text-[13px] text-white/50">{t("floatingSearch.placeholder")}</span>
+            <Search className="size-4 shrink-0" strokeWidth={1.75} aria-hidden />
+            <span className="truncate">
+              {t("floatingSearch.placeholder")}
+            </span>
           </button>
         </motion.div>
       ) : null}

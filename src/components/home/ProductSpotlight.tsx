@@ -24,7 +24,9 @@ export function ProductSpotlight() {
   const experienceCtx = useShopperExperienceOptional();
   const { locale } = useLocale();
   const t = useT();
-  const id = experienceCtx?.spotlightProductId ?? (profile === "marina" ? "sp-move-2" : "sp-era-100");
+  const id =
+    experienceCtx?.spotlightProductId ??
+    (profile === "marina" ? "sp-move-2" : profile === "joana" ? "sp-five" : "sp-era-100");
   const product = getProductByIdLocalized(id, locale);
   if (!product) return null;
 
@@ -39,7 +41,9 @@ export function ProductSpotlight() {
       className="flex flex-col bg-white"
     >
       <motion.div variants={fadeUp} className="flex flex-col px-5 pt-10 sm:px-6">
-        <EyebrowPill>{t("common.sound")}</EyebrowPill>
+        <EyebrowPill>
+          {product.category === "tv" ? t("common.tvs") : t("common.sound")}
+        </EyebrowPill>
         <h2 className="mt-3.5 font-[family-name:var(--font-display)] text-[clamp(1.3rem,4vw,1.8rem)] font-medium leading-[1.1] tracking-[-0.02em] text-[#1a1a1a]">
           {product.title.split("—")[0].trim()}
         </h2>

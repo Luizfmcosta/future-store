@@ -2,12 +2,12 @@
 
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { formatBRL, hasMediaUrl } from "@/lib/utils";
-import type { Product } from "@/types";
+import type { Product, ShopperProfileId } from "@/types";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useMemo, useState } from "react";
 
-export function ProductHero({ product, profile }: { product: Product; profile: "marina" | "ricardo" }) {
+export function ProductHero({ product, profile }: { product: Product; profile: ShopperProfileId }) {
   const [idx, setIdx] = useState(0);
   const imgs = useMemo(() => {
     const g = product.gallery.filter(hasMediaUrl);
@@ -57,7 +57,11 @@ export function ProductHero({ product, profile }: { product: Product; profile: "
         </div>
         <p className="mt-2 text-[14px] text-stone-600">{product.installmentText}</p>
         <p className="mt-1 text-[13px] text-stone-500">
-          {profile === "ricardo" ? `${product.deliveryETA} · Stock: ${product.stock}` : `${product.deliveryETA} · ${product.stock} in regional pool`}
+          {profile === "ricardo"
+            ? `${product.deliveryETA} · Stock: ${product.stock}`
+            : profile === "joana"
+              ? `${product.deliveryETA} · ${product.stock} available · ${product.bestFor[0] ?? "Popular pick"}`
+              : `${product.deliveryETA} · ${product.stock} in regional pool`}
         </p>
       </div>
     </div>

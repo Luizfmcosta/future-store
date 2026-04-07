@@ -9,6 +9,7 @@ import { sortProducts } from "@/lib/catalogSort";
 import { localizeProducts } from "@/lib/product-i18n";
 import { useT } from "@/lib/useT";
 import { hasMediaUrl } from "@/lib/utils";
+import { useDemoStore } from "@/store/demoStore";
 import { motion, useInView } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
@@ -19,19 +20,28 @@ const ease = [0.76, 0, 0.24, 1] as const;
 export function MerchStrip() {
   const { locale } = useLocale();
   const t = useT();
+  const profile = useDemoStore((s) => s.activeProfile);
   const experienceCtx = useShopperExperienceOptional();
+  const isRicardoPromoFirstVisit =
+    profile === "ricardo" &&
+    experienceCtx?.experience.segment === "ricardo_speed" &&
+    !experienceCtx.signals.isReturning;
+
   const items = useMemo(() => {
-    const base = products.filter((p) => p.category !== "accessory");
+    let base = products.filter((p) => p.category !== "accessory");
+    if (isRicardoPromoFirstVisit) {
+      base = base.filter((p) => p.category === "tv" && p.price <= 5000);
+    }
     const sorted = experienceCtx
       ? sortProducts(base, experienceCtx.experience.merchSort)
       : base;
     return localizeProducts(sorted.slice(0, 10), locale);
-  }, [locale, experienceCtx?.experience.merchSort]);
+  }, [locale, experienceCtx?.experience.merchSort, isRicardoPromoFirstVisit, experienceCtx]);
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.08 });
 
   return (
-    <section ref={ref} className="flex flex-col bg-white">
+    <section ref={ref} className="flex flex-col bg-white pb-12 sm:pb-16">
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -46,9 +56,14 @@ export function MerchStrip() {
           <br />
           {experienceCtx ? t(experienceCtx.experience.copy.merchLine2) : t("merch.headlineLine2")}
         </h2>
+        {isRicardoPromoFirstVisit ? (
+          <p className="mt-2 max-w-[40ch] text-[12px] font-medium leading-snug text-stone-500 sm:text-[13px]">
+            {t("merch.ricardoVolumeLine")}
+          </p>
+        ) : null}
       </motion.div>
 
-      <div className="relative mt-5 min-w-0 pb-10">
+      <div className="relative mt-5 min-w-0">
         <div className="flex w-full min-w-0 snap-x snap-mandatory gap-3.5 overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth touch-pan-x pl-5 pr-0 scroll-pl-5 sm:pl-6 sm:scroll-pl-6 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {items.map((p, i) => {
             const heroSrc = hasMediaUrl(p.heroImage) ? p.heroImage : null;

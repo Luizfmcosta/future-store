@@ -1,5 +1,7 @@
 "use client";
 
+import { ui } from "@/lib/ui-tokens";
+import { cn } from "@/lib/utils";
 import { useT } from "@/lib/useT";
 import { useDemoStore } from "@/store/demoStore";
 import { motion, AnimatePresence } from "framer-motion";
@@ -29,7 +31,7 @@ export function RefineDrawer() {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-500">{t("searchSerp.refineEyebrow")}</p>
+                <p className={cn(ui.home.eyebrow)}>{t("searchSerp.refineEyebrow")}</p>
                 <h2 className="text-lg font-semibold text-stone-900">{t("searchSerp.refineTitle")}</h2>
               </div>
               <button

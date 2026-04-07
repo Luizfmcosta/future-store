@@ -87,6 +87,9 @@ export function PresenterPanel() {
               <button type="button" className={btn} onClick={() => setProfile("ricardo")}>
                 Switch to Ricardo
               </button>
+              <button type="button" className={btn} onClick={() => setProfile("joana")}>
+                Switch to Joana
+              </button>
               <button
                 type="button"
                 className={btn}

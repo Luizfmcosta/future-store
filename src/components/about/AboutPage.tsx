@@ -137,29 +137,29 @@ export function AboutPage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, ease }}
-          className="relative z-10 mx-auto flex w-full max-w-xl flex-1 flex-col justify-end px-4 pb-6 pt-[calc(3.25rem+0.75rem)] sm:px-6 sm:pb-10 sm:pt-[calc(3.75rem+1rem)] -translate-y-3 sm:-translate-y-5"
+          className="relative z-10 mx-auto flex w-full max-w-xl flex-1 flex-col justify-end px-4 pb-6 pt-[calc(3.25rem+0.75rem)] sm:px-6 sm:pb-40 sm:pt-[calc(3.75rem+1rem)] -translate-y-3 sm:-translate-y-5"
         >
-          <p className="text-center font-[family-name:var(--font-display)] text-[13px] font-normal text-white/70 sm:text-[15px]">
+          <p className="text-center font-[family-name:var(--font-display)] text-[12px] font-normal text-white/70 sm:text-[15px]">
             {t("aboutPage.centralLine")}
           </p>
-          <h1 className="mt-3 text-center font-[family-name:var(--font-display)] text-[clamp(1.85rem,6.2vw,2.65rem)] font-medium leading-[1.08] tracking-[-0.02em] text-white">
+          <h1 className="mt-3 text-center font-[family-name:var(--font-display)] text-[clamp(1.55rem,5.2vw,2.35rem)] font-medium leading-[1.08] tracking-[-0.02em] text-white sm:text-[clamp(1.85rem,6.2vw,2.65rem)]">
             {t("aboutPage.heroTitle")}
           </h1>
-          <p className="mx-auto mt-4 max-w-[42ch] text-center text-[12px] font-light leading-relaxed text-white/65 sm:text-[14px]">
+          <p className="mx-auto mt-4 max-w-[42ch] text-center text-[11px] font-light leading-relaxed text-white/65 sm:text-[14px]">
             {t("aboutPage.heroSubtitle")}
           </p>
 
-          <div className="mt-10 flex flex-col items-center justify-center gap-2.5 sm:flex-row sm:gap-3">
+          <div className="mt-8 flex w-full min-w-0 flex-col items-stretch justify-center gap-2.5 @[44rem]:flex-row @[44rem]:items-center @[44rem]:justify-center @[44rem]:gap-3">
             <Link
               href="/"
-              className="inline-flex h-11 w-full max-w-xs items-center justify-center rounded-full bg-white px-6 text-[12px] font-medium text-[#0c0c0c] shadow-[0_12px_40px_-16px_rgba(0,0,0,0.35)] transition-transform hover:scale-[1.02] active:scale-[0.98] sm:w-auto"
+              className="inline-flex h-11 min-h-11 w-full shrink-0 items-center justify-center rounded-full bg-white px-5 text-[12px] font-medium leading-none text-[#0c0c0c] shadow-[0_12px_40px_-16px_rgba(0,0,0,0.35)] transition-transform hover:scale-[1.02] active:scale-[0.98] @[44rem]:w-auto @[44rem]:max-w-xs @[44rem]:px-6"
             >
               {t("aboutPage.ctaExplore")}
             </Link>
             <button
               type="button"
               onClick={activateAiAndGoHome}
-              className="inline-flex h-11 w-full max-w-xs items-center justify-center gap-2 rounded-full border border-white/25 bg-white/[0.12] px-6 text-[12px] font-medium text-white backdrop-blur-md transition hover:bg-white/[0.18] sm:w-auto"
+              className="inline-flex h-11 min-h-11 w-full shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-white/25 bg-white/[0.12] px-4 text-[12px] font-medium leading-none text-white backdrop-blur-md transition hover:bg-white/[0.18] @[44rem]:w-auto @[44rem]:max-w-xs @[44rem]:px-6"
             >
               <Sparkles className="size-3.5 opacity-90" aria-hidden />
               {t("aboutPage.ctaAi")}

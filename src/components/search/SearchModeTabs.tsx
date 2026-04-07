@@ -3,7 +3,7 @@
 import type { SearchView } from "@/components/search/SearchViewTabs";
 import { useT } from "@/lib/useT";
 import { cn } from "@/lib/utils";
-import { LayoutGrid, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
@@ -12,14 +12,16 @@ type SearchModeTabsProps = {
   className?: string;
 };
 
-const tabBase =
-  "flex min-h-10 flex-1 items-center justify-center gap-2 rounded-full px-3 py-2 text-center text-[12px] font-medium transition-[color,background-color,box-shadow] duration-200 sm:min-h-11 sm:gap-2.5 sm:px-4 sm:text-[13px]";
+/** Same spring as AppShell width presets — smooth segment slide */
+const highlightSpring = {
+  type: "spring" as const,
+  stiffness: 520,
+  damping: 34,
+  mass: 0.7,
+};
 
-const tabInactive =
-  "text-white/70 hover:bg-white/[0.08] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-white/35";
-
-const tabActive =
-  "bg-white text-stone-900 shadow-[0_2px_12px_rgba(0,0,0,0.12)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-stone-400/45";
+const tabLink =
+  "relative z-10 flex min-h-[1.75rem] min-w-0 flex-1 shrink-0 items-center justify-center rounded-full px-3 py-0.5 text-center text-[11px] font-medium leading-none outline-none transition-colors duration-200 sm:min-h-8 sm:px-4 sm:py-1 sm:text-[12px] focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-0";
 
 export function SearchModeTabs({ active, className }: SearchModeTabsProps) {
   const searchParams = useSearchParams();
@@ -41,10 +43,17 @@ export function SearchModeTabs({ active, className }: SearchModeTabsProps) {
       role="tablist"
       aria-label={t("searchSerp.modeAria")}
       className={cn(
-        "flex w-full gap-0.5 rounded-full bg-[#2a2a2a]/75 p-1 shadow-[0_8px_32px_rgba(0,0,0,0.1)] backdrop-blur-xl",
+        "relative inline-flex min-h-8 w-max max-w-[min(100%,32rem)] items-stretch rounded-full bg-[#2a2a2a]/75 p-0.5 shadow-[0_8px_32px_rgba(0,0,0,0.1)] backdrop-blur-xl",
         className,
       )}
     >
+      <motion.div
+        className="pointer-events-none absolute left-0.5 top-0.5 bottom-0.5 rounded-full bg-white/12 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]"
+        style={{ width: "calc((100% - 4px) / 2)" }}
+        initial={false}
+        animate={{ x: active === "results" ? 0 : "100%" }}
+        transition={highlightSpring}
+      />
       <Link
         href={hrefFor("results")}
         scroll={false}
@@ -53,14 +62,14 @@ export function SearchModeTabs({ active, className }: SearchModeTabsProps) {
         aria-controls="search-panel-regular"
         aria-selected={active === "results"}
         tabIndex={active === "results" ? 0 : -1}
-        className={cn(tabBase, active === "results" ? tabActive : tabInactive)}
+        className={cn(
+          tabLink,
+          active === "results"
+            ? "text-white"
+            : "text-white/80 hover:bg-white/[0.08] hover:text-white",
+        )}
       >
-        <LayoutGrid
-          className={cn("size-4 shrink-0", active === "results" ? "text-stone-600" : "text-white/75")}
-          strokeWidth={2}
-          aria-hidden
-        />
-        <span className="truncate">{t("searchSerp.modeRegular")}</span>
+        <span className="whitespace-nowrap">{t("searchSerp.modeRegular")}</span>
       </Link>
       <Link
         href={hrefFor("ai")}
@@ -70,14 +79,12 @@ export function SearchModeTabs({ active, className }: SearchModeTabsProps) {
         aria-controls="search-panel-ai"
         aria-selected={active === "ai"}
         tabIndex={active === "ai" ? 0 : -1}
-        className={cn(tabBase, active === "ai" ? tabActive : tabInactive)}
+        className={cn(
+          tabLink,
+          active === "ai" ? "text-white" : "text-white/80 hover:bg-white/[0.08] hover:text-white",
+        )}
       >
-        <Sparkles
-          className={cn("size-4 shrink-0", active === "ai" ? "text-violet-600" : "text-violet-300/95")}
-          strokeWidth={2}
-          aria-hidden
-        />
-        <span className="truncate">{t("searchSerp.modeAi")}</span>
+        <span className="whitespace-nowrap">{t("searchSerp.modeAi")}</span>
       </Link>
     </nav>
   );

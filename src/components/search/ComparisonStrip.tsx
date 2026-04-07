@@ -8,7 +8,8 @@ import { useLocale } from "@/context/LocaleContext";
 import type { ComparisonCardModel, ComparisonFitKey } from "@/lib/recommendations";
 import { localizeProduct } from "@/lib/product-i18n";
 import { useT } from "@/lib/useT";
-import { hasMediaUrl } from "@/lib/utils";
+import { ui } from "@/lib/ui-tokens";
+import { cn, hasMediaUrl } from "@/lib/utils";
 import type { ShopperProfileId } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
@@ -19,6 +20,7 @@ const FIT_KEY_TO_MSG: Record<ComparisonFitKey, string> = {
   marina_balanced: "searchSerp.compareFitMarinaBalanced",
   ricardo_budget: "searchSerp.compareFitRicardoBudget",
   ricardo_mid: "searchSerp.compareFitRicardoMid",
+  joana_balanced: "searchSerp.compareFitJoanaBalanced",
 };
 
 function ComparisonCard({ row }: { row: ComparisonCardModel }) {
@@ -44,7 +46,7 @@ function ComparisonCard({ row }: { row: ComparisonCardModel }) {
           )}
         </div>
         <div className="flex flex-1 flex-col p-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">{t(FIT_KEY_TO_MSG[row.fitKey])}</p>
+          <p className={cn(ui.home.eyebrow)}>{t(FIT_KEY_TO_MSG[row.fitKey])}</p>
           <p className="mt-2 text-[15px] font-semibold leading-snug text-stone-900">{p.title}</p>
           <ul className="mt-3 space-y-1.5 text-[12px] leading-relaxed text-stone-600">
             {row.pros.map((x) => (
@@ -64,7 +66,12 @@ function ComparisonCard({ row }: { row: ComparisonCardModel }) {
 
 export function ComparisonStrip({ items, profile }: { items: ComparisonCardModel[]; profile: ShopperProfileId }) {
   const t = useT();
-  const title = profile === "marina" ? t("searchSerp.compareTitleMarina") : t("searchSerp.compareTitleRicardo");
+  const title =
+    profile === "marina"
+      ? t("searchSerp.compareTitleMarina")
+      : profile === "joana"
+        ? t("searchSerp.compareTitleJoana")
+        : t("searchSerp.compareTitleRicardo");
 
   return (
     <section aria-label={`${t("searchSerp.compareEyebrow")} — ${title}`} className="min-w-0">

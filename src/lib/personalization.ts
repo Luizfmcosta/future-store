@@ -41,30 +41,43 @@ const DEFAULT_MODULES: HomeModuleKey[] = ["hero", "continue", "compare", "curate
  * Map profile + behavioral signals → segment.
  * - Marina + (returning OR desktop) → high-consideration research path.
  * - Marina + mobile + first visit → explore-first (comparatives before “continue”).
- * - Ricardo + (paid social OR first mobile) → speed / deal framing.
- * - Else Ricardo → value / popularity framing.
+ * - Ricardo + first visit → deal / feed speed (Instagram promo, sem histórico).
+ * - Ricardo + returning → value / popularity framing (“continue” faz sentido).
  */
 export function resolveHomeSegment(profile: ShopperProfileId, signals: ShopperSignals): HomeSegmentId {
   if (profile === "marina") {
     if (signals.isReturning || signals.device === "desktop") return "marina_research";
     return "marina_explore";
   }
-  if (!signals.isReturning && (signals.trafficChannel === "paid_social" || signals.device === "mobile")) {
-    return "ricardo_speed";
+  if (profile === "joana") {
+    if (signals.isReturning || signals.device === "desktop") return "marina_explore";
+    return "ricardo_value";
+  }
+  if (profile === "ricardo") {
+    if (!signals.isReturning) return "ricardo_speed";
+    return "ricardo_value";
   }
   return "ricardo_value";
 }
 
-function moduleOrderForSegment(segment: HomeSegmentId): HomeModuleKey[] {
+function moduleOrderForSegment(
+  segment: HomeSegmentId,
+  profile: ShopperProfileId,
+  signals: ShopperSignals,
+): HomeModuleKey[] {
   switch (segment) {
     case "marina_research":
       return ["hero", "continue", "compare", "curated", "spotlight", "strip"];
     case "marina_explore":
       return ["hero", "compare", "curated", "continue", "spotlight", "strip"];
     case "ricardo_speed":
-      return ["hero", "strip", "curated", "spotlight", "compare", "continue"];
+      /* Primeira visita: sem “continue” nem comparativo editorial — feed de ofertas + vitrine. */
+      if (profile === "ricardo" && !signals.isReturning) {
+        return ["hero", "strip", "tiktok", "curated", "spotlight"];
+      }
+      return ["hero", "strip", "tiktok", "curated", "spotlight", "compare", "continue"];
     case "ricardo_value":
-      return ["hero", "continue", "strip", "curated", "spotlight", "compare"];
+      return ["hero", "continue", "strip", "tiktok", "curated", "spotlight", "compare"];
     default:
       return DEFAULT_MODULES;
   }
@@ -116,7 +129,7 @@ export function buildHomeExperience(
   const segment = resolveHomeSegment(profile, signals);
   return {
     segment,
-    moduleOrder: moduleOrderForSegment(segment),
+    moduleOrder: moduleOrderForSegment(segment, profile, signals),
     copy: copyForSegment(segment),
     curatedSort: curatedSortForSegment(segment),
     merchSort: merchSortForSegment(segment),
@@ -131,6 +144,12 @@ export function getContinueProductId(profile: ShopperProfileId, segment: HomeSeg
   if (profile === "marina") {
     return segment === "marina_explore" ? "sp-five" : "sp-era-300";
   }
+  if (profile === "joana") {
+    return segment === "marina_explore" ? "sp-move-2" : "sp-era-100";
+  }
+  if (profile === "ricardo" && segment === "ricardo_speed") {
+    return "sp-roam-2";
+  }
   return segment === "ricardo_speed" ? "sp-era-100" : "sp-roam-2";
 }
 
@@ -138,12 +157,24 @@ export function getCompareProductId(profile: ShopperProfileId, segment: HomeSegm
   if (profile === "marina") {
     return segment === "marina_explore" ? "sp-home-theater" : "sb-arc-ultra";
   }
+  if (profile === "joana") {
+    return segment === "marina_explore" ? "sb-beam-g2" : "sb-ray";
+  }
+  if (profile === "ricardo" && segment === "ricardo_speed") {
+    return "sp-era-100";
+  }
   return segment === "ricardo_speed" ? "sb-ray" : "sp-era-100";
 }
 
 export function getSpotlightProductId(profile: ShopperProfileId, segment: HomeSegmentId): string {
   if (profile === "marina") {
     return segment === "marina_explore" ? "sp-five" : "sp-move-2";
+  }
+  if (profile === "joana") {
+    return segment === "marina_explore" ? "sp-five" : "sp-era-100";
+  }
+  if (profile === "ricardo" && segment === "ricardo_speed") {
+    return "sp-move-2";
   }
   return segment === "ricardo_speed" ? "sb-ray" : "sp-era-100";
 }

@@ -6,13 +6,11 @@ import { IntentSummary } from "@/components/search/IntentSummary";
 import { LearningWidget } from "@/components/search/LearningWidget";
 import { ResultsGrid } from "@/components/search/ResultsGrid";
 import { SearchAiPanel } from "@/components/search/SearchAiPanel";
-import { SearchModeTabs } from "@/components/search/SearchModeTabs";
 import { getSearchViewParam } from "@/components/search/SearchViewTabs";
 import { parseIntent } from "@/lib/parseIntent";
 import { getComparisonCards, getBestMatch, getLearningWidgetVariant } from "@/lib/recommendations";
 import { getSearchResults } from "@/lib/search";
 import { useDemoStore } from "@/store/demoStore";
-import { motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo } from "react";
 
@@ -55,17 +53,14 @@ export function SearchPageContent() {
   const learningVariant = getLearningWidgetVariant(intent);
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-6">
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
-        <SearchModeTabs active={view} />
-      </motion.div>
-
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="flex min-h-0 flex-1 flex-col gap-3">
       <div
         id="search-panel-regular"
         role="tabpanel"
         aria-labelledby="tab-regular-search"
         hidden={view !== "results"}
-        className="space-y-8"
+        className="mt-6 space-y-8"
       >
         <IntentSummary intent={intent} profile={profile} aiMode={aiMode} />
 
@@ -86,6 +81,7 @@ export function SearchPageContent() {
         className="flex min-h-0 flex-1 flex-col"
       >
         {view === "ai" ? <SearchAiPanel /> : null}
+      </div>
       </div>
     </div>
   );

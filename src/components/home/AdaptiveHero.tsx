@@ -1,5 +1,6 @@
 "use client";
 
+import { RicardoPromoHero } from "@/components/home/RicardoPromoHero";
 import { useLocale } from "@/context/LocaleContext";
 import { heroCopy } from "@/lib/copy";
 import { STOREFRONT_HERO_VIDEO_SRC } from "@/lib/storefrontHeroVideo";
@@ -21,12 +22,17 @@ export function AdaptiveHero() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
+    if (profile === "ricardo") return;
     const el = videoRef.current;
     if (!el) return;
     el.play().catch(() => {
       /* muted + playsInline usually allows autoplay; ignore if blocked */
     });
-  }, []);
+  }, [profile]);
+
+  if (profile === "ricardo") {
+    return <RicardoPromoHero />;
+  }
 
   return (
     <section id="home-hero" className="relative flex flex-col">
@@ -50,22 +56,27 @@ export function AdaptiveHero() {
           variants={{ hidden: {}, show: stagger }}
           initial="hidden"
           animate="show"
-          className="relative z-10 flex w-full flex-col items-center px-8 pb-36 text-center"
+          className="relative z-10 flex w-full flex-col items-center px-4 pb-36 text-center @min-[480px]:px-8"
         >
           <motion.p
             variants={child}
-            className="text-[13px] font-normal tracking-normal text-white/70 sm:text-[16px]"
+            className="text-[16px] font-normal tracking-normal text-white/70"
           >
             {copy.kicker}
           </motion.p>
 
+          {/* Narrow storefront: quase o tamanho “ótimo” de antes, só ~2 linhas (nowrap por segmento). Largo: hero completo. */}
           <motion.h1
             variants={child}
-            className="mt-2 font-[family-name:var(--font-display)] text-[clamp(2.4rem,8.5vw,3.6rem)] font-medium leading-[0.94] tracking-[-0.02em] text-white"
+            className="mt-2 min-w-0 max-w-full font-[family-name:var(--font-display)] font-medium tracking-[-0.02em] text-white @min-[480px]:leading-[0.94]"
           >
-            <span className="block">{copy.titleLine1}</span>
+            <span className="block text-[clamp(2.35rem,10.9cqi,3.15rem)] leading-[1.05] whitespace-nowrap @min-[480px]:text-[clamp(2.4rem,8cqi,3.6rem)] @min-[480px]:leading-[0.94] @min-[480px]:whitespace-normal">
+              {copy.titleLine1}
+            </span>
             {copy.titleLine2 ? (
-              <span className="block py-[6px] text-white/70">{copy.titleLine2}</span>
+              <span className="block whitespace-nowrap py-1 text-[clamp(2.25rem,10.5cqi,3rem)] leading-[1.05] text-white/70 @min-[480px]:py-[6px] @min-[480px]:text-[clamp(2.15rem,7.5cqi,3.35rem)] @min-[480px]:leading-[0.94] @min-[480px]:whitespace-normal">
+                {copy.titleLine2}
+              </span>
             ) : null}
           </motion.h1>
         </motion.div>
