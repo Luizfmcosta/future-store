@@ -9,27 +9,31 @@ import { useRef } from "react";
 
 const ease = [0.76, 0, 0.24, 1] as const;
 
+/** Player embed v2: largura mínima oficial 325px; altura alta o bastante para não rolar dentro do iframe. */
+const EMBED_W = 325;
+const EMBED_H = 800;
+
 function TikTokFrame({ videoId, title }: { videoId: string; title: string }) {
   const src = `https://www.tiktok.com/embed/v2/${videoId}`;
   return (
     <div
       className={cn(
-        "relative mx-auto w-full overflow-hidden rounded-[10px]",
+        "shrink-0 overflow-hidden rounded-[10px]",
         "border border-stone-200/90 bg-stone-100",
         "shadow-[0_1px_0_rgba(0,0,0,0.04)]",
       )}
+      style={{ width: EMBED_W, height: EMBED_H }}
     >
-      <div className="relative aspect-[9/16] w-full max-h-[min(52vh,380px)] min-h-[240px]">
-        <iframe
-          title={title}
-          src={src}
-          className="absolute left-1/2 top-0 h-[580px] w-[326px] max-w-none -translate-x-1/2 scale-[0.62] border-0 sm:scale-[0.64]"
-          style={{ transformOrigin: "top center" }}
-          loading="lazy"
-          referrerPolicy="strict-origin-when-cross-origin"
-          allow="fullscreen"
-        />
-      </div>
+      <iframe
+        title={title}
+        src={src}
+        width={EMBED_W}
+        height={EMBED_H}
+        className="block border-0"
+        loading="lazy"
+        referrerPolicy="strict-origin-when-cross-origin"
+        allow="fullscreen"
+      />
     </div>
   );
 }
@@ -58,20 +62,14 @@ export function RicardoTikTokCarousel() {
         <div className="relative mt-6">
           <div
             className={cn(
-              "flex w-full min-w-0 snap-x snap-mandatory gap-3 overflow-x-auto overflow-y-hidden overscroll-x-contain",
-              "scroll-smooth touch-pan-x pb-1 pl-0 pr-5 sm:gap-4 sm:pr-6",
+              "flex w-full min-w-0 snap-x snap-mandatory gap-4 overflow-x-auto overflow-y-hidden overscroll-x-contain",
+              "scroll-smooth touch-pan-x pb-1 pl-0 pr-5 sm:gap-5 sm:pr-6",
               "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
             )}
           >
-            {RICARDO_TIKTOK_CLIPS.map((clip, i) => (
-              <article
-                key={clip.videoId}
-                className="w-[min(72vw,220px)] shrink-0 snap-start sm:w-[200px]"
-              >
-                <TikTokFrame videoId={clip.videoId} title={t(`ricardoTiktok.clipTitle${i + 1}`)} />
-                <p className="mt-2 line-clamp-2 text-[10.5px] font-normal leading-snug text-stone-500 sm:text-[11px]">
-                  {t(`ricardoTiktok.clipCaption${i + 1}`)}
-                </p>
+            {RICARDO_TIKTOK_CLIPS.map((clip) => (
+              <article key={clip.videoId} className="shrink-0 snap-start">
+                <TikTokFrame videoId={clip.videoId} title={t("ricardoTiktok.embedTitle")} />
               </article>
             ))}
           </div>
