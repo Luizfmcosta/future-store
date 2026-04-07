@@ -16,8 +16,8 @@ function IntentEditButton({ className }: { className?: string }) {
       type="button"
       onClick={() => setRefineOpen(true)}
       className={cn(
-        "-m-1 flex size-7 shrink-0 items-center justify-center rounded-md text-[#8b96a8] transition-colors hover:bg-white/[0.06] hover:text-[#eef1f6]",
-        ui.focusRing,
+        "-m-1 flex size-7 shrink-0 items-center justify-center rounded-md text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-900",
+        ui.home.focusRing,
         "focus-visible:rounded-md",
         className
       )}
@@ -41,7 +41,7 @@ export function IntentSummary({
     return (
       <Card className="p-4">
         <div className="flex items-start justify-between gap-2">
-          <p className="min-w-0 flex-1 text-[13px] text-[#9aa3b8]">Results for: {intent.rawQuery || "Browse"}</p>
+          <p className="min-w-0 flex-1 text-[13px] text-stone-600">Results for: {intent.rawQuery || "Browse"}</p>
           <IntentEditButton className="-mt-0.5" />
         </div>
       </Card>
@@ -51,29 +51,29 @@ export function IntentSummary({
   return (
     <Card className="p-5 sm:p-6">
       <div className="flex items-start justify-between gap-3">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#7d869c]">Intent summary</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-stone-500">Intent summary</p>
         <IntentEditButton />
       </div>
       <dl className="mt-4 grid gap-3 text-[13px] sm:grid-cols-2">
         <div>
-          <dt className="text-[#6f778a]">Size / distance</dt>
-          <dd className="font-medium text-[#e8ecf4]">{intent.sizePreference ?? "—"}</dd>
+          <dt className="text-stone-500">Size / distance</dt>
+          <dd className="font-medium text-stone-900">{intent.sizePreference ?? "—"}</dd>
         </div>
         <div>
-          <dt className="text-[#6f778a]">Room</dt>
-          <dd className="font-medium text-[#e8ecf4]">{intent.roomType ?? intent.roomDistance ?? "General"}</dd>
+          <dt className="text-stone-500">Room</dt>
+          <dd className="font-medium text-stone-900">{intent.roomType ?? intent.roomDistance ?? "General"}</dd>
         </div>
         <div>
-          <dt className="text-[#6f778a]">Budget band</dt>
-          <dd className="font-medium text-[#e8ecf4]">{intent.budget ? `Up to ${formatBRL(intent.budget)}` : "Flexible"}</dd>
+          <dt className="text-stone-500">Budget band</dt>
+          <dd className="font-medium text-stone-900">{intent.budget ? `Up to ${formatBRL(intent.budget)}` : "Flexible"}</dd>
         </div>
         <div>
-          <dt className="text-[#6f778a]">Priority</dt>
-          <dd className="font-medium text-[#e8ecf4]">{intent.priority ?? "balanced"}</dd>
+          <dt className="text-stone-500">Priority</dt>
+          <dd className="font-medium text-stone-900">{intent.priority ?? "balanced"}</dd>
         </div>
         <div className="sm:col-span-2">
-          <dt className="text-[#6f778a]">Delivery</dt>
-          <dd className="font-medium text-[#e8ecf4]">{intent.deliveryNeed ?? "Standard options"}</dd>
+          <dt className="text-stone-500">Delivery</dt>
+          <dd className="font-medium text-stone-900">{intent.deliveryNeed ?? "Standard options"}</dd>
         </div>
       </dl>
     </Card>

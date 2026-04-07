@@ -14,7 +14,7 @@ function SidebarProfileCards({ light }: { light: boolean }) {
   const setProfile = useDemoStore((s) => s.setProfile);
 
   return (
-    <div className="flex w-full flex-col gap-2" role="group" aria-label="Shopper profile">
+    <div className="flex w-full flex-col gap-1.5" role="group" aria-label="Shopper profile">
       {(["marina", "ricardo"] as const).map((id) => {
         const active = activeProfile === id;
         const name = id === "marina" ? "Marina" : "Ricardo";
@@ -24,26 +24,28 @@ function SidebarProfileCards({ light }: { light: boolean }) {
             type="button"
             onClick={() => setProfile(id)}
             className={cn(
-              "flex min-h-[4.5rem] w-full flex-col items-start justify-between gap-2 rounded-[10px] px-3 py-2.5 text-left transition",
+              "flex w-full flex-row items-center gap-2.5 px-2.5 py-2 text-left transition",
               sidebarRailSurfaceClass(active, light),
             )}
           >
             <span
               className={cn(
-                "relative block size-10 shrink-0 overflow-hidden rounded-md bg-[#12151c]",
+                "relative block size-9 shrink-0 overflow-hidden rounded-lg bg-[#1a1a1a]",
                 light ? "ring-1 ring-slate-200/80" : "ring-1 ring-white/[0.08]",
               )}
             >
               <Image
                 src={SHOPPER_PORTRAIT[id]}
                 alt=""
-                width={40}
-                height={40}
+                width={36}
+                height={36}
                 className="size-full object-cover"
                 unoptimized
               />
             </span>
-            <span className={cn(shopperNameText, "w-full text-left text-inherit")}>{name}</span>
+            <span className={cn(shopperNameText, "min-w-0 flex-1 text-[14px] leading-tight text-inherit")}>
+              {name}
+            </span>
           </button>
         );
       })}

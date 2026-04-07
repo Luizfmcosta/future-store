@@ -8,8 +8,8 @@ export function ChatAssistantSources({ sources }: { sources: AssistantSource[] }
   if (sources.length === 0) return null;
 
   return (
-    <div className="mt-3 border-t border-white/[0.06] pt-3">
-      <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8b96a8]">Sources</p>
+    <div className="mt-3 border-t border-stone-200/90 pt-3">
+      <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-500">Sources</p>
       <div className="flex flex-wrap gap-1.5">
         {sources.map((s) => (
           <Source key={s.href} href={s.href}>
@@ -17,14 +17,14 @@ export function ChatAssistantSources({ sources }: { sources: AssistantSource[] }
               label={s.label}
               showFavicon
               className={cn(
-                "max-w-[9.5rem] border border-white/[0.06] bg-white/[0.06] text-[#c8d0dc]",
-                "hover:border-white/[0.1] hover:bg-white/[0.1] hover:text-[#eef1f6]"
+                "max-w-[9.5rem] border border-stone-200/90 bg-stone-50 text-stone-700",
+                "hover:border-stone-300 hover:bg-white hover:text-stone-900"
               )}
             />
             <SourceContent
               title={s.title}
               description={s.description}
-              className="w-80 border border-white/[0.08] bg-[#14161c] p-0 text-[#eef1f6] shadow-xl ring-white/10 [&_.text-muted-foreground]:text-[#9ca8b8] [&_.text-primary]:text-[#eef1f6]"
+              className="w-80 border border-stone-200/90 bg-white p-0 text-stone-900 shadow-xl ring-stone-200/40 [&_.text-muted-foreground]:text-stone-500 [&_.text-primary]:text-stone-900"
             />
           </Source>
         ))}

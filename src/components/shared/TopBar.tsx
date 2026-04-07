@@ -1,86 +1,157 @@
 "use client";
 
-import { ui } from "@/lib/ui-tokens";
-import { shopperDisplayName, SHOPPER_PORTRAIT } from "@/lib/shopperPortraits";
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/useT";
 import { useDemoStore } from "@/store/demoStore";
-import { ShoppingCart } from "lucide-react";
-import Image from "next/image";
+import { Lock } from "lucide-react";
 import Link from "next/link";
-
-/** Same footprint + corner radius for avatar and cart in the storefront top bar. */
-const topBarControl =
-  "relative flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-lg";
+import { usePathname } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 
 type TopBarProps = {
   className?: string;
 };
 
-/** Storefront-only chrome — narrative controls live in `NarrativeChrome`. */
+/** Height from top of viewport used to decide if the hero still sits behind the logo strip. */
+const HOME_LOGO_BAND_PX = 56;
+
+/**
+ * Home hero is dark; modules below are light. When the hero has scrolled up so its
+ * bottom edge clears this band, the logo switches to #232526 (no pixel sampling — works
+ * over video/gradients).
+ */
+function useHomeHeroLogoOnDark() {
+  const [onDark, setOnDark] = useState(true);
+
+  const measure = useCallback(() => {
+    const hero = document.getElementById("home-hero");
+    if (!hero) return;
+    const { bottom } = hero.getBoundingClientRect();
+    setOnDark(bottom > HOME_LOGO_BAND_PX);
+  }, []);
+
+  useEffect(() => {
+    measure();
+    const main = document.querySelector<HTMLElement>("[data-storefront-window] main");
+    if (main) {
+      main.addEventListener("scroll", measure, { passive: true });
+    }
+    window.addEventListener("resize", measure);
+    return () => {
+      if (main) {
+        main.removeEventListener("scroll", measure);
+      }
+      window.removeEventListener("resize", measure);
+    };
+  }, [measure]);
+
+  return onDark;
+}
+
 export function TopBar({ className }: TopBarProps) {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
   const openCart = useDemoStore((s) => s.openCart);
   const cartLineId = useDemoStore((s) => s.cartLineId);
-  const activeProfile = useDemoStore((s) => s.activeProfile);
-  const shopperName = shopperDisplayName(activeProfile);
+  const logoIsOnDark = useHomeHeroLogoOnDark();
+  const t = useT();
+
+  if (!isHome) {
+    return (
+      <header
+        className={cn(
+          /* Same solid surface as `main` (bg-white) — no translucent bar banding. */
+          "sticky top-0 z-40 shrink-0 border-b border-stone-200/90 bg-white",
+          className,
+        )}
+      >
+        <div className="mx-auto flex w-full items-center justify-between px-4 py-2.5 sm:px-5 sm:py-3">
+          <Link href="/" aria-label={t("topBar.ariaHome")} className="shrink-0">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/branding/fs-reduced.svg" alt="" className="h-6 w-auto opacity-90 sm:h-7" />
+          </Link>
+          <div className="flex items-center gap-1.5">
+            <nav className="flex items-center rounded-full bg-[#2a2a2a]/75 backdrop-blur-xl">
+              <Link
+                href="/about"
+                className="rounded-full px-4 py-2 text-[12px] font-medium text-white/80 transition-colors duration-200 hover:bg-white/[0.08] hover:text-white sm:text-[13px]"
+              >
+                {t("common.about")}
+              </Link>
+            </nav>
+            <button
+              type="button"
+              onClick={openCart}
+              className="relative flex items-center justify-center rounded-full bg-[#2a2a2a]/75 p-2 text-white/80 backdrop-blur-xl transition-colors hover:bg-[#2a2a2a]/90"
+              aria-label={t("common.cart")}
+            >
+              <Lock className="size-[15px]" strokeWidth={1.5} />
+              {cartLineId ? (
+                <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-[14px] items-center justify-center rounded-full bg-white px-0.5 text-[8px] font-bold text-[#1a1a1a]">
+                  1
+                </span>
+              ) : null}
+            </button>
+          </div>
+        </div>
+      </header>
+    );
+  }
 
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-40 shrink-0 border-b border-white/[0.06] bg-[#0a0c0e]/92 backdrop-blur-2xl supports-[backdrop-filter]:bg-[#0a0c0e]/85",
-        className
-      )}
-    >
-      <div className="mx-auto flex w-full max-w-full items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5">
-        <div className="flex min-w-0 shrink-0 items-center sm:h-9">
-          <Link
-            href="/"
-            className={cn(
-              "group flex min-h-9 min-w-0 shrink-0 items-center rounded-lg px-1 py-0.5 transition-colors duration-150 ease-out hover:bg-white/[0.06] focus-visible:outline-none sm:min-h-0",
-              ui.focusRing,
-              "focus-visible:rounded-lg"
-            )}
-            aria-label="Home"
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element -- local SVG brand asset */}
+    <header className={cn("absolute left-0 right-0 top-0 z-40", className)}>
+      <div className="flex w-full items-center justify-between px-4 py-3.5 sm:px-5 sm:py-4">
+        {/* Logo — left side, auto-contrast */}
+        <Link href="/" aria-label={t("topBar.ariaHome")} className="shrink-0">
+          {logoIsOnDark ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
             <img
               src="/branding/fs-reduced.svg"
               alt=""
-              className="h-7 w-auto max-w-[140px] object-contain object-left opacity-[0.95] transition group-hover:opacity-100 sm:h-8"
+              className={cn(
+                "h-6 w-auto transition-[filter,opacity] duration-500 sm:h-7",
+                "brightness-0 invert opacity-100",
+              )}
             />
-          </Link>
-        </div>
-        <div className="ml-auto flex shrink-0 items-center gap-1.5">
-          <div
-            className={cn(topBarControl, "border border-white/[0.08]")}
-            role="img"
-            aria-label={`Active shopper: ${shopperName}`}
-          >
-            <Image
-              src={SHOPPER_PORTRAIT[activeProfile]}
-              alt=""
-              width={36}
-              height={36}
-              className="size-full object-cover"
-              unoptimized
+          ) : (
+            <span
+              aria-hidden
+              className={cn(
+                "inline-block h-6 w-[calc(1.5rem*569/316)] shrink-0 bg-[#232526] opacity-[0.88] transition-opacity duration-500 sm:h-7 sm:w-[calc(1.75rem*569/316)]",
+              )}
+              style={{
+                maskImage: "url(/branding/fs-reduced.svg)",
+                WebkitMaskImage: "url(/branding/fs-reduced.svg)",
+                maskSize: "contain",
+                maskRepeat: "no-repeat",
+                maskPosition: "left center",
+              }}
             />
-          </div>
+          )}
+        </Link>
+
+        {/* Right side: nav pill + cart — aligned right */}
+        <div className="flex items-center gap-1.5">
+          <nav className="flex items-center rounded-full bg-[#2a2a2a]/75 backdrop-blur-xl">
+            <Link
+              href="/about"
+              className="rounded-full px-4 py-2 text-[12px] font-medium text-white/80 transition-colors duration-200 hover:bg-white/[0.08] hover:text-white sm:text-[13px]"
+            >
+              {t("common.about")}
+            </Link>
+          </nav>
+
           <button
             type="button"
             onClick={openCart}
-            className={cn(
-              topBarControl,
-              "border border-white/[0.08] bg-white/[0.06] p-2 text-[#9ca8b8] transition-colors hover:border-white/[0.12] hover:bg-white/[0.09] hover:text-[#eef1f6]",
-              ui.focusRing,
-              "focus-visible:rounded-lg",
-            )}
-            aria-label="Cart"
+            className="relative flex items-center justify-center rounded-full bg-[#2a2a2a]/75 p-2 text-white/80 backdrop-blur-xl transition-colors hover:bg-[#2a2a2a]/90"
+            aria-label={t("common.cart")}
           >
-            <ShoppingCart className="size-[18px] shrink-0" strokeWidth={2} aria-hidden />
+            <Lock className="size-[15px]" strokeWidth={1.5} />
             {cartLineId ? (
-              <span
-                className="absolute right-1 top-1 size-1.5 rounded-full bg-[#e85d5d] ring-2 ring-[#0a0c0e]"
-                aria-hidden
-              />
+              <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-[14px] items-center justify-center rounded-full bg-white px-0.5 text-[8px] font-bold text-[#1a1a1a]">
+                1
+              </span>
             ) : null}
           </button>
         </div>

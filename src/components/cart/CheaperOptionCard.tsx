@@ -9,9 +9,9 @@ import Link from "next/link";
 
 export function CheaperOptionCard({ option }: { option: BundleOption }) {
   return (
-    <Card className="overflow-hidden bg-white/[0.03] p-0">
+    <Card className="overflow-hidden bg-stone-50/50 p-0">
       <div className="flex gap-4 p-4">
-        <div className="relative h-20 w-24 shrink-0 overflow-hidden rounded-xl bg-[#060708]">
+        <div className="relative h-20 w-24 shrink-0 overflow-hidden rounded-xl bg-[#f5f5f5]">
           {hasMediaUrl(option.soundbar.heroImage) ? (
             <Image src={option.soundbar.heroImage} alt="" fill className="object-contain" sizes="96px" unoptimized />
           ) : (
@@ -19,10 +19,10 @@ export function CheaperOptionCard({ option }: { option: BundleOption }) {
           )}
         </div>
         <div className="min-w-0">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-[#8b96a8]">Leaner add-on</p>
-          <p className="mt-1 text-[14px] font-semibold text-[#f0f3fa]">{option.title}</p>
-          <p className="mt-1 text-[18px] font-semibold tabular-nums text-[#eef1f6]">{formatBRL(option.comboPrice)}</p>
-          <Link href={`/product/${option.soundbar.id}`} className="mt-2 inline-block text-[12px] font-semibold text-[#9ca8b8] transition hover:text-[#eef1f6]">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">Leaner add-on</p>
+          <p className="mt-1 text-[14px] font-semibold text-stone-900">{option.title}</p>
+          <p className="mt-1 text-[18px] font-semibold tabular-nums text-stone-900">{formatBRL(option.comboPrice)}</p>
+          <Link href={`/product/${option.soundbar.id}`} className="mt-2 inline-block text-[12px] font-semibold text-stone-600 transition hover:text-stone-900">
             Details
           </Link>
         </div>

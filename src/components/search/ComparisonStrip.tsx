@@ -13,8 +13,8 @@ import Link from "next/link";
 function ComparisonCard({ row }: { row: ComparisonCardModel }) {
   return (
     <Link href={`/product/${row.product.id}`} className="block h-full min-w-0">
-      <Card className="flex h-full flex-col overflow-hidden p-0 transition hover:border-white/[0.09]">
-        <div className="relative aspect-[16/10] w-full bg-[#060708]">
+      <Card className="flex h-full flex-col overflow-hidden p-0 transition hover:border-stone-300/90 hover:shadow-[0_16px_40px_-24px_rgba(0,0,0,0.14)]">
+        <div className="relative aspect-[16/10] w-full bg-[#f5f5f5]">
           {hasMediaUrl(row.product.heroImage) ? (
             <Image
               src={row.product.heroImage}
@@ -25,18 +25,18 @@ function ComparisonCard({ row }: { row: ComparisonCardModel }) {
               unoptimized
             />
           ) : (
-            <EmptyMediaSlot className="absolute inset-0" />
+            <EmptyMediaSlot className="absolute inset-0" variant="light" />
           )}
         </div>
         <div className="flex flex-1 flex-col p-4">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-[#7d869c]">{row.fit}</p>
-          <p className="mt-2 text-[15px] font-semibold leading-snug text-[#f0f3fa]">{row.product.title}</p>
-          <ul className="mt-3 space-y-1.5 text-[12px] leading-relaxed text-[#aeb6ca]">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">{row.fit}</p>
+          <p className="mt-2 text-[15px] font-semibold leading-snug text-stone-900">{row.product.title}</p>
+          <ul className="mt-3 space-y-1.5 text-[12px] leading-relaxed text-stone-600">
             {row.pros.map((x) => (
               <li key={x}>+ {x}</li>
             ))}
             {row.tradeoffs.map((x) => (
-              <li key={x} className="text-[#8b93a7]">
+              <li key={x} className="text-stone-500">
                 Δ {x}
               </li>
             ))}
@@ -53,7 +53,7 @@ export function ComparisonStrip({ items, profile }: { items: ComparisonCardModel
 
   return (
     <section aria-label={`Compare — ${title}`} className="min-w-0">
-      <SectionTitle eyebrow="Compare" title={title} />
+      <SectionTitle variant="editorial" eyebrow="Compare" title={title} />
       {/*
         Always a horizontal carousel (not viewport md:grid). The storefront column is often narrow
         while the window is wide — Tailwind md:* would wrongly show a squeezed grid instead of scroll.

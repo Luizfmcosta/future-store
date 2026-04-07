@@ -1,10 +1,17 @@
 import { ClientProviders } from "@/components/ClientProviders";
 import type { Metadata } from "next";
-import { Inter, Manrope, Geist } from "next/font/google";
+import { DM_Sans, Inter, Manrope, Geist } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-display",
+  display: "swap",
+});
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -12,7 +19,6 @@ const manrope = Manrope({
   display: "swap",
 });
 
-/** Narrative rail: Inter Medium 12 / −4% letter-spacing (Figma). */
 const interSidebar = Inter({
   subsets: ["latin"],
   weight: ["500"],
@@ -21,8 +27,9 @@ const interSidebar = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Future Store — AI-first storefront",
-  description: "Premium, adaptive storefront prototype — interface-first commerce.",
+  title: "Future Store — vitrine com IA em primeiro lugar",
+  description:
+    "Protótipo de vitrine premium e adaptativa — comércio centrado na interface.",
 };
 
 export default function RootLayout({
@@ -32,9 +39,17 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="pt-BR"
       data-theme="dark"
-      className={cn("h-full", "antialiased", manrope.variable, "font-sans", geist.variable, interSidebar.variable)}
+      className={cn(
+        "h-full",
+        "antialiased",
+        manrope.variable,
+        dmSans.variable,
+        "font-sans",
+        geist.variable,
+        interSidebar.variable,
+      )}
     >
       <body className="min-h-full bg-[var(--app-canvas)] font-sans text-[var(--foreground)]">
         <ClientProviders>{children}</ClientProviders>

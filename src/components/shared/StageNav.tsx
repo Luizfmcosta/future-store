@@ -1,6 +1,7 @@
 "use client";
 
 import { getSearchViewParam } from "@/components/search/SearchViewTabs";
+import { useT } from "@/lib/useT";
 import { narrativeSidebarText, sidebarRailSurfaceClass } from "@/lib/narrativeSidebar";
 import { cn } from "@/lib/utils";
 import { useDemoStore } from "@/store/demoStore";
@@ -8,17 +9,18 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
-const DEMO_PDP_HREF = "/product/tv-aurora-oled-65";
+const DEMO_PDP_HREF = "/product/sp-era-300";
 
 function stageButtonClass(active: boolean, light: boolean) {
   return cn(
     narrativeSidebarText,
-    "flex min-h-10 w-full items-center justify-center rounded-[10px] px-2 text-center transition",
+    "flex min-h-9 w-full items-center justify-center px-2 text-center text-[11px] transition",
     sidebarRailSurfaceClass(active, light),
   );
 }
 
 function StageNavInner({ light }: { light: boolean }) {
+  const t = useT();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const view = pathname.startsWith("/search") ? getSearchViewParam(searchParams) : "results";
@@ -32,21 +34,21 @@ function StageNavInner({ light }: { light: boolean }) {
   const isCart = cartOpen;
 
   return (
-    <div className="flex flex-col gap-1.5" role="navigation" aria-label="Stage">
+    <div className="flex flex-col gap-1" role="navigation" aria-label={t("stageNav.aria")}>
       <Link href="/" scroll={false} className={stageButtonClass(isHome, light)}>
-        Home
+        {t("stageNav.home")}
       </Link>
       <Link href="/search?view=ai" scroll={false} className={stageButtonClass(isSearchChat, light)}>
-        Search/Chat
+        {t("stageNav.searchChat")}
       </Link>
       <Link href="/search" scroll={false} className={stageButtonClass(isSerp, light)}>
-        SERP
+        {t("stageNav.serp")}
       </Link>
       <Link href={DEMO_PDP_HREF} scroll={false} className={stageButtonClass(isPdp, light)}>
-        PDP
+        {t("stageNav.pdp")}
       </Link>
       <button type="button" onClick={() => openCart()} className={stageButtonClass(isCart, light)}>
-        Cart
+        {t("stageNav.cart")}
       </button>
     </div>
   );

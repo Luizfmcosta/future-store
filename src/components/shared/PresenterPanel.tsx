@@ -110,8 +110,8 @@ export function PresenterPanel() {
                 type="button"
                 className={btn}
                 onClick={() => {
-                  addToCart("tv-pulse-led-55");
-                  router.push("/product/tv-pulse-led-55");
+                  addToCart("sp-roam-2");
+                  router.push("/product/sp-roam-2");
                 }}
               >
                 Open cart drawer (add sample TV)

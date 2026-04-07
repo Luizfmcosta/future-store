@@ -19,9 +19,9 @@ export function getBundleOptions(profile: ShopperProfileId, tv: Product): {
 } {
   const related = bundleDefs.filter((b) => b.productIds[0] === tv.id);
   const primary = related[0];
-  const sbPremium = getProductById("sb-nova-atmos-500");
-  const sbEcho = getProductById("sb-echo-compact-210");
-  const sbPulse = getProductById("sb-pulse-bar-mini");
+  const sbPremium = getProductById("sp-era-300");
+  const sbEcho = getProductById("sp-era-100");
+  const sbPulse = getProductById("sp-roam-2");
 
   const make = (def: typeof bundleDefs[0] | undefined, sb: Product | undefined): BundleOption | null => {
     if (!def || !sb) return null;
@@ -46,19 +46,19 @@ export function getBundleOptions(profile: ShopperProfileId, tv: Product): {
     profile === "marina" && sbPremium
       ? ({
           bundleId: "virtual-premium",
-          title: "Reference sound — Nova Atmos",
+          title: "Spatial upgrade — Era 300",
           soundbar: sbPremium,
           savings: Math.min(400, Math.round(tv.price * 0.04)),
-          blurb: "Height channels matched to cinematic panels",
+          blurb: "Add flagship spatial audio to your setup",
           comboPrice: tv.price + sbPremium.price - Math.min(400, Math.round(tv.price * 0.04)),
         } satisfies BundleOption)
       : sbPremium
         ? ({
             bundleId: "virtual-premium",
-            title: "Upgrade path — Nova Atmos",
+            title: "Upgrade path — Era 300",
             soundbar: sbPremium,
             savings: 280,
-            blurb: "Step-up clarity for living rooms",
+            blurb: "Step-up clarity for open rooms",
             comboPrice: tv.price + sbPremium.price - 280,
           } satisfies BundleOption)
         : null;
@@ -68,10 +68,10 @@ export function getBundleOptions(profile: ShopperProfileId, tv: Product): {
     cheaperSb && cheaperSb.id !== primaryOpt?.soundbar.id
       ? ({
           bundleId: "virtual-value",
-          title: "Lean bundle — compact bar",
+          title: "Lean add-on — Roam 2",
           soundbar: cheaperSb,
           savings: 120,
-          blurb: profile === "ricardo" ? "Keeps monthly payment lower" : "Minimal footprint add-on",
+          blurb: profile === "ricardo" ? "Keeps monthly payment lower" : "Portable speaker to extend your system",
           comboPrice: tv.price + cheaperSb.price - 120,
         } satisfies BundleOption)
       : null;

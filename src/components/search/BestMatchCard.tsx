@@ -29,7 +29,7 @@ export function BestMatchCard({
             storefronts get image | copy without viewport-only breakpoints fighting the column width.
           */}
           <div className="grid grid-cols-1 @md:grid-cols-[1.1fr_1fr] @md:items-stretch @md:gap-0">
-            <div className="relative w-full shrink-0 bg-[#060708] @md:min-h-[300px] @lg:min-h-[22rem]">
+            <div className="relative w-full shrink-0 bg-[#f5f5f5] @md:min-h-[300px] @lg:min-h-[22rem]">
               <div className="relative aspect-[16/10] w-full @md:absolute @md:inset-0 @md:aspect-auto @md:h-full @md:min-h-0">
                 {hasMediaUrl(product.heroImage) ? (
                   <Image
@@ -41,28 +41,30 @@ export function BestMatchCard({
                     unoptimized
                   />
                 ) : (
-                  <EmptyMediaSlot className="absolute inset-0" />
+                  <EmptyMediaSlot className="absolute inset-0" variant="light" />
                 )}
               </div>
             </div>
-            <div className="flex flex-col items-start justify-center border-t border-white/[0.06] p-5 @md:border-t-0 @md:border-l @md:p-7">
+            <div className="flex flex-col items-start justify-center border-t border-stone-200/90 p-5 @md:border-t-0 @md:border-l @md:p-7">
               {aiMode ? (
-                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#8b93a7]">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-stone-500">
                   Best choice for your space and budget
                 </p>
               ) : (
-                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#8b93a7]">Top result</p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-stone-500">Top result</p>
               )}
-              <h3 className="mt-2 text-lg font-semibold leading-tight text-white sm:text-xl">{product.title}</h3>
-              <p className="mt-3 text-[13px] leading-relaxed text-[#b4bcd1] sm:text-[14px]">
+              <h3 className="mt-2 text-lg font-semibold leading-tight text-stone-900 sm:text-xl">{product.title}</h3>
+              <p className="mt-3 text-[13px] leading-relaxed text-stone-600 sm:text-[14px]">
                 {profile === "marina"
-                  ? `${product.technology} · ${product.inches}" · ${product.compatibilityTags.slice(0, 2).join(" · ")}`
+                  ? product.technology && product.inches
+                    ? `${product.technology} · ${product.inches}" · ${product.compatibilityTags.slice(0, 2).join(" · ")}`
+                    : product.compatibilityTags.slice(0, 3).join(" · ")
                   : `${product.installmentText} · ${product.deliveryETA}`}
               </p>
               <div className="mt-4 flex flex-wrap items-baseline gap-3 sm:mt-5">
-                <span className="text-xl font-semibold text-[#f2f4f8] sm:text-2xl">{formatBRL(product.price)}</span>
+                <span className="text-xl font-semibold text-stone-900 sm:text-2xl">{formatBRL(product.price)}</span>
                 {product.oldPrice ? (
-                  <span className="text-sm text-[#7d869c] line-through">{formatBRL(product.oldPrice)}</span>
+                  <span className="text-sm text-stone-400 line-through">{formatBRL(product.oldPrice)}</span>
                 ) : null}
               </div>
             </div>

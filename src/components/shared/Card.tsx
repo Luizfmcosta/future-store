@@ -1,6 +1,5 @@
 "use client";
 
-import { ui } from "@/lib/ui-tokens";
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 
@@ -16,9 +15,7 @@ export function Card({
   return (
     <Tag
       className={cn(
-        "rounded-2xl bg-[#14161c]/90 backdrop-blur-xl",
-        ui.hairline,
-        "shadow-[0_12px_40px_-20px_rgba(0,0,0,0.5)]",
+        "rounded-2xl border border-stone-200/90 bg-white shadow-[0_12px_40px_-28px_rgba(0,0,0,0.12)]",
         className
       )}
     >

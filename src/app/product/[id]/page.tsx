@@ -6,11 +6,15 @@ import { FitInsightWidget } from "@/components/pdp/FitInsightWidget";
 import { PolicySummaryWidget } from "@/components/pdp/PolicySummaryWidget";
 import { ProductHero } from "@/components/pdp/ProductHero";
 import { ReviewSummaryWidget } from "@/components/pdp/ReviewSummaryWidget";
+import { useLocale } from "@/context/LocaleContext";
 import { getProductById } from "@/data/products";
+import { getProductByIdLocalized } from "@/lib/product-i18n";
+import { recordProductView } from "@/lib/shopperSignalsStorage";
 import { getPdpInsights } from "@/lib/recommendations";
+import { useT } from "@/lib/useT";
+import { cn } from "@/lib/utils";
 import { useDemoStore } from "@/store/demoStore";
 import { motion } from "framer-motion";
-import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { ArrowLeft, Search } from "lucide-react";
@@ -18,8 +22,10 @@ import { ArrowLeft, Search } from "lucide-react";
 export default function ProductPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
+  const { locale } = useLocale();
+  const t = useT();
   const id = typeof params?.id === "string" ? params.id : "";
-  const product = id ? getProductById(id) : undefined;
+  const product = id ? getProductByIdLocalized(id, locale) : undefined;
   const profile = useDemoStore((s) => s.activeProfile);
   const aiMode = useDemoStore((s) => s.aiMode);
   const setSelected = useDemoStore((s) => s.setSelectedProduct);
@@ -32,10 +38,14 @@ export default function ProductPage() {
     if (p) setSelected(p.id);
   }, [id, setSelected]);
 
+  useEffect(() => {
+    if (product?.id) recordProductView(product.id);
+  }, [product?.id]);
+
   if (!product) {
     return (
-      <div className="rounded-2xl border border-white/[0.08] bg-[#0f1118]/80 p-10 text-center text-[#9aa3b8]">
-        Product not found.
+      <div className="rounded-2xl border border-stone-200/90 bg-stone-50 p-10 text-center text-stone-600">
+        {t("pdp.notFound")}
       </div>
     );
   }
@@ -46,21 +56,15 @@ export default function ProductPage() {
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden scroll-smooth pb-4">
         <div className="flex flex-col space-y-8">
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-between gap-3">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => router.back()}
-              className="inline-flex items-center gap-2 rounded-lg px-1 py-1 text-[13px] font-semibold text-[#9ca8b8] transition-colors duration-150 ease-out hover:bg-white/[0.06] hover:text-[#eef1f6] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/25"
+              className="inline-flex items-center gap-2 rounded-lg px-1 py-1 text-[13px] font-semibold text-stone-600 transition-colors duration-150 ease-out hover:bg-stone-100 hover:text-stone-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-stone-400/40"
             >
               <ArrowLeft className="h-4 w-4" />
-              Back
+              {t("pdp.back")}
             </button>
-            <Link
-              href="/search"
-              className="rounded-lg px-2 py-1 text-[13px] font-semibold text-[#9ca8b8] transition-colors duration-150 ease-out hover:bg-white/[0.06] hover:text-[#eef1f6] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/25"
-            >
-              Open search
-            </Link>
           </motion.div>
 
           <ProductHero product={product} profile={profile} />
@@ -68,7 +72,7 @@ export default function ProductPage() {
           {aiMode ? (
             <FitInsightWidget title={insights.idealTitle} body={insights.idealBody} />
           ) : (
-            <div className="rounded-[1.75rem] border border-white/[0.07] bg-[#0f1118]/80 p-5 text-[14px] text-[#aeb6ca]">
+            <div className="rounded-[1.75rem] border border-stone-200/90 bg-stone-50/90 p-5 text-[14px] text-stone-600">
               {product.bestFor[0]}
             </div>
           )}
@@ -85,29 +89,34 @@ export default function ProductPage() {
         </div>
       </div>
 
-      <div className="relative z-20 shrink-0 border-t border-white/[0.08] bg-[#060708]/92 px-1 py-4 backdrop-blur-xl supports-[backdrop-filter]:bg-[#060708]/85 sm:px-2">
+      <div className="relative z-20 shrink-0 border-t border-stone-200/90 bg-white/95 px-1 py-4 backdrop-blur-xl supports-[backdrop-filter]:bg-white/90 sm:px-2">
         <div className="flex min-h-0 items-center gap-3">
           <button
             type="button"
             onClick={() => setSearchOverlayOpen(true)}
-            className="inline-flex h-11 w-[5.25rem] shrink-0 items-center justify-center gap-1 rounded-full border border-white/[0.1] bg-[#14161c]/95 px-2.5 text-[11px] font-semibold leading-none text-[#c8d0dc] shadow-sm transition hover:border-white/[0.14] hover:bg-[#1a1d24]"
+            className={cn(
+              "inline-flex h-11 shrink-0 items-center justify-center gap-1 rounded-full border border-stone-200/90 bg-stone-50 text-[11px] font-semibold leading-none text-stone-700 shadow-sm transition hover:border-stone-300/90 hover:bg-stone-100",
+              locale === "pt-BR" ? "w-[6.75rem] px-3" : "w-[5.25rem] px-2.5",
+            )}
             aria-haspopup="dialog"
           >
             <Search className="size-3.5 shrink-0 opacity-90" strokeWidth={2} aria-hidden />
-            <span className="leading-none">Ask</span>
+            <span className="leading-none">{t("pdp.ask")}</span>
           </button>
           <button
             type="button"
             onClick={() => {
-              if (product.category === "tv") {
+              if (product.category === "tv" || product.category === "speaker") {
                 addToCart(product.id);
               } else {
-                router.push(`/product/tv-pulse-led-55`);
+                router.push(`/product/sp-era-100`);
               }
             }}
-            className="inline-flex h-11 min-w-0 flex-1 items-center justify-center rounded-full bg-[#eef1f7] px-4 text-[12px] font-semibold leading-none tracking-tight text-[#0b0c0f] transition hover:bg-white"
+            className="inline-flex h-11 min-w-0 flex-1 items-center justify-center rounded-full bg-stone-900 px-4 text-[12px] font-semibold leading-none tracking-tight text-white transition hover:bg-stone-800"
           >
-            {product.category === "tv" ? "Add to cart" : "Pair TVs"}
+            {product.category === "tv" || product.category === "speaker"
+              ? t("pdp.addToCart")
+              : t("pdp.pairSpeakers")}
           </button>
         </div>
       </div>

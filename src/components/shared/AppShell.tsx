@@ -11,11 +11,19 @@ import { StorefrontMain } from "@/components/shared/StorefrontMain";
 import { StorefrontPortalProvider } from "@/components/shared/StorefrontPortalContext";
 import { TopBar } from "@/components/shared/TopBar";
 import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
+import { useT } from "@/lib/useT";
 import { cn } from "@/lib/utils";
 import { useDemoStore } from "@/store/demoStore";
+import { AnimatePresence } from "framer-motion";
+import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { Minimize2 } from "lucide-react";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
+
+const AIVisionOverlay = dynamic(
+  () => import("@/components/vision/AIVisionOverlay").then((m) => m.AIVisionOverlay),
+  { ssr: false },
+);
 
 function getFullscreenElement(): Element | null {
   const d = document as Document & { webkitFullscreenElement?: Element | null };
@@ -37,12 +45,14 @@ const STOREFRONT_DEFAULT = 440;
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const aiMode = useDemoStore((s) => s.aiMode);
   const setScreen = useDemoStore((s) => s.setCurrentScreen);
   const storefrontRef = useRef<HTMLDivElement>(null);
   const [storefrontPortalMount, setStorefrontPortalMount] = useState<HTMLDivElement | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const isMd = useMediaQuery("(min-width: 768px)");
   const [storefrontWidth, setStorefrontWidth] = useState(STOREFRONT_DEFAULT);
+  const t = useT();
 
   useEffect(() => {
     if (pathname === "/") setScreen("home");
@@ -75,7 +85,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="flex min-h-dvh flex-col overflow-x-visible bg-[var(--app-canvas)] md:flex-row">
+    <div className="flex min-h-dvh flex-col overflow-x-visible bg-[var(--app-canvas)] md:h-dvh md:max-h-dvh md:flex-row md:overflow-hidden">
       <NarrativeChrome compact className="md:hidden" />
 
       <NarrativeChrome className="hidden md:block" />
@@ -93,56 +103,76 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               : undefined
           }
         >
+          {/* Canvas mat (2px); h-full restores scroll height chain for flex/min-h-0. */}
           <div
-            ref={storefrontRef}
-            data-storefront-window
             className={cn(
-              "relative flex h-full min-h-0 w-full flex-col overflow-hidden rounded-[1.75rem] border border-white/[0.06] bg-[#060708] shadow-[0_24px_64px_-32px_rgba(0,0,0,0.65)]",
-              isFullscreen && "!h-screen !max-h-none !w-screen !max-w-none !rounded-none border-0 shadow-none"
+              "flex h-full min-h-0 w-full flex-col rounded-[1.75rem] bg-[var(--app-canvas)] p-0.5",
+              "shadow-[0_24px_56px_-28px_rgba(0,0,0,0.18)]",
+              isFullscreen && "!rounded-none !p-0 shadow-none"
             )}
           >
-            {isFullscreen ? (
-              <button
-                type="button"
-                onClick={exitFullscreen}
-                className="absolute left-3 top-3 z-[70] flex items-center gap-2 rounded-lg border border-white/[0.06] bg-[#08090c]/92 px-3 py-2 text-[12px] font-medium text-[#e8ecf4] backdrop-blur-md transition hover:bg-[#12151c]/95"
-                aria-label="Exit fullscreen"
-              >
-                <Minimize2 className="h-4 w-4 shrink-0 opacity-90" />
-                Exit fullscreen
-              </button>
-            ) : null}
+            <div
+              ref={storefrontRef}
+              data-storefront-window
+              data-home-editorial="true"
+              className={cn(
+                "relative flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden rounded-[calc(1.75rem-2px)] border-0",
+                /* #121212 matches HomeFooter — avoids white AA fringe vs canvas at rounded corners. */
+                "bg-[#121212]",
+                isFullscreen &&
+                  "!h-screen !max-h-none !w-screen !max-w-none !rounded-none"
+              )}
+            >
+              {isFullscreen ? (
+                <button
+                  type="button"
+                  onClick={exitFullscreen}
+                  className={cn(
+                    "absolute left-3 top-3 z-[70] flex items-center gap-2 rounded-lg border px-3 py-2 text-[12px] font-medium backdrop-blur-md transition",
+                    "border-stone-200/90 bg-white/90 text-stone-800 hover:bg-stone-50"
+                  )}
+                  aria-label={t("appShell.exitFullscreen")}
+                >
+                  <Minimize2 className="h-4 w-4 shrink-0 opacity-90" />
+                  {t("appShell.exitFullscreen")}
+                </button>
+              ) : null}
 
-            <div className="pointer-events-none absolute inset-0 opacity-90" aria-hidden>
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.06),_transparent_55%)]" />
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_rgba(255,255,255,0.03),_transparent_50%)]" />
+              <StorefrontPortalProvider mountNode={storefrontPortalMount}>
+                <div
+                  className={cn(
+                    "relative z-10 flex min-h-0 flex-1 flex-col",
+                    isFullscreen && "pt-12"
+                  )}
+                >
+                  <TopBar />
+                  <div className="relative min-h-0 flex flex-1 flex-col">
+                    <Suspense
+                      fallback={
+                        <main className="min-h-0 flex-1 overflow-y-auto bg-white px-4 pb-32 pt-5 sm:px-6 sm:pb-32 sm:pt-6">
+                          {children}
+                        </main>
+                      }
+                    >
+                      <StorefrontMain>{children}</StorefrontMain>
+                    </Suspense>
+                    <AnimatePresence>{aiMode ? <AIVisionOverlay key="ai-vision" /> : null}</AnimatePresence>
+                  </div>
+                  <Suspense fallback={null}>
+                    <FloatingSearchDock />
+                  </Suspense>
+                </div>
+                <div
+                  ref={setStorefrontPortalMount}
+                  className="pointer-events-none absolute inset-0 z-[100]"
+                  aria-hidden
+                />
+              </StorefrontPortalProvider>
             </div>
-
-            <StorefrontPortalProvider mountNode={storefrontPortalMount}>
-              <div
-                className={cn(
-                  "relative z-10 flex min-h-0 flex-1 flex-col",
-                  isFullscreen && "pt-12"
-                )}
-              >
-                <TopBar />
-                <Suspense fallback={<main className="min-h-0 flex-1 overflow-y-auto px-4 pb-32 pt-5 sm:px-6 sm:pb-32 sm:pt-6">{children}</main>}>
-                  <StorefrontMain>{children}</StorefrontMain>
-                </Suspense>
-                <Suspense fallback={null}>
-                  <FloatingSearchDock />
-                </Suspense>
-              </div>
-              <div
-                ref={setStorefrontPortalMount}
-                className="pointer-events-none absolute inset-0 z-[100]"
-                aria-hidden
-              />
-            </StorefrontPortalProvider>
           </div>
 
           <ResizeEdgeHandle
-            theme="window"
+            theme="window-light"
             disabled={isFullscreen || !isMd}
             onDelta={(dx) =>
               setStorefrontWidth((w) =>

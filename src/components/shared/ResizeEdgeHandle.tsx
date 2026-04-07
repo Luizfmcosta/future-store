@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import { useCallback, useRef } from "react";
 
-type ResizeEdgeHandleTheme = "rail-light" | "rail-dark" | "window";
+type ResizeEdgeHandleTheme = "rail-light" | "rail-dark" | "window" | "window-light";
 
 export type ResizeEdgeHandleProps = {
   /** Incremental horizontal delta in px (positive widens when handle is on the right edge). */
@@ -54,14 +54,18 @@ export function ResizeEdgeHandle({ onDelta, disabled, theme = "rail-dark", class
       ? "bg-slate-500/65"
       : theme === "rail-dark"
         ? "bg-white/[0.32]"
-        : "bg-white/[0.22]";
+        : theme === "window-light"
+          ? "bg-stone-400/50"
+          : "bg-white/[0.22]";
 
   const focusRing =
     theme === "rail-light"
       ? "focus-visible:ring-2 focus-visible:ring-slate-400/60 focus-visible:ring-offset-0"
       : theme === "window"
         ? "focus-visible:ring-2 focus-visible:ring-sky-500/45 focus-visible:ring-offset-0"
-        : "focus-visible:ring-2 focus-visible:ring-white/25 focus-visible:ring-offset-0";
+        : theme === "window-light"
+          ? "focus-visible:ring-2 focus-visible:ring-stone-400/45 focus-visible:ring-offset-0"
+          : "focus-visible:ring-2 focus-visible:ring-white/25 focus-visible:ring-offset-0";
 
   return (
     <div

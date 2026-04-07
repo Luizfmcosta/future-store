@@ -30,6 +30,7 @@ export function SearchPageContent() {
   const setQuery = useDemoStore((s) => s.setQuery);
   const runSearch = useDemoStore((s) => s.runSearch);
   const profile = useDemoStore((s) => s.activeProfile);
+  const aiMode = useDemoStore((s) => s.aiMode);
 
   useEffect(() => {
     if (!parsedIntent) {
@@ -66,13 +67,13 @@ export function SearchPageContent() {
         hidden={view !== "results"}
         className="space-y-8"
       >
-        <IntentSummary intent={intent} profile={profile} aiMode />
+        <IntentSummary intent={intent} profile={profile} aiMode={aiMode} />
 
-        <BestMatchCard product={best} profile={profile} aiMode />
+        <BestMatchCard product={best} profile={profile} aiMode={aiMode} />
 
         <ComparisonStrip items={compare} profile={profile} />
 
-        <LearningWidget title={learn.title} body={learn.body} tag={learn.tag} />
+        {aiMode ? <LearningWidget title={learn.title} body={learn.body} tag={learn.tag} /> : null}
 
         <ResultsGrid products={displayResults} profile={profile} />
       </div>

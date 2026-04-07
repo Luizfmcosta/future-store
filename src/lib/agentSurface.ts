@@ -15,7 +15,8 @@ export function getAgentSurface(product: Product, profile: ShopperProfileId): Ag
     deliveryPromise: product.deliveryETA,
     returns: product.returnPolicyShort,
     compatibility: product.compatibilityTags,
-    bundleEligible: product.category === "tv" || product.category === "soundbar",
+    bundleEligible:
+      product.category === "tv" || product.category === "soundbar" || product.category === "speaker",
     confidenceScore: Math.min(0.97, base + profileBoost + stockBoost),
   };
 }

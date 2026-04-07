@@ -13,7 +13,7 @@ export type ShopperProfile = {
   interests: string[];
 };
 
-export type ProductCategory = "tv" | "soundbar" | "accessory";
+export type ProductCategory = "tv" | "soundbar" | "speaker" | "accessory";
 
 export type DisplayTechnology = "OLED" | "QLED" | "LED";
 
@@ -70,6 +70,7 @@ export type HomeModuleKey =
   | "continue"
   | "curated"
   | "compare"
+  | "spotlight"
   | "proof"
   | "strip";
 

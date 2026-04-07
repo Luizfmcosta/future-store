@@ -1,20 +1,19 @@
 "use client";
 
 import { SearchCommandOverlay } from "@/components/search/SearchCommandOverlay";
-import { ui } from "@/lib/ui-tokens";
+import { useT } from "@/lib/useT";
 import { cn } from "@/lib/utils";
 import { useDemoStore } from "@/store/demoStore";
+import { motion, useAnimationControls } from "framer-motion";
 import { Search } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 const AI_FOLLOWUP_SELECTOR = "[data-ai-followup-input]";
+const ease = [0.76, 0, 0.24, 1] as [number, number, number, number];
 
-/**
- * Bottom floating search pill. Opens centered command overlay.
- * On PDP the pill is inlined next to Add to cart — see product page.
- */
 export function FloatingSearchDock() {
+  const t = useT();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const open = useDemoStore((s) => s.searchOverlayOpen);
@@ -26,6 +25,38 @@ export function FloatingSearchDock() {
   );
 
   const isPdp = pathname.startsWith("/product/");
+
+  const controls = useAnimationControls();
+  const lastScrollY = useRef(0);
+  const hidden = useRef(false);
+
+  const onScroll = useCallback(() => {
+    const scrollEl = document.querySelector<HTMLElement>(
+      "[data-storefront-window] main",
+    );
+    if (!scrollEl) return;
+
+    const y = scrollEl.scrollTop;
+    const delta = y - lastScrollY.current;
+    lastScrollY.current = y;
+
+    if (delta > 8 && y > 200 && !hidden.current) {
+      hidden.current = true;
+      controls.start({ y: 80, opacity: 0, transition: { duration: 0.35, ease } });
+    } else if (delta < -4 && hidden.current) {
+      hidden.current = false;
+      controls.start({ y: 0, opacity: 1, transition: { duration: 0.4, ease } });
+    }
+  }, [controls]);
+
+  useEffect(() => {
+    const scrollEl = document.querySelector<HTMLElement>(
+      "[data-storefront-window] main",
+    );
+    if (!scrollEl) return;
+    scrollEl.addEventListener("scroll", onScroll, { passive: true });
+    return () => scrollEl.removeEventListener("scroll", onScroll);
+  }, [onScroll]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -46,23 +77,26 @@ export function FloatingSearchDock() {
   return (
     <>
       {!hideFloatingPill && !isPdp ? (
-        <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-[60] flex justify-center px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2">
+        <motion.div
+          initial={{ y: 0, opacity: 1 }}
+          animate={controls}
+          className="pointer-events-none absolute bottom-0 left-0 right-0 z-[60] flex justify-center px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2"
+        >
           <button
             type="button"
             onClick={() => setOpen(true)}
             className={cn(
-              ui.searchBar,
-              "pointer-events-auto flex h-11 w-full max-w-xl items-center gap-2.5 rounded-full border-white/[0.08] bg-[#14161c]/95 px-3.5 shadow-[0_8px_32px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-[box-shadow,border-color] duration-200 hover:border-white/[0.1] hover:shadow-[0_12px_40px_rgba(0,0,0,0.55)]",
-              "text-left",
-              "focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/20",
+              "pointer-events-auto flex h-10 w-full max-w-xl items-center gap-2.5 rounded-full px-3.5 text-left transition-all duration-200",
+              "bg-[#2a2a2a]/75 shadow-[0_8px_32px_rgba(0,0,0,0.25)] backdrop-blur-xl hover:bg-[#2a2a2a]/85",
+              "focus-visible:outline focus-visible:outline-2 focus-visible:outline-stone-400/40",
             )}
             aria-haspopup="dialog"
             aria-expanded={open}
           >
-            <Search className="size-[17px] shrink-0 text-[#9ca8b8]" strokeWidth={2} aria-hidden />
-            <span className="truncate text-[14px] text-[#8b96a8]">Ask anything</span>
+            <Search className="size-4 shrink-0 text-white/50" strokeWidth={1.75} aria-hidden />
+            <span className="truncate text-[13px] text-white/50">{t("floatingSearch.placeholder")}</span>
           </button>
-        </div>
+        </motion.div>
       ) : null}
 
       <SearchCommandOverlay open={open} onClose={() => setOpen(false)} />

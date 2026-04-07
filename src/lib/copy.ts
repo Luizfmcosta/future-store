@@ -1,21 +1,21 @@
+import { getMessage } from "@/lib/messages";
+import type { AppLocale } from "@/lib/locale-types";
 import type { ShopperProfileId } from "@/types";
 
-export function heroCopy(profile: ShopperProfileId) {
-  if (profile === "marina") {
-    return {
-      title: "Build a better home cinema",
-      subtitle: "Curated panels and sound for controlled light, accurate color, and calm upgrades.",
-      cta: "Compare before deciding",
-    };
-  }
+export function heroCopy(profile: ShopperProfileId, locale: AppLocale) {
+  const b = profile === "marina" ? "hero.marina" : "hero.ricardo";
   return {
-    title: "Top TV deals this weekend",
-    subtitle: "Straight prices, clear installments, fast-moving sizes — picked for real living rooms.",
-    cta: "Shop popular picks",
+    kicker: getMessage(locale, `${b}.kicker`) ?? "",
+    titleLine1: getMessage(locale, `${b}.titleLine1`) ?? "",
+    titleLine2: getMessage(locale, `${b}.titleLine2`) ?? "",
+    subtitle: getMessage(locale, `${b}.subtitle`) ?? "",
+    cta: getMessage(locale, `${b}.cta`) ?? "",
+    featuredEyebrow: getMessage(locale, `${b}.featuredEyebrow`) ?? "",
   };
 }
 
-export function proofTitle(profile: ShopperProfileId): string {
-  return profile === "marina" ? "What owners cite in reviews" : "Most chosen right now";
+export function proofTitle(profile: ShopperProfileId, locale: AppLocale): string {
+  return (
+    getMessage(locale, profile === "marina" ? "proof.marina" : "proof.ricardo") ?? ""
+  );
 }
-

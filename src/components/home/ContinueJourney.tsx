@@ -1,59 +1,91 @@
 "use client";
 
-import { Card } from "@/components/shared/Card";
-import { SectionTitle } from "@/components/shared/SectionTitle";
-import { ui } from "@/lib/ui-tokens";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
-import { cn, formatBRL, hasMediaUrl } from "@/lib/utils";
+import { EyebrowPill } from "@/components/shared/EyebrowPill";
+import { useLocale } from "@/context/LocaleContext";
+import { getProductByIdLocalized } from "@/lib/product-i18n";
+import { useT } from "@/lib/useT";
+import { hasMediaUrl } from "@/lib/utils";
+import { useShopperExperienceOptional } from "@/context/ShopperExperienceContext";
 import { useDemoStore } from "@/store/demoStore";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { getProductById } from "@/data/products";
+
+const ease = [0.76, 0, 0.24, 1] as const;
+const stagger = { staggerChildren: 0.08 };
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease } },
+};
 
 export function ContinueJourney() {
   const profile = useDemoStore((s) => s.activeProfile);
-  const ai = useDemoStore((s) => s.aiMode);
-  const id = profile === "marina" ? "tv-aurora-oled-65" : "tv-pulse-led-55";
-  const p = getProductById(id);
-  if (!p) return null;
+  const experienceCtx = useShopperExperienceOptional();
+  const { locale } = useLocale();
+  const t = useT();
+  const id =
+    experienceCtx?.continueProductId ?? (profile === "marina" ? "sp-era-300" : "sp-roam-2");
+  const product = getProductByIdLocalized(id, locale);
+  if (!product) return null;
+
+  const heroSrc = hasMediaUrl(product.heroImage) ? product.heroImage : null;
 
   return (
     <motion.section
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.25 }}
-      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+      variants={{ hidden: {}, show: stagger }}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, amount: 0.1 }}
+      className="flex flex-col bg-white"
     >
-      <SectionTitle title={profile === "marina" ? "Continue where you left off" : "Most popular right now"} eyebrow="Journey" />
-      <Link
-        href={`/product/${p.id}`}
-        className="group block rounded-2xl outline-none transition-[transform,box-shadow] duration-200 ease-out focus-visible:ring-2 focus-visible:ring-white/25 focus-visible:ring-offset-2 focus-visible:ring-offset-[#060708] active:scale-[0.995]"
+      <motion.div variants={fadeUp} className="px-5 pt-10 sm:px-6">
+        <EyebrowPill>
+          {product.category === "speaker" ? t("common.speakers") : t("common.audio")}
+        </EyebrowPill>
+      </motion.div>
+
+      <motion.div variants={fadeUp} className="px-5 pt-3.5 sm:px-6">
+        <h2 className="whitespace-pre-line font-[family-name:var(--font-display)] text-[clamp(1.35rem,4.2vw,1.85rem)] font-medium leading-[1.12] tracking-[-0.02em] text-[#1a1a1a]">
+          {experienceCtx ? t(experienceCtx.experience.copy.continueHeadline) : t("continueJourney.headline")}
+        </h2>
+        <p className="mt-2.5 font-[family-name:var(--font-display)] text-[clamp(1.05rem,3.2vw,1.25rem)] font-medium leading-snug tracking-[-0.015em] text-[#444]">
+          {product.title.split("—")[0].trim()}
+        </p>
+      </motion.div>
+
+      <motion.div
+        variants={{
+          hidden: { opacity: 0, scale: 0.97 },
+          show: { opacity: 1, scale: 1, transition: { duration: 0.8, ease } },
+        }}
+        className="px-5 pt-5 sm:px-6"
       >
-        <Card className="flex items-center gap-3 p-4 transition-[background-color,border-color] duration-200 ease-out group-hover:border-white/[0.09] group-hover:bg-[#181a22]/95 sm:gap-4 sm:p-5">
-          <div className="relative h-[104px] w-[104px] shrink-0 overflow-hidden rounded-xl bg-[#060708] sm:h-[112px] sm:w-[112px]">
-            {hasMediaUrl(p.heroImage) ? (
-              <Image src={p.heroImage} alt="" fill className="object-contain" sizes="112px" unoptimized />
-            ) : (
-              <EmptyMediaSlot className="absolute inset-0 rounded-xl" />
-            )}
-          </div>
-          <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5">
-            <p className={ui.label}>{p.brand}</p>
-            <p className={cn(ui.cardTitle, "mt-1 line-clamp-2")}>{p.title}</p>
-            <p className={cn(ui.price, "mt-2")}>{formatBRL(p.price)}</p>
-            {ai ? (
-              <p className={cn(ui.body, "mt-2 text-[12px]")}>
-                {profile === "marina"
-                  ? "Aligned with your last session on premium OLED and home theater pairings."
-                  : "High volume this week — clear installment path and fast-moving stock."}
-              </p>
-            ) : (
-              <p className={cn(ui.body, "mt-2 text-[12px] text-[#7d869c]")}>Resume browsing</p>
-            )}
-          </div>
-        </Card>
-      </Link>
+        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-[#f5f5f5]">
+          {heroSrc ? (
+            <Image src={heroSrc} alt="" fill className="object-contain p-5" sizes="100vw" unoptimized />
+          ) : (
+            <EmptyMediaSlot className="absolute inset-0" variant="light" />
+          )}
+        </div>
+      </motion.div>
+
+      <motion.div variants={fadeUp} className="flex flex-col px-5 pb-10 pt-4 sm:px-6">
+        <p className="max-w-[42ch] text-[12px] font-light leading-[1.7] text-[#888]">
+          {experienceCtx
+            ? t(experienceCtx.experience.copy.continueBody)
+            : profile === "marina"
+              ? t("continueJourney.marinaBody")
+              : t("continueJourney.ricardoBody")}
+        </p>
+
+        <Link
+          href={`/product/${product.id}`}
+          className="mt-5 inline-flex h-10 w-fit items-center justify-center rounded-full bg-[#1a1a1a] px-6 text-[11px] font-medium text-white transition-transform duration-300 hover:scale-[1.03] active:scale-[0.97]"
+        >
+          {experienceCtx ? t(experienceCtx.experience.copy.continueCta) : t("continueJourney.exploreBrand", { brand: product.brand })}
+        </Link>
+      </motion.div>
     </motion.section>
   );
 }

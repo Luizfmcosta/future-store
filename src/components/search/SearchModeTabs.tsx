@@ -32,7 +32,7 @@ export function SearchModeTabs({ active, className }: SearchModeTabsProps) {
     <nav
       role="tablist"
       aria-label="Search mode"
-      className={cn("flex w-full gap-0 border-b border-white/[0.08]", className)}
+      className={cn("flex w-full gap-0 border-b border-stone-200/90", className)}
     >
       <Link
         href={hrefFor("results")}
@@ -45,8 +45,8 @@ export function SearchModeTabs({ active, className }: SearchModeTabsProps) {
         className={cn(
           "relative flex min-h-9 min-w-0 flex-1 items-center justify-center gap-2 border-b-2 border-transparent px-3 py-1.5 text-[13px] font-medium transition-colors sm:min-h-10 sm:gap-2.5 sm:px-4 sm:py-2",
           active === "results"
-            ? "border-[#eef1f6] text-[#eef1f6]"
-            : "border-transparent text-[#8b96a8] hover:text-[#c8d0dc]"
+            ? "border-stone-900 text-stone-900"
+            : "border-transparent text-stone-500 hover:text-stone-700"
         )}
       >
         <LayoutGrid className="size-4 shrink-0 opacity-90" strokeWidth={2} aria-hidden />
@@ -63,11 +63,11 @@ export function SearchModeTabs({ active, className }: SearchModeTabsProps) {
         className={cn(
           "relative flex min-h-9 min-w-0 flex-1 items-center justify-center gap-2 border-b-2 border-transparent px-3 py-1.5 text-[13px] font-medium transition-colors sm:min-h-10 sm:gap-2.5 sm:px-4 sm:py-2",
           active === "ai"
-            ? "border-[#eef1f6] text-[#eef1f6]"
-            : "border-transparent text-[#8b96a8] hover:text-[#c8d0dc]"
+            ? "border-stone-900 text-stone-900"
+            : "border-transparent text-stone-500 hover:text-stone-700"
         )}
       >
-        <Sparkles className="size-4 shrink-0 text-[#c4b5fd]" strokeWidth={2} aria-hidden />
+        <Sparkles className="size-4 shrink-0 text-violet-600" strokeWidth={2} aria-hidden />
         <span className="truncate">AI Mode</span>
       </Link>
     </nav>

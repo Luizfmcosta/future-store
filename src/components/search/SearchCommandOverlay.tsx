@@ -1,30 +1,26 @@
 "use client";
 
 import { PromptInput, PromptInputTextarea } from "@/components/ui/prompt-input";
-import { getProductById, getSoundbars, getTvs, products } from "@/data/products";
 import { getSearchViewParam } from "@/components/search/SearchViewTabs";
-import { ui } from "@/lib/ui-tokens";
-import { cn } from "@/lib/utils";
 import { useStorefrontPortal } from "@/components/shared/StorefrontPortalContext";
+import { useLocale } from "@/context/LocaleContext";
+import { getProductById, getSoundbars, getSpeakers, products } from "@/data/products";
+import { formatMessage, getMessage } from "@/lib/messages";
+import { localizeProduct, localizeProducts } from "@/lib/product-i18n";
+import {
+  buildPdpQuickChips,
+  getQuickSearchQueries,
+  getSearchCategoryRows,
+} from "@/lib/searchCopy";
+import { ui } from "@/lib/ui-tokens";
+import { useT } from "@/lib/useT";
+import { cn } from "@/lib/utils";
 import { useDemoStore } from "@/store/demoStore";
 import type { Product } from "@/types";
 import { Package, Search, Tag, X } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useId, useMemo } from "react";
 import { createPortal } from "react-dom";
-
-const CATEGORIES = [
-  { key: "tv", label: "Televisions", hint: "OLED, QLED, room size" },
-  { key: "soundbar", label: "Soundbars", hint: "Atmos, living room" },
-  { key: "accessory", label: "Accessories", hint: "Mounts, HDMI" },
-] as const;
-
-const QUICK_SEARCHES = [
-  "TV for a 3m living room, best value, up to 5000",
-  "OLED under 5000",
-  '75" TV bright living room',
-  "Soundbar with eARC",
-];
 
 function searchPath(pathname: string, searchParams: URLSearchParams): string {
   const onSearch = pathname.startsWith("/search");
@@ -33,8 +29,8 @@ function searchPath(pathname: string, searchParams: URLSearchParams): string {
 }
 
 function relatedForPdp(product: Product): Product[] {
-  if (product.category === "tv") {
-    return getTvs()
+  if (product.category === "speaker" || product.category === "tv") {
+    return getSpeakers()
       .filter((p) => p.id !== product.id)
       .slice(0, 4);
   }
@@ -44,19 +40,6 @@ function relatedForPdp(product: Product): Product[] {
       .slice(0, 4);
   }
   return products.filter((p) => p.id !== product.id && p.category === product.category).slice(0, 4);
-}
-
-function pdpQuickChips(product: Product): string[] {
-  const chips = [
-    `Compare alternatives to ${product.title}`,
-    product.technology
-      ? `More ${product.technology} options like ${product.brand}`
-      : `More from ${product.brand}`,
-    `Delivery, install, and ${product.returnPolicyShort.toLowerCase()}`,
-    `Soundbars and HDMI setup for ${product.title}`,
-    product.bestFor[0] ? `Is this model right for ${product.bestFor[0].toLowerCase()}?` : "",
-  ];
-  return chips.filter(Boolean);
 }
 
 type SearchCommandOverlayProps = {
@@ -70,6 +53,8 @@ export function SearchCommandOverlay({ open, onClose }: SearchCommandOverlayProp
   const searchParams = useSearchParams();
   const titleId = useId();
   const storefrontPortal = useStorefrontPortal();
+  const { locale } = useLocale();
+  const t = useT();
 
   const currentQuery = useDemoStore((s) => s.currentQuery);
   const setQuery = useDemoStore((s) => s.setQuery);
@@ -81,15 +66,26 @@ export function SearchCommandOverlay({ open, onClose }: SearchCommandOverlayProp
     return id ? getProductById(id) : undefined;
   }, [pathname]);
 
+  const pdpLocalized = useMemo(
+    () => (pdpProduct ? localizeProduct(pdpProduct, locale) : undefined),
+    [pdpProduct, locale],
+  );
+
   const related = useMemo(
-    () => (pdpProduct ? relatedForPdp(pdpProduct) : []),
-    [pdpProduct],
+    () => (pdpProduct ? localizeProducts(relatedForPdp(pdpProduct), locale) : []),
+    [pdpProduct, locale],
   );
 
   const pdpChips = useMemo(
-    () => (pdpProduct ? pdpQuickChips(pdpProduct) : []),
-    [pdpProduct],
+    () => (pdpProduct ? buildPdpQuickChips(pdpProduct, locale) : []),
+    [pdpProduct, locale],
   );
+
+  const trending = useMemo(() => localizeProducts(products.slice(0, 4), locale), [locale]);
+
+  const categories = useMemo(() => getSearchCategoryRows(locale), [locale]);
+
+  const quickSearches = useMemo(() => getQuickSearchQueries(locale), [locale]);
 
   const submitAndGo = useCallback(() => {
     const q = currentQuery.trim();
@@ -132,24 +128,22 @@ export function SearchCommandOverlay({ open, onClose }: SearchCommandOverlayProp
 
   if (!open || !storefrontPortal) return null;
 
-  const trending = products.slice(0, 4);
-
   return createPortal(
     <div
-      className="pointer-events-auto absolute inset-0 z-[1] flex items-start justify-center overflow-y-auto bg-[#030405]/75 px-3 py-6 pt-[max(1.5rem,env(safe-area-inset-top))] backdrop-blur-md sm:items-center sm:py-10"
+      className="pointer-events-auto absolute inset-0 z-[1] flex items-start justify-center overflow-y-auto bg-stone-900/35 px-3 py-6 pt-[max(1.5rem,env(safe-area-inset-top))] backdrop-blur-md sm:items-center sm:py-10"
       role="presentation"
     >
       <button
         type="button"
         className="absolute inset-0 cursor-default"
-        aria-label="Close search"
+        aria-label={t("searchOverlay.close")}
         onClick={onClose}
       />
 
       <div
         className={cn(
           "relative z-10 flex w-full max-w-[min(100%-1.5rem,480px)] flex-col overflow-hidden rounded-2xl",
-          "border border-white/[0.1] bg-[#101218] shadow-[0_24px_80px_rgba(0,0,0,0.65)]",
+          "border border-stone-200/90 bg-white shadow-[0_24px_56px_-28px_rgba(0,0,0,0.18)]",
         )}
         role="dialog"
         aria-modal="true"
@@ -157,18 +151,20 @@ export function SearchCommandOverlay({ open, onClose }: SearchCommandOverlayProp
         onClick={(e) => e.stopPropagation()}
       >
         <h2 id={titleId} className="sr-only">
-          {pdpProduct ? `Search — ${pdpProduct.title}` : "Search Future Store"}
+          {pdpLocalized
+            ? t("searchOverlay.srSearchPdpTitle", { title: pdpLocalized.title })
+            : t("searchOverlay.srSearchTitle")}
         </h2>
 
-        {pdpProduct ? (
-          <p className="border-b border-white/[0.06] px-3 py-2 text-[11px] leading-snug text-[#8b96a8]">
-            <span className="font-medium text-[#c8d0dc]">On this page · </span>
-            {pdpProduct.title}
+        {pdpLocalized ? (
+          <p className="border-b border-stone-200/90 px-3 py-2 text-[11px] leading-snug text-stone-500">
+            <span className="font-medium text-stone-800">{t("searchOverlay.onThisPage")}</span>
+            {pdpLocalized.title}
           </p>
         ) : null}
 
-        <div className="flex items-center gap-2 border-b border-white/[0.08] px-3 py-2.5">
-          <Search className="size-[18px] shrink-0 text-[#8b96a8]" strokeWidth={2} aria-hidden />
+        <div className="flex items-center gap-2 border-b border-stone-200/90 px-3 py-2.5">
+          <Search className="size-[18px] shrink-0 text-stone-500" strokeWidth={2} aria-hidden />
           <div className="min-w-0 flex-1">
             <PromptInput
               value={currentQuery}
@@ -181,11 +177,13 @@ export function SearchCommandOverlay({ open, onClose }: SearchCommandOverlayProp
                 autoFocus
                 placeholder={
                   pdpProduct
-                    ? `Ask about ${pdpProduct.brand}…`
-                    : "Search Future Store…"
+                    ? formatMessage(t("searchOverlay.placeholderPdpBrand"), {
+                        brand: pdpProduct.brand,
+                      })
+                    : t("searchOverlay.placeholderSearch")
                 }
-                className="min-h-[40px] w-full resize-none border-0 bg-transparent py-1.5 text-[15px] text-[#eef1f6] placeholder:text-[#7d8898] focus-visible:ring-0"
-                aria-label="Search query"
+                className="min-h-[40px] w-full resize-none border-0 bg-transparent py-1.5 text-[15px] text-stone-900 placeholder:text-stone-400 focus-visible:ring-0"
+                aria-label={t("searchOverlay.ariaSearchQuery")}
               />
             </PromptInput>
           </div>
@@ -193,11 +191,11 @@ export function SearchCommandOverlay({ open, onClose }: SearchCommandOverlayProp
             type="button"
             onClick={onClose}
             className={cn(
-              "flex size-9 shrink-0 items-center justify-center rounded-lg text-[#9ca8b8] transition-colors hover:bg-white/[0.08] hover:text-[#eef1f6]",
-              ui.focusRing,
+              "flex size-9 shrink-0 items-center justify-center rounded-lg text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-900",
+              ui.home.focusRing,
               "focus-visible:rounded-lg",
             )}
-            aria-label="Close"
+            aria-label={t("searchOverlay.closeButton")}
           >
             <X className="size-[18px]" strokeWidth={2} />
           </button>
@@ -206,30 +204,30 @@ export function SearchCommandOverlay({ open, onClose }: SearchCommandOverlayProp
         <div className="max-h-[min(55dvh,420px)] overflow-y-auto overscroll-contain px-2 py-3">
           {pdpProduct ? (
             <>
-              <p className={cn(ui.eyebrow, "mb-2 px-2")}>Similar picks</p>
+              <p className={cn(ui.home.eyebrow, "mb-2 px-2")}>{t("searchOverlay.similarPicks")}</p>
               <ul className="space-y-0.5">
                 {related.map((p) => (
                   <li key={p.id}>
                     <button
                       type="button"
                       onClick={() => applyQuery(p.title)}
-                      className="flex w-full items-start gap-2.5 rounded-lg px-2 py-2 text-left text-[13px] text-[#e8ecf4] transition-colors hover:bg-white/[0.06] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/20"
+                      className="flex w-full items-start gap-2.5 rounded-lg px-2 py-2 text-left text-[13px] text-stone-800 transition-colors hover:bg-stone-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-stone-400/40"
                     >
-                      <Package className="mt-0.5 size-4 shrink-0 text-[#8b96a8]" strokeWidth={2} />
+                      <Package className="mt-0.5 size-4 shrink-0 text-stone-500" strokeWidth={2} />
                       <span className="line-clamp-2 leading-snug">{p.title}</span>
                     </button>
                   </li>
                 ))}
               </ul>
 
-              <p className={cn(ui.eyebrow, "mb-2 mt-4 px-2")}>Suggested questions</p>
+              <p className={cn(ui.home.eyebrow, "mb-2 mt-4 px-2")}>{t("searchOverlay.suggestedQuestions")}</p>
               <ul className="flex flex-wrap gap-1.5 px-2">
                 {pdpChips.map((q) => (
                   <li key={q}>
                     <button
                       type="button"
                       onClick={() => applyQuery(q)}
-                      className="rounded-full border border-white/[0.08] bg-white/[0.04] px-2.5 py-1 text-left text-[11px] font-medium leading-snug text-[#c8d0dc] transition-colors hover:bg-white/[0.08]"
+                      className="rounded-full border border-stone-200/90 bg-stone-50 px-2.5 py-1 text-left text-[11px] font-medium leading-snug text-stone-700 transition-colors hover:bg-stone-100"
                     >
                       {q.length > 52 ? `${q.slice(0, 50)}…` : q}
                     </button>
@@ -237,64 +235,73 @@ export function SearchCommandOverlay({ open, onClose }: SearchCommandOverlayProp
                 ))}
               </ul>
 
-              <p className={cn(ui.eyebrow, "mb-2 mt-4 px-2")}>Warranty & policy</p>
+              <p className={cn(ui.home.eyebrow, "mb-2 mt-4 px-2")}>{t("searchOverlay.warrantyPolicy")}</p>
               <button
                 type="button"
                 onClick={() =>
                   applyQuery(
-                    `${pdpProduct.title} — ${pdpProduct.warrantyShort}. Returns: ${pdpProduct.returnPolicyShort}`,
+                    `${pdpLocalized!.title} — ${pdpLocalized!.warrantyShort}. ${
+                      locale === "pt-BR" ? "Devoluções" : "Returns"
+                    }: ${pdpLocalized!.returnPolicyShort}`,
                   )
                 }
-                className="mx-2 flex w-[calc(100%-1rem)] items-start gap-2 rounded-lg border border-white/[0.06] bg-white/[0.03] px-2 py-2 text-left text-[12px] text-[#aeb6ca] transition-colors hover:bg-white/[0.06]"
+                className="mx-2 flex w-[calc(100%-1rem)] items-start gap-2 rounded-lg border border-stone-200/90 bg-stone-50/90 px-2 py-2 text-left text-[12px] text-stone-600 transition-colors hover:bg-stone-100"
               >
-                <span className="line-clamp-3">{pdpProduct.warrantyShort}</span>
+                <span className="line-clamp-3">{pdpLocalized?.warrantyShort}</span>
               </button>
             </>
           ) : (
             <>
-              <p className={cn(ui.eyebrow, "mb-2 px-2")}>Trending now</p>
+              <p className={cn(ui.home.eyebrow, "mb-2 px-2")}>{t("searchOverlay.trendingNow")}</p>
               <ul className="space-y-0.5">
                 {trending.map((p) => (
                   <li key={p.id}>
                     <button
                       type="button"
                       onClick={() => applyQuery(p.title)}
-                      className="flex w-full items-start gap-2.5 rounded-lg px-2 py-2 text-left text-[13px] text-[#e8ecf4] transition-colors hover:bg-white/[0.06] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/20"
+                      className="flex w-full items-start gap-2.5 rounded-lg px-2 py-2 text-left text-[13px] text-stone-800 transition-colors hover:bg-stone-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-stone-400/40"
                     >
-                      <Package className="mt-0.5 size-4 shrink-0 text-[#8b96a8]" strokeWidth={2} />
+                      <Package className="mt-0.5 size-4 shrink-0 text-stone-500" strokeWidth={2} />
                       <span className="line-clamp-2 leading-snug">{p.title}</span>
                     </button>
                   </li>
                 ))}
               </ul>
 
-              <p className={cn(ui.eyebrow, "mb-2 mt-4 px-2")}>Categories</p>
+              <p className={cn(ui.home.eyebrow, "mb-2 mt-4 px-2")}>{t("searchOverlay.categoriesHint")}</p>
               <ul className="space-y-0.5">
-                {CATEGORIES.map((c) => (
+                {categories.map((c) => (
                   <li key={c.key}>
                     <button
                       type="button"
-                      onClick={() => applyQuery(`Browse ${c.label} — ${c.hint}`)}
-                      className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-left transition-colors hover:bg-white/[0.06] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/20"
+                      onClick={() =>
+                        applyQuery(
+                          formatMessage(getMessage(locale, "searchOverlay.browseCategory") ?? "", {
+                            label: c.label,
+                            hint: c.hint,
+                          }),
+                        )
+                      }
+                      className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-left transition-colors hover:bg-stone-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-stone-400/40"
                     >
-                      <Tag className="size-4 shrink-0 text-[#8b96a8]" strokeWidth={2} />
+                      <Tag className="size-4 shrink-0 text-stone-500" strokeWidth={2} />
                       <span>
-                        <span className="block text-[13px] font-medium text-[#e8ecf4]">{c.label}</span>
-                        <span className="block text-[11px] text-[#7d8898]">{c.hint}</span>
+                        <span className="block text-[13px] font-medium text-stone-900">{c.label}</span>
+                        <span className="block text-[11px] text-stone-500">{c.hint}</span>
                       </span>
                     </button>
                   </li>
                 ))}
               </ul>
 
-              <p className={cn(ui.eyebrow, "mb-2 mt-4 px-2")}>Quick searches</p>
+              <p className={cn(ui.home.eyebrow, "mb-2 mt-4 px-2")}>{t("searchOverlay.quickSearches")}</p>
               <ul className="flex flex-wrap gap-1.5 px-2">
-                {QUICK_SEARCHES.map((q) => (
+                {quickSearches.map((q) => (
                   <li key={q}>
                     <button
                       type="button"
                       onClick={() => applyQuery(q)}
-                      className="rounded-full border border-white/[0.08] bg-white/[0.04] px-2.5 py-1 text-[11px] font-medium text-[#c8d0dc] transition-colors hover:bg-white/[0.08]"
+                      className="rounded-full border border-stone-200/90 bg-stone-50 px-2.5 py-1 text-[11px] font-medium text-stone-700 transition-colors hover:bg-stone-100"
                     >
                       {q.length > 42 ? `${q.slice(0, 40)}…` : q}
                     </button>
@@ -305,24 +312,24 @@ export function SearchCommandOverlay({ open, onClose }: SearchCommandOverlayProp
           )}
         </div>
 
-        <div className="flex flex-col gap-2 border-t border-white/[0.08] px-3 py-2.5">
+        <div className="flex flex-col gap-2 border-t border-stone-200/90 px-3 py-2.5">
           <div className="flex justify-end">
             <button
               type="button"
               onClick={submitAndGo}
               className={cn(
-                "min-h-[36px] rounded-full bg-[#eef1f6] px-5 text-[12px] font-semibold text-[#0a0c0e] transition-colors hover:bg-white",
-                ui.focusRing,
+                "min-h-[36px] rounded-full bg-stone-900 px-5 text-[12px] font-semibold text-white transition-colors hover:bg-stone-800",
+                ui.home.focusRing,
                 "focus-visible:rounded-full",
               )}
             >
-              Search
+              {t("searchOverlay.searchButton")}
             </button>
           </div>
-          <p className="text-center text-[10px] text-[#5c6674]">
-            <kbd className="rounded border border-white/[0.1] bg-white/[0.05] px-1 py-0.5 font-mono text-[10px]">⌘</kbd>
-            <kbd className="ml-0.5 rounded border border-white/[0.1] bg-white/[0.05] px-1 py-0.5 font-mono text-[10px]">K</kbd>
-            <span className="ml-1">to open · Enter to search</span>
+          <p className="text-center text-[10px] text-stone-500">
+            <kbd className="rounded border border-stone-200/90 bg-stone-50 px-1 py-0.5 font-mono text-[10px] text-stone-700">⌘</kbd>
+            <kbd className="ml-0.5 rounded border border-stone-200/90 bg-stone-50 px-1 py-0.5 font-mono text-[10px] text-stone-700">K</kbd>
+            <span className="ml-1">{t("searchOverlay.shortcutHint")}</span>
           </p>
         </div>
       </div>
