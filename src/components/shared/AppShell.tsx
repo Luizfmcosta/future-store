@@ -101,6 +101,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           )}
         >
         <div
+          data-storefront-container
           className={cn(
             "@container relative mx-auto w-full max-w-[440px] overflow-visible",
             "h-[min(100dvh-2rem,880px)] max-h-[880px] md:h-[min(100dvh-4rem,880px)]",
@@ -154,11 +155,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     isFullscreen && "pt-12"
                   )}
                 >
-                  <TopBar />
+                  <Suspense fallback={null}>
+                    <TopBar />
+                  </Suspense>
                   <div className="relative min-h-0 flex flex-1 flex-col">
                     <Suspense
                       fallback={
-                        <main className="min-h-0 flex-1 overflow-y-auto bg-white px-4 pb-32 pt-5 sm:px-6 sm:pb-32 sm:pt-6">
+                        <main className="min-h-0 flex-1 overflow-y-auto scrollbar-none bg-white px-4 pb-32 pt-5 sm:px-6 sm:pb-32 sm:pt-6">
                           {children}
                         </main>
                       }
@@ -176,6 +179,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   className="pointer-events-none absolute inset-0 z-[100]"
                   aria-hidden
                 />
+                <RayXOverlay />
+                <RefineDrawer />
+                <CartDrawer />
+                <PresenterPanel />
               </StorefrontPortalProvider>
             </div>
           </div>
@@ -202,7 +209,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       <div
         className={cn(
-          "pointer-events-auto fixed right-4 z-[60] hidden md:flex items-center",
+          /* Above storefront portal (z-[100]) so external chrome stays on top of side sheets. */
+          "pointer-events-auto fixed right-4 z-[110] hidden md:flex items-center",
           "top-[max(1rem,env(safe-area-inset-top))]",
         )}
         role="group"
@@ -265,17 +273,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </div>
 
       <div
-        className="pointer-events-auto fixed right-4 z-[60] bottom-[max(1rem,env(safe-area-inset-bottom))]"
+        className="pointer-events-auto fixed right-4 z-[110] bottom-[max(1rem,env(safe-area-inset-bottom))]"
         role="group"
         aria-label={t("appShell.profileSwitcherGroup")}
       >
         <TopBarProfileCluster />
       </div>
 
-      <RayXOverlay />
-      <RefineDrawer />
-      <CartDrawer />
-      <PresenterPanel />
     </div>
   );
 }

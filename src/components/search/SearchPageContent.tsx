@@ -6,7 +6,6 @@ import { IntentSummary } from "@/components/search/IntentSummary";
 import { LearningWidget } from "@/components/search/LearningWidget";
 import { ResultsGrid } from "@/components/search/ResultsGrid";
 import { SearchAiPanel } from "@/components/search/SearchAiPanel";
-import { SearchModeTabs } from "@/components/search/SearchModeTabs";
 import { getSearchViewParam } from "@/components/search/SearchViewTabs";
 import { useLocale } from "@/context/LocaleContext";
 import { products } from "@/data/products";
@@ -78,16 +77,7 @@ export function SearchPageContent() {
   );
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
-      <div className="mt-4 mb-3 flex w-full shrink-0 justify-start">
-        {/*
-          Full width of the main column (screen margin comes from `StorefrontMain` only). Caps at 352px on wide frames.
-        */}
-        <div className="w-full max-w-[352px]">
-          <SearchModeTabs active={view} />
-        </div>
-      </div>
-      <div className="flex min-h-0 flex-1 flex-col gap-3">
+    <div className="flex min-h-0 flex-1 flex-col gap-3">
       <div
         id="search-panel-regular"
         role="tabpanel"
@@ -95,15 +85,17 @@ export function SearchPageContent() {
         hidden={view !== "results"}
         className="space-y-8 pb-12 sm:pb-16"
       >
-        <IntentSummary intent={intent} profile={profile} aiMode={aiMode} />
+        <IntentSummary intent={intent} profile={profile} aiMode={aiMode} resultsCount={displayResults.length} />
 
-        <section aria-labelledby="search-quick-heading" className="min-w-0">
-          <h2 id="search-quick-heading" className="mb-2 text-[11px] font-medium leading-snug tracking-tight text-stone-500">
-            {t("searchOverlay.quickSearches")}
+        <BestMatchCard product={best} profile={profile} aiMode={aiMode} />
+
+        <section aria-labelledby="search-refine-heading" className="min-w-0">
+          <h2 id="search-refine-heading" className="mb-2 text-[11px] font-medium leading-snug tracking-tight text-stone-500">
+            {t("searchOverlay.refineSearch")}
           </h2>
           <div className="-mx-4 min-w-0 sm:-mx-6">
             <ul
-              className="flex flex-nowrap gap-2 overflow-x-auto overscroll-x-contain px-4 pb-1 pt-0.5 [scrollbar-width:thin] sm:px-6"
+              className="flex flex-nowrap gap-2 overflow-x-auto overscroll-x-contain px-4 pb-1 pt-0.5 scrollbar-none sm:px-6"
               role="list"
             >
               {quickSearches.map((q) => (
@@ -120,8 +112,6 @@ export function SearchPageContent() {
             </ul>
           </div>
         </section>
-
-        <BestMatchCard product={best} profile={profile} aiMode={aiMode} />
 
         <ComparisonStrip items={compare} profile={profile} />
 
@@ -158,7 +148,6 @@ export function SearchPageContent() {
         className="flex min-h-0 flex-1 flex-col"
       >
         {view === "ai" ? <SearchAiPanel /> : null}
-      </div>
       </div>
     </div>
   );

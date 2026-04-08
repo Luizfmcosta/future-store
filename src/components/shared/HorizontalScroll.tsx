@@ -20,7 +20,7 @@ export function HorizontalScroll({ children, className }: HorizontalScrollProps)
           "flex w-full min-w-0 snap-x snap-mandatory gap-3 overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth touch-pan-x [-webkit-overflow-scrolling:touch]",
           /* Left inset for first card + snap alignment; right matches end spacer */
           "pl-5 pr-0 scroll-pl-5 scroll-pr-5 sm:pl-6 sm:scroll-pl-6 sm:scroll-pr-6",
-          "pb-1 pt-0.5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          "pb-1 pt-0.5 scrollbar-none"
         )}
       >
         {children}

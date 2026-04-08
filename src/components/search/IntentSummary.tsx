@@ -8,7 +8,7 @@ import { cn, formatBRL } from "@/lib/utils";
 import { useDemoStore } from "@/store/demoStore";
 import type { SearchIntent } from "@/types";
 import type { ShopperProfileId } from "@/types";
-import { Filter } from "lucide-react";
+import { ChevronDown, Filter, SlidersHorizontal } from "lucide-react";
 
 function IntentFilterButton({ className, ariaLabel }: { className?: string; ariaLabel: string }) {
   const setRefineOpen = useDemoStore((s) => s.setRefineOpen);
@@ -21,7 +21,7 @@ function IntentFilterButton({ className, ariaLabel }: { className?: string; aria
         "-m-1 flex size-7 shrink-0 items-center justify-center rounded-md text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-900",
         ui.home.focusRing,
         "focus-visible:rounded-md",
-        className
+        className,
       )}
       aria-label={ariaLabel}
     >
@@ -30,24 +30,61 @@ function IntentFilterButton({ className, ariaLabel }: { className?: string; aria
   );
 }
 
-/** Labeled control — matches `Card` height when used in a stretched flex row beside the results strip. */
-function IntentFilterLabeledButton({ ariaLabel, label }: { ariaLabel: string; label: string }) {
+const filterChipClass =
+  "inline-flex h-9 shrink-0 items-center gap-0.5 rounded-full border border-stone-200/90 bg-white px-3.5 text-[13px] font-medium text-stone-900 shadow-[0_1px_2px_rgba(15,23,42,0.06)] transition hover:bg-stone-50";
+
+/** Shop-style row: black circular control + scrollable white pills (below search headline). */
+function SerpFilterChipStrip({ resultsCount }: { resultsCount: number }) {
+  const t = useT();
   const setRefineOpen = useDemoStore((s) => s.setRefineOpen);
+  const open = () => setRefineOpen(true);
+
+  const chips: { msgKey: "filterChipCategory" | "filterChipOnSale" | "filterChipSort"; chevron: boolean }[] = [
+    { msgKey: "filterChipCategory", chevron: true },
+    { msgKey: "filterChipOnSale", chevron: false },
+    { msgKey: "filterChipSort", chevron: true },
+  ];
 
   return (
-    <button
-      type="button"
-      onClick={() => setRefineOpen(true)}
-      className={cn(
-        "inline-flex shrink-0 items-center justify-center gap-2 self-stretch rounded-2xl border border-stone-200/90 bg-white px-4 text-[13px] font-medium text-stone-800 shadow-[0_12px_40px_-28px_rgba(0,0,0,0.12)] transition-colors hover:bg-stone-50",
-        ui.home.focusRing,
-        "focus-visible:rounded-2xl",
-      )}
-      aria-label={ariaLabel}
-    >
-      <Filter className="size-3.5 shrink-0 text-stone-600" strokeWidth={2} aria-hidden />
-      {label}
-    </button>
+    <div className="-mx-4 min-w-0 sm:-mx-6">
+      <div
+        className="flex items-center gap-2 overflow-x-auto overscroll-x-contain px-4 pb-0.5 pt-0.5 scrollbar-none sm:px-6"
+        role="toolbar"
+        aria-label={t("searchSerp.filterBarAria")}
+      >
+        <button
+          type="button"
+          onClick={open}
+          className={cn(
+            "flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-black text-white shadow-[0_1px_3px_rgba(0,0,0,0.14)] transition hover:bg-stone-800",
+            ui.home.focusRing,
+            "focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+          )}
+          aria-label={t("searchSerp.filterIntentAria")}
+        >
+          <SlidersHorizontal className="size-[18px]" strokeWidth={2} aria-hidden />
+        </button>
+
+        {resultsCount > 0 ? (
+          <button type="button" onClick={open} className={cn(filterChipClass, ui.home.focusRing, "focus-visible:rounded-full")}>
+            {t("searchSerp.resultsCountPill", { count: resultsCount })}
+          </button>
+        ) : null}
+
+        {chips.map(({ msgKey, chevron }) => (
+          <button
+            key={msgKey}
+            type="button"
+            onClick={open}
+            className={cn(filterChipClass, ui.home.focusRing, "focus-visible:rounded-full")}
+            aria-label={t("searchSerp.filterIntentAria")}
+          >
+            {t(`searchSerp.${msgKey}`)}
+            {chevron ? <ChevronDown className="size-3.5 shrink-0 text-stone-500" strokeWidth={2} aria-hidden /> : null}
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -83,23 +120,24 @@ export function IntentSummary({
   intent,
   profile: _profile,
   aiMode,
+  resultsCount = 0,
 }: {
   intent: SearchIntent;
   profile: ShopperProfileId;
   aiMode: boolean;
+  /** Non-AI SERP: shown in the first filter chip (“N results”). */
+  resultsCount?: number;
 }) {
   const t = useT();
 
   if (!aiMode) {
+    const headline = intent.rawQuery.trim() || t("searchSerp.browseFallback");
     return (
-      <div className="flex w-full min-w-0 items-stretch gap-2 sm:gap-3">
-        <Card className="flex min-w-0 flex-1 items-center p-4">
-          <p className="min-w-0 flex-1 text-[13px] text-stone-600">
-            {t("searchSerp.resultsFor")}{" "}
-            <span className="font-medium text-stone-800">{intent.rawQuery.trim() || t("searchSerp.browseFallback")}</span>
-          </p>
-        </Card>
-        <IntentFilterLabeledButton ariaLabel={t("searchSerp.filterIntentAria")} label={t("searchSerp.filterIntentLabel")} />
+      <div className="flex w-full min-w-0 flex-col gap-3">
+        <h1 className="pt-8 text-pretty text-xl font-semibold leading-snug tracking-tight text-stone-900 sm:text-2xl">
+          {headline}
+        </h1>
+        <SerpFilterChipStrip resultsCount={resultsCount} />
       </div>
     );
   }

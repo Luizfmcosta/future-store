@@ -48,7 +48,7 @@ export function NarrativeChrome({
     >
       <SidebarHeader />
 
-      <div className="mt-5 flex min-h-0 flex-1 flex-col gap-3.5 overflow-y-auto overscroll-y-contain pb-6 pt-1 md:mt-6 md:gap-4 md:pb-7">
+      <div className="mt-5 flex min-h-0 flex-1 flex-col gap-3.5 overflow-y-auto overscroll-y-contain scrollbar-none pb-6 pt-1 md:mt-6 md:gap-4 md:pb-7">
         <div className="space-y-1.5">
           <SectionLabel>{t("narrative.shopper")}</SectionLabel>
           <ProfileSwitcher variant="sidebar" />

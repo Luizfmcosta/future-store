@@ -52,7 +52,7 @@ export default function ProductPage() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden scroll-smooth pb-4">
+      <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden scroll-smooth scrollbar-none pb-4">
         <div className="flex flex-col space-y-8">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-3">
             <button

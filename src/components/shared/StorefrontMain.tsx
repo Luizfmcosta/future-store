@@ -29,7 +29,7 @@ export function StorefrontMain({ children }: { children: React.ReactNode }) {
           : isHome
             ? "bg-white"
             : "bg-white px-4 sm:px-6",
-        isPdp ? "min-h-0 overflow-hidden" : "scroll-smooth overflow-y-auto",
+        isPdp ? "min-h-0 overflow-hidden" : "scroll-smooth overflow-y-auto scrollbar-none",
         isHome ? "pt-0" : mainTopForFloatingBar,
         isSearchAiMode
           ? "pb-0"

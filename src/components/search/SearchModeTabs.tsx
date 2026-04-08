@@ -1,32 +1,36 @@
 "use client";
 
 import type { SearchView } from "@/components/search/SearchViewTabs";
+import { useStorefrontMinWidth } from "@/lib/hooks/useStorefrontMinWidth";
 import { useT } from "@/lib/useT";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { MessageCircle, Search } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+
+/**
+ * Tailwind container `@md` default = 28rem (448px). Labels use `@md:*` so they follow the
+ * storefront frame width, not the browser viewport (wide screen + narrow preview was showing text).
+ */
+const STOREFRONT_LABEL_MIN_PX = 448;
 
 type SearchModeTabsProps = {
   active: SearchView;
   className?: string;
 };
 
-/** Same spring as AppShell width presets — smooth segment slide */
-const highlightSpring = {
+const thumbSpring = {
   type: "spring" as const,
   stiffness: 520,
   damping: 34,
   mass: 0.7,
 };
 
-/** Fixed height at every size — avoids layout shift when the storefront frame crosses breakpoints */
-const tabLink =
-  "relative z-10 flex h-8 min-h-8 min-w-0 flex-1 shrink-0 items-center justify-center rounded-full px-3 text-center text-[11px] font-medium leading-none outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-0";
-
 export function SearchModeTabs({ active, className }: SearchModeTabsProps) {
   const searchParams = useSearchParams();
   const t = useT();
+  const showLabels = useStorefrontMinWidth(STOREFRONT_LABEL_MIN_PX);
 
   const hrefFor = (view: SearchView) => {
     const p = new URLSearchParams(searchParams.toString());
@@ -39,54 +43,74 @@ export function SearchModeTabs({ active, className }: SearchModeTabsProps) {
     return s ? `/search?${s}` : "/search";
   };
 
+  const segmentClass = (isOn: boolean) =>
+    cn(
+      "relative z-10 flex h-full min-h-0 min-w-0 flex-1 items-center justify-center gap-0 rounded-full px-1 py-0 text-[12px] font-medium leading-none transition-colors duration-200 @md:gap-1.5 @md:px-1.5 @md:text-[13px]",
+      /* Colors align with `ui.home` label / card title (search lives on the same light storefront). */
+      isOn ? "font-semibold text-stone-900" : "text-stone-600",
+    );
+
+  const iconClass = (isOn: boolean) =>
+    cn("size-[15px] shrink-0 @md:size-[17px]", isOn ? "text-stone-900" : "text-stone-400");
+
   return (
-    <nav
-      role="tablist"
-      aria-label={t("searchSerp.modeAria")}
-      className={cn(
-        "relative flex w-full max-w-full items-stretch rounded-full bg-[#2a2a2a]/75 p-px shadow-[0_6px_26px_rgba(0,0,0,0.1)] backdrop-blur-xl",
-        className,
-      )}
-    >
-      <motion.div
-        className="pointer-events-none absolute left-px top-px bottom-px rounded-full bg-white/12 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]"
-        style={{ width: "calc((100% - 2px) / 2)" }}
-        initial={false}
-        animate={{ x: active === "results" ? 0 : "100%" }}
-        transition={highlightSpring}
-      />
-      <Link
-        href={hrefFor("results")}
-        scroll={false}
-        role="tab"
-        id="tab-regular-search"
-        aria-controls="search-panel-regular"
-        aria-selected={active === "results"}
-        tabIndex={active === "results" ? 0 : -1}
-        className={cn(
-          tabLink,
-          active === "results"
-            ? "text-white"
-            : "text-white/80 hover:bg-white/[0.08] hover:text-white",
-        )}
+    <div className={cn("flex w-full items-center justify-center px-0.5", className)}>
+      <nav
+        role="tablist"
+        aria-label={t("searchSerp.modeAria")}
+        className="relative w-full max-w-[10.5rem] @md:max-w-[19.5rem]"
       >
-        <span className="whitespace-nowrap">{t("searchSerp.modeRegular")}</span>
-      </Link>
-      <Link
-        href={hrefFor("ai")}
-        scroll={false}
-        role="tab"
-        id="tab-ai-mode"
-        aria-controls="search-panel-ai"
-        aria-selected={active === "ai"}
-        tabIndex={active === "ai" ? 0 : -1}
-        className={cn(
-          tabLink,
-          active === "ai" ? "text-white" : "text-white/80 hover:bg-white/[0.08] hover:text-white",
-        )}
-      >
-        <span className="whitespace-nowrap">{t("searchSerp.modeAi")}</span>
-      </Link>
-    </nav>
+        <div
+          className={cn(
+            "relative flex h-9 w-full items-stretch rounded-full p-0.5",
+            /* Same gray family as EyebrowPill / editorial chips (`ui.home.eyebrowPill`). */
+            "bg-[#f0f0f0] shadow-[inset_0_1px_0_rgba(0,0,0,0.05)]",
+          )}
+        >
+          <motion.div
+            aria-hidden
+            className="pointer-events-none absolute left-0.5 top-0.5 z-0 h-[calc(100%-4px)] rounded-full border border-stone-200/80 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.06)]"
+            style={{ width: "calc((100% - 4px) / 2)" }}
+            initial={false}
+            animate={{ x: active === "results" ? 0 : "100%" }}
+            transition={thumbSpring}
+          />
+          <Link
+            href={hrefFor("results")}
+            scroll={false}
+            role="tab"
+            id="tab-regular-search"
+            aria-label={showLabels ? undefined : t("searchSerp.modeRegular")}
+            aria-controls="search-panel-regular"
+            aria-selected={active === "results"}
+            tabIndex={active === "results" ? 0 : -1}
+            className={cn(
+              segmentClass(active === "results"),
+              "outline-none focus-visible:ring-2 focus-visible:ring-stone-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+            )}
+          >
+            <Search className={iconClass(active === "results")} strokeWidth={2} aria-hidden />
+            <span className="hidden truncate leading-none @md:inline">{t("searchSerp.modeRegular")}</span>
+          </Link>
+          <Link
+            href={hrefFor("ai")}
+            scroll={false}
+            role="tab"
+            id="tab-ai-mode"
+            aria-label={showLabels ? undefined : t("searchSerp.modeAi")}
+            aria-controls="search-panel-ai"
+            aria-selected={active === "ai"}
+            tabIndex={active === "ai" ? 0 : -1}
+            className={cn(
+              segmentClass(active === "ai"),
+              "outline-none focus-visible:ring-2 focus-visible:ring-stone-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+            )}
+          >
+            <MessageCircle className={iconClass(active === "ai")} strokeWidth={2} aria-hidden />
+            <span className="hidden truncate leading-none @md:inline">{t("searchSerp.modeAi")}</span>
+          </Link>
+        </div>
+      </nav>
+    </div>
   );
 }

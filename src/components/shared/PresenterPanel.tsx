@@ -1,5 +1,6 @@
 "use client";
 
+import { StorefrontOverlayPortal } from "@/components/shared/StorefrontOverlayPortal";
 import { getBestMatch } from "@/lib/recommendations";
 import { getSearchResults } from "@/lib/search";
 import { useRouter } from "next/navigation";
@@ -50,14 +51,15 @@ export function PresenterPanel() {
     "w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 py-2.5 text-left text-[13px] font-medium text-[#e8ecf6] transition hover:bg-white/[0.07]";
 
   return (
-    <AnimatePresence>
-      {open ? (
-        <motion.div
-          className="fixed inset-0 z-[80] flex items-end justify-center sm:items-center sm:p-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
+    <StorefrontOverlayPortal>
+      <AnimatePresence>
+        {open ? (
+          <motion.div
+            className="pointer-events-auto absolute inset-0 z-[80] flex items-end justify-center sm:items-center sm:p-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
           <button type="button" className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setOpen(false)} aria-label="Close" />
           <motion.div
             initial={{ y: 24, opacity: 0 }}
@@ -123,7 +125,8 @@ export function PresenterPanel() {
             <p className="mt-3 text-[11px] text-[#6f778a]">Shortcut: Ctrl+Shift+. · ⌘+Shift+.</p>
           </motion.div>
         </motion.div>
-      ) : null}
-    </AnimatePresence>
+        ) : null}
+      </AnimatePresence>
+    </StorefrontOverlayPortal>
   );
 }

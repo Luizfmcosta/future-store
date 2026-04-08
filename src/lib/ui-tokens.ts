@@ -28,7 +28,7 @@ export const ui = {
     /** Card / panel interior. */
     fillPanel: "rounded-[calc(1.5rem-1px)] bg-[#131314]/94 backdrop-blur-md",
     fillPillInner:
-      "relative flex h-9 min-h-9 w-full min-w-0 flex-nowrap items-stretch overflow-x-auto rounded-full bg-[#18181a]/95 p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-sm [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+      "relative flex h-9 min-h-9 w-full min-w-0 flex-nowrap items-stretch overflow-x-auto rounded-full bg-[#18181a]/95 p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-sm scrollbar-none",
 
     /**
      * Cluster fixo (seletor + card): um único vidro no contorno inteiro (substitui edgePanel opaco + fill empilhados).
@@ -40,7 +40,7 @@ export const ui = {
      * Faixa das pills dentro do cluster — só tint sutil, sem segundo backdrop-blur (o blur vem do `clusterShell`).
      */
     fillPillTrackCluster:
-      "relative flex h-9 min-h-9 w-full min-w-0 flex-nowrap items-stretch overflow-x-auto rounded-full bg-white/[0.05] p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+      "relative flex h-12 min-h-12 w-full min-w-0 flex-nowrap items-stretch overflow-x-auto rounded-full bg-white/[0.05] p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] scrollbar-none",
 
     /**
      * Presets de largura da vitrine (AppShell): mesmo vidro que `clusterShell`, formato pill.

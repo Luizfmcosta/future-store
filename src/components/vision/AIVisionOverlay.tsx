@@ -130,7 +130,7 @@ export function AIVisionOverlay() {
             </button>
           </header>
 
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-4 py-3 sm:px-5 sm:py-4">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain scrollbar-none px-4 py-3 sm:px-5 sm:py-4">
             <ul className="flex flex-col gap-2.5">
               {items.map((card, i) => {
                 const Icon = iconFor[card.type];

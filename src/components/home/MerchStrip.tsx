@@ -65,7 +65,7 @@ export function MerchStrip() {
       </motion.div>
 
       <div className="relative mt-5 min-w-0">
-        <div className="flex w-full min-w-0 snap-x snap-mandatory gap-3.5 overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth touch-pan-x pl-5 pr-0 scroll-pl-5 sm:pl-6 sm:scroll-pl-6 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex w-full min-w-0 snap-x snap-mandatory gap-3.5 overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth touch-pan-x scrollbar-none pl-5 pr-0 scroll-pl-5 sm:pl-6 sm:scroll-pl-6">
           {items.map((p, i) => {
             const heroSrc = hasMediaUrl(p.heroImage) ? p.heroImage : null;
             return (

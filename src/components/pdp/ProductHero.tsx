@@ -42,7 +42,7 @@ export function ProductHero({ product, profile }: { product: Product; profile: S
         </AskImageButton>
       </motion.div>
       {imgs.length > 1 ? (
-        <div className="flex gap-2 overflow-x-auto pb-1">
+        <div className="flex gap-2 overflow-x-auto scrollbar-none pb-1">
           {imgs.map((src, i) => (
             <button
               key={src + String(i)}

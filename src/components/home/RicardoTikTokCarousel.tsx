@@ -86,7 +86,7 @@ export function RicardoTikTokCarousel() {
             className={cn(
               "overflow-x-auto overflow-y-hidden overscroll-x-contain",
               "scroll-smooth touch-pan-x pl-5 pr-6 sm:pl-0 sm:pr-0",
-              "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
+              "scrollbar-none",
             )}
           >
             <div className="flex w-max snap-x snap-mandatory gap-3.5 sm:gap-5">
