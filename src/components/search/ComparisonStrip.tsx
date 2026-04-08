@@ -27,40 +27,61 @@ function ComparisonCard({ row }: { row: ComparisonCardModel }) {
   const { locale } = useLocale();
   const t = useT();
   const p = localizeProduct(row.product, locale);
+  const href = `/product/${row.product.id}`;
 
   return (
-    <Link href={`/product/${row.product.id}`} className="block h-full min-w-0">
-      <Card className="flex h-full flex-col overflow-hidden p-0 transition hover:border-stone-300/90 hover:shadow-[0_16px_40px_-24px_rgba(0,0,0,0.14)]">
-        <div className="relative aspect-[16/10] w-full bg-[#f5f5f5]">
-          {hasMediaUrl(row.product.heroImage) ? (
-            <Image
-              src={row.product.heroImage}
-              alt=""
-              fill
-              className="object-contain"
-              sizes="(max-width: 640px) 90vw, 320px"
-              unoptimized
-            />
-          ) : (
-            <EmptyMediaSlot className="absolute inset-0" variant="light" />
-          )}
+    <Card className="flex h-full min-w-0 flex-col overflow-hidden p-0 transition hover:border-stone-300/90 hover:shadow-[0_16px_40px_-24px_rgba(0,0,0,0.14)]">
+      <div className="relative aspect-[16/10] w-full shrink-0 bg-[#f5f5f5]">
+        {hasMediaUrl(row.product.heroImage) ? (
+          <Image
+            src={row.product.heroImage}
+            alt=""
+            fill
+            className="object-contain"
+            sizes="(max-width: 640px) 90vw, 320px"
+            unoptimized
+          />
+        ) : (
+          <EmptyMediaSlot className="absolute inset-0" variant="light" />
+        )}
+      </div>
+      <div className="flex min-h-0 flex-1 flex-col p-4">
+        <p className={cn(ui.home.eyebrow)}>{t(FIT_KEY_TO_MSG[row.fitKey])}</p>
+        <p className="mt-2 text-[15px] font-semibold leading-snug text-stone-900">{p.title}</p>
+        <ul className="mt-3 space-y-1.5 text-[12px] leading-relaxed text-stone-600">
+          {row.pros.map((x) => (
+            <li key={x}>+ {x}</li>
+          ))}
+          {row.tradeoffs.map((x) => (
+            <li key={x} className="text-stone-500">
+              Δ {x}
+            </li>
+          ))}
+        </ul>
+        <div className="mt-auto flex flex-col gap-2.5 pt-4 sm:flex-row">
+          <Link
+            href={href}
+            className={cn(
+              "flex h-10 min-h-0 flex-1 items-center justify-center rounded-full border border-stone-200/90 text-[12px] font-medium text-stone-800 transition-colors hover:border-stone-400 hover:bg-stone-50 sm:text-[13px]",
+              ui.home.focusRing,
+              "focus-visible:rounded-full",
+            )}
+          >
+            {t("common.explore")}
+          </Link>
+          <Link
+            href={href}
+            className={cn(
+              "flex h-10 min-h-0 flex-1 items-center justify-center rounded-full bg-[#1a1a1a] text-[12px] font-medium text-white transition-transform hover:scale-[1.02] active:scale-[0.98] sm:text-[13px]",
+              ui.home.focusRing,
+              "focus-visible:rounded-full",
+            )}
+          >
+            {t("common.buyNow")}
+          </Link>
         </div>
-        <div className="flex flex-1 flex-col p-4">
-          <p className={cn(ui.home.eyebrow)}>{t(FIT_KEY_TO_MSG[row.fitKey])}</p>
-          <p className="mt-2 text-[15px] font-semibold leading-snug text-stone-900">{p.title}</p>
-          <ul className="mt-3 space-y-1.5 text-[12px] leading-relaxed text-stone-600">
-            {row.pros.map((x) => (
-              <li key={x}>+ {x}</li>
-            ))}
-            {row.tradeoffs.map((x) => (
-              <li key={x} className="text-stone-500">
-                Δ {x}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </Card>
-    </Link>
+      </div>
+    </Card>
   );
 }
 

@@ -37,47 +37,69 @@ export function BestMatchCard({
       ? `${p.technology} · ${p.inches}" · ${p.installmentText}`
       : `${p.bestFor[0] ?? p.compatibilityTags[0]} · ${p.deliveryETA}`;
 
+  const href = `/product/${product.id}`;
+
   return (
     <motion.div layout>
-      <Link href={`/product/${product.id}`}>
-        <Card className="@container overflow-hidden p-0">
-          <div className="grid grid-cols-1 @md:grid-cols-[1.1fr_1fr] @md:items-stretch @md:gap-0">
-            <div className="relative w-full shrink-0 bg-[#f5f5f5] @md:min-h-[300px] @lg:min-h-[22rem]">
-              <div className="relative aspect-[16/10] w-full @md:absolute @md:inset-0 @md:aspect-auto @md:h-full @md:min-h-0">
-                {hasMediaUrl(product.heroImage) ? (
-                  <Image
-                    src={product.heroImage}
-                    alt=""
-                    fill
-                    className="object-contain object-center p-3 @md:p-4"
-                    sizes="(max-width: 900px) 100vw, min(100vw, 640px)"
-                    unoptimized
-                  />
-                ) : (
-                  <EmptyMediaSlot className="absolute inset-0" variant="light" />
-                )}
-              </div>
-            </div>
-            <div className="flex flex-col items-start justify-center border-t border-stone-200/90 p-5 @md:border-t-0 @md:border-l @md:p-7">
-              {aiMode ? (
-                <p className={cn(ui.home.eyebrow)}>{t("searchSerp.bestMatchAiEyebrow")}</p>
+      <Card className="@container overflow-hidden p-0">
+        <div className="grid grid-cols-1 @md:grid-cols-[1.1fr_1fr] @md:items-stretch @md:gap-0">
+          <div className="relative w-full shrink-0 bg-[#f5f5f5] @md:min-h-[300px] @lg:min-h-[22rem]">
+            <div className="relative aspect-[16/10] w-full @md:absolute @md:inset-0 @md:aspect-auto @md:h-full @md:min-h-0">
+              {hasMediaUrl(product.heroImage) ? (
+                <Image
+                  src={product.heroImage}
+                  alt=""
+                  fill
+                  className="object-contain object-center p-3 @md:p-4"
+                  sizes="(max-width: 900px) 100vw, min(100vw, 640px)"
+                  unoptimized
+                />
               ) : (
-                <p className={cn(ui.home.eyebrow)}>{t("searchSerp.bestMatchSerpEyebrow")}</p>
+                <EmptyMediaSlot className="absolute inset-0" variant="light" />
               )}
-              <h3 className="mt-2 text-lg font-semibold leading-tight text-stone-900 sm:text-xl">{p.title}</h3>
-              <p className="mt-3 text-[13px] leading-relaxed text-stone-600 sm:text-[14px]">
-                {profile === "marina" ? detailMarina : profile === "joana" ? detailJoana : detailRicardo}
-              </p>
-              <div className="mt-4 flex flex-wrap items-baseline gap-3 sm:mt-5">
-                <span className="text-xl font-semibold text-stone-900 sm:text-2xl">{formatBRL(p.price)}</span>
-                {p.oldPrice ? (
-                  <span className="text-sm text-stone-400 line-through">{formatBRL(p.oldPrice)}</span>
-                ) : null}
-              </div>
             </div>
           </div>
-        </Card>
-      </Link>
+          <div className="flex flex-col items-stretch justify-center border-t border-stone-200/90 p-5 @md:border-t-0 @md:border-l @md:p-7">
+            {aiMode ? (
+              <p className={cn(ui.home.eyebrow)}>{t("searchSerp.bestMatchAiEyebrow")}</p>
+            ) : (
+              <p className={cn(ui.home.eyebrow)}>{t("searchSerp.bestMatchSerpEyebrow")}</p>
+            )}
+            <h3 className="mt-2 text-lg font-semibold leading-tight text-stone-900 sm:text-xl">{p.title}</h3>
+            <p className="mt-3 text-[13px] leading-relaxed text-stone-600 sm:text-[14px]">
+              {profile === "marina" ? detailMarina : profile === "joana" ? detailJoana : detailRicardo}
+            </p>
+            <div className="mt-4 flex flex-wrap items-baseline gap-3 sm:mt-5">
+              <span className="text-xl font-semibold text-stone-900 sm:text-2xl">{formatBRL(p.price)}</span>
+              {p.oldPrice ? (
+                <span className="text-sm text-stone-400 line-through">{formatBRL(p.oldPrice)}</span>
+              ) : null}
+            </div>
+            <div className="mt-6 flex w-full max-w-md flex-col gap-2.5 sm:flex-row">
+              <Link
+                href={href}
+                className={cn(
+                  "flex h-10 min-h-0 flex-1 items-center justify-center rounded-full border border-stone-200/90 text-[12px] font-medium text-stone-800 transition-colors hover:border-stone-400 hover:bg-stone-50 sm:text-[13px]",
+                  ui.home.focusRing,
+                  "focus-visible:rounded-full",
+                )}
+              >
+                {t("common.explore")}
+              </Link>
+              <Link
+                href={href}
+                className={cn(
+                  "flex h-10 min-h-0 flex-1 items-center justify-center rounded-full bg-[#1a1a1a] text-[12px] font-medium text-white transition-transform hover:scale-[1.02] active:scale-[0.98] sm:text-[13px]",
+                  ui.home.focusRing,
+                  "focus-visible:rounded-full",
+                )}
+              >
+                {t("common.buyNow")}
+              </Link>
+            </div>
+          </div>
+        </div>
+      </Card>
     </motion.div>
   );
 }

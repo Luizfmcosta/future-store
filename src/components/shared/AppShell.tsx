@@ -6,10 +6,10 @@ import { PresenterPanel } from "@/components/shared/PresenterPanel";
 import { RayXOverlay } from "@/components/rayx/RayXOverlay";
 import { ResizeEdgeHandle } from "@/components/shared/ResizeEdgeHandle";
 import { FloatingSearchDock } from "@/components/search/FloatingSearchDock";
-import { SearchResultsFloatingTabs } from "@/components/search/SearchResultsFloatingTabs";
 import { StorefrontMain } from "@/components/shared/StorefrontMain";
 import { StorefrontPortalProvider } from "@/components/shared/StorefrontPortalContext";
-import { ProfileSwitcher } from "@/components/shared/ProfileSwitcher";
+import { TopBarProfileCluster } from "@/components/shared/ProfileSwitcher";
+import { ui } from "@/lib/ui-tokens";
 import { TopBar } from "@/components/shared/TopBar";
 import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
 import { useT } from "@/lib/useT";
@@ -43,7 +43,6 @@ async function exitFullscreenDoc() {
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isAboutRoute = pathname === "/about";
   const aiMode = useDemoStore((s) => s.aiMode);
   const setScreen = useDemoStore((s) => s.setCurrentScreen);
   const storefrontRef = useRef<HTMLDivElement>(null);
@@ -93,8 +92,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-dvh flex-col overflow-x-visible bg-[var(--app-canvas)] md:h-dvh md:max-h-dvh md:overflow-hidden">
       <div
         className={cn(
-          "flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-x-visible sm:p-6 md:p-8",
-          isAboutRoute ? "p-2" : "p-3",
+          "flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-x-visible p-3 sm:p-6 md:p-8",
         )}
       >
         <div
@@ -106,7 +104,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           className={cn(
             "@container relative mx-auto w-full max-w-[440px] overflow-visible",
             "h-[min(100dvh-2rem,880px)] max-h-[880px] md:h-[min(100dvh-4rem,880px)]",
-            "md:min-w-[340px] md:max-w-[960px]",
+            "md:min-w-[340px] md:max-w-[1280px]",
           )}
           style={
             isMd && !isFullscreen
@@ -170,9 +168,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     <AnimatePresence>{aiMode ? <AIVisionOverlay key="ai-vision" /> : null}</AnimatePresence>
                   </div>
                   <Suspense fallback={null}>
-                    <SearchResultsFloatingTabs />
-                  </Suspense>
-                  <Suspense fallback={null}>
                     <FloatingSearchDock />
                   </Suspense>
                 </div>
@@ -206,11 +201,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </div>
 
       <div
-        className="pointer-events-auto fixed left-4 top-4 z-[60] flex items-center"
+        className="pointer-events-auto fixed left-4 top-4 z-[60]"
         role="group"
         aria-label={t("appShell.profileSwitcherGroup")}
       >
-        <ProfileSwitcher variant="topBar" />
+        <TopBarProfileCluster />
       </div>
 
       <div
@@ -221,54 +216,59 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         role="group"
         aria-label={t("appShell.widthPresetsGroup")}
       >
-        <div className="relative inline-flex h-9 min-w-[5.25rem] rounded-full bg-zinc-900/95 p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-sm">
-          <motion.div
-            className="pointer-events-none absolute left-1 top-1 bottom-1 rounded-full bg-zinc-600 shadow-[0_1px_2px_rgba(0,0,0,0.35)]"
-            style={{ width: "calc((100% - 8px) / 2)" }}
-            initial={false}
-            animate={{
-              x: mobilePresetActive ? 0 : "100%",
-              opacity: presetHighlightVisible ? 1 : 0,
-              scale: presetHighlightVisible ? 1 : 0.92,
-            }}
-            transition={{
-              type: "spring",
-              stiffness: 520,
-              damping: 34,
-              mass: 0.7,
-              opacity: { duration: 0.2 },
-            }}
-          />
-          <button
-            type="button"
-            onClick={() => setStorefrontWidth(clampStorefrontWidth(STOREFRONT_WIDTH.presetMobile))}
-            className={cn(
-              "relative z-10 flex flex-1 items-center justify-center rounded-full outline-none transition-colors duration-200",
-              "focus-visible:ring-2 focus-visible:ring-zinc-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--app-canvas)]",
-              mobilePresetActive
-                ? "text-white"
-                : "text-zinc-400 hover:text-zinc-200",
-            )}
-            aria-label={t("appShell.widthPresetMobile")}
-            aria-pressed={mobilePresetActive}
-          >
-            <Smartphone className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
-          </button>
-          <button
-            type="button"
-            onClick={() => setStorefrontWidth(clampStorefrontWidth(STOREFRONT_WIDTH.presetDesktop))}
-            className={cn(
-              "relative z-10 flex flex-1 items-center justify-center rounded-full outline-none transition-colors duration-200",
-              "focus-visible:ring-2 focus-visible:ring-zinc-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--app-canvas)]",
-              desktopPresetActive
-                ? "text-white"
-                : "text-zinc-400 hover:text-zinc-200",
-            )}
-            aria-label={t("appShell.widthPresetDesktop")}
-            aria-pressed={desktopPresetActive}
-          >
-            <Monitor className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
-          </button>
+        <div className={cn(ui.glassChrome.widthPresetShell, "inline-flex min-w-[5.25rem]")}>
+          <div className={ui.glassChrome.widthPresetTrack}>
+            <motion.div
+              className={cn(
+                "pointer-events-none absolute left-1 top-1 bottom-1 rounded-full",
+                ui.floatingChrome.presetKnob,
+              )}
+              style={{ width: "calc((100% - 8px) / 2)" }}
+              initial={false}
+              animate={{
+                x: mobilePresetActive ? 0 : "100%",
+                opacity: presetHighlightVisible ? 1 : 0,
+                scale: presetHighlightVisible ? 1 : 0.92,
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 520,
+                damping: 34,
+                mass: 0.7,
+                opacity: { duration: 0.2 },
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setStorefrontWidth(clampStorefrontWidth(STOREFRONT_WIDTH.presetMobile))}
+              className={cn(
+                "relative z-10 flex flex-1 items-center justify-center rounded-full outline-none transition-colors duration-200",
+                ui.floatingChrome.segmentFocus,
+                mobilePresetActive
+                  ? "text-white"
+                  : ui.floatingChrome.segmentInactive,
+              )}
+              aria-label={t("appShell.widthPresetMobile")}
+              aria-pressed={mobilePresetActive}
+            >
+              <Smartphone className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
+            </button>
+            <button
+              type="button"
+              onClick={() => setStorefrontWidth(clampStorefrontWidth(STOREFRONT_WIDTH.presetDesktop))}
+              className={cn(
+                "relative z-10 flex flex-1 items-center justify-center rounded-full outline-none transition-colors duration-200",
+                ui.floatingChrome.segmentFocus,
+                desktopPresetActive
+                  ? "text-white"
+                  : ui.floatingChrome.segmentInactive,
+              )}
+              aria-label={t("appShell.widthPresetDesktop")}
+              aria-pressed={desktopPresetActive}
+            >
+              <Monitor className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
+            </button>
+          </div>
         </div>
       </div>
 

@@ -20,8 +20,9 @@ const highlightSpring = {
   mass: 0.7,
 };
 
+/** Fixed height at every size — avoids layout shift when the storefront frame crosses breakpoints */
 const tabLink =
-  "relative z-10 flex min-h-[1.75rem] min-w-0 flex-1 shrink-0 items-center justify-center rounded-full px-3 py-0.5 text-center text-[11px] font-medium leading-none outline-none transition-colors duration-200 sm:min-h-8 sm:px-4 sm:py-1 sm:text-[12px] focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-0";
+  "relative z-10 flex h-8 min-h-8 min-w-0 flex-1 shrink-0 items-center justify-center rounded-full px-3 text-center text-[11px] font-medium leading-none outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-0";
 
 export function SearchModeTabs({ active, className }: SearchModeTabsProps) {
   const searchParams = useSearchParams();
@@ -43,13 +44,13 @@ export function SearchModeTabs({ active, className }: SearchModeTabsProps) {
       role="tablist"
       aria-label={t("searchSerp.modeAria")}
       className={cn(
-        "relative inline-flex min-h-8 w-max max-w-[min(100%,32rem)] items-stretch rounded-full bg-[#2a2a2a]/75 p-0.5 shadow-[0_8px_32px_rgba(0,0,0,0.1)] backdrop-blur-xl",
+        "relative flex w-full max-w-full items-stretch rounded-full bg-[#2a2a2a]/75 p-px shadow-[0_6px_26px_rgba(0,0,0,0.1)] backdrop-blur-xl",
         className,
       )}
     >
       <motion.div
-        className="pointer-events-none absolute left-0.5 top-0.5 bottom-0.5 rounded-full bg-white/12 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]"
-        style={{ width: "calc((100% - 4px) / 2)" }}
+        className="pointer-events-none absolute left-px top-px bottom-px rounded-full bg-white/12 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]"
+        style={{ width: "calc((100% - 2px) / 2)" }}
         initial={false}
         animate={{ x: active === "results" ? 0 : "100%" }}
         transition={highlightSpring}

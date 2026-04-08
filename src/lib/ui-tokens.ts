@@ -15,6 +15,52 @@ export const ui = {
   /** Default 1px edge on dark chrome */
   hairline: "border border-white/[0.06]",
 
+  /**
+   * Hairline gradient: só cinzas neutros (R≈G≈B), escuro → mais escuro — equilibrado, sem “sumir”.
+   */
+  glassChrome: {
+    edgePill:
+      "bg-gradient-to-b from-[#2a2a2c] via-[#1e1e20] to-[#121214] p-px shadow-[0_8px_28px_rgba(0,0,0,0.22)]",
+    edgePanel:
+      "bg-gradient-to-b from-[#2a2a2c] via-[#1e1e20] to-[#121214] p-px shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)]",
+    /** Track inside gradient ring (profile switcher, width toggle). */
+    fillPill: "rounded-full bg-[#141415]/92 backdrop-blur-md",
+    /** Card / panel interior. */
+    fillPanel: "rounded-[calc(1.5rem-1px)] bg-[#131314]/94 backdrop-blur-md",
+    fillPillInner:
+      "relative flex h-9 min-h-9 w-full min-w-0 flex-nowrap items-stretch overflow-x-auto rounded-full bg-[#18181a]/95 p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-sm [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+
+    /**
+     * Cluster fixo (seletor + card): um único vidro no contorno inteiro (substitui edgePanel opaco + fill empilhados).
+     * Presets de largura usam `widthPresetShell` (mesmo vidro, formato pill).
+     */
+    clusterShell:
+      "overflow-hidden rounded-3xl border border-white/[0.11] bg-[#08080a]/30 backdrop-blur-2xl shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)]",
+    /**
+     * Faixa das pills dentro do cluster — só tint sutil, sem segundo backdrop-blur (o blur vem do `clusterShell`).
+     */
+    fillPillTrackCluster:
+      "relative flex h-9 min-h-9 w-full min-w-0 flex-nowrap items-stretch overflow-x-auto rounded-full bg-white/[0.05] p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+
+    /**
+     * Presets de largura da vitrine (AppShell): mesmo vidro que `clusterShell`, formato pill.
+     */
+    widthPresetShell:
+      "overflow-hidden rounded-full border border-white/[0.11] bg-[#08080a]/30 backdrop-blur-2xl shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)]",
+    widthPresetTrack:
+      "relative inline-flex h-9 min-w-[5.25rem] w-full items-stretch overflow-hidden rounded-full bg-white/[0.05] p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]",
+  },
+
+  /** Botões flutuantes fora da vitrine (perfil, largura) — cinza neutro, sem tom azulado do zinc. */
+  floatingChrome: {
+    segmentActive:
+      "bg-[#3d3d40] text-white shadow-[0_1px_2px_rgba(0,0,0,0.38)]",
+    segmentInactive: "text-[#b8b8bc] hover:text-[#f0f0f1]",
+    segmentFocus:
+      "focus-visible:ring-2 focus-visible:ring-[#5a5a5d]/75 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--app-canvas)]",
+    presetKnob: "bg-[#3d3d40] shadow-[0_1px_2px_rgba(0,0,0,0.38)]",
+  },
+
   /** Secondary controls (ghost buttons, tertiary chips) */
   surfaceInset: "border border-white/[0.06]",
 
@@ -31,15 +77,20 @@ export const ui = {
    */
   floatingSearchBarRowPad: "pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2",
 
-  /** 13px / leading normal / 70% white — floating search pill + modo IA (incl. `md:text-[13px]` vs `Textarea`). */
-  floatingSearchPillText: "text-[13px] leading-normal text-white/70 md:text-[13px]",
+  /** 13px — floating search pill + IA (texto sobre vidro claro). */
+  floatingSearchPillText: "text-[13px] leading-normal text-stone-600 md:text-[13px]",
 
   /**
-   * Bottom floating search pill — matches `FloatingSearchDock` trigger (no search icon).
-   * AI follow-up adds send on the right inside the same shell.
+   * Bottom floating search pill — vidro branco leve (`FloatingSearchDock` + `SearchAiPanel`).
    */
   floatingSearchPill:
-    "flex w-full max-w-xl min-h-10 items-center gap-2.5 rounded-full border-0 bg-[#2a2a2a]/75 px-3.5 text-left shadow-[0_8px_32px_rgba(0,0,0,0.25)] backdrop-blur-xl transition-colors hover:bg-[#2a2a2a]/85 focus-within:bg-[#2a2a2a]/85",
+    "flex w-full max-w-xl min-h-10 items-center gap-2.5 rounded-full border border-stone-200/60 bg-white/86 backdrop-blur-md px-3.5 text-left shadow-[0_8px_28px_rgba(15,23,42,0.08)] transition-colors hover:bg-white/92 focus-within:bg-white/94",
+
+  /**
+   * Prompt estilo ChatGPT: coluna (textarea em cima, barra de ações embaixo), vidro leve (blur + alpha).
+   */
+  promptInputKit:
+    "flex w-full cursor-text flex-col gap-0 rounded-[1.75rem] border border-stone-200/60 bg-white/86 p-3 shadow-[0_8px_28px_rgba(15,23,42,0.08)] backdrop-blur-md backdrop-saturate-150",
 
   narrativeSectionLabel: (light: boolean) =>
     light

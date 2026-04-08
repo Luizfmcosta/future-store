@@ -8,21 +8,20 @@ import {
   ChatContainerScrollAnchor,
 } from "@/components/ui/chat-container";
 import { Message, MessageAvatar, MessageContent, MessageMeta } from "@/components/ui/message";
-import {
-  PromptInput,
-  PromptInputActions,
-  PromptInputTextarea,
-} from "@/components/ui/prompt-input";
+import { PromptSuggestionRow } from "@/components/search/PromptSuggestionRow";
+import { PromptInputChatToolbar } from "@/components/search/PromptInputChatToolbar";
+import { PromptInput, PromptInputTextarea } from "@/components/ui/prompt-input";
 import { useLocale } from "@/context/LocaleContext";
 import { assistantReplyForQuery, type AssistantSource } from "@/lib/chatAssistant";
+import { getPromptSuggestionPool } from "@/lib/promptSuggestions";
 import { ui } from "@/lib/ui-tokens";
 import { useT } from "@/lib/useT";
 import { cn } from "@/lib/utils";
 import { useDemoStore } from "@/store/demoStore";
 import type { Product } from "@/types";
-import { ArrowUp, Bot } from "lucide-react";
+import { Bot } from "lucide-react";
 import { useStickToBottomContext } from "use-stick-to-bottom";
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 type Msg =
   | { role: "user"; content: string }
@@ -83,16 +82,18 @@ function ReasoningLoading() {
 export function SearchAiPanel() {
   const { locale } = useLocale();
   const t = useT();
+  const promptFileInputId = useId();
   const profile = useDemoStore((s) => s.activeProfile);
   const currentQuery = useDemoStore((s) => s.currentQuery);
 
   const [messages, setMessages] = useState<Msg[]>([]);
   const [draft, setDraft] = useState("");
   const [replying, setReplying] = useState(false);
-  const [composerExpanded, setComposerExpanded] = useState(false);
   const [scrollBump, setScrollBump] = useState(0);
   const lastSeedKeyRef = useRef<string | null>(null);
   const replyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const suggestionPool = useMemo(() => getPromptSuggestionPool(locale), [locale]);
 
   const threadKey =
     currentQuery.trim().length > 0 ? `${currentQuery.trim()}|${profile}|${locale}` : "empty";
@@ -100,18 +101,6 @@ export function SearchAiPanel() {
   const bumpScroll = useCallback(() => {
     setScrollBump((n) => n + 1);
   }, []);
-
-  useLayoutEffect(() => {
-    const el = document.querySelector<HTMLTextAreaElement>("[data-ai-followup-input]");
-    if (!el) return;
-    const sync = () => {
-      setComposerExpanded(el.offsetHeight > 42);
-    };
-    sync();
-    const ro = new ResizeObserver(sync);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [draft, replying]);
 
   useEffect(() => {
     const q = currentQuery.trim();
@@ -166,7 +155,7 @@ export function SearchAiPanel() {
           className="h-full min-h-[min(36dvh,280px)]"
           stickInitial={false}
         >
-          <ChatContainerContent className="gap-8 pt-6 pb-[calc(4.5rem+env(safe-area-inset-bottom,0px))]">
+          <ChatContainerContent className="gap-8 pt-6 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))]">
             <ScrollToBottomOnBump bump={scrollBump} threadKey={threadKey} />
             {messages.length === 0 ? (
               <p className="text-center text-[14px] leading-relaxed tracking-tight text-stone-600 sm:text-[15px]">
@@ -215,58 +204,45 @@ export function SearchAiPanel() {
         )}
       >
         <div className="pointer-events-auto w-full max-w-xl px-0">
+          <PromptSuggestionRow
+            query={draft}
+            pool={suggestionPool}
+            onSelect={setDraft}
+            disabled={replying}
+          />
           <PromptInput
             value={draft}
             onValueChange={setDraft}
             onSubmit={onSend}
-            maxHeight={200}
+            maxHeight={160}
             disabled={replying}
             className={cn(
-              "cursor-text border-0 border-transparent bg-transparent p-0 shadow-none ring-0 outline-none rounded-none",
+              ui.promptInputKit,
               "transition-opacity duration-200",
               replying && "pointer-events-none opacity-60",
             )}
           >
-            <div
+            <PromptInputTextarea
+              data-ai-followup-input=""
+              data-storefront-search-field=""
+              placeholder={replying ? t("searchAiPanel.placeholderReasoning") : t("searchAiPanel.placeholderAsk")}
+              disabled={replying}
               className={cn(
-                ui.floatingSearchPill,
-                !composerExpanded && "h-10",
-                composerExpanded ? "items-end" : "items-center",
-                "overflow-hidden",
+                ui.floatingSearchPillText,
+                "max-h-[160px] text-stone-800 placeholder:text-stone-400",
               )}
-            >
-              <PromptInputTextarea
-                data-ai-followup-input=""
-                data-storefront-search-field=""
-                placeholder={replying ? t("searchAiPanel.placeholderReasoning") : t("searchAiPanel.placeholderAsk")}
-                disabled={replying}
-                className={cn(
-                  ui.floatingSearchPillText,
-                  "min-h-10 flex-1 border-0 bg-transparent py-2 pl-0 pr-1 placeholder:text-white/70 focus-visible:ring-0 focus-visible:ring-offset-0",
-                )}
-                aria-label={t("searchAiPanel.ariaMessage")}
-              />
-              <PromptInputActions className="shrink-0 pr-0">
-                <button
-                  type="button"
-                  disabled={replying}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onSend();
-                  }}
-                  className={cn(
-                    "flex size-7 shrink-0 items-center justify-center rounded-full bg-white text-stone-900",
-                    "transition-[transform,background-color] hover:bg-white/90 active:scale-[0.98]",
-                    "disabled:pointer-events-none disabled:opacity-40",
-                    ui.home.focusRing,
-                    "focus-visible:rounded-full",
-                  )}
-                  aria-label={t("searchAiPanel.sendAria")}
-                >
-                  <ArrowUp className="size-4 text-stone-900" strokeWidth={2.5} aria-hidden />
-                </button>
-              </PromptInputActions>
-            </div>
+              aria-label={t("searchAiPanel.ariaMessage")}
+            />
+            <PromptInputChatToolbar
+              fileInputId={promptFileInputId}
+              disabled={replying}
+              onSend={onSend}
+              sendDisabled={!draft.trim()}
+              sendLabel={t("searchAiPanel.sendAria")}
+              onMicClick={() => {
+                /* demo: entrada por voz */
+              }}
+            />
           </PromptInput>
         </div>
       </div>

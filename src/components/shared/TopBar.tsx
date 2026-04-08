@@ -1,9 +1,11 @@
 "use client";
 
+import { SHOPPER_PORTRAIT } from "@/lib/shopperPortraits";
 import { cn } from "@/lib/utils";
 import { useT } from "@/lib/useT";
 import { useDemoStore } from "@/store/demoStore";
 import { ShoppingBag } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -16,13 +18,12 @@ type TopBarProps = {
 const HERO_LOGO_BAND_PX = 56;
 
 /**
- * Home + About: dark hero under the bar; logo inverts while hero spans the band.
+ * Home: dark hero under the bar; logo inverts while hero spans the band.
  * Other routes: light surfaces → gray logo (#232526 mask).
  */
 function useTopBarLogoOnDark(pathname: string) {
   const isHome = pathname === "/";
-  const isAbout = pathname === "/about";
-  const measureDarkHero = isHome || isAbout;
+  const measureDarkHero = isHome;
   const [onDark, setOnDark] = useState(measureDarkHero);
 
   const measure = useCallback(() => {
@@ -30,8 +31,7 @@ function useTopBarLogoOnDark(pathname: string) {
       setOnDark(false);
       return;
     }
-    const id = isHome ? "home-hero" : "about-hero";
-    const el = document.getElementById(id);
+    const el = document.getElementById("home-hero");
     if (!el) {
       /* Hero not mounted yet (or strict mode) — keep light logo off dark until we know; default to inverted on hero routes. */
       if (measureDarkHero) setOnDark(true);
@@ -39,7 +39,7 @@ function useTopBarLogoOnDark(pathname: string) {
     }
     const { bottom } = el.getBoundingClientRect();
     setOnDark(bottom > HERO_LOGO_BAND_PX);
-  }, [measureDarkHero, isHome, isAbout]);
+  }, [measureDarkHero]);
 
   useEffect(() => {
     if (!measureDarkHero) {
@@ -65,6 +65,7 @@ function useTopBarLogoOnDark(pathname: string) {
 
 export function TopBar({ className }: TopBarProps) {
   const pathname = usePathname();
+  const activeProfile = useDemoStore((s) => s.activeProfile);
   const openCart = useDemoStore((s) => s.openCart);
   const cartLineId = useDemoStore((s) => s.cartLineId);
   const logoOnDark = useTopBarLogoOnDark(pathname);
@@ -72,7 +73,7 @@ export function TopBar({ className }: TopBarProps) {
 
   return (
     <header className={cn("absolute left-0 right-0 top-0 z-40", className)}>
-      <div className="flex w-full items-center justify-between px-4 py-3.5 sm:px-5 sm:py-4">
+      <div className="flex w-full items-center justify-between px-4 py-3.5 sm:px-6 sm:py-4">
         <Link
           href="/"
           aria-label={t("topBar.ariaHome")}
@@ -106,20 +107,21 @@ export function TopBar({ className }: TopBarProps) {
         </Link>
 
         <div className="flex items-center gap-1.5">
-          <nav className="flex items-center rounded-full bg-[#2a2a2a]/75 backdrop-blur-xl">
-            <Link
-              href="/about"
-              aria-current={pathname === "/about" ? "page" : undefined}
-              className={cn(
-                "inline-flex h-9 items-center rounded-full px-4 text-[12px] font-medium leading-none transition-colors duration-200 sm:text-[13px]",
-                pathname === "/about"
-                  ? "bg-white/12 text-white"
-                  : "text-white/80 hover:bg-white/[0.08] hover:text-white",
-              )}
+          {activeProfile === "marina" ? (
+            <span
+              className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full bg-[#1a1a1a] ring-1 ring-white/15"
+              aria-hidden
             >
-              {t("common.about")}
-            </Link>
-          </nav>
+              <Image
+                src={SHOPPER_PORTRAIT.marina}
+                alt=""
+                width={36}
+                height={36}
+                className="size-full object-cover"
+                unoptimized
+              />
+            </span>
+          ) : null}
 
           <button
             type="button"

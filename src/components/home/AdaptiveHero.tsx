@@ -56,7 +56,7 @@ export function AdaptiveHero() {
           variants={{ hidden: {}, show: stagger }}
           initial="hidden"
           animate="show"
-          className="relative z-10 flex w-full flex-col items-center px-4 pb-36 text-center @min-[480px]:px-8"
+          className="relative z-10 flex w-full -translate-y-8 flex-col items-center px-4 pb-36 text-center @min-[480px]:px-8"
         >
           <motion.p
             variants={child}

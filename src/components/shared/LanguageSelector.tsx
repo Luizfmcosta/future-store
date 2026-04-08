@@ -6,7 +6,7 @@ import { useT } from "@/lib/useT";
 import { cn } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
 
-const LOCALES: AppLocale[] = ["pt-BR", "en-US"];
+const LOCALES: AppLocale[] = ["en-US", "pt-BR"];
 
 export function LanguageSelector({ className }: { className?: string }) {
   const { locale, setLocale } = useLocale();
