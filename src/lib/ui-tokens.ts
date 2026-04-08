@@ -105,8 +105,12 @@ export const ui = {
 
   /** Warm editorial home (Saki-like light storefront) */
   home: {
-    /** Section kicker / card label on white — prefer over all-caps eyebrows */
-    eyebrow: "text-[13px] font-medium leading-snug text-stone-600 tracking-normal",
+    /**
+     * Pill kicker on white — same as `<EyebrowPill />` (e.g. ContinueJourney “A strong foundation”).
+     * Prefer the component; this string is the single source of truth for class names.
+     */
+    eyebrowPill:
+      "inline-flex w-fit items-center rounded-full bg-[#f0f0f0] px-3 py-1 text-[11px] font-normal tracking-[0.1px] text-[#666]",
     sectionTitle: "text-lg font-semibold leading-tight tracking-tight text-stone-900 sm:text-xl",
     label: "text-[12px] font-medium text-stone-600",
     cardTitle: "text-[14px] font-semibold leading-snug text-stone-900",

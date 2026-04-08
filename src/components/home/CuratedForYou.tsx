@@ -28,13 +28,20 @@ function shortTitle(p: Product) {
 function MarinaCompareCard({
   product,
   tierLabel,
+  displayTitle,
+  displaySubline,
+  displayBlurb,
 }: {
   product: Product;
   tierLabel: string;
+  displayTitle?: string;
+  displaySubline?: string;
+  displayBlurb?: string;
 }) {
   const t = useT();
   const heroSrc = hasMediaUrl(product.heroImage) ? product.heroImage : null;
-  const blurb = product.bestFor[0] ?? product.reviewStrengths[0];
+  const title = displayTitle ?? shortTitle(product);
+  const blurb = displayBlurb ?? (product.bestFor[0] ?? product.reviewStrengths[0]);
 
   return (
     <motion.article
@@ -63,8 +70,11 @@ function MarinaCompareCard({
       <div className="flex min-h-0 flex-1 flex-col gap-4 p-3.5 sm:p-4">
         <div className="min-w-0 space-y-2">
           <h3 className="text-[15px] font-semibold leading-snug text-[#1a1a1a] sm:text-[16px]">
-            {shortTitle(product)}
+            {title}
           </h3>
+          {displaySubline ? (
+            <p className="text-[12px] font-medium leading-snug text-stone-500 sm:text-[13px]">{displaySubline}</p>
+          ) : null}
           <p className="text-[15px] font-semibold tabular-nums tracking-tight text-stone-900 sm:text-[16px]">
             {formatBRL(product.price)}
           </p>
@@ -226,6 +236,27 @@ export function CuratedForYou() {
                     : i === 0
                       ? t("curated.marinaTierA")
                       : t("curated.marinaTierB")
+                }
+                displayTitle={
+                  profile === "marina"
+                    ? i === 0
+                      ? t("curated.marinaCardATitle")
+                      : t("curated.marinaCardBTitle")
+                    : undefined
+                }
+                displaySubline={
+                  profile === "marina"
+                    ? i === 0
+                      ? t("curated.marinaCardASub")
+                      : t("curated.marinaCardBSub")
+                    : undefined
+                }
+                displayBlurb={
+                  profile === "marina"
+                    ? i === 0
+                      ? t("curated.marinaCardABlurb")
+                      : t("curated.marinaCardBBlurb")
+                    : undefined
                 }
               />
             ))}

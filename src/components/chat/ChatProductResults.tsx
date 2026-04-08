@@ -2,6 +2,7 @@
 
 import { Card } from "@/components/shared/Card";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
+import { EyebrowPill } from "@/components/shared/EyebrowPill";
 import { useLocale } from "@/context/LocaleContext";
 import { localizeProduct } from "@/lib/product-i18n";
 import { useT } from "@/lib/useT";
@@ -27,9 +28,7 @@ export function ChatProductResults({
 
   return (
     <div className="w-full min-w-0 space-y-2">
-      <p id="chat-top-matches-heading" className={cn(ui.home.eyebrow)}>
-        {t("searchAiPanel.topMatches")}
-      </p>
+      <EyebrowPill id="chat-top-matches-heading">{t("searchAiPanel.topMatches")}</EyebrowPill>
       <div
         role="group"
         aria-labelledby="chat-top-matches-heading"

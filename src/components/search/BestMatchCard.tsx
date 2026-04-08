@@ -2,6 +2,7 @@
 
 import { Card } from "@/components/shared/Card";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
+import { EyebrowPill } from "@/components/shared/EyebrowPill";
 import { useLocale } from "@/context/LocaleContext";
 import { localizeProduct } from "@/lib/product-i18n";
 import { useT } from "@/lib/useT";
@@ -61,9 +62,9 @@ export function BestMatchCard({
           </div>
           <div className="flex flex-col items-stretch justify-center border-t border-stone-200/90 p-5 @md:border-t-0 @md:border-l @md:p-7">
             {aiMode ? (
-              <p className={cn(ui.home.eyebrow)}>{t("searchSerp.bestMatchAiEyebrow")}</p>
+              <EyebrowPill>{t("searchSerp.bestMatchAiEyebrow")}</EyebrowPill>
             ) : (
-              <p className={cn(ui.home.eyebrow)}>{t("searchSerp.bestMatchSerpEyebrow")}</p>
+              <EyebrowPill>{t("searchSerp.bestMatchSerpEyebrow")}</EyebrowPill>
             )}
             <h3 className="mt-2 text-lg font-semibold leading-tight text-stone-900 sm:text-xl">{p.title}</h3>
             <p className="mt-3 text-[13px] leading-relaxed text-stone-600 sm:text-[14px]">
