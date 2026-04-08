@@ -7,9 +7,9 @@ import { cn, formatBRL } from "@/lib/utils";
 import { useDemoStore } from "@/store/demoStore";
 import type { SearchIntent } from "@/types";
 import type { ShopperProfileId } from "@/types";
-import { Pencil } from "lucide-react";
+import { Filter } from "lucide-react";
 
-function IntentEditButton({ className, ariaLabel }: { className?: string; ariaLabel: string }) {
+function IntentFilterButton({ className, ariaLabel }: { className?: string; ariaLabel: string }) {
   const setRefineOpen = useDemoStore((s) => s.setRefineOpen);
 
   return (
@@ -24,7 +24,28 @@ function IntentEditButton({ className, ariaLabel }: { className?: string; ariaLa
       )}
       aria-label={ariaLabel}
     >
-      <Pencil className="size-3.5" strokeWidth={2} aria-hidden />
+      <Filter className="size-3.5" strokeWidth={2} aria-hidden />
+    </button>
+  );
+}
+
+/** Labeled control — matches `Card` height when used in a stretched flex row beside the results strip. */
+function IntentFilterLabeledButton({ ariaLabel, label }: { ariaLabel: string; label: string }) {
+  const setRefineOpen = useDemoStore((s) => s.setRefineOpen);
+
+  return (
+    <button
+      type="button"
+      onClick={() => setRefineOpen(true)}
+      className={cn(
+        "inline-flex shrink-0 items-center justify-center gap-2 self-stretch rounded-2xl border border-stone-200/90 bg-white px-4 text-[13px] font-medium text-stone-800 shadow-[0_12px_40px_-28px_rgba(0,0,0,0.12)] transition-colors hover:bg-stone-50",
+        ui.home.focusRing,
+        "focus-visible:rounded-2xl",
+      )}
+      aria-label={ariaLabel}
+    >
+      <Filter className="size-3.5 shrink-0 text-stone-600" strokeWidth={2} aria-hidden />
+      {label}
     </button>
   );
 }
@@ -70,15 +91,15 @@ export function IntentSummary({
 
   if (!aiMode) {
     return (
-      <Card className="p-4">
-        <div className="flex items-start justify-between gap-2">
+      <div className="flex w-full min-w-0 items-stretch gap-2 sm:gap-3">
+        <Card className="flex min-w-0 flex-1 items-center p-4">
           <p className="min-w-0 flex-1 text-[13px] text-stone-600">
             {t("searchSerp.resultsFor")}{" "}
             <span className="font-medium text-stone-800">{intent.rawQuery.trim() || t("searchSerp.browseFallback")}</span>
           </p>
-          <IntentEditButton className="-mt-0.5" ariaLabel={t("searchSerp.editIntentAria")} />
-        </div>
-      </Card>
+        </Card>
+        <IntentFilterLabeledButton ariaLabel={t("searchSerp.filterIntentAria")} label={t("searchSerp.filterIntentLabel")} />
+      </div>
     );
   }
 
@@ -86,7 +107,7 @@ export function IntentSummary({
     <Card className="p-5 sm:p-6">
       <div className="flex items-start justify-between gap-3">
         <p className={cn(ui.home.eyebrow)}>{t("searchSerp.intentSummaryTitle")}</p>
-        <IntentEditButton ariaLabel={t("searchSerp.editIntentAria")} />
+        <IntentFilterButton ariaLabel={t("searchSerp.filterIntentAria")} />
       </div>
       <dl className="mt-4 grid gap-3 text-[13px] sm:grid-cols-2">
         <div>

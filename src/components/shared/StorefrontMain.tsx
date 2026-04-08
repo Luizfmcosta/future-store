@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { usePathname, useSearchParams } from "next/navigation";
 
 /**
- * Main scroll region. Search “Modo IA”: no bottom padding on `main` — the follow-up bar is `absolute`
+ * Main scroll region. Search Chat: no bottom padding on `main` — the follow-up bar is `absolute`
  * to the panel bottom and must align with `FloatingSearchDock` (sibling outside `main`, `bottom-0` on the shell).
  * Safe area + row padding live on `ui.floatingSearchBarRowPad` in the composer / dock only.
  */
@@ -16,7 +16,6 @@ export function StorefrontMain({ children }: { children: React.ReactNode }) {
   const isPdp = pathname.startsWith("/product/");
 
   const isHome = pathname === "/";
-  const isAbout = pathname === "/about";
   /** TopBar is absolute (floating); non–hero pages need offset so content clears the bar. */
   const mainTopForFloatingBar = "pt-[3.25rem] sm:pt-[3.75rem]";
 
@@ -29,11 +28,9 @@ export function StorefrontMain({ children }: { children: React.ReactNode }) {
           ? "bg-white px-4 sm:px-6"
           : isHome
             ? "bg-white"
-            : isAbout
-              ? "bg-white px-0"
-              : "bg-white px-4 sm:px-6",
+            : "bg-white px-4 sm:px-6",
         isPdp ? "min-h-0 overflow-hidden" : "scroll-smooth overflow-y-auto",
-        isHome || isAbout ? "pt-0" : mainTopForFloatingBar,
+        isHome ? "pt-0" : mainTopForFloatingBar,
         isSearchAiMode
           ? "pb-0"
           : isPdp

@@ -30,8 +30,6 @@ export default function ProductPage() {
   const aiMode = useDemoStore((s) => s.aiMode);
   const setSelected = useDemoStore((s) => s.setSelectedProduct);
   const addToCart = useDemoStore((s) => s.addToCart);
-  const setSearchOverlayOpen = useDemoStore((s) => s.setSearchOverlayOpen);
-
   useEffect(() => {
     if (!id) return;
     const p = getProductById(id);
@@ -94,12 +92,11 @@ export default function ProductPage() {
         <div className="flex min-h-0 items-center gap-3">
           <button
             type="button"
-            onClick={() => setSearchOverlayOpen(true)}
+            onClick={() => router.push("/search")}
             className={cn(
               "inline-flex h-11 shrink-0 items-center justify-center gap-1 rounded-full border border-stone-200/90 bg-stone-50 text-[11px] font-semibold leading-none text-stone-700 shadow-sm transition hover:border-stone-300/90 hover:bg-stone-100",
               locale === "pt-BR" ? "w-[6.75rem] px-3" : "w-[5.25rem] px-2.5",
             )}
-            aria-haspopup="dialog"
           >
             <Search className="size-3.5 shrink-0 opacity-90" strokeWidth={2} aria-hidden />
             <span className="leading-none">{t("pdp.ask")}</span>

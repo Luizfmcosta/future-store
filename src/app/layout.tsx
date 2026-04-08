@@ -27,9 +27,9 @@ const interSidebar = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Future Store — vitrine com IA em primeiro lugar",
+  title: "Future Store — AI-first storefront",
   description:
-    "Protótipo de vitrine premium e adaptativa — comércio centrado na interface.",
+    "Premium, adaptive storefront prototype — interface-first commerce.",
 };
 
 export default function RootLayout({
@@ -39,7 +39,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="pt-BR"
+      lang="en"
       data-theme="dark"
       className={cn(
         "h-full",

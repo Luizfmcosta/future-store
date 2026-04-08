@@ -7,7 +7,8 @@ import type { ShopperProfileId } from "@/types";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-const DEFAULT_QUERY = "Caixa sem fio para sala de ~3 m, melhor custo-benefício, até R$ 5000";
+const DEFAULT_QUERY =
+  "Wireless speaker for ~3 m living room, best value, up to R$ 5000";
 
 export type ColorMode = "dark" | "light";
 
@@ -25,8 +26,6 @@ type DemoState = {
   compareSelection: string[];
   currentScreen: ScreenId;
   cartLineId: string | null;
-  /** Shared with FloatingSearchDock + PDP “Ask” so the command overlay opens from either place. */
-  searchOverlayOpen: boolean;
 
   setParsedIntent: (intent: SearchIntent | null) => void;
   setProfile: (id: ShopperProfileId) => void;
@@ -44,7 +43,6 @@ type DemoState = {
   setRefineOpen: (v: boolean) => void;
   setCurrentScreen: (s: ScreenId) => void;
   setCompareSelection: (ids: string[]) => void;
-  setSearchOverlayOpen: (open: boolean) => void;
   reset: () => void;
   presetSearch: () => void;
 };
@@ -65,7 +63,6 @@ export const useDemoStore = create<DemoState>()(
   compareSelection: [],
   currentScreen: "home",
   cartLineId: null,
-  searchOverlayOpen: false,
 
   setParsedIntent: (intent) => set({ parsedIntent: intent }),
   setProfile: (id) => set({ activeProfile: id }),
@@ -95,7 +92,6 @@ export const useDemoStore = create<DemoState>()(
   setRefineOpen: (v) => set({ refineOpen: v }),
   setCurrentScreen: (s) => set({ currentScreen: s }),
   setCompareSelection: (ids) => set({ compareSelection: ids }),
-  setSearchOverlayOpen: (open) => set({ searchOverlayOpen: open }),
   reset: () =>
     set({
       activeProfile: "marina",
@@ -111,7 +107,6 @@ export const useDemoStore = create<DemoState>()(
       compareSelection: [],
       currentScreen: "home",
       cartLineId: null,
-      searchOverlayOpen: false,
     }),
   presetSearch: () => {
     const query = DEFAULT_QUERY;

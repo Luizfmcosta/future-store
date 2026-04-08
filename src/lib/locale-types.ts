@@ -1,6 +1,6 @@
 export type AppLocale = "pt-BR" | "en-US";
 
-export const DEFAULT_LOCALE: AppLocale = "pt-BR";
+export const DEFAULT_LOCALE: AppLocale = "en-US";
 
 export const LOCALE_STORAGE_KEY = "future-store-locale";
 
