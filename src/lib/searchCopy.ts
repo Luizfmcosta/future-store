@@ -6,15 +6,15 @@ import type { Product } from "@/types";
 const QUICK_SEARCHES: Record<AppLocale, string[]> = {
   "pt-BR": [
     "Caixa sem fio para sala de 3 m, melhor custo-benefício",
-    "Sonos Era 100 ou Roam 2",
+    "Horizon One ou Trail Mini",
     "Som espacial Dolby Atmos portátil",
-    "Move 2 para área externa",
+    "Trail Max para área externa",
   ],
   "en-US": [
     "Wireless speaker for a 3m living room, best value",
-    "Sonos Era 100 vs Roam 2",
+    "Horizon One vs Trail Mini",
     "Spatial audio smart speaker under 5000",
-    "Move 2 for patio listening",
+    "Trail Max for patio listening",
   ],
 };
 

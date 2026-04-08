@@ -25,7 +25,7 @@ export function ContinueJourney() {
   const experienceCtx = useShopperExperienceOptional();
   const { locale } = useLocale();
   const t = useT();
-  /* Marina copy is always Beam/soundbar editorial; don’t pair it with “recent PDP” IDs. */
+  /* Marina copy is always Stage/soundbar editorial; don’t pair it with “recent PDP” IDs. */
   const id =
     profile === "marina"
       ? "sb-beam-g2"

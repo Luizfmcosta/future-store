@@ -90,7 +90,7 @@ export function getBundleOptions(
 
   const cheaperSb = profile === "ricardo" ? sbPulse ?? sbEcho : sbEcho ?? sbPulse;
   const cheaperSbLoc = cheaperSb ? localizeProduct(cheaperSb, locale) : undefined;
-  const cheaperName = cheaperSbLoc?.title.split("—")[0].trim() ?? "Roam 2";
+  const cheaperName = cheaperSbLoc?.title.split("—")[0].trim() ?? "Trail Mini";
   const cheaperOpt =
     cheaperSb && cheaperSb.id !== primaryOpt?.soundbar.id
       ? ({

@@ -43,7 +43,7 @@ function MarinaCompareCard({
   displayTitle?: string;
   displaySubline?: string;
   displayBlurb?: string;
-  /** When card title describes a bundle but PDP is one SKU (e.g. Beam + Sub Mini). */
+  /** When card title describes a bundle but PDP is one SKU (e.g. Stage Compact + SubStage Mini). */
   heroImageOverride?: string;
 }) {
   const t = useT();
@@ -186,7 +186,7 @@ export function CuratedForYou() {
     if (isRicardoPromoFirstVisit) {
       return localizeProducts(getPromoTvsUnder(5000).slice(0, 2), locale);
     }
-    /* Marina: fixed pair matches curated card titles (Beam + Sub Mini vs Arc surround set). */
+    /* Marina: fixed pair matches curated card titles (Stage Compact + sub vs Stage Ultra surround). */
     if (profile === "marina") {
       const a = getProductById("sb-beam-g2");
       const b = getProductById("sp-home-theater");

@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 
-/** Lifestyle — caixa portátil (referência Sonos: texto à esquerda sobre imagem). */
+/** Lifestyle — caixa portátil (texto à esquerda sobre imagem). */
 const HERO_IMAGE = "/media/home/ricardo-promo-hero-speaker.png";
 
 const ease = [0.76, 0, 0.24, 1] as const;

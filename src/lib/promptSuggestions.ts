@@ -7,24 +7,24 @@ import { getQuickSearchQueries } from "@/lib/searchCopy";
  */
 const EXTRA_PROMPTS: Record<AppLocale, string[]> = {
   "en-US": [
-    "Compare Sonos Era 100 and Roam 2",
+    "Compare Horizon One and Trail Mini",
     "Best speaker for a small apartment",
     "Is Dolby Atmos worth it for music only?",
     "Waterproof options for patio or pool",
-    "Cheapest way to start with Sonos",
+    "Cheapest way to start a multi-room setup",
     "What is Trueplay and when does it help?",
     "Soundbar or stereo pair for the living room",
-    "Move 2 battery life vs Roam 2",
+    "Trail Max battery life vs Trail Mini",
   ],
   "pt-BR": [
-    "Comparar Sonos Era 100 e Roam 2",
+    "Comparar Horizon One e Trail Mini",
     "Melhor caixa para apartamento pequeno",
     "Dolby Atmos vale a pena só para música?",
     "Opções à prova d'água para área externa",
-    "Forma mais acessível de começar com Sonos",
+    "Forma mais acessível de começar um setup multiambiente",
     "O que é Trueplay e quando ajuda?",
     "Soundbar ou par estéreo na sala",
-    "Autonomia Move 2 vs Roam 2",
+    "Autonomia Trail Max vs Trail Mini",
   ],
 };
 

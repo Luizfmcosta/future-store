@@ -5,48 +5,48 @@ import type { Product } from "@/types";
 /** Portuguese copy layered over canonical English `products` data. */
 const ptBrOverrides: Partial<Record<string, Partial<Product>>> = {
   "sp-era-100": {
-    title: "Sonos Era 100 — Som estéreo inteligente",
+    title: "Horizon One — Som estéreo inteligente",
     deliveryETA: "3–5 dias úteis",
     reviewStrengths: [
       "Som rico em um formato compacto",
-      "WiFi + Bluetooth; app Sonos e assistentes de voz",
+      "WiFi + Bluetooth; app própria e assistentes de voz",
       "Trueplay ajusta o som ao ambiente",
     ],
     reviewWeaknesses: [
-      "Para home theater com altura, considere Era 300 ou soundbar",
+      "Para home theater com altura, considere Horizon Three ou soundbar",
     ],
     returnPolicyShort: "30 dias",
     warrantyShort: "24 meses fabricante",
     bestFor: ["Cozinhas", "Mesas", "Pares estéreo em salas menores"],
   },
   "sp-era-300": {
-    title: "Sonos Era 300 — Som espacial e inteligente",
+    title: "Horizon Three — Som espacial e inteligente",
     deliveryETA: "3–5 dias úteis",
     reviewStrengths: [
       "Música em Dolby Atmos e áudio espacial",
       "Pressão sonora para salas abertas",
       "Arquitetura acústica premium com vários drivers",
     ],
-    reviewWeaknesses: ["Maior que Era 100 — planeje o móvel"],
+    reviewWeaknesses: ["Maior que Horizon One — planeje o móvel"],
     returnPolicyShort: "30 dias",
     warrantyShort: "24 meses fabricante",
     bestFor: ["Salas de estar", "Música espacial", "Referência standalone"],
   },
   "sp-move-2": {
-    title: "Sonos Move 2 — Caixa portátil potente",
+    title: "Trail Max — Caixa portátil potente",
     deliveryETA: "3–5 dias úteis",
     reviewStrengths: [
       "Até 24 h de bateria para dentro e fora de casa",
       "Estéreo em um único corpo",
       "Resistente à intempérie para varanda e viagem",
     ],
-    reviewWeaknesses: ["Mais pesado que o Roam para carregar todo dia"],
+    reviewWeaknesses: ["Mais pesado que o Trail Mini para carregar todo dia"],
     returnPolicyShort: "30 dias",
     warrantyShort: "24 meses fabricante",
     bestFor: ["Varanda", "Festas portáteis", "Som entre cômodos"],
   },
   "sp-roam-2": {
-    title: "Sonos Roam 2 — Caixa inteligente ultra portátil",
+    title: "Trail Mini — Caixa inteligente ultra portátil",
     deliveryETA: "3–5 dias úteis",
     reviewStrengths: [
       "Design pocket com som claro e encorpado",
@@ -56,10 +56,10 @@ const ptBrOverrides: Partial<Record<string, Partial<Product>>> = {
     reviewWeaknesses: ["Não substitui caixas de sala inteira"],
     returnPolicyShort: "30 dias",
     warrantyShort: "24 meses fabricante",
-    bestFor: ["Viagem", "Presente", "Primeiro Sonos"],
+    bestFor: ["Viagem", "Presente", "Primeira caixa wireless"],
   },
   "sp-home-theater": {
-    title: "Sonos Surround Set — Arc + Era de surround",
+    title: "Cinema Surround System — Stage Ultra + satélites traseiros",
     deliveryETA: "Entrega agendada",
     reviewStrengths: [
       "Soundbar Atmos com surrounds combinados",
@@ -72,10 +72,10 @@ const ptBrOverrides: Partial<Record<string, Partial<Product>>> = {
     bestFor: ["Home theater", "Filmes", "Games no console"],
   },
   "sp-turntable-set": {
-    title: "Sonos Listening Set — Toca-discos + Era 100",
+    title: "Listening Set — Toca-discos + Horizon One",
     deliveryETA: "5–7 dias úteis",
     reviewStrengths: [
-      "Vinil transmitido para qualquer cômodo Sonos",
+      "Vinil transmitido para qualquer cômodo do sistema",
       "Conjunto minimalista com line-in",
       "Ótima entrada no hi-fi",
     ],
@@ -85,7 +85,7 @@ const ptBrOverrides: Partial<Record<string, Partial<Product>>> = {
     bestFor: ["Vinil", "Salas de estar", "Ambientes com design"],
   },
   "sp-era-pair": {
-    title: "Sonos 2 cômodos — Era 100 ×2",
+    title: "2 cômodos — Horizon One ×2",
     deliveryETA: "3–5 dias úteis",
     reviewStrengths: [
       "Imagem estéreo quando emparelhadas",
@@ -98,7 +98,7 @@ const ptBrOverrides: Partial<Record<string, Partial<Product>>> = {
     bestFor: ["Estéreo", "Dois cômodos", "Escritório + quarto"],
   },
   "sp-roam-pair": {
-    title: "Sonos Adventure Set — Roam 2 ×2",
+    title: "Adventure Set — Trail Mini ×2",
     deliveryETA: "3–5 dias úteis",
     reviewStrengths: [
       "Par estéreo para mesas e áreas pequenas",
@@ -150,12 +150,12 @@ const ptBrOverrides: Partial<Record<string, Partial<Product>>> = {
     bestFor: ["Sala de estar", "Esportes", "Família"],
   },
   "sb-arc-ultra": {
-    title: "Sonos Arc Ultra — Soundbar smart premium com Sound Motion™",
+    title: "Stage Ultra — Soundbar smart premium com Sound Motion™",
     deliveryETA: "5–7 dias úteis",
     reviewStrengths: [
       "Dolby Atmos imersivo com arquitetura Sound Motion",
       "eARC e HDMI para TVs atuais",
-      "Combina com Sub 4 e Era como surround",
+      "Combina com SubStage Pro e Horizon como surround",
     ],
     reviewWeaknesses: ["Barra larga — meça o rack antes"],
     returnPolicyShort: "30 dias",
@@ -163,56 +163,56 @@ const ptBrOverrides: Partial<Record<string, Partial<Product>>> = {
     bestFor: ["TV na sala", "Cinema em casa", "Games no console"],
   },
   "sb-beam-g2": {
-    title: "Sonos Beam (Gen 2) — Soundbar smart compacta",
+    title: "Stage Compact (Gen 2) — Soundbar smart compacta",
     deliveryETA: "3–5 dias úteis",
     reviewStrengths: [
       "Atmos virtualizado em formato pequeno",
       "Ideal para quartos e TVs médias",
-      "Voz e multiambiente Sonos",
+      "Voz e áudio multiambiente em toda a casa",
     ],
-    reviewWeaknesses: ["Salas muito abertas pedem Arc Ultra"],
+    reviewWeaknesses: ["Salas muito abertas pedem Stage Ultra"],
     returnPolicyShort: "30 dias",
     warrantyShort: "24 meses fabricante",
     bestFor: ["TV no quarto", "Apartamentos", "Streaming do dia a dia"],
   },
   "sb-ray": {
-    title: "Sonos Ray — Soundbar compacta essencial",
+    title: "Stage Essential — Soundbar compacta essencial",
     deliveryETA: "3–5 dias úteis",
     reviewStrengths: [
       "Diálogos mais claros com investimento acessível",
       "Encaixa em racks estreitos e parede",
-      "Cresce para um sistema Sonos completo",
+      "Cresce para um sistema multiambiente completo",
     ],
-    reviewWeaknesses: ["Sem Atmos — upgrade natural é Beam ou Arc"],
+    reviewWeaknesses: ["Sem Atmos — upgrade natural é Stage Compact ou Stage Ultra"],
     returnPolicyShort: "30 dias",
     warrantyShort: "24 meses fabricante",
     bestFor: ["TVs menores", "Primeira soundbar", "Escritórios"],
   },
   "sp-five": {
-    title: "Sonos Five — Caixa wireless hi-fi premium",
+    title: "Studio Reference — Caixa wireless hi-fi premium",
     deliveryETA: "3–5 dias úteis",
     reviewStrengths: [
       "Aceita par estéreo para sala de audição séria",
       "Entrada line-in para toca-discos ou mesa",
       "Graves limpos sem sub separado na maioria das salas",
     ],
-    reviewWeaknesses: ["Maior que Era — confira profundidade do móvel"],
+    reviewWeaknesses: ["Maior que a linha Horizon — confira profundidade do móvel"],
     returnPolicyShort: "30 dias",
     warrantyShort: "24 meses fabricante",
     bestFor: ["Hi-fi", "Setup com vinil", "Cozinhas amplas"],
   },
   "sp-sub-4": {
-    title: "Sonos Sub 4 — Subwoofer wireless premium",
+    title: "SubStage Pro — Subwoofer wireless premium",
     deliveryETA: "5–7 dias úteis",
     reviewStrengths: [
-      "Transforma Arc Ultra e Beam com graves de verdade",
+      "Transforma Stage Ultra e Stage Compact com graves de verdade",
       "Drivers force-canceling, pouca vibração no móvel",
       "Pareamento wireless — esconde atrás do sofá",
     ],
-    reviewWeaknesses: ["Investimento alto — Sub Mini atende salas menores"],
+    reviewWeaknesses: ["Investimento alto — SubStage Mini atende salas menores"],
     returnPolicyShort: "30 dias",
     warrantyShort: "24 meses fabricante",
-    bestFor: ["Sets com Arc", "Filmes de ação", "Música eletrônica"],
+    bestFor: ["Sets com Stage Ultra", "Filmes de ação", "Música eletrônica"],
   },
 };
 
