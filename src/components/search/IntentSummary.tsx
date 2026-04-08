@@ -1,6 +1,7 @@
 "use client";
 
 import { Card } from "@/components/shared/Card";
+import { EyebrowPill } from "@/components/shared/EyebrowPill";
 import { ui } from "@/lib/ui-tokens";
 import { useT } from "@/lib/useT";
 import { cn, formatBRL } from "@/lib/utils";
@@ -106,7 +107,7 @@ export function IntentSummary({
   return (
     <Card className="p-5 sm:p-6">
       <div className="flex items-start justify-between gap-3">
-        <p className={cn(ui.home.eyebrow)}>{t("searchSerp.intentSummaryTitle")}</p>
+        <EyebrowPill>{t("searchSerp.intentSummaryTitle")}</EyebrowPill>
         <IntentFilterButton ariaLabel={t("searchSerp.filterIntentAria")} />
       </div>
       <dl className="mt-4 grid gap-3 text-[13px] sm:grid-cols-2">

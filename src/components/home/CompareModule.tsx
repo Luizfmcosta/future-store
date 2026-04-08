@@ -43,7 +43,9 @@ export function CompareModule() {
           className="flex min-w-0 flex-1 flex-col items-start @lg:basis-1/2 @lg:py-2"
         >
           <motion.div variants={fadeUp}>
-            <EyebrowPill>{product.brand}</EyebrowPill>
+            <EyebrowPill>
+              {profile === "marina" ? t("compare.marinaEyebrow") : product.brand}
+            </EyebrowPill>
           </motion.div>
 
           <motion.h2
@@ -73,7 +75,11 @@ export function CompareModule() {
               href={`/product/${product.id}`}
               className="mt-5 inline-flex h-10 w-fit items-center justify-center rounded-full bg-[#1a1a1a] px-6 text-[11px] font-medium text-white transition-transform duration-300 hover:scale-[1.03] active:scale-[0.97] sm:text-[12px]"
             >
-              {experienceCtx ? t(experienceCtx.experience.copy.compareCta) : t("compare.cta")}
+              {experienceCtx
+                ? t(experienceCtx.experience.copy.compareCta)
+                : profile === "marina"
+                  ? t("compare.marinaCta")
+                  : t("compare.cta")}
             </Link>
           </motion.div>
         </motion.div>

@@ -1,8 +1,8 @@
 "use client";
 
+import { EyebrowPill } from "@/components/shared/EyebrowPill";
 import { Source, SourceContent, SourceTrigger } from "@/components/ui/source";
 import type { AssistantSource } from "@/lib/chatAssistant";
-import { ui } from "@/lib/ui-tokens";
 import { useT } from "@/lib/useT";
 import { cn } from "@/lib/utils";
 
@@ -12,7 +12,7 @@ export function ChatAssistantSources({ sources }: { sources: AssistantSource[] }
 
   return (
     <div className="min-w-0">
-      <p className={cn("mb-2", ui.home.eyebrow)}>{t("searchAiPanel.sourcesLabel")}</p>
+      <EyebrowPill className="mb-2">{t("searchAiPanel.sourcesLabel")}</EyebrowPill>
       <div className="flex flex-wrap gap-1.5">
         {sources.map((s) => (
           <Source key={s.href} href={s.href}>

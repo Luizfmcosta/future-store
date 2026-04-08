@@ -5,7 +5,7 @@ import { EyebrowPill } from "@/components/shared/EyebrowPill";
 import { useLocale } from "@/context/LocaleContext";
 import { getProductByIdLocalized } from "@/lib/product-i18n";
 import { useT } from "@/lib/useT";
-import { hasMediaUrl } from "@/lib/utils";
+import { cn, hasMediaUrl } from "@/lib/utils";
 import { useShopperExperienceOptional } from "@/context/ShopperExperienceContext";
 import { useDemoStore } from "@/store/demoStore";
 import { motion } from "framer-motion";
@@ -26,7 +26,7 @@ export function ContinueJourney() {
   const t = useT();
   const id =
     experienceCtx?.continueProductId ??
-    (profile === "marina" ? "sp-era-300" : profile === "joana" ? "sp-move-2" : "sp-roam-2");
+    (profile === "marina" ? "sb-beam-g2" : profile === "joana" ? "sp-move-2" : "sp-roam-2");
   const product = getProductByIdLocalized(id, locale);
   if (!product) return null;
 
@@ -39,7 +39,9 @@ export function ContinueJourney() {
     ? t("continueJourney.ricardoEntryHeadline")
     : experienceCtx
       ? t(experienceCtx.experience.copy.continueHeadline)
-      : t("continueJourney.headline");
+      : profile === "marina"
+        ? t("continueJourney.marinaHeadline")
+        : t("continueJourney.headline");
 
   const body =
     useRicardoEntryCopy
@@ -56,7 +58,9 @@ export function ContinueJourney() {
     ? t("continueJourney.ricardoEntryCta")
     : experienceCtx
       ? t(experienceCtx.experience.copy.continueCta)
-      : t("continueJourney.exploreBrand", { brand: product.brand });
+      : profile === "marina"
+        ? t("continueJourney.marinaCta")
+        : t("continueJourney.exploreBrand", { brand: product.brand });
 
   return (
     <section className="bg-white">
@@ -70,16 +74,27 @@ export function ContinueJourney() {
         <div className="flex min-w-0 flex-1 flex-col items-start @lg:basis-1/2">
           <motion.div variants={fadeUp}>
             <EyebrowPill>
-              {product.category === "speaker" ? t("common.speakers") : t("common.audio")}
+              {profile === "marina"
+                ? t("continueJourney.marinaEyebrow")
+                : product.category === "speaker"
+                  ? t("common.speakers")
+                  : t("common.audio")}
             </EyebrowPill>
           </motion.div>
 
           <motion.div variants={fadeUp} className="mt-3.5 w-full">
-            <h2 className="whitespace-pre-line text-left font-[family-name:var(--font-display)] text-[clamp(1.35rem,4.2vw,1.85rem)] font-medium leading-[1.12] tracking-[-0.02em] text-[#1a1a1a]">
+            <h2
+              className={cn(
+                "text-left font-[family-name:var(--font-display)] text-[clamp(1.2rem,3.8vw,1.85rem)] font-medium leading-[1.15] tracking-[-0.02em] text-[#1a1a1a]",
+                profile === "marina"
+                  ? "text-balance whitespace-normal text-pretty"
+                  : "whitespace-pre-line",
+              )}
+            >
               {headline}
             </h2>
             <p className="mt-2.5 font-[family-name:var(--font-display)] text-[clamp(1.05rem,3.2vw,1.25rem)] font-medium leading-snug tracking-[-0.015em] text-[#444]">
-              {product.title.split("—")[0].trim()}
+              {profile === "marina" ? t("continueJourney.marinaProductLine") : product.title.split("—")[0].trim()}
             </p>
           </motion.div>
 

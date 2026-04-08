@@ -60,21 +60,21 @@ export function AdaptiveHero() {
         >
           <motion.p
             variants={child}
-            className="text-[16px] font-normal tracking-normal text-white/70"
+            className="text-[14px] font-normal tracking-normal text-white/70 @min-[480px]:text-[16px]"
           >
             {copy.kicker}
           </motion.p>
 
-          {/* Narrow storefront: quase o tamanho “ótimo” de antes, só ~2 linhas (nowrap por segmento). Largo: hero completo. */}
+          {/* Smaller type + wrap on narrow viewports so long headlines don’t overflow the storefront frame */}
           <motion.h1
             variants={child}
-            className="mt-2 min-w-0 max-w-full font-[family-name:var(--font-display)] font-medium tracking-[-0.02em] text-white @min-[480px]:leading-[0.94]"
+            className="mt-2 min-w-0 max-w-[min(100%,22rem)] font-[family-name:var(--font-display)] font-medium tracking-[-0.02em] text-white @min-[480px]:max-w-full @min-[480px]:leading-[0.94]"
           >
-            <span className="block text-[clamp(2.35rem,10.9cqi,3.15rem)] leading-[1.05] whitespace-nowrap @min-[480px]:text-[clamp(2.4rem,8cqi,3.6rem)] @min-[480px]:leading-[0.94] @min-[480px]:whitespace-normal">
+            <span className="block text-balance text-[clamp(1.65rem,7.8cqi,2.55rem)] leading-[1.12] @min-[480px]:text-[clamp(1.9rem,7cqi,3.15rem)] @min-[480px]:leading-[0.94]">
               {copy.titleLine1}
             </span>
             {copy.titleLine2 ? (
-              <span className="block whitespace-nowrap py-1 text-[clamp(2.25rem,10.5cqi,3rem)] leading-[1.05] text-white/70 @min-[480px]:py-[6px] @min-[480px]:text-[clamp(2.15rem,7.5cqi,3.35rem)] @min-[480px]:leading-[0.94] @min-[480px]:whitespace-normal">
+              <span className="block text-balance py-1 text-[clamp(1.5rem,7.2cqi,2.35rem)] leading-[1.12] text-white/70 @min-[480px]:py-[6px] @min-[480px]:text-[clamp(1.75rem,6.5cqi,2.85rem)] @min-[480px]:leading-[0.94]">
                 {copy.titleLine2}
               </span>
             ) : null}

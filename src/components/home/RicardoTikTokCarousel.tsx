@@ -1,7 +1,7 @@
 "use client";
 
+import { EyebrowPill } from "@/components/shared/EyebrowPill";
 import { RICARDO_TIKTOK_CLIPS } from "@/data/ricardoTiktokClips";
-import { ui } from "@/lib/ui-tokens";
 import { useT } from "@/lib/useT";
 import { cn } from "@/lib/utils";
 import { motion, useInView } from "framer-motion";
@@ -73,7 +73,7 @@ export function RicardoTikTokCarousel() {
         transition={{ duration: 0.55, ease }}
         className="mx-auto max-w-[1200px] min-w-0 px-5 pb-10 pt-9 sm:px-6 sm:pb-12 sm:pt-10"
       >
-        <p className={cn(ui.home.eyebrow, "text-stone-500")}>{t("ricardoTiktok.eyebrow")}</p>
+        <EyebrowPill>{t("ricardoTiktok.eyebrow")}</EyebrowPill>
         <h2 className="mt-1.5 font-[family-name:var(--font-display)] text-[clamp(1.1rem,3.2vw,1.35rem)] font-medium leading-snug tracking-[-0.02em] text-stone-900">
           {t("ricardoTiktok.title")}
         </h2>

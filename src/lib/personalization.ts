@@ -142,7 +142,7 @@ export function getContinueProductId(profile: ShopperProfileId, segment: HomeSeg
   const recent = getRecentProductIds();
   if (recent[0]) return recent[0];
   if (profile === "marina") {
-    return segment === "marina_explore" ? "sp-five" : "sp-era-300";
+    return "sb-beam-g2";
   }
   if (profile === "joana") {
     return segment === "marina_explore" ? "sp-move-2" : "sp-era-100";

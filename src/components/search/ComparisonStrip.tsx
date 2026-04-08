@@ -2,6 +2,7 @@
 
 import { Card } from "@/components/shared/Card";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
+import { EyebrowPill } from "@/components/shared/EyebrowPill";
 import { HorizontalScroll } from "@/components/shared/HorizontalScroll";
 import { SectionTitle } from "@/components/shared/SectionTitle";
 import { useLocale } from "@/context/LocaleContext";
@@ -46,7 +47,7 @@ function ComparisonCard({ row }: { row: ComparisonCardModel }) {
         )}
       </div>
       <div className="flex min-h-0 flex-1 flex-col p-4">
-        <p className={cn(ui.home.eyebrow)}>{t(FIT_KEY_TO_MSG[row.fitKey])}</p>
+        <EyebrowPill>{t(FIT_KEY_TO_MSG[row.fitKey])}</EyebrowPill>
         <p className="mt-2 text-[15px] font-semibold leading-snug text-stone-900">{p.title}</p>
         <ul className="mt-3 space-y-1.5 text-[12px] leading-relaxed text-stone-600">
           {row.pros.map((x) => (

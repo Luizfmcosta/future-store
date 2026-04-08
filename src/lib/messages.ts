@@ -39,9 +39,9 @@ export const messages: Record<
     },
     hero: {
       marina: {
-        kicker: "Inspirado por você",
-        titleLine1: "Adaptado ao",
-        titleLine2: "seu contexto",
+        kicker: "Continue de onde parou",
+        titleLine1: "Monte o setup dos sonhos",
+        titleLine2: "que você estava explorando",
         subtitle:
           "Na Future Store, unimos inovação e tradição para elevar seu entretenimento em casa, criando experiências para momentos extraordinários.",
         cta: "Conheça a Future Store",
@@ -82,8 +82,12 @@ export const messages: Record<
     continueJourney: {
       exploreBrand: "Explorar {brand}",
       headline: "Continue onde\nvocê parou",
+      marinaEyebrow: "Uma base sólida",
+      marinaHeadline: "Comece com uma soundbar que define seu sistema",
+      marinaProductLine: "Soundbar Beam",
+      marinaCta: "Ver produto",
       marinaBody:
-        "Retomamos sua pesquisa por som de referência: o mesmo modelo em destaque para o seu perfil, com acabamentos para combinar com o ambiente — refine a última milha antes de decidir.",
+        "Diálogo nítido, som equilibrado e integração fácil com TVs — um ponto de partida confiável para um home theater.",
       ricardoBody:
         "Uma escolha prática com bom custo-benefício para trazer som melhor ao dia a dia.",
       joanaBody:
@@ -94,10 +98,12 @@ export const messages: Record<
       ricardoEntryCta: "Ver produto",
     },
     compare: {
-      marinaHeadline: "Cinema em casa\npremium",
-      ricardoHeadline: "Qualidade de som\nincrível",
+      marinaEyebrow: "Uma abordagem alternativa",
+      marinaHeadline: "Considere uma caixa standalone\nno lugar de uma soundbar",
       marinaBody:
-        "Experimente o equilíbrio perfeito entre precisão e imersão em cada cena. Som frontal nítido, surrounds que fecham o palco e profundidade digna de sala dedicada — tudo no mesmo tom acústico.",
+        "Uma configuração com uma única caixa pode entregar som amplo que preenche a sala — enquanto uma soundbar foca mais no áudio da TV. Veja qual abordagem combina melhor com o seu espaço.",
+      marinaCta: "Ver comparativo",
+      ricardoHeadline: "Qualidade de som\nincrível",
       ricardoBody:
         "Experimente som nítido e presente pelo melhor custo-benefício. Configuração simples, desempenho confiável e preço que faz sentido para quem quer evoluir sem complicação.",
       joanaHeadline: "Som que preenche\na sala com equilíbrio",
@@ -106,17 +112,25 @@ export const messages: Record<
       cta: "Explorar",
     },
     curated: {
-      marinaHeadline: "Feito para cinema,\nperfeito para você",
+      marinaHeadline: "Compare duas formas de montar seu sistema",
       ricardoHeadline: "Feito para valor,\nperfeito para você",
       marinaBody:
-        "Explore o contraste entre áudio espacial e som que preenche a sala. Duas filosofias moldadas pela acústica, refinadas para o seu ambiente — como você pesquisa, antes de fechar o carrinho.",
+        "Configurações diferentes para combinar com seu espaço, expectativas e orçamento.",
       ricardoBody:
         "Explore nossas opções com melhor custo-benefício e as mais populares da faixa média. Dois caminhos para um som melhor, pensados para orçamentos reais.",
       joanaHeadline: "Feito para ouvir bem,\nsem complicar",
       joanaBody:
         "Duas rotas que equilibram performance e uso real: uma com mais corpo para a sala, outra mais enxuta — você escolhe o que combina com o momento.",
-      marinaTierA: "Referência de imersão",
-      marinaTierB: "Alternativa sólida",
+      marinaTierA: "Configuração compacta",
+      marinaTierB: "Som surround completo",
+      marinaCardATitle: "Beam + Sub Mini",
+      marinaCardBTitle: "Arc + Sub + caixas traseiras",
+      marinaCardASub: "Home theater",
+      marinaCardBSub: "TV na sala",
+      marinaCardABlurb:
+        "Som equilibrado com mais grave, ideal para salas de estar menores.",
+      marinaCardBBlurb:
+        "Som mais imersivo com canais surround e graves mais profundos para ambientes maiores.",
       joanaTierA: "Presença na sala",
       joanaTierB: "Opção enxuta",
       ricardoPromoHeadline: "Mais vendidos\nna faixa de entrada",
@@ -134,7 +148,15 @@ export const messages: Record<
       subline: "Experiências compartilhadas que ajudam você a decidir com mais segurança.",
       embedTitle: "Vídeo do TikTok",
     },
-    spotlight: {},
+    spotlight: {
+      marinaEyebrow: "Como escolher",
+      marinaHeadline: "O que faz um home theater soar melhor",
+      marinaBody:
+        "Entenda como soundbars, subwoofers e caixas traseiras trabalham juntos — e o que priorizar conforme o seu espaço.",
+      marinaCta: "Ver guia",
+      marinaImageAlt:
+        "Ilustração em linha em perspectiva ampla: sala com TV, soundbar, subwoofer e caixas em torno do sofá.",
+    },
     floatingSearch: {
       placeholder: "Pergunte o que quiser",
     },
@@ -419,27 +441,27 @@ export const messages: Record<
     },
     experience: {
       marinaResearch: {
-        continueHeadline: "Continue de onde\nvocê parou",
+        continueHeadline: "Comece com uma soundbar que define seu sistema",
         continueBody:
-          "Retomamos o que você estava avaliando: modelos premium e integração com o ambiente — com espaço para comparar especificações antes de decidir.",
-        continueCta: "Explorar detalhes",
+          "Diálogo nítido, som equilibrado e integração fácil com TVs — um ponto de partida confiável para um home theater.",
+        continueCta: "Ver produto",
         compareCta: "Ver comparativo",
-        spotlightCta: "Ver ficha técnica",
-        merchEyebrow: "Catálogo curado",
-        merchLine1: "Alto desempenho",
-        merchLine2: "para sua sala",
+        spotlightCta: "Ver guia",
+        merchEyebrow: "Explore outras opções",
+        merchLine1: "Formas diferentes de montar",
+        merchLine2: "seu setup de som",
         socialHeadline: "O que especialistas\ndestacam nas avaliações",
         socialBody:
           "Análises com foco em timbre, cena sonora e integração — para quem pesquisa antes de investir.",
         socialCta: "Ler análises",
       },
       marinaExplore: {
-        continueHeadline: "Seu próximo passo\nem áudio",
+        continueHeadline: "Comece com uma soundbar que define seu sistema",
         continueBody:
-          "Quando quiser retomar, seus favoritos e comparativos ficam aqui — comece pelos setups que mais combinam com ambientes integrados.",
-        continueCta: "Explorar detalhes",
-        compareCta: "Abrir comparativo",
-        spotlightCta: "Ver produto",
+          "Diálogo nítido, som equilibrado e integração fácil com TVs — um ponto de partida confiável para um home theater.",
+        continueCta: "Ver produto",
+        compareCta: "Ver comparativo",
+        spotlightCta: "Ver guia",
         merchEyebrow: "Descubra o catálogo",
         merchLine1: "Som em cada ambiente,",
         merchLine2: "sem fio",
@@ -511,9 +533,9 @@ export const messages: Record<
     },
     hero: {
       marina: {
-        kicker: "Inspired by You",
-        titleLine1: "Designed by",
-        titleLine2: "Intelligence",
+        kicker: "Continue where you left off",
+        titleLine1: "Build the dream setup",
+        titleLine2: "you were exploring",
         subtitle:
           "At Future Store, we blend innovation with tradition to elevate your home entertainment, crafting experiences for extraordinary moments.",
         cta: "Meet Future Store",
@@ -554,8 +576,12 @@ export const messages: Record<
     continueJourney: {
       exploreBrand: "Explore {brand}",
       headline: "Continue where\nyou left off",
+      marinaEyebrow: "A strong foundation",
+      marinaHeadline: "Start with a soundbar that defines your system",
+      marinaProductLine: "Beam Soundbar",
+      marinaCta: "View product",
       marinaBody:
-        "We picked up your research thread: the same model highlighted for your profile, with finishes that match your space — refine the last mile before you decide.",
+        "Clear dialogue, balanced sound and easy integration with TVs — a reliable starting point for a home theater setup.",
       ricardoBody:
         "A practical, value-smart pick for better everyday sound.",
       joanaBody:
@@ -566,10 +592,12 @@ export const messages: Record<
       ricardoEntryCta: "View product",
     },
     compare: {
-      marinaHeadline: "Premium\nhome cinema",
-      ricardoHeadline: "Incredible\nsound quality",
+      marinaEyebrow: "An alternative approach",
+      marinaHeadline: "Consider a standalone speaker\ninstead of a soundbar",
       marinaBody:
-        "Experience the perfect balance of precision and immersion in every scene. Crisp front sound, matched surrounds, and depth worthy of a dedicated room — all tuned to the same sonic signature.",
+        "A single-speaker setup can deliver wide, room-filling sound — while a soundbar is more focused on TV audio. See which approach fits your space better.",
+      marinaCta: "View comparison",
+      ricardoHeadline: "Incredible\nsound quality",
       ricardoBody:
         "Experience clear, engaging sound at the best value. Simple setup, reliable performance, and a price that makes sense when you want more without the fuss.",
       joanaHeadline: "Sound that fills\nthe room — in balance",
@@ -578,17 +606,25 @@ export const messages: Record<
       cta: "Explore",
     },
     curated: {
-      marinaHeadline: "Crafted for cinema,\nperfected for you",
+      marinaHeadline: "Compare two ways to build your system",
       ricardoHeadline: "Crafted for value,\nperfected for you",
       marinaBody:
-        "Explore the depth of spatial audio and the punch of room-filling sound. Two philosophies shaped by acoustics, refined for your room — the way you research before you buy.",
+        "Different configurations to match your space, expectations and budget.",
       ricardoBody:
         "Explore our best-value picks and the most popular mid-range options. Two paths to better sound, shaped for real budgets.",
       joanaHeadline: "Made to sound great,\nwithout the noise",
       joanaBody:
         "Two routes that balance performance and real life: one with more body for the room, one leaner — you pick what fits the moment.",
-      marinaTierA: "Immersion flagship",
-      marinaTierB: "Strong alternative",
+      marinaTierA: "Compact setup",
+      marinaTierB: "Full surround",
+      marinaCardATitle: "Beam + Sub Mini",
+      marinaCardBTitle: "Arc + Sub + Rear Speakers",
+      marinaCardASub: "Home Theater",
+      marinaCardBSub: "Living Room TV",
+      marinaCardABlurb:
+        "Balanced sound with added bass, ideal for smaller living rooms.",
+      marinaCardBBlurb:
+        "More immersive sound with surround channels and deeper bass for larger spaces.",
       joanaTierA: "Presence in the room",
       joanaTierB: "Leaner option",
       ricardoPromoHeadline: "Top sellers\nin the entry range",
@@ -606,7 +642,15 @@ export const messages: Record<
       subline: "Shared experiences that help you decide with more confidence.",
       embedTitle: "TikTok video",
     },
-    spotlight: {},
+    spotlight: {
+      marinaEyebrow: "How to choose",
+      marinaHeadline: "What makes a home theater system sound better",
+      marinaBody:
+        "Understand how soundbars, subwoofers and rear speakers work together — and what to prioritize based on your space.",
+      marinaCta: "View guide",
+      marinaImageAlt:
+        "Wide-angle line drawing of a living room with a TV, soundbar, subwoofer, and speakers around the seating area.",
+    },
     floatingSearch: {
       placeholder: "Ask anything you want",
     },
@@ -891,27 +935,27 @@ export const messages: Record<
     },
     experience: {
       marinaResearch: {
-        continueHeadline: "Pick up where\nyou left off",
+        continueHeadline: "Start with a soundbar that defines your system",
         continueBody:
-          "We’re surfacing what you were researching: premium models and room fit — with room to compare specs before you commit.",
-        continueCta: "Explore details",
+          "Clear dialogue, balanced sound and easy integration with TVs — a reliable starting point for a home theater setup.",
+        continueCta: "View product",
         compareCta: "View comparison",
-        spotlightCta: "View specs",
-        merchEyebrow: "Curated catalog",
-        merchLine1: "High performance",
-        merchLine2: "for your room",
+        spotlightCta: "View guide",
+        merchEyebrow: "Explore other options",
+        merchLine1: "Different ways to build",
+        merchLine2: "your sound setup",
         socialHeadline: "What reviewers\ncall out first",
         socialBody:
           "Write-ups focused on imaging, soundstage, and integration — for shoppers who research before they buy.",
         socialCta: "Read reviews",
       },
       marinaExplore: {
-        continueHeadline: "Your next step\nin sound",
+        continueHeadline: "Start with a soundbar that defines your system",
         continueBody:
-          "When you’re ready to continue, favorites and comparisons live here — start with setups built for integrated homes.",
-        continueCta: "Explore details",
-        compareCta: "Open comparison",
-        spotlightCta: "View product",
+          "Clear dialogue, balanced sound and easy integration with TVs — a reliable starting point for a home theater setup.",
+        continueCta: "View product",
+        compareCta: "View comparison",
+        spotlightCta: "View guide",
         merchEyebrow: "Browse the line",
         merchLine1: "Sound in every room,",
         merchLine2: "without wires",
