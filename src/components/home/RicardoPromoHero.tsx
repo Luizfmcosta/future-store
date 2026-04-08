@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale } from "@/context/LocaleContext";
 import { getCheapestPromoSpeaker } from "@/data/products";
 import { ui } from "@/lib/ui-tokens";
 import { useT } from "@/lib/useT";
@@ -18,10 +19,18 @@ const child = {
   show: { opacity: 1, y: 0, transition: { duration: 0.9, ease } },
 };
 
+function formatPromoFromPrice(price: number, locale: string): string {
+  if (locale === "en-US") {
+    return `R$ ${price.toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
+  }
+  return formatBRL(price);
+}
+
 export function RicardoPromoHero() {
   const t = useT();
+  const { locale } = useLocale();
   const cheapest = getCheapestPromoSpeaker();
-  const fromPrice = cheapest ? formatBRL(cheapest.price) : "—";
+  const fromPrice = cheapest ? formatPromoFromPrice(cheapest.price, locale) : "—";
 
   return (
     <section id="home-hero" className="relative flex flex-col">

@@ -148,7 +148,7 @@ export function getContinueProductId(profile: ShopperProfileId, segment: HomeSeg
     return segment === "marina_explore" ? "sp-move-2" : "sp-era-100";
   }
   if (profile === "ricardo" && segment === "ricardo_speed") {
-    return "sp-roam-2";
+    return "sp-era-300";
   }
   return segment === "ricardo_speed" ? "sp-era-100" : "sp-roam-2";
 }
@@ -174,7 +174,7 @@ export function getSpotlightProductId(profile: ShopperProfileId, segment: HomeSe
     return segment === "marina_explore" ? "sp-five" : "sp-era-100";
   }
   if (profile === "ricardo" && segment === "ricardo_speed") {
-    return "sp-move-2";
+    return "sp-era-100";
   }
   return segment === "ricardo_speed" ? "sb-ray" : "sp-era-100";
 }
