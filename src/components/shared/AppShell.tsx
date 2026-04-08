@@ -92,7 +92,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-dvh flex-col overflow-x-visible bg-[var(--app-canvas)] md:h-dvh md:max-h-dvh md:overflow-hidden">
       <div
         className={cn(
-          "flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-x-visible p-3 sm:p-6 md:p-8",
+          "flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-x-visible p-3 sm:p-6 md:p-8 2xl:p-12",
         )}
       >
         <div
@@ -104,8 +104,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           data-storefront-container
           className={cn(
             "@container relative mx-auto w-full max-w-[440px] overflow-visible",
-            "h-[min(100dvh-2rem,880px)] max-h-[880px] md:h-[min(100dvh-4rem,880px)]",
-            "md:min-w-[340px] md:max-w-[1280px]",
+            "h-[min(100dvh-2rem,880px)] max-h-[880px]",
+            "md:h-[min(100dvh-4rem,960px)] md:max-h-[960px]",
+            "xl:h-[min(100dvh-5rem,1080px)] xl:max-h-[1080px]",
+            "2xl:h-[min(100dvh-6rem,1200px)] 2xl:max-h-[1200px]",
+            "md:min-w-[340px] md:max-w-[1680px]",
           )}
           style={
             isMd && !isFullscreen
