@@ -8,6 +8,7 @@ import {
   getSpotlightProductId,
   type HomeExperienceConfig,
 } from "@/lib/personalization";
+import { useRecentProductIds } from "@/lib/hooks/useRecentProductIds";
 import { useDemoStore } from "@/store/demoStore";
 import type { ShopperSignals } from "@/types/shopperSignals";
 import { createContext, useContext, useMemo, type ReactNode } from "react";
@@ -36,6 +37,7 @@ export function ShopperExperienceProvider({
 }) {
   const profile = useDemoStore((s) => s.activeProfile);
   const signals = useShopperSignals({ incrementVisitOnMount: !!incrementVisitOnMount });
+  const recentProductIds = useRecentProductIds();
 
   const value = useMemo((): ShopperExperienceValue => {
     const experience = buildHomeExperience(profile, signals);
@@ -43,11 +45,11 @@ export function ShopperExperienceProvider({
     return {
       signals,
       experience,
-      continueProductId: getContinueProductId(profile, segment),
+      continueProductId: getContinueProductId(profile, segment, recentProductIds),
       compareProductId: getCompareProductId(profile, segment),
       spotlightProductId: getSpotlightProductId(profile, segment),
     };
-  }, [profile, signals]);
+  }, [profile, signals, recentProductIds]);
 
   return <ShopperExperienceContext.Provider value={value}>{children}</ShopperExperienceContext.Provider>;
 }
