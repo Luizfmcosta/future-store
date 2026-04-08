@@ -1,36 +1,24 @@
 "use client";
 
 import { getRecentProductIds } from "@/lib/shopperSignalsStorage";
-import { useSyncExternalStore } from "react";
-
-const SERVER_SNAPSHOT: string[] = [];
-
-let cachedKey = "";
-let cachedIds: string[] = SERVER_SNAPSHOT;
-
-function getClientSnapshot(): string[] {
-  const ids = getRecentProductIds();
-  const key = JSON.stringify(ids);
-  if (key === cachedKey) return cachedIds;
-  cachedKey = key;
-  cachedIds = ids.length === 0 ? SERVER_SNAPSHOT : ids;
-  return cachedIds;
-}
-
-function subscribe(onStoreChange: () => void) {
-  if (typeof window === "undefined") return () => {};
-  const fn = () => {
-    cachedKey = "";
-    onStoreChange();
-  };
-  window.addEventListener("fs:recent-product-ids", fn);
-  return () => window.removeEventListener("fs:recent-product-ids", fn);
-}
+import { useEffect, useState } from "react";
 
 /**
- * Recent PDP ids from sessionStorage, safe for SSR/hydration: server and the
- * first client pass use an empty snapshot; real storage is read after hydrate.
+ * Recent PDP ids from sessionStorage. Initial render is always `[]` so SSR and
+ * the first client pass match; storage is read after mount (post-hydration).
+ * Subscribes to `fs:recent-product-ids` for same-tab updates from `recordProductView`.
  */
 export function useRecentProductIds(): string[] {
-  return useSyncExternalStore(subscribe, getClientSnapshot, () => SERVER_SNAPSHOT);
+  const [ids, setIds] = useState<string[]>(() => []);
+
+  useEffect(() => {
+    function sync() {
+      setIds(getRecentProductIds());
+    }
+    sync();
+    window.addEventListener("fs:recent-product-ids", sync);
+    return () => window.removeEventListener("fs:recent-product-ids", sync);
+  }, []);
+
+  return ids;
 }
