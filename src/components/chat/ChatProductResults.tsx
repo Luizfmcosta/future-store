@@ -33,7 +33,7 @@ export function ChatProductResults({
       <div
         role="group"
         aria-labelledby="chat-top-matches-heading"
-        className="snap-x snap-mandatory w-full min-w-0 overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch] [scrollbar-width:thin] [scrollbar-color:rgba(120,113,108,0.35)_transparent]"
+        className="snap-x snap-mandatory w-full min-w-0 overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch] scrollbar-none"
       >
         <ul className="flex w-max list-none items-stretch gap-3 pb-1 pr-1 pt-0.5">
           {shown.map((raw) => {

@@ -1,13 +1,16 @@
 "use client";
 
+import { SearchModeTabs } from "@/components/search/SearchModeTabs";
+import { getSearchViewParam } from "@/components/search/SearchViewTabs";
 import { SHOPPER_PORTRAIT } from "@/lib/shopperPortraits";
+import { ui } from "@/lib/ui-tokens";
 import { cn } from "@/lib/utils";
 import { useT } from "@/lib/useT";
 import { useDemoStore } from "@/store/demoStore";
 import { ShoppingBag } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 type TopBarProps = {
@@ -65,78 +68,113 @@ function useTopBarLogoOnDark(pathname: string) {
 
 export function TopBar({ className }: TopBarProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const activeProfile = useDemoStore((s) => s.activeProfile);
   const openCart = useDemoStore((s) => s.openCart);
   const cartLineId = useDemoStore((s) => s.cartLineId);
   const logoOnDark = useTopBarLogoOnDark(pathname);
   const t = useT();
 
+  const isSearchPage = pathname === "/search";
+  const searchView = isSearchPage ? getSearchViewParam(searchParams) : "results";
+
+  const logo = (
+    <Link
+      href="/"
+      aria-label={t("topBar.ariaHome")}
+      className="inline-flex h-9 max-h-9 shrink-0 items-center overflow-hidden"
+    >
+      {logoOnDark ? (
+        /* eslint-disable-next-line @next/next/no-img-element */
+        <img
+          src="/branding/fs-reduced.svg"
+          alt=""
+          className={cn(
+            "h-full w-auto max-h-9 object-contain object-left transition-[filter,opacity] duration-500",
+            "brightness-0 invert opacity-100",
+          )}
+        />
+      ) : (
+        <span
+          aria-hidden
+          className={cn(
+            "inline-block h-9 w-[calc(2.25rem*569/316)] max-w-full shrink-0 bg-[#1A1A1A]/90 transition-opacity duration-500",
+          )}
+          style={{
+            maskImage: "url(/branding/fs-reduced.svg)",
+            WebkitMaskImage: "url(/branding/fs-reduced.svg)",
+            maskSize: "contain",
+            maskRepeat: "no-repeat",
+            maskPosition: "left center",
+          }}
+        />
+      )}
+    </Link>
+  );
+
+  const rightActions = (
+    <div className="flex shrink-0 items-center gap-1.5">
+      {activeProfile === "marina" ? (
+        <span
+          className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full bg-[#1a1a1a] ring-1 ring-white/15"
+          aria-hidden
+        >
+          <Image
+            src={SHOPPER_PORTRAIT.marina}
+            alt=""
+            width={36}
+            height={36}
+            className="size-full object-cover"
+            unoptimized
+          />
+        </span>
+      ) : null}
+
+      <button
+        type="button"
+        onClick={openCart}
+        className={cn(
+          "relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full",
+          /* Same glass as `ui.promptInputKit` / floating search — white, border, blur, soft shadow */
+          "border border-stone-200/60 bg-white/86 text-stone-700 shadow-[0_8px_28px_rgba(15,23,42,0.08)] backdrop-blur-md backdrop-saturate-150",
+          "transition-[border-color,background-color,box-shadow] duration-200 hover:border-stone-300/80 hover:bg-white/92 active:bg-white/94",
+          ui.home.focusRing,
+        )}
+        aria-label={t("common.cart")}
+      >
+        <ShoppingBag className="size-[17px]" strokeWidth={1.75} aria-hidden />
+        {cartLineId ? (
+          <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-[14px] items-center justify-center rounded-full bg-stone-900 px-0.5 text-[8px] font-bold text-white">
+            1
+          </span>
+        ) : null}
+      </button>
+    </div>
+  );
+
   return (
     <header className={cn("absolute left-0 right-0 top-0 z-40", className)}>
-      <div className="flex w-full items-center justify-between px-4 py-3.5 sm:px-6 sm:py-4">
-        <Link
-          href="/"
-          aria-label={t("topBar.ariaHome")}
-          className="inline-flex h-9 shrink-0 items-center"
-        >
-          {logoOnDark ? (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img
-              src="/branding/fs-reduced.svg"
-              alt=""
-              className={cn(
-                "h-[calc(2.25rem*0.95)] w-auto transition-[filter,opacity] duration-500",
-                "brightness-0 invert opacity-100",
-              )}
-            />
-          ) : (
-            <span
-              aria-hidden
-              className={cn(
-                "inline-block h-[calc(2.25rem*0.95)] w-[calc(2.25rem*0.95*569/316)] shrink-0 bg-[#232526] opacity-[0.88] transition-opacity duration-500",
-              )}
-              style={{
-                maskImage: "url(/branding/fs-reduced.svg)",
-                WebkitMaskImage: "url(/branding/fs-reduced.svg)",
-                maskSize: "contain",
-                maskRepeat: "no-repeat",
-                maskPosition: "left center",
-              }}
-            />
-          )}
-        </Link>
-
-        <div className="flex items-center gap-1.5">
-          {activeProfile === "marina" ? (
-            <span
-              className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full bg-[#1a1a1a] ring-1 ring-white/15"
-              aria-hidden
-            >
-              <Image
-                src={SHOPPER_PORTRAIT.marina}
-                alt=""
-                width={36}
-                height={36}
-                className="size-full object-cover"
-                unoptimized
-              />
-            </span>
-          ) : null}
-
-          <button
-            type="button"
-            onClick={openCart}
-            className="relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#2a2a2a]/75 text-white/80 backdrop-blur-xl transition-colors hover:bg-[#2a2a2a]/90"
-            aria-label={t("common.cart")}
-          >
-            <ShoppingBag className="size-[17px]" strokeWidth={1.75} />
-            {cartLineId ? (
-              <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-[14px] items-center justify-center rounded-full bg-white px-0.5 text-[8px] font-bold text-[#1a1a1a]">
-                1
-              </span>
-            ) : null}
-          </button>
-        </div>
+      <div
+        className={cn(
+          isSearchPage
+            ? "flex w-full items-center gap-x-2 px-4 py-3.5 sm:gap-x-3 sm:px-6 sm:py-4"
+            : "flex w-full items-center justify-between px-4 py-3.5 sm:px-6 sm:py-4",
+        )}
+      >
+        {isSearchPage ? (
+          <>
+            <div className="flex shrink-0 items-center">{logo}</div>
+            <div className="flex min-h-0 min-w-0 flex-1 items-center justify-center px-0.5">
+              <SearchModeTabs active={searchView} />
+            </div>
+            <div className="flex shrink-0 items-center">{rightActions}</div>
+          </>
+        ) : (
+          <>
+            {logo}
+            {rightActions}
+          </>
+        )}
       </div>
     </header>
   );

@@ -51,7 +51,7 @@ export default function RootLayout({
         interSidebar.variable,
       )}
     >
-      <body className="min-h-full bg-[var(--app-canvas)] font-sans text-[var(--foreground)]">
+      <body className="min-h-full bg-[var(--app-canvas)] font-sans text-[var(--foreground)] scrollbar-none">
         <ClientProviders>{children}</ClientProviders>
       </body>
     </html>

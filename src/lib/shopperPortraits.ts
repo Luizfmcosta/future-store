@@ -20,3 +20,13 @@ export function shopperDisplayName(id: ShopperProfileId): string {
       return id;
   }
 }
+
+/** Iniciais para avatar placeholder (tabs, chips): duas letras se nome composto; senão a inicial. */
+export function shopperTabInitials(id: ShopperProfileId): string {
+  const name = shopperDisplayName(id).trim();
+  const parts = name.split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) {
+    return `${parts[0]![0]!}${parts[1]![0]!}`.toUpperCase();
+  }
+  return name.slice(0, 1).toUpperCase();
+}

@@ -98,7 +98,8 @@ export const useDemoStore = create<DemoState>()(
     if (!text && !refs.length) return;
     const merged = mergePromptRefsIntoQuery(text, refs);
     set({
-      currentQuery: text,
+      /** Mesma string que o intent e o painel Chat — senão “Ask” só com chip deixava `currentQuery` vazio e o Chat em branco. */
+      currentQuery: merged,
       promptProductRefs: [],
       parsedIntent: parseIntent(merged),
       currentScreen: "search",

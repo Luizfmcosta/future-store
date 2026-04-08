@@ -26,6 +26,7 @@ export function FloatingSearchDock() {
   const currentQuery = useDemoStore((s) => s.currentQuery);
   const promptProductRefs = useDemoStore((s) => s.promptProductRefs);
   const setQuery = useDemoStore((s) => s.setQuery);
+  const clearPromptProductRefs = useDemoStore((s) => s.clearPromptProductRefs);
   const runSearch = useDemoStore((s) => s.runSearch);
 
   const hideFloatingPill = useMemo(
@@ -45,6 +46,13 @@ export function FloatingSearchDock() {
     runSearch(q || undefined);
     router.push(getSearchResultsPath(pathname, searchParams));
   }, [currentQuery, pathname, router, runSearch, searchParams]);
+
+  /** Fresh composer on home — query persists across search/PDP while the dock is hidden or other routes use it. */
+  useEffect(() => {
+    if (pathname !== "/") return;
+    setQuery("");
+    clearPromptProductRefs();
+  }, [pathname, setQuery, clearPromptProductRefs]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
