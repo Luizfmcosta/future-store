@@ -2,7 +2,6 @@
 
 import { useLocale } from "@/context/LocaleContext";
 import { getCheapestPromoSpeaker } from "@/data/products";
-import { ProductAskFloatingButton } from "@/components/shared/AskImageButton";
 import { ui } from "@/lib/ui-tokens";
 import { useT } from "@/lib/useT";
 import { cn, formatBRL } from "@/lib/utils";
@@ -51,16 +50,6 @@ export function RicardoPromoHero() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/25 sm:from-black/40" aria-hidden />
         </div>
-        {cheapest ? (
-          <div className="pointer-events-auto absolute bottom-24 right-4 z-20 sm:bottom-10 sm:right-6">
-            <ProductAskFloatingButton
-              productLabel={cheapest.title}
-              productId={cheapest.id}
-              alwaysVisible
-              className="shadow-[0_6px_20px_rgba(0,0,0,0.35)]"
-            />
-          </div>
-        ) : null}
 
         <div className="relative z-10 flex h-full min-h-0 flex-col items-start justify-end px-4 pb-28 pt-24 sm:justify-center sm:px-6 sm:pb-16 sm:pt-20">
           <motion.div
