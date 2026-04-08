@@ -1,5 +1,6 @@
 "use client";
 
+import { AskImageButton } from "@/components/shared/AskImageButton";
 import { Card } from "@/components/shared/Card";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { EyebrowPill } from "@/components/shared/EyebrowPill";
@@ -21,7 +22,6 @@ const FIT_KEY_TO_MSG: Record<ComparisonFitKey, string> = {
   marina_balanced: "searchSerp.compareFitMarinaBalanced",
   ricardo_budget: "searchSerp.compareFitRicardoBudget",
   ricardo_mid: "searchSerp.compareFitRicardoMid",
-  joana_balanced: "searchSerp.compareFitJoanaBalanced",
 };
 
 function ComparisonCard({ row }: { row: ComparisonCardModel }) {
@@ -32,20 +32,22 @@ function ComparisonCard({ row }: { row: ComparisonCardModel }) {
 
   return (
     <Card className="flex h-full min-w-0 flex-col overflow-hidden p-0 transition hover:border-stone-300/90 hover:shadow-[0_16px_40px_-24px_rgba(0,0,0,0.14)]">
-      <div className="relative aspect-[16/10] w-full shrink-0 bg-[#f5f5f5]">
-        {hasMediaUrl(row.product.heroImage) ? (
-          <Image
-            src={row.product.heroImage}
-            alt=""
-            fill
-            className="object-contain"
-            sizes="(max-width: 640px) 90vw, 320px"
-            unoptimized
-          />
-        ) : (
-          <EmptyMediaSlot className="absolute inset-0" variant="light" />
-        )}
-      </div>
+      <AskImageButton productLabel={p.title} productId={row.product.id} className="aspect-[16/10] w-full shrink-0 bg-[#f5f5f5]">
+        <div className="relative h-full w-full">
+          {hasMediaUrl(row.product.heroImage) ? (
+            <Image
+              src={row.product.heroImage}
+              alt=""
+              fill
+              className="object-contain"
+              sizes="(max-width: 640px) 90vw, 320px"
+              unoptimized
+            />
+          ) : (
+            <EmptyMediaSlot className="absolute inset-0" variant="light" />
+          )}
+        </div>
+      </AskImageButton>
       <div className="flex min-h-0 flex-1 flex-col p-4">
         <EyebrowPill>{t(FIT_KEY_TO_MSG[row.fitKey])}</EyebrowPill>
         <p className="mt-2 text-[15px] font-semibold leading-snug text-stone-900">{p.title}</p>
@@ -89,11 +91,7 @@ function ComparisonCard({ row }: { row: ComparisonCardModel }) {
 export function ComparisonStrip({ items, profile }: { items: ComparisonCardModel[]; profile: ShopperProfileId }) {
   const t = useT();
   const title =
-    profile === "marina"
-      ? t("searchSerp.compareTitleMarina")
-      : profile === "joana"
-        ? t("searchSerp.compareTitleJoana")
-        : t("searchSerp.compareTitleRicardo");
+    profile === "marina" ? t("searchSerp.compareTitleMarina") : t("searchSerp.compareTitleRicardo");
 
   return (
     <section aria-label={`${t("searchSerp.compareEyebrow")} — ${title}`} className="min-w-0">

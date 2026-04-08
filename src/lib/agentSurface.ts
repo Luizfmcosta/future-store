@@ -9,9 +9,7 @@ export function getAgentSurface(product: Product, profile: ShopperProfileId): Ag
       ? 0.07
       : profile === "ricardo" && product.sponsored
         ? 0.05
-        : profile === "joana" && product.marginTier === "mid"
-          ? 0.045
-          : 0;
+        : 0;
   const stockBoost = Math.min(0.1, product.stock / 500);
 
   return {

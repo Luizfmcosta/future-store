@@ -1,5 +1,6 @@
 "use client";
 
+import { mergePromptRefsIntoQuery, type PromptProductRef } from "@/lib/promptProductRefs";
 import { parseIntent } from "@/lib/parseIntent";
 import type { SearchIntent } from "@/types";
 import type { ScreenId } from "@/types";
@@ -18,6 +19,8 @@ type DemoState = {
   rayXMode: boolean;
   colorMode: ColorMode;
   currentQuery: string;
+  /** Visual / logical refs merged into intent on submit without replacing the typed line. */
+  promptProductRefs: PromptProductRef[];
   parsedIntent: SearchIntent | null;
   selectedProductId: string | null;
   cartDrawerOpen: boolean;
@@ -33,6 +36,9 @@ type DemoState = {
   setColorMode: (m: ColorMode) => void;
   setRayX: (v: boolean) => void;
   setQuery: (q: string) => void;
+  addPromptProductRef: (ref: { productId?: string; label: string }) => void;
+  removePromptProductRef: (key: string) => void;
+  clearPromptProductRefs: () => void;
   runSearch: (q?: string) => void;
   setSelectedProduct: (id: string | null) => void;
   openCart: () => void;
@@ -47,6 +53,8 @@ type DemoState = {
   presetSearch: () => void;
 };
 
+export type { PromptProductRef } from "@/lib/promptProductRefs";
+
 export const useDemoStore = create<DemoState>()(
   persist(
     (set, get) => ({
@@ -55,6 +63,7 @@ export const useDemoStore = create<DemoState>()(
   rayXMode: false,
   colorMode: "dark",
   currentQuery: "",
+  promptProductRefs: [],
   parsedIntent: null,
   selectedProductId: null,
   cartDrawerOpen: false,
@@ -70,11 +79,28 @@ export const useDemoStore = create<DemoState>()(
   setColorMode: (m) => set({ colorMode: m }),
   setRayX: (v) => set({ rayXMode: v }),
   setQuery: (q) => set({ currentQuery: q }),
+  addPromptProductRef: ({ productId, label }) =>
+    set((state) => {
+      const key = productId ?? `label:${label}`;
+      const next = state.promptProductRefs.filter((r) => r.key !== key);
+      return {
+        promptProductRefs: [...next, { key, productId, label: label.trim() }],
+      };
+    }),
+  removePromptProductRef: (key) =>
+    set((state) => ({
+      promptProductRefs: state.promptProductRefs.filter((r) => r.key !== key),
+    })),
+  clearPromptProductRefs: () => set({ promptProductRefs: [] }),
   runSearch: (q) => {
-    const query = q ?? get().currentQuery;
+    const text = (q ?? get().currentQuery).trim();
+    const refs = get().promptProductRefs;
+    if (!text && !refs.length) return;
+    const merged = mergePromptRefsIntoQuery(text, refs);
     set({
-      currentQuery: query,
-      parsedIntent: parseIntent(query),
+      currentQuery: text,
+      promptProductRefs: [],
+      parsedIntent: parseIntent(merged),
       currentScreen: "search",
     });
   },
@@ -99,6 +125,7 @@ export const useDemoStore = create<DemoState>()(
       rayXMode: false,
       colorMode: "dark",
       currentQuery: "",
+      promptProductRefs: [],
       parsedIntent: null,
       selectedProductId: null,
       cartDrawerOpen: false,

@@ -201,17 +201,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </div>
 
       <div
-        className="pointer-events-auto fixed left-4 top-4 z-[60]"
-        role="group"
-        aria-label={t("appShell.profileSwitcherGroup")}
-      >
-        <TopBarProfileCluster />
-      </div>
-
-      <div
         className={cn(
-          "fixed right-4 top-4 z-[60] hidden md:flex",
-          "items-center",
+          "pointer-events-auto fixed right-4 z-[60] hidden md:flex items-center",
+          "top-[max(1rem,env(safe-area-inset-top))]",
         )}
         role="group"
         aria-label={t("appShell.widthPresetsGroup")}
@@ -270,6 +262,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </button>
           </div>
         </div>
+      </div>
+
+      <div
+        className="pointer-events-auto fixed right-4 z-[60] bottom-[max(1rem,env(safe-area-inset-bottom))]"
+        role="group"
+        aria-label={t("appShell.profileSwitcherGroup")}
+      >
+        <TopBarProfileCluster />
       </div>
 
       <RayXOverlay />

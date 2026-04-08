@@ -77,28 +77,18 @@ export function getBundleOptions(
           blurb: T(locale, "cart.virtualPremiumMarinaBlurb"),
           comboPrice: tv.price + sbPremium.price - Math.min(400, Math.round(tv.price * 0.04)),
         } satisfies BundleOption)
-      : profile === "joana" && sbPremium
+      : sbPremium
         ? ({
             bundleId: "virtual-premium",
-            title: T(locale, "cart.virtualPremiumJoanaTitle"),
+            title: T(locale, "cart.virtualPremiumRicardoTitle"),
             soundbar: sbPremium,
-            savings: Math.min(320, Math.round(tv.price * 0.035)),
-            blurb: T(locale, "cart.virtualPremiumJoanaBlurb"),
-            comboPrice: tv.price + sbPremium.price - Math.min(320, Math.round(tv.price * 0.035)),
+            savings: 280,
+            blurb: T(locale, "cart.virtualPremiumRicardoBlurb"),
+            comboPrice: tv.price + sbPremium.price - 280,
           } satisfies BundleOption)
-        : sbPremium
-          ? ({
-              bundleId: "virtual-premium",
-              title: T(locale, "cart.virtualPremiumRicardoTitle"),
-              soundbar: sbPremium,
-              savings: 280,
-              blurb: T(locale, "cart.virtualPremiumRicardoBlurb"),
-              comboPrice: tv.price + sbPremium.price - 280,
-            } satisfies BundleOption)
-          : null;
+        : null;
 
-  const cheaperSb =
-    profile === "ricardo" ? sbPulse ?? sbEcho : profile === "joana" ? sbEcho ?? sbPulse : sbEcho ?? sbPulse;
+  const cheaperSb = profile === "ricardo" ? sbPulse ?? sbEcho : sbEcho ?? sbPulse;
   const cheaperSbLoc = cheaperSb ? localizeProduct(cheaperSb, locale) : undefined;
   const cheaperName = cheaperSbLoc?.title.split("—")[0].trim() ?? "Roam 2";
   const cheaperOpt =
@@ -110,11 +100,7 @@ export function getBundleOptions(
           savings: 120,
           blurb: T(
             locale,
-            profile === "ricardo"
-              ? "cart.virtualCheaperBlurbRicardo"
-              : profile === "joana"
-                ? "cart.virtualCheaperBlurbJoana"
-                : "cart.virtualCheaperBlurbMarina",
+            profile === "ricardo" ? "cart.virtualCheaperBlurbRicardo" : "cart.virtualCheaperBlurbMarina",
           ),
           comboPrice: tv.price + cheaperSb.price - 120,
         } satisfies BundleOption)

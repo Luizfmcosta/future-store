@@ -49,10 +49,6 @@ export function resolveHomeSegment(profile: ShopperProfileId, signals: ShopperSi
     if (signals.isReturning || signals.device === "desktop") return "marina_research";
     return "marina_explore";
   }
-  if (profile === "joana") {
-    if (signals.isReturning || signals.device === "desktop") return "marina_explore";
-    return "ricardo_value";
-  }
   if (profile === "ricardo") {
     if (!signals.isReturning) return "ricardo_speed";
     return "ricardo_value";
@@ -144,9 +140,6 @@ export function getContinueProductId(profile: ShopperProfileId, segment: HomeSeg
   if (profile === "marina") {
     return "sb-beam-g2";
   }
-  if (profile === "joana") {
-    return segment === "marina_explore" ? "sp-move-2" : "sp-era-100";
-  }
   if (profile === "ricardo" && segment === "ricardo_speed") {
     return "sp-era-300";
   }
@@ -157,9 +150,6 @@ export function getCompareProductId(profile: ShopperProfileId, segment: HomeSegm
   if (profile === "marina") {
     return segment === "marina_explore" ? "sp-home-theater" : "sb-arc-ultra";
   }
-  if (profile === "joana") {
-    return segment === "marina_explore" ? "sb-beam-g2" : "sb-ray";
-  }
   if (profile === "ricardo" && segment === "ricardo_speed") {
     return "sp-era-100";
   }
@@ -169,9 +159,6 @@ export function getCompareProductId(profile: ShopperProfileId, segment: HomeSegm
 export function getSpotlightProductId(profile: ShopperProfileId, segment: HomeSegmentId): string {
   if (profile === "marina") {
     return segment === "marina_explore" ? "sp-five" : "sp-move-2";
-  }
-  if (profile === "joana") {
-    return segment === "marina_explore" ? "sp-five" : "sp-era-100";
   }
   if (profile === "ricardo" && segment === "ricardo_speed") {
     return "sp-era-100";

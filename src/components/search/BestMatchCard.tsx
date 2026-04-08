@@ -1,5 +1,6 @@
 "use client";
 
+import { AskImageButton } from "@/components/shared/AskImageButton";
 import { Card } from "@/components/shared/Card";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { EyebrowPill } from "@/components/shared/EyebrowPill";
@@ -33,10 +34,6 @@ export function BestMatchCard({
       ? `${p.technology} · ${p.inches}" · ${p.compatibilityTags.slice(0, 2).join(" · ")}`
       : p.compatibilityTags.slice(0, 3).join(" · ");
   const detailRicardo = `${p.installmentText} · ${p.deliveryETA}`;
-  const detailJoana =
-    p.technology && p.inches
-      ? `${p.technology} · ${p.inches}" · ${p.installmentText}`
-      : `${p.bestFor[0] ?? p.compatibilityTags[0]} · ${p.deliveryETA}`;
 
   const href = `/product/${product.id}`;
 
@@ -44,22 +41,24 @@ export function BestMatchCard({
     <motion.div layout>
       <Card className="@container overflow-hidden p-0">
         <div className="grid grid-cols-1 @md:grid-cols-[1.1fr_1fr] @md:items-stretch @md:gap-0">
-          <div className="relative w-full shrink-0 bg-[#f5f5f5] @md:min-h-[300px] @lg:min-h-[22rem]">
-            <div className="relative aspect-[16/10] w-full @md:absolute @md:inset-0 @md:aspect-auto @md:h-full @md:min-h-0">
-              {hasMediaUrl(product.heroImage) ? (
-                <Image
-                  src={product.heroImage}
-                  alt=""
-                  fill
-                  className="object-contain object-center p-3 @md:p-4"
-                  sizes="(max-width: 900px) 100vw, min(100vw, 640px)"
-                  unoptimized
-                />
-              ) : (
-                <EmptyMediaSlot className="absolute inset-0" variant="light" />
-              )}
+          <AskImageButton productLabel={p.title} productId={product.id} className="w-full shrink-0 bg-[#f5f5f5] @md:min-h-[300px] @lg:min-h-[22rem]">
+            <div className="relative w-full @md:min-h-[300px] @lg:min-h-[22rem]">
+              <div className="relative aspect-[16/10] w-full @md:absolute @md:inset-0 @md:aspect-auto @md:h-full @md:min-h-0">
+                {hasMediaUrl(product.heroImage) ? (
+                  <Image
+                    src={product.heroImage}
+                    alt=""
+                    fill
+                    className="object-contain object-center p-3 @md:p-4"
+                    sizes="(max-width: 900px) 100vw, min(100vw, 640px)"
+                    unoptimized
+                  />
+                ) : (
+                  <EmptyMediaSlot className="absolute inset-0" variant="light" />
+                )}
+              </div>
             </div>
-          </div>
+          </AskImageButton>
           <div className="flex flex-col items-stretch justify-center border-t border-stone-200/90 p-5 @md:border-t-0 @md:border-l @md:p-7">
             {aiMode ? (
               <EyebrowPill>{t("searchSerp.bestMatchAiEyebrow")}</EyebrowPill>
@@ -68,7 +67,7 @@ export function BestMatchCard({
             )}
             <h3 className="mt-2 text-lg font-semibold leading-tight text-stone-900 sm:text-xl">{p.title}</h3>
             <p className="mt-3 text-[13px] leading-relaxed text-stone-600 sm:text-[14px]">
-              {profile === "marina" ? detailMarina : profile === "joana" ? detailJoana : detailRicardo}
+              {profile === "marina" ? detailMarina : detailRicardo}
             </p>
             <div className="mt-4 flex flex-wrap items-baseline gap-3 sm:mt-5">
               <span className="text-xl font-semibold text-stone-900 sm:text-2xl">{formatBRL(p.price)}</span>

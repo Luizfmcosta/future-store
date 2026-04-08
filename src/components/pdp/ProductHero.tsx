@@ -1,5 +1,6 @@
 "use client";
 
+import { AskImageButton } from "@/components/shared/AskImageButton";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { formatBRL, hasMediaUrl } from "@/lib/utils";
 import type { Product, ShopperProfileId } from "@/types";
@@ -17,20 +18,28 @@ export function ProductHero({ product, profile }: { product: Product; profile: S
 
   return (
     <div className="space-y-4">
-      <motion.div layout className="relative aspect-[4/3] overflow-hidden rounded-[1.75rem] border border-black/[0.08] bg-[#f5f5f5] sm:aspect-[16/9]">
-        {imgs.length > 0 ? (
-          <Image
-            src={imgs[idx] ?? imgs[0]!}
-            alt=""
-            fill
-            className="object-contain p-4 sm:p-6"
-            sizes="100vw"
-            priority
-            unoptimized
-          />
-        ) : (
-          <EmptyMediaSlot className="absolute inset-0" variant="light" />
-        )}
+      <motion.div layout className="overflow-hidden rounded-[1.75rem] border border-black/[0.08] bg-[#f5f5f5]">
+        <AskImageButton
+          productLabel={product.title}
+          productId={product.id}
+          className="aspect-[4/3] w-full sm:aspect-[16/9]"
+        >
+          {imgs.length > 0 ? (
+            <div className="relative h-full w-full">
+              <Image
+                src={imgs[idx] ?? imgs[0]!}
+                alt=""
+                fill
+                className="object-contain p-4 sm:p-6"
+                sizes="100vw"
+                priority
+                unoptimized
+              />
+            </div>
+          ) : (
+            <EmptyMediaSlot className="relative min-h-[12rem] sm:min-h-[16rem]" variant="light" />
+          )}
+        </AskImageButton>
       </motion.div>
       {imgs.length > 1 ? (
         <div className="flex gap-2 overflow-x-auto pb-1">
@@ -59,9 +68,7 @@ export function ProductHero({ product, profile }: { product: Product; profile: S
         <p className="mt-1 text-[13px] text-stone-500">
           {profile === "ricardo"
             ? `${product.deliveryETA} · Stock: ${product.stock}`
-            : profile === "joana"
-              ? `${product.deliveryETA} · ${product.stock} available · ${product.bestFor[0] ?? "Popular pick"}`
-              : `${product.deliveryETA} · ${product.stock} in regional pool`}
+            : `${product.deliveryETA} · ${product.stock} in regional pool`}
         </p>
       </div>
     </div>

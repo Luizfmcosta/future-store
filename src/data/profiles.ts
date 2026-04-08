@@ -25,16 +25,4 @@ export const profiles: Record<ShopperProfileId, ShopperProfile> = {
     merchandisingBias: "cost-benefit",
     interests: ["Installments", "Popular sizes", "Fast delivery"],
   },
-  joana: {
-    id: "joana",
-    name: "Joana",
-    device: "mobile",
-    segment: "premium-researcher",
-    returning: true,
-    source: "Organic · balanced listening",
-    tone: "editorial",
-    proofPreference: "technical",
-    merchandisingBias: "premium",
-    interests: ["Room-filling sound", "Design-led setups", "Clear comparisons"],
-  },
 };

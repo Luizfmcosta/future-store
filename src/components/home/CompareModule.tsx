@@ -1,5 +1,6 @@
 "use client";
 
+import { AskImageButton } from "@/components/shared/AskImageButton";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { EyebrowPill } from "@/components/shared/EyebrowPill";
 import { useLocale } from "@/context/LocaleContext";
@@ -26,7 +27,7 @@ export function CompareModule() {
   const t = useT();
   const id =
     experienceCtx?.compareProductId ??
-    (profile === "marina" ? "sb-arc-ultra" : profile === "joana" ? "sb-beam-g2" : "sb-ray");
+    (profile === "marina" ? "sb-arc-ultra" : "sb-ray");
   const product = getProductByIdLocalized(id, locale);
   if (!product) return null;
 
@@ -44,11 +45,7 @@ export function CompareModule() {
         >
           <motion.div variants={fadeUp}>
             <EyebrowPill>
-              {profile === "marina"
-                ? t("compare.marinaEyebrow")
-                : profile === "ricardo"
-                  ? t("compare.ricardoEyebrow")
-                  : product.brand}
+              {profile === "marina" ? t("compare.marinaEyebrow") : t("compare.ricardoEyebrow")}
             </EyebrowPill>
           </motion.div>
 
@@ -56,22 +53,14 @@ export function CompareModule() {
             variants={fadeUp}
             className="mt-3.5 whitespace-pre-line text-left font-[family-name:var(--font-display)] text-[clamp(1.3rem,4vw,1.8rem)] font-medium leading-[1.15] tracking-[-0.02em] text-[#1a1a1a]"
           >
-            {profile === "marina"
-              ? t("compare.marinaHeadline")
-              : profile === "joana"
-                ? t("compare.joanaHeadline")
-                : t("compare.ricardoHeadline")}
+            {profile === "marina" ? t("compare.marinaHeadline") : t("compare.ricardoHeadline")}
           </motion.h2>
 
           <motion.p
             variants={fadeUp}
             className="mt-3 max-w-[40ch] text-left text-[12px] font-light leading-[1.7] text-[#888] sm:text-[13px]"
           >
-            {profile === "marina"
-              ? t("compare.marinaBody")
-              : profile === "joana"
-                ? t("compare.joanaBody")
-                : t("compare.ricardoBody")}
+            {profile === "marina" ? t("compare.marinaBody") : t("compare.ricardoBody")}
           </motion.p>
 
           <motion.div variants={fadeUp}>
@@ -83,9 +72,7 @@ export function CompareModule() {
                 ? t(experienceCtx.experience.copy.compareCta)
                 : profile === "marina"
                   ? t("compare.marinaCta")
-                  : profile === "ricardo"
-                    ? t("compare.ricardoCta")
-                    : t("compare.cta")}
+                  : t("compare.ricardoCta")}
             </Link>
           </motion.div>
         </motion.div>
@@ -97,22 +84,28 @@ export function CompareModule() {
           transition={{ duration: 0.85, ease }}
           className="w-full min-w-0 flex-1 @lg:basis-1/2"
         >
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-[#f5f5f5]">
+          <AskImageButton
+            productLabel={product.title}
+            productId={product.id}
+            className="aspect-[4/3] w-full overflow-hidden rounded-xl bg-[#f5f5f5]"
+          >
             {heroSrc ? (
-              <Image
-                src={heroSrc}
-                alt=""
-                fill
-                className={cn(
-                  profile === "ricardo" ? "object-cover object-center" : "object-contain p-5 sm:p-6",
-                )}
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                unoptimized
-              />
+              <div className="relative h-full w-full">
+                <Image
+                  src={heroSrc}
+                  alt=""
+                  fill
+                  className={cn(
+                    profile === "ricardo" ? "object-cover object-center" : "object-contain p-5 sm:p-6",
+                  )}
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  unoptimized
+                />
+              </div>
             ) : (
-              <EmptyMediaSlot className="absolute inset-0" variant="light" />
+              <EmptyMediaSlot className="relative min-h-[10rem]" variant="light" />
             )}
-          </div>
+          </AskImageButton>
         </motion.div>
       </div>
     </section>
