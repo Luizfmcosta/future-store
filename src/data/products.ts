@@ -1,7 +1,8 @@
 import type { Product } from "@/types";
 
+/** Local asset under `public/media/products/`. Encodes spaces and special chars. */
 function media(name: string): string {
-  return `/media/products/${name}`;
+  return `/media/products/${encodeURIComponent(name)}`;
 }
 
 /**
@@ -33,11 +34,11 @@ export const products: Product[] = [
     bestFor: ["Kitchens", "Desks", "Stereo pairs in small rooms"],
     marginTier: "mid",
     sponsored: true,
-    heroImage: media("sonos-era-100-lifestyle.png"),
+    heroImage: media("Era 100 Wireless Speaker.png"),
     gallery: [
-      media("ba7417c9ec5d2dcf54f46a4b3481eb1d5d55d1b5-2000x2000.avif"),
-      media("0d3373d97722b8b9728b95026895d089f9241ae8-1920x1920.avif"),
-      media("82ce8697780924b067d289793981db85c83b2b00-2000x2000.avif"),
+      media("Era 100 Speaker.png"),
+      media("Core 100 Speaker.png"),
+      media("sonos-era-100-lifestyle.png"),
     ],
   },
   {
@@ -63,8 +64,9 @@ export const products: Product[] = [
     compatibilityTags: ["Spatial audio", "WiFi 6", "Bluetooth 5.0", "AirPlay 2"],
     bestFor: ["Living rooms", "Spatial music", "Standalone flagship"],
     marginTier: "high",
-    heroImage: media("1dfecdf1513cd96cd28e789adac4957b97adf50b-1800x1800.avif"),
+    heroImage: media("Era 300 Speaker.png"),
     gallery: [
+      media("Stronger sound with more presence in the room.png"),
       media("82ce8697780924b067d289793981db85c83b2b00-2000x2000.avif"),
       media("1178ce56bf752b5183fed1c6429e3a15b6770216-2480x2480.avif"),
     ],
@@ -93,11 +95,11 @@ export const products: Product[] = [
     compatibilityTags: ["Bluetooth", "WiFi", "Line-in", "USB-C"],
     bestFor: ["Patio", "Portable parties", "Room-to-room listening"],
     marginTier: "high",
-    heroImage: media("87e816c0a480d8a27c1d379e02e84d84f6db5041-1280x1280.avif"),
+    heroImage: media("Move Portable Speaker.png"),
     gallery: [
+      media("Move Outdoor Speaker.png"),
+      media("sonos-move-2-lifestyle.png"),
       media("87e816c0a480d8a27c1d379e02e84d84f6db5041-1280x1280.avif"),
-      media("110a711ffb1d9ec82743734ef7477a7d400c8d11-2400x2400.avif"),
-      media("a2481284c5700c238a123168458f74c2b19e1bed-2379x2379.avif"),
     ],
   },
   {
@@ -124,10 +126,11 @@ export const products: Product[] = [
     bestFor: ["Travel", "Gifts", "First Sonos speaker"],
     marginTier: "mid",
     sponsored: true,
-    heroImage: media("110a711ffb1d9ec82743734ef7477a7d400c8d11-2400x2400.avif"),
+    heroImage: media("Roam 2 Portable Speaker.png"),
     gallery: [
-      media("a2481284c5700c238a123168458f74c2b19e1bed-2379x2379.avif"),
-      media("87e816c0a480d8a27c1d379e02e84d84f6db5041-1280x1280.avif"),
+      media("Go Compact Speaker.png"),
+      media("Roam Lite Speaker.png"),
+      media("Mini One Speaker.png"),
     ],
   },
   {
@@ -154,7 +157,7 @@ export const products: Product[] = [
     compatibilityTags: ["Dolby Atmos", "eARC", "HDMI", "WiFi"],
     bestFor: ["Home theater", "Movie nights", "Console gaming"],
     marginTier: "high",
-    heroImage: media("1178ce56bf752b5183fed1c6429e3a15b6770216-2480x2480.avif"),
+    heroImage: media("Arc + Sub + Rear Speakers.png"),
     gallery: [
       media("3cb78a6f04f3125c38ee0c37dfa78c4591916da1-2480x2480.avif"),
       media("1dfecdf1513cd96cd28e789adac4957b97adf50b-1800x1800.avif"),
@@ -183,8 +186,9 @@ export const products: Product[] = [
     compatibilityTags: ["Line-in", "WiFi", "Bluetooth", "AirPlay 2"],
     bestFor: ["Vinyl lovers", "Living rooms", "Design-led setups"],
     marginTier: "high",
-    heroImage: media("aa63e8b53815c94ecb60fdde9baeffcbf3fcd8aa-2000x2000.avif"),
+    heroImage: media("Era 100 Speaker.png"),
     gallery: [
+      media("A great place to start.png"),
       media("ba7417c9ec5d2dcf54f46a4b3481eb1d5d55d1b5-2000x2000.avif"),
       media("0d3373d97722b8b9728b95026895d089f9241ae8-1920x1920.avif"),
     ],
@@ -213,10 +217,10 @@ export const products: Product[] = [
     compatibilityTags: ["Stereo pair", "WiFi", "AirPlay 2"],
     bestFor: ["Stereo listening", "Two-room starter", "Office + bedroom"],
     marginTier: "mid",
-    heroImage: media("77350061ddcfded38dcce31526b3ec45ded63743-1280x1280.avif"),
+    heroImage: media("Era 100 Speaker.png"),
     gallery: [
-      media("82ce8697780924b067d289793981db85c83b2b00-2000x2000.avif"),
-      media("ba7417c9ec5d2dcf54f46a4b3481eb1d5d55d1b5-2000x2000.avif"),
+      media("Stronger sound with more presence in the room.png"),
+      media("77350061ddcfded38dcce31526b3ec45ded63743-1280x1280.avif"),
     ],
   },
   {
@@ -244,10 +248,10 @@ export const products: Product[] = [
     bestFor: ["Outdoors", "Travel duo", "Student apartments"],
     marginTier: "mid",
     sponsored: true,
-    heroImage: media("a2481284c5700c238a123168458f74c2b19e1bed-2379x2379.avif"),
+    heroImage: media("Roam 2 Portable Speaker.png"),
     gallery: [
-      media("110a711ffb1d9ec82743734ef7477a7d400c8d11-2400x2400.avif"),
-      media("87e816c0a480d8a27c1d379e02e84d84f6db5041-1280x1280.avif"),
+      media("Music that goes with you, wherever you are.png"),
+      media("a2481284c5700c238a123168458f74c2b19e1bed-2379x2379.avif"),
     ],
   },
   /** TVs — entry / mid tier for promo funnels (Ricardo). */
@@ -364,10 +368,10 @@ export const products: Product[] = [
     bestFor: ["Living room TV", "Cinema nights", "Console gaming"],
     marginTier: "high",
     sponsored: true,
-    heroImage: media("fe8be07f006292560731a3bfb4481f9758bd44dc-2000x1020.avif"),
+    heroImage: media("Clearer dialogue and more immersive TV sound.png"),
     gallery: [
+      media("fe8be07f006292560731a3bfb4481f9758bd44dc-2000x1020.avif"),
       media("63597b504e8affad7de8e6c7d440011016fe1ff3-2000x1341.avif"),
-      media("3cb78a6f04f3125c38ee0c37dfa78c4591916da1-2480x2480.avif"),
     ],
   },
   {
@@ -391,10 +395,11 @@ export const products: Product[] = [
     compatibilityTags: ["Dolby Atmos", "eARC", "HDMI", "WiFi"],
     bestFor: ["Bedroom TV", "Apartments", "Everyday streaming"],
     marginTier: "mid",
-    heroImage: media("e12ba440b45fc67e970049734783d6fb0b6b20d1-2480x2480.avif"),
+    heroImage: media("Beam Soundbar.png"),
     gallery: [
-      media("af5c86024d32b2fa5c41cbb81dd909d02878ea12-1510x959.avif"),
-      media("b38c2b390ddf8576df36f50a3b9d69774d65a1ef-2000x2000.avif"),
+      media("Beam + Sub Mini.png"),
+      media("Beam Compact Soundbar.png"),
+      media("Start with a soundbar that defines your system.png"),
     ],
   },
   {
@@ -419,10 +424,10 @@ export const products: Product[] = [
     bestFor: ["Small TVs", "First soundbar", "Offices"],
     marginTier: "mid",
     sponsored: true,
-    heroImage: media("b11fda58212ffc54736af5412c8be6e52d976e84-701x509.avif"),
+    heroImage: media("Ray Compact Soundbar.png"),
     gallery: [
+      media("b11fda58212ffc54736af5412c8be6e52d976e84-701x509.avif"),
       media("47a0e60ac5d697e707fcda68c77d9e460c1d5233-732x481.avif"),
-      media("ed86978e2f4d10e9a1044cf9d023cd21418f43a7-1920x345.avif"),
     ],
   },
   {
@@ -448,8 +453,8 @@ export const products: Product[] = [
     marginTier: "high",
     heroImage: media("66e3cfe30d0b259876278d17a526295d43f044e5-2480x2480.avif"),
     gallery: [
+      media("Explore the full range of speakers.png"),
       media("72e9843281b069391d73240660b11acb66ccdac3-2000x2000.avif"),
-      media("a57b2c8d90c191d435490e8bc636b5a582adac03-2000x2000.avif"),
     ],
   },
   {
@@ -480,6 +485,12 @@ export const products: Product[] = [
     ],
   },
 ];
+
+/** Curated home cards: UI titles describe a bundle; hero can show bundle art while PDP stays one SKU. */
+export function getCuratedMarinaCardHeroOverride(productId: string): string | undefined {
+  if (productId === "sb-beam-g2") return media("Beam + Sub Mini.png");
+  return undefined;
+}
 
 export function getProductById(id: string): Product | undefined {
   return products.find((p) => p.id === id);

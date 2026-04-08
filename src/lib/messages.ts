@@ -90,7 +90,7 @@ export const messages: Record<
     },
     compare: {
       marinaEyebrow: "Uma abordagem alternativa",
-      marinaHeadline: "Considere uma caixa standalone\nno lugar de uma soundbar",
+      marinaHeadline: "Considere uma caixa\nstandalone no lugar de uma soundbar",
       marinaBody:
         "Uma configuração com uma única caixa pode entregar som amplo que preenche a sala — enquanto uma soundbar foca mais no áudio da TV. Veja qual abordagem combina melhor com o seu espaço.",
       marinaCta: "Ver comparativo",
@@ -564,7 +564,7 @@ export const messages: Record<
     },
     compare: {
       marinaEyebrow: "An alternative approach",
-      marinaHeadline: "Consider a standalone speaker\ninstead of a soundbar",
+      marinaHeadline: "Consider a standalone\nspeaker instead of a soundbar",
       marinaBody:
         "A single-speaker setup can deliver wide, room-filling sound — while a soundbar is more focused on TV audio. See which approach fits your space better.",
       marinaCta: "View comparison",

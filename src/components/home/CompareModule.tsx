@@ -51,7 +51,7 @@ export function CompareModule() {
 
           <motion.h2
             variants={fadeUp}
-            className="mt-3.5 whitespace-pre-line text-left font-[family-name:var(--font-display)] text-[clamp(1.3rem,4vw,1.8rem)] font-medium leading-[1.15] tracking-[-0.02em] text-[#1a1a1a]"
+            className="mt-3.5 whitespace-pre-line text-balance text-pretty text-left font-[family-name:var(--font-display)] text-[clamp(1.3rem,4vw,1.8rem)] font-medium leading-[1.2] tracking-[-0.02em] text-[#1a1a1a]"
           >
             {profile === "marina" ? t("compare.marinaHeadline") : t("compare.ricardoHeadline")}
           </motion.h2>

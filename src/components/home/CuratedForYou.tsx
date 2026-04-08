@@ -3,7 +3,11 @@
 import { AskImageButton } from "@/components/shared/AskImageButton";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { useLocale } from "@/context/LocaleContext";
-import { getPromoTvsUnder, getSpeakersAndSoundbars } from "@/data/products";
+import {
+  getCuratedMarinaCardHeroOverride,
+  getProductById,
+  getPromoTvsUnder,
+} from "@/data/products";
 import { localizeProducts } from "@/lib/product-i18n";
 import { useT } from "@/lib/useT";
 import { cn, formatBRL, hasMediaUrl } from "@/lib/utils";
@@ -32,15 +36,19 @@ function MarinaCompareCard({
   displayTitle,
   displaySubline,
   displayBlurb,
+  heroImageOverride,
 }: {
   product: Product;
   tierLabel: string;
   displayTitle?: string;
   displaySubline?: string;
   displayBlurb?: string;
+  /** When card title describes a bundle but PDP is one SKU (e.g. Beam + Sub Mini). */
+  heroImageOverride?: string;
 }) {
   const t = useT();
-  const heroSrc = hasMediaUrl(product.heroImage) ? product.heroImage : null;
+  const resolvedHero = heroImageOverride ?? product.heroImage;
+  const heroSrc = hasMediaUrl(resolvedHero) ? resolvedHero : null;
   const title = displayTitle ?? shortTitle(product);
   const blurb = displayBlurb ?? (product.bestFor[0] ?? product.reviewStrengths[0]);
 
@@ -178,21 +186,22 @@ export function CuratedForYou() {
     if (isRicardoPromoFirstVisit) {
       return localizeProducts(getPromoTvsUnder(5000).slice(0, 2), locale);
     }
-    const catalog = getSpeakersAndSoundbars();
-    const mode = experienceCtx?.experience.curatedSort ?? "profile_default";
-    let sorted: typeof catalog;
-    if (mode === "price_desc") {
-      sorted = [...catalog].sort((a, b) => b.price - a.price || a.id.localeCompare(b.id));
-    } else if (mode === "price_asc") {
-      sorted = [...catalog].sort((a, b) => a.price - b.price || a.id.localeCompare(b.id));
-    } else {
-      sorted =
-        profile === "marina"
-          ? [...catalog].sort((a, b) => b.price - a.price || a.id.localeCompare(b.id))
-          : [...catalog].sort((a, b) => a.price - b.price || a.id.localeCompare(b.id));
+    /* Marina: fixed pair matches curated card titles (Beam + Sub Mini vs Arc surround set). */
+    if (profile === "marina") {
+      const a = getProductById("sb-beam-g2");
+      const b = getProductById("sp-home-theater");
+      if (!a || !b) return [];
+      return localizeProducts([a, b], locale);
     }
-    return localizeProducts(sorted.slice(0, 2), locale);
-  }, [profile, locale, experienceCtx?.experience.curatedSort, isRicardoPromoFirstVisit]);
+    /* Ricardo: pair matches “around R$ 2.000” headline (portable + compact smart speaker). */
+    if (profile === "ricardo") {
+      const a = getProductById("sp-roam-2");
+      const b = getProductById("sp-era-100");
+      if (!a || !b) return [];
+      return localizeProducts([a, b], locale);
+    }
+    return [];
+  }, [profile, locale, isRicardoPromoFirstVisit]);
 
   return (
     <section className="flex flex-col bg-white">
@@ -238,6 +247,7 @@ export function CuratedForYou() {
                 key={p.id}
                 product={p}
                 tierLabel={i === 0 ? t("curated.marinaTierA") : t("curated.marinaTierB")}
+                heroImageOverride={getCuratedMarinaCardHeroOverride(p.id)}
                 displayTitle={
                   profile === "marina"
                     ? i === 0

@@ -150,14 +150,13 @@ export function getContinueProductId(
   return segment === "ricardo_speed" ? "sp-era-100" : "sp-roam-2";
 }
 
-export function getCompareProductId(profile: ShopperProfileId, segment: HomeSegmentId): string {
+export function getCompareProductId(profile: ShopperProfileId, _segment: HomeSegmentId): string {
   if (profile === "marina") {
-    return segment === "marina_explore" ? "sp-home-theater" : "sb-arc-ultra";
+    /* Copy: “standalone speaker vs soundbar” — feature a flagship speaker, not a bar. */
+    return "sp-era-300";
   }
-  if (profile === "ricardo" && segment === "ricardo_speed") {
-    return "sp-era-100";
-  }
-  return segment === "ricardo_speed" ? "sb-ray" : "sp-era-100";
+  /* Copy: “full range of speakers” — wireless speaker lead-in. */
+  return "sp-era-100";
 }
 
 export function getSpotlightProductId(profile: ShopperProfileId, segment: HomeSegmentId): string {
