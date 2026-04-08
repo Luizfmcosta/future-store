@@ -1,5 +1,6 @@
 "use client";
 
+import { PromptContextBadges } from "@/components/search/PromptContextBadges";
 import { PromptSuggestionRow } from "@/components/search/PromptSuggestionRow";
 import { PromptInput, PromptInputTextarea } from "@/components/ui/prompt-input";
 import { PromptInputChatToolbar } from "@/components/search/PromptInputChatToolbar";
@@ -10,12 +11,10 @@ import { useT } from "@/lib/useT";
 import { ui } from "@/lib/ui-tokens";
 import { cn } from "@/lib/utils";
 import { useDemoStore } from "@/store/demoStore";
-import { motion, useAnimationControls } from "framer-motion";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useId, useMemo, useRef } from "react";
+import { useCallback, useEffect, useId, useMemo } from "react";
 
 const AI_FOLLOWUP_SELECTOR = "[data-ai-followup-input]";
-const ease = [0.76, 0, 0.24, 1] as [number, number, number, number];
 
 export function FloatingSearchDock() {
   const t = useT();
@@ -25,6 +24,7 @@ export function FloatingSearchDock() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const currentQuery = useDemoStore((s) => s.currentQuery);
+  const promptProductRefs = useDemoStore((s) => s.promptProductRefs);
   const setQuery = useDemoStore((s) => s.setQuery);
   const runSearch = useDemoStore((s) => s.runSearch);
 
@@ -39,44 +39,12 @@ export function FloatingSearchDock() {
   /** Chips only on non-SERP routes; hide after submit / on results (same route). */
   const showPromptSuggestions = pathname !== "/search";
 
-  const controls = useAnimationControls();
-  const lastScrollY = useRef(0);
-  const hidden = useRef(false);
-
   const submitSearch = useCallback(() => {
     const q = currentQuery.trim();
-    if (!q) return;
-    runSearch(q);
+    if (!q && !useDemoStore.getState().promptProductRefs.length) return;
+    runSearch(q || undefined);
     router.push(getSearchResultsPath(pathname, searchParams));
   }, [currentQuery, pathname, router, runSearch, searchParams]);
-
-  const onScroll = useCallback(() => {
-    const scrollEl = document.querySelector<HTMLElement>(
-      "[data-storefront-window] main",
-    );
-    if (!scrollEl) return;
-
-    const y = scrollEl.scrollTop;
-    const delta = y - lastScrollY.current;
-    lastScrollY.current = y;
-
-    if (delta > 8 && y > 200 && !hidden.current) {
-      hidden.current = true;
-      controls.start({ y: 80, opacity: 0, transition: { duration: 0.35, ease } });
-    } else if (delta < -4 && hidden.current) {
-      hidden.current = false;
-      controls.start({ y: 0, opacity: 1, transition: { duration: 0.4, ease } });
-    }
-  }, [controls]);
-
-  useEffect(() => {
-    const scrollEl = document.querySelector<HTMLElement>(
-      "[data-storefront-window] main",
-    );
-    if (!scrollEl) return;
-    scrollEl.addEventListener("scroll", onScroll, { passive: true });
-    return () => scrollEl.removeEventListener("scroll", onScroll);
-  }, [onScroll]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -97,9 +65,7 @@ export function FloatingSearchDock() {
   return (
     <>
       {!hideFloatingPill && !isPdp ? (
-        <motion.div
-          initial={{ y: 0, opacity: 1 }}
-          animate={controls}
+        <div
           className={cn(
             "pointer-events-none absolute bottom-0 left-0 right-0 z-[60] flex justify-center px-4 sm:px-6",
             ui.floatingSearchBarRowPad,
@@ -120,6 +86,7 @@ export function FloatingSearchDock() {
               maxHeight={120}
               className={cn(ui.promptInputKit, "w-full max-w-xl")}
             >
+              <PromptContextBadges />
               <PromptInputTextarea
                 data-storefront-search-field=""
                 placeholder={t("floatingSearch.placeholder")}
@@ -129,14 +96,14 @@ export function FloatingSearchDock() {
               <PromptInputChatToolbar
                 fileInputId={fileInputId}
                 onSend={submitSearch}
-                sendDisabled={!currentQuery.trim()}
+                sendDisabled={!currentQuery.trim() && promptProductRefs.length === 0}
                 onMicClick={() => {
                   /* demo: entrada por voz */
                 }}
               />
             </PromptInput>
           </div>
-        </motion.div>
+        </div>
       ) : null}
     </>
   );

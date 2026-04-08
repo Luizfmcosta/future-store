@@ -8,6 +8,7 @@ import {
   ChatContainerScrollAnchor,
 } from "@/components/ui/chat-container";
 import { Message, MessageAvatar, MessageContent, MessageMeta } from "@/components/ui/message";
+import { PromptContextBadges } from "@/components/search/PromptContextBadges";
 import { PromptSuggestionRow } from "@/components/search/PromptSuggestionRow";
 import { PromptInputChatToolbar } from "@/components/search/PromptInputChatToolbar";
 import { PromptInput, PromptInputTextarea } from "@/components/ui/prompt-input";
@@ -17,6 +18,7 @@ import { getPromptSuggestionPool } from "@/lib/promptSuggestions";
 import { ui } from "@/lib/ui-tokens";
 import { useT } from "@/lib/useT";
 import { cn } from "@/lib/utils";
+import { mergePromptRefsIntoQuery } from "@/lib/promptProductRefs";
 import { useDemoStore } from "@/store/demoStore";
 import type { Product } from "@/types";
 import { Bot } from "lucide-react";
@@ -85,6 +87,8 @@ export function SearchAiPanel() {
   const promptFileInputId = useId();
   const profile = useDemoStore((s) => s.activeProfile);
   const currentQuery = useDemoStore((s) => s.currentQuery);
+  const promptProductRefs = useDemoStore((s) => s.promptProductRefs);
+  const clearPromptProductRefs = useDemoStore((s) => s.clearPromptProductRefs);
 
   const [messages, setMessages] = useState<Msg[]>([]);
   const [draft, setDraft] = useState("");
@@ -129,22 +133,26 @@ export function SearchAiPanel() {
 
   const onSend = useCallback(() => {
     const text = draft.trim();
-    if (!text || replying) return;
+    const refs = useDemoStore.getState().promptProductRefs;
+    if ((!text && !refs.length) || replying) return;
 
-    setMessages((prev) => [...prev, { role: "user", content: text }]);
+    const merged = mergePromptRefsIntoQuery(text, refs);
+    clearPromptProductRefs();
+
+    setMessages((prev) => [...prev, { role: "user", content: merged }]);
     setDraft("");
     setReplying(true);
     bumpScroll();
 
     if (replyTimerRef.current) clearTimeout(replyTimerRef.current);
     replyTimerRef.current = setTimeout(() => {
-      const { text: reply, products, sources } = assistantReplyForQuery(text, profile, true, locale);
+      const { text: reply, products, sources } = assistantReplyForQuery(merged, profile, true, locale);
       setMessages((prev) => [...prev, { role: "assistant", content: reply, products, sources }]);
       setReplying(false);
       replyTimerRef.current = null;
       bumpScroll();
     }, REASONING_MIN_MS);
-  }, [draft, profile, replying, locale, bumpScroll]);
+  }, [draft, profile, replying, locale, bumpScroll, clearPromptProductRefs]);
 
   return (
     <div className="relative flex min-h-0 flex-1 flex-col">
@@ -222,6 +230,7 @@ export function SearchAiPanel() {
               replying && "pointer-events-none opacity-60",
             )}
           >
+            <PromptContextBadges />
             <PromptInputTextarea
               data-ai-followup-input=""
               data-storefront-search-field=""
@@ -237,7 +246,7 @@ export function SearchAiPanel() {
               fileInputId={promptFileInputId}
               disabled={replying}
               onSend={onSend}
-              sendDisabled={!draft.trim()}
+              sendDisabled={!draft.trim() && promptProductRefs.length === 0}
               sendLabel={t("searchAiPanel.sendAria")}
               onMicClick={() => {
                 /* demo: entrada por voz */

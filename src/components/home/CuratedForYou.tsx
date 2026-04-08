@@ -1,5 +1,6 @@
 "use client";
 
+import { AskImageButton } from "@/components/shared/AskImageButton";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { useLocale } from "@/context/LocaleContext";
 import { getPromoTvsUnder, getSpeakersAndSoundbars } from "@/data/products";
@@ -52,20 +53,26 @@ function MarinaCompareCard({
         <p className="text-[13px] font-semibold leading-snug text-stone-700 sm:text-[14px]">{tierLabel}</p>
       </div>
 
-      <div className="relative aspect-[5/4] w-full shrink-0 overflow-hidden bg-[#f5f5f5]">
+      <AskImageButton
+        productLabel={product.title}
+        productId={product.id}
+        className="aspect-[5/4] w-full shrink-0 overflow-hidden bg-[#f5f5f5]"
+      >
         {heroSrc ? (
-          <Image
-            src={heroSrc}
-            alt=""
-            fill
-            className="object-contain p-4 sm:p-5"
-            sizes="(max-width: 480px) 45vw, 400px"
-            unoptimized
-          />
+          <div className="relative h-full w-full">
+            <Image
+              src={heroSrc}
+              alt=""
+              fill
+              className="object-contain p-4 sm:p-5"
+              sizes="(max-width: 480px) 45vw, 400px"
+              unoptimized
+            />
+          </div>
         ) : (
-          <EmptyMediaSlot className="absolute inset-0" variant="light" />
+          <EmptyMediaSlot className="relative min-h-[8rem]" variant="light" />
         )}
-      </div>
+      </AskImageButton>
 
       <div className="flex min-h-0 flex-1 flex-col gap-4 p-3.5 sm:p-4">
         <div className="min-w-0 space-y-2">
@@ -111,20 +118,26 @@ function RicardoPickCard({ product }: { product: Product }) {
       variants={fadeUp}
       className="overflow-hidden rounded-2xl border border-stone-200/90 bg-white shadow-[0_8px_28px_-18px_rgba(0,0,0,0.12)]"
     >
-      <div className="relative aspect-[5/4] w-full overflow-hidden bg-[#f5f5f5]">
+      <AskImageButton
+        productLabel={product.title}
+        productId={product.id}
+        className="aspect-[5/4] w-full overflow-hidden bg-[#f5f5f5]"
+      >
         {heroSrc ? (
-          <Image
-            src={heroSrc}
-            alt=""
-            fill
-            className="object-contain p-4"
-            sizes="(max-width: 480px) 100vw, 400px"
-            unoptimized
-          />
+          <div className="relative h-full w-full">
+            <Image
+              src={heroSrc}
+              alt=""
+              fill
+              className="object-contain p-4"
+              sizes="(max-width: 480px) 100vw, 400px"
+              unoptimized
+            />
+          </div>
         ) : (
-          <EmptyMediaSlot className="absolute inset-0" variant="light" />
+          <EmptyMediaSlot className="relative min-h-[8rem]" variant="light" />
         )}
-      </div>
+      </AskImageButton>
       <div className="flex flex-col gap-3 p-3 sm:p-4">
         <div>
           <h3 className="text-[13px] font-medium leading-snug text-[#1a1a1a]">{shortTitle(product)}</h3>
@@ -174,7 +187,7 @@ export function CuratedForYou() {
       sorted = [...catalog].sort((a, b) => a.price - b.price || a.id.localeCompare(b.id));
     } else {
       sorted =
-        profile === "marina" || profile === "joana"
+        profile === "marina"
           ? [...catalog].sort((a, b) => b.price - a.price || a.id.localeCompare(b.id))
           : [...catalog].sort((a, b) => a.price - b.price || a.id.localeCompare(b.id));
     }
@@ -195,18 +208,14 @@ export function CuratedForYou() {
             ? t("curated.ricardoPromoHeadline")
             : profile === "marina"
               ? t("curated.marinaHeadline")
-              : profile === "joana"
-                ? t("curated.joanaHeadline")
-                : t("curated.ricardoHeadline")}
+              : t("curated.ricardoHeadline")}
         </h2>
         <p className="mt-2.5 max-w-[min(100%,26rem)] text-[13px] font-light leading-[22px] text-[#888]">
           {isRicardoPromoFirstVisit
             ? t("curated.ricardoPromoBody")
             : profile === "marina"
               ? t("curated.marinaBody")
-              : profile === "joana"
-                ? t("curated.joanaBody")
-                : t("curated.ricardoBody")}
+              : t("curated.ricardoBody")}
         </p>
       </motion.div>
 
@@ -217,26 +226,18 @@ export function CuratedForYou() {
         viewport={{ once: true, amount: 0.08 }}
         className={cn(
           "px-4 pb-9 sm:px-6 sm:pb-10",
-          profile === "marina" || profile === "joana"
+          profile === "marina"
             ? "grid grid-cols-1 gap-3 @md:grid-cols-2 sm:gap-4"
             : "flex flex-col gap-4",
         )}
       >
-        {profile === "marina" || profile === "joana" ? (
+        {profile === "marina" ? (
           <>
             {pair.map((p, i) => (
               <MarinaCompareCard
                 key={p.id}
                 product={p}
-                tierLabel={
-                  profile === "joana"
-                    ? i === 0
-                      ? t("curated.joanaTierA")
-                      : t("curated.joanaTierB")
-                    : i === 0
-                      ? t("curated.marinaTierA")
-                      : t("curated.marinaTierB")
-                }
+                tierLabel={i === 0 ? t("curated.marinaTierA") : t("curated.marinaTierB")}
                 displayTitle={
                   profile === "marina"
                     ? i === 0

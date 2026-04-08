@@ -1,5 +1,6 @@
 "use client";
 
+import { AskImageButton } from "@/components/shared/AskImageButton";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { EyebrowPill } from "@/components/shared/EyebrowPill";
 import { useLocale } from "@/context/LocaleContext";
@@ -79,20 +80,26 @@ export function MerchStrip() {
                   {i + 1}
                 </span>
 
-                <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl bg-[#f5f5f5]">
+                <AskImageButton
+                  productLabel={p.title}
+                  productId={p.id}
+                  className="aspect-[3/4] w-full overflow-hidden rounded-xl bg-[#f5f5f5]"
+                >
                   {heroSrc ? (
-                    <Image
-                      src={heroSrc}
-                      alt=""
-                      fill
-                      className="object-contain p-4 transition-transform duration-700 ease-out hover:scale-105"
-                      sizes="60vw"
-                      unoptimized
-                    />
+                    <div className="relative h-full w-full">
+                      <Image
+                        src={heroSrc}
+                        alt=""
+                        fill
+                        className="object-contain p-4 transition-transform duration-700 ease-out hover:scale-105"
+                        sizes="60vw"
+                        unoptimized
+                      />
+                    </div>
                   ) : (
-                    <EmptyMediaSlot className="absolute inset-0 rounded-xl" variant="light" />
+                    <EmptyMediaSlot className="relative min-h-[10rem] rounded-xl" variant="light" />
                   )}
-                </div>
+                </AskImageButton>
 
                 <h3 className="mt-2.5 text-[11px] font-medium leading-snug text-[#1a1a1a]">
                   {p.title.split("—")[0].trim()}

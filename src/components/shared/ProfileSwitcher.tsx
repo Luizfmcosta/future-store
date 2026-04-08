@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import type { ShopperProfileId } from "@/types";
 import { useDemoStore } from "@/store/demoStore";
 import { motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ChevronUp } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -19,7 +19,7 @@ export const PROFILE_TOP_CLUSTER_WIDTH_CLASS =
   "w-[min(248px,calc(100vw-2rem))] shrink-0";
 
 const toggleBtnClass = cn(
-  "flex shrink-0 items-center justify-center rounded-full p-1.5 text-[#b0b0b4] outline-none transition hover:bg-white/[0.08] hover:text-white",
+  "flex size-7 shrink-0 items-center justify-center rounded-full p-0 text-[#b0b0b4] outline-none transition hover:bg-white/[0.08] hover:text-white",
   ui.floatingChrome.segmentFocus,
 );
 
@@ -34,7 +34,7 @@ const caretMotion = {
 /** Rótulo acessível do perfil ativo — repete o texto do pill selecionado (única ocorrência do nome). */
 export const TOPBAR_PROFILE_ACTIVE_LABEL_ID = "topbar-profile-active-label";
 
-/** Pills + detalhe do perfil num único bloco (mesmo chrome). Colapsado = só o seletor; caret fixo no fundo. */
+/** Pills + detalhe do perfil num único bloco (mesmo chrome). Ancorado no canto inferior: detalhe abre para cima; caret acima dos pills; pills no fundo. */
 export function TopBarProfileCluster({ className }: { className?: string }) {
   const t = useT();
   const [expanded, setExpanded] = useState(false);
@@ -52,8 +52,7 @@ export function TopBarProfileCluster({ className }: { className?: string }) {
           className="flex flex-col overflow-hidden"
           style={{ ["--panel-ms" as string]: `${PANEL_MS}ms` }}
         >
-          <ProfileSwitcher variant="topBar" />
-          {/* grid 0fr↔1fr: o rodapé sobe junto com o fecho; opacidade em paralelo (sem desmonte no fim). */}
+          {/* grid 0fr↔1fr: detalhe no topo; com painel fixo no rodapé da viewport, o crescimento vai para cima. */}
           <div
             className={cn(
               "grid overflow-hidden transition-[grid-template-rows] [transition-duration:var(--panel-ms)] [transition-timing-function:cubic-bezier(0.22,1,0.36,1)]",
@@ -68,7 +67,7 @@ export function TopBarProfileCluster({ className }: { className?: string }) {
               )}
               aria-hidden={!expanded}
             >
-              <div className="flex flex-col gap-3 px-3.5 pt-2.5">
+              <div className="flex flex-col gap-3 px-3.5 pb-2.5 pt-4 sm:pt-5">
                 <span className="relative block aspect-square w-[7.25rem] max-w-full shrink-0 overflow-hidden rounded-2xl bg-[#1a1a1a] ring-1 ring-white/[0.08]">
                   <Image
                     src={SHOPPER_PORTRAIT[activeProfile]}
@@ -100,12 +99,7 @@ export function TopBarProfileCluster({ className }: { className?: string }) {
               </div>
             </div>
           </div>
-          <div
-            className={cn(
-              "flex justify-center px-2.5",
-              expanded ? "pb-3 pt-1" : "pb-1 pt-0.5",
-            )}
-          >
+          <div className="flex justify-center px-2.5 py-0.5">
             <button
               type="button"
               className={toggleBtnClass}
@@ -121,10 +115,11 @@ export function TopBarProfileCluster({ className }: { className?: string }) {
                 transition={caretMotion.rotate}
                 aria-hidden
               >
-                <ChevronDown className="size-4" strokeWidth={2} />
+                <ChevronUp className="size-3.5" strokeWidth={2} />
               </motion.span>
             </button>
           </div>
+          <ProfileSwitcher variant="topBar" />
         </div>
       </section>
     </div>

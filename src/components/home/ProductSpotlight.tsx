@@ -1,5 +1,6 @@
 "use client";
 
+import { AskImageButton } from "@/components/shared/AskImageButton";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { EyebrowPill } from "@/components/shared/EyebrowPill";
 import { useLocale } from "@/context/LocaleContext";
@@ -30,7 +31,7 @@ export function ProductSpotlight() {
   const t = useT();
   const id =
     experienceCtx?.spotlightProductId ??
-    (profile === "marina" ? "sp-move-2" : profile === "joana" ? "sp-five" : "sp-era-100");
+    (profile === "marina" ? "sp-move-2" : "sp-era-100");
   const product = getProductByIdLocalized(id, locale);
   const isMarinaGuide = profile === "marina";
   const isRicardoSpotlight = profile === "ricardo";
@@ -97,9 +98,11 @@ export function ProductSpotlight() {
         }}
         className="px-5 pt-5 sm:px-6"
       >
-        <div
+        <AskImageButton
+          productLabel={product.title}
+          productId={product.id}
           className={cn(
-            "relative w-full overflow-hidden bg-[#f5f5f5]",
+            "w-full overflow-hidden bg-[#f5f5f5]",
             isMarinaGuide || isRicardoSpotlight
               ? "aspect-[2/1] min-h-[11rem] sm:min-h-[14rem] rounded-xl"
               : "aspect-[16/10] rounded-xl",
@@ -117,20 +120,22 @@ export function ProductSpotlight() {
               aria-label={imageAlt}
             />
           ) : heroSrc ? (
-            <Image
-              src={heroSrc}
-              alt=""
-              fill
-              className={cn(
-                isRicardoSpotlight ? "object-cover object-center" : "object-contain p-4 sm:p-6",
-              )}
-              sizes="100vw"
-              unoptimized
-            />
+            <div className="relative h-full w-full">
+              <Image
+                src={heroSrc}
+                alt=""
+                fill
+                className={cn(
+                  isRicardoSpotlight ? "object-cover object-center" : "object-contain p-4 sm:p-6",
+                )}
+                sizes="100vw"
+                unoptimized
+              />
+            </div>
           ) : (
-            <EmptyMediaSlot className="absolute inset-0 rounded-xl" variant="light" />
+            <EmptyMediaSlot className="relative min-h-[10rem] rounded-xl" variant="light" />
           )}
-        </div>
+        </AskImageButton>
       </motion.div>
 
       <motion.div variants={fadeUp} className="px-5 pb-10 pt-4 sm:px-6">

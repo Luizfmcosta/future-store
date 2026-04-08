@@ -1,5 +1,6 @@
 "use client";
 
+import { AskImageButton } from "@/components/shared/AskImageButton";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { EyebrowPill } from "@/components/shared/EyebrowPill";
 import { useLocale } from "@/context/LocaleContext";
@@ -26,7 +27,7 @@ export function ContinueJourney() {
   const t = useT();
   const id =
     experienceCtx?.continueProductId ??
-    (profile === "marina" ? "sb-beam-g2" : profile === "joana" ? "sp-move-2" : "sp-era-300");
+    (profile === "marina" ? "sb-beam-g2" : "sp-era-300");
   const product = getProductByIdLocalized(id, locale);
   if (!product) return null;
 
@@ -50,9 +51,7 @@ export function ContinueJourney() {
         ? t(experienceCtx.experience.copy.continueBody)
         : profile === "marina"
           ? t("continueJourney.marinaBody")
-          : profile === "joana"
-            ? t("continueJourney.joanaBody")
-            : t("continueJourney.ricardoBody");
+          : t("continueJourney.ricardoBody");
 
   const cta = useRicardoEntryCopy
     ? t("continueJourney.ricardoEntryCta")
@@ -123,20 +122,26 @@ export function ContinueJourney() {
           }}
           className="w-full min-w-0 flex-1 @lg:basis-1/2"
         >
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-[#f5f5f5]">
+          <AskImageButton
+            productLabel={product.title}
+            productId={product.id}
+            className="aspect-[4/3] w-full overflow-hidden rounded-xl bg-[#f5f5f5]"
+          >
             {heroSrc ? (
-              <Image
-                src={heroSrc}
-                alt=""
-                fill
-                className="object-contain p-5 sm:p-6"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                unoptimized
-              />
+              <div className="relative h-full w-full">
+                <Image
+                  src={heroSrc}
+                  alt=""
+                  fill
+                  className="object-contain p-5 sm:p-6"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  unoptimized
+                />
+              </div>
             ) : (
-              <EmptyMediaSlot className="absolute inset-0" variant="light" />
+              <EmptyMediaSlot className="relative min-h-[10rem]" variant="light" />
             )}
-          </div>
+          </AskImageButton>
         </motion.div>
       </motion.div>
     </section>

@@ -3,8 +3,7 @@ import type { AppLocale } from "@/lib/locale-types";
 import type { ShopperProfileId } from "@/types";
 
 export function heroCopy(profile: ShopperProfileId, locale: AppLocale) {
-  const b =
-    profile === "marina" ? "hero.marina" : profile === "ricardo" ? "hero.ricardo" : "hero.joana";
+  const b = profile === "marina" ? "hero.marina" : "hero.ricardo";
   return {
     kicker: getMessage(locale, `${b}.kicker`) ?? "",
     titleLine1: getMessage(locale, `${b}.titleLine1`) ?? "",
@@ -16,7 +15,6 @@ export function heroCopy(profile: ShopperProfileId, locale: AppLocale) {
 }
 
 export function proofTitle(profile: ShopperProfileId, locale: AppLocale): string {
-  const key =
-    profile === "marina" ? "proof.marina" : profile === "ricardo" ? "proof.ricardo" : "proof.joana";
+  const key = profile === "marina" ? "proof.marina" : "proof.ricardo";
   return getMessage(locale, key) ?? "";
 }

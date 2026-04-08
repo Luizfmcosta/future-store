@@ -10,7 +10,7 @@ export function ReviewSummaryWidget({ product, profile }: { product: Product; pr
     <Card className="p-5 sm:p-6">
       <EyebrowPill>Review summary</EyebrowPill>
       <h3 className="mt-2 text-lg font-semibold text-stone-900">
-        {profile === "marina" ? "Quality and tradeoffs" : profile === "joana" ? "Balance and real-world use" : "Trust and popularity"}
+        {profile === "marina" ? "Quality and tradeoffs" : "Trust and popularity"}
       </h3>
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         <div>

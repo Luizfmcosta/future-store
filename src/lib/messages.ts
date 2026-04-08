@@ -23,6 +23,7 @@ export const messages: Record<
       home: "Início",
       explore: "Explorar",
       buyNow: "Comprar agora",
+      askProduct: "Perguntar",
       tvs: "TVs",
       speakers: "Caixas",
       audio: "Áudio",
@@ -56,15 +57,6 @@ export const messages: Record<
         cta: "Conheça a Future Store",
         featuredEyebrow: "Esta semana",
       },
-      joana: {
-        kicker: "Inspirado por você",
-        titleLine1: "Adaptado ao",
-        titleLine2: "seu contexto",
-        subtitle:
-          "Na Future Store, equilibramos som envolvente e decisão tranquila — curadoria clara, comparações úteis e produtos que fazem sentido no seu ritmo.",
-        cta: "Conheça a Future Store",
-        featuredEyebrow: "Para você",
-      },
       ricardoPromo: {
         kicker: "Ofertas do fim de semana",
         headline: "Até 30% OFF em caixas de som",
@@ -77,7 +69,6 @@ export const messages: Record<
     proof: {
       marina: "O que donos citam nas avaliações",
       ricardo: "Mais escolhidos agora",
-      joana: "Destaques que combinam valor e experiência",
     },
     continueJourney: {
       exploreBrand: "Explorar {brand}",
@@ -90,8 +81,6 @@ export const messages: Record<
         "Diálogo nítido, som equilibrado e integração fácil com TVs — um ponto de partida confiável para um home theater.",
       ricardoBody:
         "Uma escolha prática com bom custo-benefício para trazer som melhor ao dia a dia.",
-      joanaBody:
-        "Retomamos no meio termo: som forte e design que combina com a sala — com espaço para comparar e decidir sem pressa.",
       ricardoEntryEyebrow: "Em alta agora",
       ricardoEntryHeadline: "Um ótimo lugar para começar",
       ricardoEntryProductLine: "Caixa Era 300 Wireless",
@@ -110,9 +99,6 @@ export const messages: Record<
       ricardoBody:
         "Das portáteis compactas aos sistemas mais potentes para a sala — encontre o modelo certo para o seu espaço e orçamento.",
       ricardoCta: "Comprar caixas",
-      joanaHeadline: "Som que preenche\na sala com equilíbrio",
-      joanaBody:
-        "Experimente presença sonora e versatilidade no ponto certo entre referência e praticidade — para ambientes que pedem presença sem excesso.",
       cta: "Explorar",
     },
     curated: {
@@ -122,9 +108,6 @@ export const messages: Record<
       ricardoHeadline: "Melhores opções perto de\nR$ 2.000",
       ricardoBody:
         "Seleções populares com bom desempenho nesta faixa de preço.",
-      joanaHeadline: "Feito para ouvir bem,\nsem complicar",
-      joanaBody:
-        "Duas rotas que equilibram performance e uso real: uma com mais corpo para a sala, outra mais enxuta — você escolhe o que combina com o momento.",
       marinaTierA: "Configuração compacta",
       marinaTierB: "Som surround completo",
       marinaCardATitle: "Beam + Sub Mini",
@@ -135,8 +118,6 @@ export const messages: Record<
         "Som equilibrado com mais grave, ideal para salas de estar menores.",
       marinaCardBBlurb:
         "Som mais imersivo com canais surround e graves mais profundos para ambientes maiores.",
-      joanaTierA: "Presença na sala",
-      joanaTierB: "Opção enxuta",
       ricardoPromoHeadline: "Melhores opções perto de\nR$ 2.000",
       ricardoPromoBody:
         "Seleções populares com bom desempenho nesta faixa de preço.",
@@ -218,12 +199,9 @@ export const messages: Record<
       virtualPremiumMarinaBlurb: "Acrescente som espacial de referência ao que você já escolheu.",
       virtualPremiumRicardoTitle: "Caminho de upgrade — Era 300",
       virtualPremiumRicardoBlurb: "Mais clareza e presença sonora em salas amplas.",
-      virtualPremiumJoanaTitle: "Upgrade equilibrado — Era 300",
-      virtualPremiumJoanaBlurb: "Mais corpo e detalhe para a sala, sem exagerar no pacote.",
       virtualCheaperTitle: "Complemento portátil — {name}",
       virtualCheaperBlurbMarina: "Caixa para levar e estender seu sistema para outros ambientes.",
       virtualCheaperBlurbRicardo: "Mantém a parcela mais acessível com um extra útil.",
-      virtualCheaperBlurbJoana: "Complemento prático que equilibra custo e versatilidade.",
       bundleDefBndEraRoamTitle: "Prateleira + portátil — Era 100 + Roam 2",
       bundleDefBndEraRoamBody: "Caixa inteligente para a sala e ultra portátil para o resto do dia",
       bundleDefBndEraPairRoamTitle: "Kit multiambiente — 2 salas Era + Roam",
@@ -266,13 +244,6 @@ export const messages: Record<
         tag3: "Busca por preço",
         bio: "Quer decidir rápido, guiado por ofertas e pelo que está em alta.",
         bio2: "Vê promoções, mais vendidos e opções de melhor custo-benefício.",
-      },
-      joana: {
-        tag1: "Usuária recorrente",
-        tag2: "Mobile",
-        tag3: "Equilíbrio",
-        bio: "Busca som que preencha a sala com bom senso:",
-        bio2: "curadoria clara, comparações úteis e decisão sem pressa — valor e experiência no ponto certo.",
       },
     },
     searchOverlay: {
@@ -350,7 +321,6 @@ export const messages: Record<
       compareEyebrow: "Comparar",
       compareTitleMarina: "Três jeitos de equipar — escolha o equilíbrio",
       compareTitleRicardo: "Três opções — caminho mais rápido",
-      compareTitleJoana: "Três caminhos — som claro, decisão no seu tempo",
       resultsAllMatches: "Todas as correspondências",
       refineGridButton: "Refinar",
       refineGridAria: "Refinar resultados da busca",
@@ -366,7 +336,6 @@ export const messages: Record<
       compareFitMarinaBalanced: "Som equilibrado para sala",
       compareFitRicardoBudget: "Custo-benefício",
       compareFitRicardoMid: "Faixa média popular",
-      compareFitJoanaBalanced: "Equilíbrio sala e valor",
       learningSurroundTitle: "Surround vs estéreo",
       learningSurroundBody:
         "Um kit home theater traz canais traseiros; pares estéreo brilham em música no mesmo ambiente.",
@@ -440,13 +409,10 @@ export const messages: Record<
       club: "Future Store Club",
       marinaHeadline: "Clube para\napaixonados por\ncinema em casa",
       ricardoHeadline: "Clube para\ncompradores\ninteligentes",
-      joanaHeadline: "Clube para\nquem quer o melhor\nsem pressa",
       marinaBody:
         "Acesso antecipado a lançamentos, guias exclusivos de calibração e preços só para membros em painéis premium e sistemas de som.",
       ricardoBody:
         "Receba alertas de ofertas relâmpago, combos exclusivos e cupons para membros. Sem spam — só economia na sua caixa de entrada.",
-      joanaBody:
-        "Conteúdos que conectam especificação e uso real, ofertas selecionadas e lembretes úteis — menos ruído, mais clareza na escolha.",
     },
     experience: {
       marinaResearch: {
@@ -526,6 +492,7 @@ export const messages: Record<
       home: "Home",
       explore: "Explore",
       buyNow: "Buy Now",
+      askProduct: "Ask",
       tvs: "TVs",
       speakers: "Speakers",
       audio: "Audio",
@@ -559,15 +526,6 @@ export const messages: Record<
         cta: "Meet Future Store",
         featuredEyebrow: "This week",
       },
-      joana: {
-        kicker: "Inspired by You",
-        titleLine1: "Designed by",
-        titleLine2: "Intelligence",
-        subtitle:
-          "At Future Store, we balance immersive sound with a calm path to decide — clear curation, helpful comparisons, and products that fit your pace.",
-        cta: "Meet Future Store",
-        featuredEyebrow: "For you",
-      },
       ricardoPromo: {
         kicker: "Weekend offers",
         headline: "Up to 30% off speakers",
@@ -580,7 +538,6 @@ export const messages: Record<
     proof: {
       marina: "What owners cite in reviews",
       ricardo: "Most chosen right now",
-      joana: "Highlights that blend value and experience",
     },
     continueJourney: {
       exploreBrand: "Explore {brand}",
@@ -593,8 +550,6 @@ export const messages: Record<
         "Clear dialogue, balanced sound and easy integration with TVs — a reliable starting point for a home theater setup.",
       ricardoBody:
         "A practical, value-smart pick for better everyday sound.",
-      joanaBody:
-        "We meet you in the middle: powerful sound and design that fits the living room — room to compare and decide without rush.",
       ricardoEntryEyebrow: "Popular right now",
       ricardoEntryHeadline: "A great place to start",
       ricardoEntryProductLine: "Era 300 Wireless Speaker",
@@ -613,9 +568,6 @@ export const messages: Record<
       ricardoBody:
         "From compact portable models to more powerful setups for your living room — find the one that fits your space and budget.",
       ricardoCta: "Shop speakers",
-      joanaHeadline: "Sound that fills\nthe room — in balance",
-      joanaBody:
-        "Feel room-filling presence and versatility between reference and everyday practicality — for spaces that want impact without excess.",
       cta: "Explore",
     },
     curated: {
@@ -625,9 +577,6 @@ export const messages: Record<
       ricardoHeadline: "Best options around\nR$ 2,000",
       ricardoBody:
         "Popular picks with strong performance in this price range.",
-      joanaHeadline: "Made to sound great,\nwithout the noise",
-      joanaBody:
-        "Two routes that balance performance and real life: one with more body for the room, one leaner — you pick what fits the moment.",
       marinaTierA: "Compact setup",
       marinaTierB: "Full surround",
       marinaCardATitle: "Beam + Sub Mini",
@@ -638,8 +587,6 @@ export const messages: Record<
         "Balanced sound with added bass, ideal for smaller living rooms.",
       marinaCardBBlurb:
         "More immersive sound with surround channels and deeper bass for larger spaces.",
-      joanaTierA: "Presence in the room",
-      joanaTierB: "Leaner option",
       ricardoPromoHeadline: "Best options around\nR$ 2,000",
       ricardoPromoBody:
         "Popular picks with strong performance in this price range.",
@@ -721,12 +668,9 @@ export const messages: Record<
       virtualPremiumMarinaBlurb: "Add flagship spatial audio to your setup",
       virtualPremiumRicardoTitle: "Upgrade path — Era 300",
       virtualPremiumRicardoBlurb: "Step-up clarity for open rooms",
-      virtualPremiumJoanaTitle: "Balanced upgrade — Era 300",
-      virtualPremiumJoanaBlurb: "More body and detail for the room without overbuilding the bundle.",
       virtualCheaperTitle: "Lean add-on — {name}",
       virtualCheaperBlurbMarina: "Portable speaker to extend your system",
       virtualCheaperBlurbRicardo: "Keeps monthly payment lower",
-      virtualCheaperBlurbJoana: "Practical add-on that balances cost and versatility.",
       bundleDefBndEraRoamTitle: "Shelf + portable — Era 100 + Roam 2",
       bundleDefBndEraRoamBody: "Room-filling smart speaker plus an ultra-portable for everywhere else",
       bundleDefBndEraPairRoamTitle: "Whole-home starter — 2-Room Era + Roam",
@@ -769,13 +713,6 @@ export const messages: Record<
         tag3: "Price-led",
         bio: "Wants fast decisions guided by deals and what’s trending.",
         bio2: "Sees promos, bestsellers, and strong value picks first.",
-      },
-      joana: {
-        tag1: "Returning shopper",
-        tag2: "Mobile",
-        tag3: "Balanced",
-        bio: "Looks for room-filling sound with good judgment: clear curation, useful comparisons, and calm decisions — value and experience in balance.",
-        bio2: "",
       },
     },
     searchOverlay: {
@@ -853,7 +790,6 @@ export const messages: Record<
       compareEyebrow: "Compare",
       compareTitleMarina: "Three setups — pick your tradeoff",
       compareTitleRicardo: "Three picks — fastest path",
-      compareTitleJoana: "Three paths — clear sound, your pace",
       resultsAllMatches: "All matches",
       refineGridButton: "Refine",
       refineGridAria: "Refine search results",
@@ -869,7 +805,6 @@ export const messages: Record<
       compareFitMarinaBalanced: "Balanced room sound",
       compareFitRicardoBudget: "Budget-smart",
       compareFitRicardoMid: "Popular mid tier",
-      compareFitJoanaBalanced: "Balanced room & value",
       learningSurroundTitle: "Surround vs stereo",
       learningSurroundBody:
         "A home theater set adds rear channels; stereo pairs shine for music in one room.",
@@ -943,13 +878,10 @@ export const messages: Record<
       club: "Future Store Club",
       marinaHeadline: "Club For Home\nCinema Enthusiasts",
       ricardoHeadline: "Club For Smart\nShoppers",
-      joanaHeadline: "Club For\nThoughtful\nListeners",
       marinaBody:
         "Get early access to new releases, exclusive calibration guides, and member-only pricing on premium panels and sound systems.",
       ricardoBody:
         "Get notified about flash deals, exclusive bundles, and member-only coupons. No spam, just savings delivered to your inbox.",
-      joanaBody:
-        "Content that connects specs with real use, curated offers, and helpful nudges — less noise, more clarity in every choice.",
     },
     experience: {
       marinaResearch: {

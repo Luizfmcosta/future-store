@@ -1,5 +1,6 @@
 "use client";
 
+import { AskImageButton } from "@/components/shared/AskImageButton";
 import { Card } from "@/components/shared/Card";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { useLocale } from "@/context/LocaleContext";
@@ -47,20 +48,22 @@ export function ResultsGrid({ products, profile }: { products: Product[]; profil
               key={p.id}
               className="flex h-full flex-col overflow-hidden p-0 transition hover:border-stone-300/90 hover:shadow-[0_16px_40px_-24px_rgba(0,0,0,0.14)]"
             >
-              <div className="relative aspect-[16/10] w-full shrink-0 bg-[#f5f5f5]">
-                {hasMediaUrl(p.heroImage) ? (
-                  <Image
-                    src={p.heroImage}
-                    alt=""
-                    fill
-                    className="object-contain"
-                    sizes="(max-width: 767px) min(100vw, 36rem), (max-width: 900px) 46vw, 400px"
-                    unoptimized
-                  />
-                ) : (
-                  <EmptyMediaSlot className="absolute inset-0" variant="light" />
-                )}
-              </div>
+              <AskImageButton productLabel={p.title} productId={p.id} className="aspect-[16/10] w-full shrink-0 bg-[#f5f5f5]">
+                <div className="relative h-full min-h-0 w-full">
+                  {hasMediaUrl(p.heroImage) ? (
+                    <Image
+                      src={p.heroImage}
+                      alt=""
+                      fill
+                      className="object-contain"
+                      sizes="(max-width: 767px) min(100vw, 36rem), (max-width: 900px) 46vw, 400px"
+                      unoptimized
+                    />
+                  ) : (
+                    <EmptyMediaSlot className="absolute inset-0" variant="light" />
+                  )}
+                </div>
+              </AskImageButton>
               <div className="flex min-h-0 flex-1 flex-col space-y-1.5 p-2.5 sm:space-y-2 sm:p-4">
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-[12px] font-medium text-stone-500">{p.brand}</p>
@@ -72,11 +75,7 @@ export function ResultsGrid({ products, profile }: { products: Product[]; profil
                 </div>
                 <p className="line-clamp-2 text-[13px] font-semibold leading-snug text-stone-900 sm:text-[15px]">{p.title}</p>
                 <p className="line-clamp-2 text-[11px] text-stone-500 sm:text-[13px]">
-                  {profile === "marina"
-                    ? p.bestFor[0]
-                    : profile === "joana"
-                      ? `${p.bestFor[0]} · ${p.deliveryETA}`
-                      : p.deliveryETA}
+                  {profile === "marina" ? p.bestFor[0] : p.deliveryETA}
                 </p>
                 <div className="flex flex-wrap items-baseline gap-1.5 pt-1 sm:gap-2">
                   <span className="text-[14px] font-semibold tabular-nums text-stone-900 sm:text-[16px]">
