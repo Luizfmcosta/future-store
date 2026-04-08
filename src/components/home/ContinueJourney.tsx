@@ -26,7 +26,7 @@ export function ContinueJourney() {
   const t = useT();
   const id =
     experienceCtx?.continueProductId ??
-    (profile === "marina" ? "sb-beam-g2" : profile === "joana" ? "sp-move-2" : "sp-roam-2");
+    (profile === "marina" ? "sb-beam-g2" : profile === "joana" ? "sp-move-2" : "sp-era-300");
   const product = getProductByIdLocalized(id, locale);
   if (!product) return null;
 
@@ -76,9 +76,11 @@ export function ContinueJourney() {
             <EyebrowPill>
               {profile === "marina"
                 ? t("continueJourney.marinaEyebrow")
-                : product.category === "speaker"
-                  ? t("common.speakers")
-                  : t("common.audio")}
+                : useRicardoEntryCopy && profile === "ricardo"
+                  ? t("continueJourney.ricardoEntryEyebrow")
+                  : product.category === "speaker"
+                    ? t("common.speakers")
+                    : t("common.audio")}
             </EyebrowPill>
           </motion.div>
 
@@ -86,7 +88,7 @@ export function ContinueJourney() {
             <h2
               className={cn(
                 "text-left font-[family-name:var(--font-display)] text-[clamp(1.2rem,3.8vw,1.85rem)] font-medium leading-[1.15] tracking-[-0.02em] text-[#1a1a1a]",
-                profile === "marina"
+                profile === "marina" || (useRicardoEntryCopy && profile === "ricardo")
                   ? "text-balance whitespace-normal text-pretty"
                   : "whitespace-pre-line",
               )}
@@ -94,7 +96,11 @@ export function ContinueJourney() {
               {headline}
             </h2>
             <p className="mt-2.5 font-[family-name:var(--font-display)] text-[clamp(1.05rem,3.2vw,1.25rem)] font-medium leading-snug tracking-[-0.015em] text-[#444]">
-              {profile === "marina" ? t("continueJourney.marinaProductLine") : product.title.split("—")[0].trim()}
+              {profile === "marina"
+                ? t("continueJourney.marinaProductLine")
+                : useRicardoEntryCopy && profile === "ricardo"
+                  ? t("continueJourney.ricardoEntryProductLine")
+                  : product.title.split("—")[0].trim()}
             </p>
           </motion.div>
 

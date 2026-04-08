@@ -11,6 +11,7 @@ import { useDemoStore } from "@/store/demoStore";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 
 const ease = [0.76, 0, 0.24, 1] as const;
 const stagger = { staggerChildren: 0.08 };
@@ -19,8 +20,8 @@ const fadeUp = {
   show: { opacity: 1, y: 0, transition: { duration: 0.7, ease } },
 };
 
-/** Editorial diagram for Marina spotlight (“how to choose” home theater layout). */
-const MARINA_SPOTLIGHT_DIAGRAM_SRC = "/media/home/home-theater-room-diagram.png";
+/** Muted loop for Marina spotlight (“how to choose” home theater layout). */
+const MARINA_SPOTLIGHT_VIDEO_SRC = "/media/home/marina-how-to-choose.mp4";
 
 export function ProductSpotlight() {
   const profile = useDemoStore((s) => s.activeProfile);
@@ -31,29 +32,47 @@ export function ProductSpotlight() {
     experienceCtx?.spotlightProductId ??
     (profile === "marina" ? "sp-move-2" : profile === "joana" ? "sp-five" : "sp-era-100");
   const product = getProductByIdLocalized(id, locale);
+  const isMarinaGuide = profile === "marina";
+  const isRicardoSpotlight = profile === "ricardo";
+  const marinaVideoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (!isMarinaGuide) return;
+    const el = marinaVideoRef.current;
+    if (!el) return;
+    el.play().catch(() => {
+      /* muted + playsInline usually allows autoplay; ignore if blocked */
+    });
+  }, [isMarinaGuide, id, locale]);
+
   if (!product) return null;
 
-  const isMarinaGuide = profile === "marina";
-  const heroSrc = isMarinaGuide
-    ? MARINA_SPOTLIGHT_DIAGRAM_SRC
-    : hasMediaUrl(product.heroImage)
-      ? product.heroImage
-      : null;
+  const heroSrc = !isMarinaGuide && hasMediaUrl(product.heroImage) ? product.heroImage : null;
   const eyebrow = isMarinaGuide
     ? t("spotlight.marinaEyebrow")
-    : product.category === "tv"
-      ? t("common.tvs")
-      : t("common.sound");
-  const headline = isMarinaGuide ? t("spotlight.marinaHeadline") : product.title.split("—")[0].trim();
+    : isRicardoSpotlight
+      ? t("spotlight.ricardoEyebrow")
+      : product.category === "tv"
+        ? t("common.tvs")
+        : t("common.sound");
+  const headline = isMarinaGuide
+    ? t("spotlight.marinaHeadline")
+    : isRicardoSpotlight
+      ? t("spotlight.ricardoHeadline")
+      : product.title.split("—")[0].trim();
   const body = isMarinaGuide
     ? t("spotlight.marinaBody")
-    : `${product.reviewStrengths[0]}. ${product.reviewStrengths.slice(1).join(". ")}.`;
+    : isRicardoSpotlight
+      ? t("spotlight.ricardoBody")
+      : `${product.reviewStrengths[0]}. ${product.reviewStrengths.slice(1).join(". ")}.`;
   const imageAlt = isMarinaGuide ? t("spotlight.marinaImageAlt") : "";
   const ctaLabel = experienceCtx
     ? t(experienceCtx.experience.copy.spotlightCta)
     : isMarinaGuide
       ? t("spotlight.marinaCta")
-      : t("common.explore");
+      : isRicardoSpotlight
+        ? t("spotlight.ricardoCta")
+        : t("common.explore");
 
   return (
     <motion.section
@@ -81,17 +100,30 @@ export function ProductSpotlight() {
         <div
           className={cn(
             "relative w-full overflow-hidden bg-[#f5f5f5]",
-            isMarinaGuide
+            isMarinaGuide || isRicardoSpotlight
               ? "aspect-[2/1] min-h-[11rem] sm:min-h-[14rem] rounded-xl"
               : "aspect-[16/10] rounded-xl",
           )}
         >
-          {heroSrc ? (
+          {isMarinaGuide ? (
+            <video
+              ref={marinaVideoRef}
+              className="absolute inset-0 h-full w-full object-cover object-center"
+              src={MARINA_SPOTLIGHT_VIDEO_SRC}
+              muted
+              playsInline
+              loop
+              autoPlay
+              aria-label={imageAlt}
+            />
+          ) : heroSrc ? (
             <Image
               src={heroSrc}
-              alt={imageAlt}
+              alt=""
               fill
-              className={cn(isMarinaGuide ? "object-cover object-center" : "object-contain p-4 sm:p-6")}
+              className={cn(
+                isRicardoSpotlight ? "object-cover object-center" : "object-contain p-4 sm:p-6",
+              )}
               sizes="100vw"
               unoptimized
             />

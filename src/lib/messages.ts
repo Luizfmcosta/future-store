@@ -66,10 +66,10 @@ export const messages: Record<
         featuredEyebrow: "Para você",
       },
       ricardoPromo: {
-        kicker: "Oferta do fim de semana",
-        headline: "Caixas de som com até 30% OFF",
+        kicker: "Ofertas do fim de semana",
+        headline: "Até 30% OFF em caixas de som",
         subhead:
-          "Portáteis e para sala, Wi‑Fi e Bluetooth, até 12x. Estoque limitado — modelos selecionados.",
+          "Modelos portáteis e para sala, com Wi‑Fi e Bluetooth. Até 12x. Estoque limitado.",
         fromLabel: "A partir de",
         cta: "Ver ofertas",
       },
@@ -92,9 +92,11 @@ export const messages: Record<
         "Uma escolha prática com bom custo-benefício para trazer som melhor ao dia a dia.",
       joanaBody:
         "Retomamos no meio termo: som forte e design que combina com a sala — com espaço para comparar e decidir sem pressa.",
-      ricardoEntryHeadline: "Comece por um modelo\ncom ótimo custo-benefício",
+      ricardoEntryEyebrow: "Em alta agora",
+      ricardoEntryHeadline: "Um ótimo lugar para começar",
+      ricardoEntryProductLine: "Caixa Era 300 Wireless",
       ricardoEntryBody:
-        "Uma entrada leve e portátil da linha: som nítido, uso simples e preço que faz sentido como primeiro passo.",
+        "Som equilibrado, instalação fácil e um dos modelos mais escolhidos.",
       ricardoEntryCta: "Ver produto",
     },
     compare: {
@@ -103,9 +105,11 @@ export const messages: Record<
       marinaBody:
         "Uma configuração com uma única caixa pode entregar som amplo que preenche a sala — enquanto uma soundbar foca mais no áudio da TV. Veja qual abordagem combina melhor com o seu espaço.",
       marinaCta: "Ver comparativo",
-      ricardoHeadline: "Qualidade de som\nincrível",
+      ricardoEyebrow: "Mais opções",
+      ricardoHeadline: "Explore a linha completa\nde caixas de som",
       ricardoBody:
-        "Experimente som nítido e presente pelo melhor custo-benefício. Configuração simples, desempenho confiável e preço que faz sentido para quem quer evoluir sem complicação.",
+        "Das portáteis compactas aos sistemas mais potentes para a sala — encontre o modelo certo para o seu espaço e orçamento.",
+      ricardoCta: "Comprar caixas",
       joanaHeadline: "Som que preenche\na sala com equilíbrio",
       joanaBody:
         "Experimente presença sonora e versatilidade no ponto certo entre referência e praticidade — para ambientes que pedem presença sem excesso.",
@@ -113,11 +117,11 @@ export const messages: Record<
     },
     curated: {
       marinaHeadline: "Compare duas formas de montar seu sistema",
-      ricardoHeadline: "Feito para valor,\nperfeito para você",
       marinaBody:
         "Configurações diferentes para combinar com seu espaço, expectativas e orçamento.",
+      ricardoHeadline: "Melhores opções perto de\nR$ 2.000",
       ricardoBody:
-        "Explore nossas opções com melhor custo-benefício e as mais populares da faixa média. Dois caminhos para um som melhor, pensados para orçamentos reais.",
+        "Seleções populares com bom desempenho nesta faixa de preço.",
       joanaHeadline: "Feito para ouvir bem,\nsem complicar",
       joanaBody:
         "Duas rotas que equilibram performance e uso real: uma com mais corpo para a sala, outra mais enxuta — você escolhe o que combina com o momento.",
@@ -133,9 +137,9 @@ export const messages: Record<
         "Som mais imersivo com canais surround e graves mais profundos para ambientes maiores.",
       joanaTierA: "Presença na sala",
       joanaTierB: "Opção enxuta",
-      ricardoPromoHeadline: "Mais vendidos\nna faixa de entrada",
+      ricardoPromoHeadline: "Melhores opções perto de\nR$ 2.000",
       ricardoPromoBody:
-        "Seleção direta: o que mais sai para salas como a sua — sem texto longo, com preço e estoque visíveis.",
+        "Seleções populares com bom desempenho nesta faixa de preço.",
     },
     merch: {
       headlineLine1: "Som em cada ambiente,",
@@ -143,9 +147,9 @@ export const messages: Record<
       ricardoVolumeLine: "2.340 unidades vendidas este mês em modelos em promoção",
     },
     ricardoTiktok: {
-      eyebrow: "Na rede",
-      title: "O que outros clientes comentam",
-      subline: "Experiências compartilhadas que ajudam você a decidir com mais segurança.",
+      eyebrow: "Vídeos de clientes",
+      title: "Veja como essas caixas se comportam na prática",
+      subline: "Ambientes reais, uso real — para você saber o que esperar.",
       embedTitle: "Vídeo do TikTok",
     },
     spotlight: {
@@ -156,6 +160,11 @@ export const messages: Record<
       marinaCta: "Ver guia",
       marinaImageAlt:
         "Ilustração em linha em perspectiva ampla: sala com TV, soundbar, subwoofer e caixas em torno do sofá.",
+      ricardoEyebrow: "Mais potência, ainda simples",
+      ricardoHeadline: "Caixa Era 100 Wireless",
+      ricardoBody:
+        "Som estéreo mais rico em formato compacto. Wi‑Fi, Bluetooth e controle pelo app.",
+      ricardoCta: "Ver produto",
     },
     floatingSearch: {
       placeholder: "Pergunte o que quiser",
@@ -475,11 +484,11 @@ export const messages: Record<
         continueBody:
           "Seleção rápida com os modelos mais pedidos agora — preço à vista e parcelamento claro.",
         continueCta: "Ver oferta",
-        compareCta: "Comprar agora",
-        spotlightCta: "Comprar agora",
-        merchEyebrow: "Mais vendidos",
-        merchLine1: "Os favoritos",
-        merchLine2: "da galera",
+        compareCta: "Comprar caixas",
+        spotlightCta: "Ver produto",
+        merchEyebrow: "Compare opções",
+        merchLine1: "Escolha a caixa",
+        merchLine2: "que combina com você",
         socialHeadline: "Quem comprou,\naprovou",
         socialBody:
           "Milhares de pedidos entregues — ofertas com estoque e entrega rápida.",
@@ -490,11 +499,11 @@ export const messages: Record<
         continueBody:
           "Seleção com preço claro, modelos populares e entrega objetiva — para decidir rápido sem complicação.",
         continueCta: "Ver produto",
-        compareCta: "Ver oferta",
-        spotlightCta: "Ver oferta",
-        merchEyebrow: "Melhor custo-benefício",
-        merchLine1: "Som em cada ambiente,",
-        merchLine2: "sem fio",
+        compareCta: "Comprar caixas",
+        spotlightCta: "Ver produto",
+        merchEyebrow: "Compare opções",
+        merchLine1: "Escolha a caixa",
+        merchLine2: "que combina com você",
         socialHeadline: "Os mais escolhidos\nagora",
         socialBody:
           "Ranking por volume de vendas e avaliações — transparência para decidir rápido.",
@@ -560,11 +569,11 @@ export const messages: Record<
         featuredEyebrow: "For you",
       },
       ricardoPromo: {
-        kicker: "Weekend deal",
-        headline: "Speakers with up to 30% OFF",
+        kicker: "Weekend offers",
+        headline: "Up to 30% off speakers",
         subhead:
-          "Portable and room speakers, Wi‑Fi & Bluetooth, up to 12 installments. Limited stock — selected models.",
-        fromLabel: "Starting at",
+          "Portable and living room models with Wi‑Fi and Bluetooth. Up to 12 installments. Limited stock.",
+        fromLabel: "Starting from",
         cta: "View offers",
       },
     },
@@ -586,9 +595,11 @@ export const messages: Record<
         "A practical, value-smart pick for better everyday sound.",
       joanaBody:
         "We meet you in the middle: powerful sound and design that fits the living room — room to compare and decide without rush.",
-      ricardoEntryHeadline: "Start with a standout\nvalue pick",
+      ricardoEntryEyebrow: "Popular right now",
+      ricardoEntryHeadline: "A great place to start",
+      ricardoEntryProductLine: "Era 300 Wireless Speaker",
       ricardoEntryBody:
-        "A light, portable entry in the range — clear sound, simple setup, and pricing that works as a first step.",
+        "Well-balanced sound, easy setup and one of the most chosen models.",
       ricardoEntryCta: "View product",
     },
     compare: {
@@ -597,9 +608,11 @@ export const messages: Record<
       marinaBody:
         "A single-speaker setup can deliver wide, room-filling sound — while a soundbar is more focused on TV audio. See which approach fits your space better.",
       marinaCta: "View comparison",
-      ricardoHeadline: "Incredible\nsound quality",
+      ricardoEyebrow: "More options",
+      ricardoHeadline: "Explore the full range\nof speakers",
       ricardoBody:
-        "Experience clear, engaging sound at the best value. Simple setup, reliable performance, and a price that makes sense when you want more without the fuss.",
+        "From compact portable models to more powerful setups for your living room — find the one that fits your space and budget.",
+      ricardoCta: "Shop speakers",
       joanaHeadline: "Sound that fills\nthe room — in balance",
       joanaBody:
         "Feel room-filling presence and versatility between reference and everyday practicality — for spaces that want impact without excess.",
@@ -607,11 +620,11 @@ export const messages: Record<
     },
     curated: {
       marinaHeadline: "Compare two ways to build your system",
-      ricardoHeadline: "Crafted for value,\nperfected for you",
       marinaBody:
         "Different configurations to match your space, expectations and budget.",
+      ricardoHeadline: "Best options around\nR$ 2,000",
       ricardoBody:
-        "Explore our best-value picks and the most popular mid-range options. Two paths to better sound, shaped for real budgets.",
+        "Popular picks with strong performance in this price range.",
       joanaHeadline: "Made to sound great,\nwithout the noise",
       joanaBody:
         "Two routes that balance performance and real life: one with more body for the room, one leaner — you pick what fits the moment.",
@@ -627,9 +640,9 @@ export const messages: Record<
         "More immersive sound with surround channels and deeper bass for larger spaces.",
       joanaTierA: "Presence in the room",
       joanaTierB: "Leaner option",
-      ricardoPromoHeadline: "Top sellers\nin the entry range",
+      ricardoPromoHeadline: "Best options around\nR$ 2,000",
       ricardoPromoBody:
-        "Straight picks: what moves fastest for rooms like yours — clear price and stock, no long reads.",
+        "Popular picks with strong performance in this price range.",
     },
     merch: {
       headlineLine1: "Sound in every room,",
@@ -637,9 +650,9 @@ export const messages: Record<
       ricardoVolumeLine: "2,340 units sold this month on promo models",
     },
     ricardoTiktok: {
-      eyebrow: "On social",
-      title: "What other shoppers are saying",
-      subline: "Shared experiences that help you decide with more confidence.",
+      eyebrow: "Customer videos",
+      title: "See how these speakers actually perform",
+      subline: "Real setups, real use — so you know what to expect.",
       embedTitle: "TikTok video",
     },
     spotlight: {
@@ -650,6 +663,11 @@ export const messages: Record<
       marinaCta: "View guide",
       marinaImageAlt:
         "Wide-angle line drawing of a living room with a TV, soundbar, subwoofer, and speakers around the seating area.",
+      ricardoEyebrow: "More power, still simple",
+      ricardoHeadline: "Era 100 Wireless Speaker",
+      ricardoBody:
+        "Richer sound in a compact format. Wi‑Fi, Bluetooth and app control.",
+      ricardoCta: "View product",
     },
     floatingSearch: {
       placeholder: "Ask anything you want",
@@ -969,11 +987,11 @@ export const messages: Record<
         continueBody:
           "A fast lane to what’s selling now — clear pricing and installments at a glance.",
         continueCta: "See the deal",
-        compareCta: "Buy now",
-        spotlightCta: "Buy now",
-        merchEyebrow: "Top sellers",
-        merchLine1: "Crowd favorites",
-        merchLine2: "right now",
+        compareCta: "Shop speakers",
+        spotlightCta: "View product",
+        merchEyebrow: "Compare options",
+        merchLine1: "Choose the speaker",
+        merchLine2: "that fits you",
         socialHeadline: "Buyers are\nadding these",
         socialBody:
           "High order volume and fast delivery windows — built for quick decisions.",
@@ -984,11 +1002,11 @@ export const messages: Record<
         continueBody:
           "Popular picks with transparent pricing and straightforward delivery — decide quickly with no fuss.",
         continueCta: "View product",
-        compareCta: "See offer",
-        spotlightCta: "See offer",
-        merchEyebrow: "Best value",
-        merchLine1: "Sound in every room,",
-        merchLine2: "without wires",
+        compareCta: "Shop speakers",
+        spotlightCta: "View product",
+        merchEyebrow: "Compare options",
+        merchLine1: "Choose the speaker",
+        merchLine2: "that fits you",
         socialHeadline: "Most chosen\nthis week",
         socialBody:
           "Ranked by sales volume and ratings — transparency for fast decisions.",

@@ -5,7 +5,7 @@ import { EyebrowPill } from "@/components/shared/EyebrowPill";
 import { useLocale } from "@/context/LocaleContext";
 import { getProductByIdLocalized } from "@/lib/product-i18n";
 import { useT } from "@/lib/useT";
-import { hasMediaUrl } from "@/lib/utils";
+import { cn, hasMediaUrl } from "@/lib/utils";
 import { useShopperExperienceOptional } from "@/context/ShopperExperienceContext";
 import { useDemoStore } from "@/store/demoStore";
 import { motion } from "framer-motion";
@@ -44,7 +44,11 @@ export function CompareModule() {
         >
           <motion.div variants={fadeUp}>
             <EyebrowPill>
-              {profile === "marina" ? t("compare.marinaEyebrow") : product.brand}
+              {profile === "marina"
+                ? t("compare.marinaEyebrow")
+                : profile === "ricardo"
+                  ? t("compare.ricardoEyebrow")
+                  : product.brand}
             </EyebrowPill>
           </motion.div>
 
@@ -79,7 +83,9 @@ export function CompareModule() {
                 ? t(experienceCtx.experience.copy.compareCta)
                 : profile === "marina"
                   ? t("compare.marinaCta")
-                  : t("compare.cta")}
+                  : profile === "ricardo"
+                    ? t("compare.ricardoCta")
+                    : t("compare.cta")}
             </Link>
           </motion.div>
         </motion.div>
@@ -97,7 +103,9 @@ export function CompareModule() {
                 src={heroSrc}
                 alt=""
                 fill
-                className="object-contain p-5 sm:p-6"
+                className={cn(
+                  profile === "ricardo" ? "object-cover object-center" : "object-contain p-5 sm:p-6",
+                )}
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 unoptimized
               />
