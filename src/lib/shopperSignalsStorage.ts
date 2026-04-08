@@ -115,4 +115,5 @@ export function recordProductView(productId: string): void {
   const prev = getRecentProductIds().filter((id) => id !== productId);
   const next = [productId, ...prev].slice(0, MAX_RECENT_PRODUCTS);
   sessionStorage.setItem(STORAGE_KEYS.lastProductIds, JSON.stringify(next));
+  window.dispatchEvent(new Event("fs:recent-product-ids"));
 }

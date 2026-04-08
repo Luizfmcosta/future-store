@@ -134,8 +134,12 @@ export function buildHomeExperience(
 }
 
 /** Product slots — IDs from catalog; continue prefers recent PDP views when present. */
-export function getContinueProductId(profile: ShopperProfileId, segment: HomeSegmentId): string {
-  const recent = getRecentProductIds();
+export function getContinueProductId(
+  profile: ShopperProfileId,
+  segment: HomeSegmentId,
+  recentIds: string[] = getRecentProductIds(),
+): string {
+  const recent = recentIds;
   if (recent[0]) return recent[0];
   if (profile === "marina") {
     return "sb-beam-g2";
