@@ -5,11 +5,10 @@ import { ui } from "@/lib/ui-tokens";
 import { useT } from "@/lib/useT";
 import { cn, formatBRL } from "@/lib/utils";
 import { motion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
 
-/** Lifestyle — caixa portátil (texto à esquerda sobre imagem). */
-const HERO_IMAGE = "/media/home/ricardo-promo-hero-speaker.png";
+/** Lifestyle — portable speakers (copy over full-bleed looped video). */
+const HERO_VIDEO = "/media/home/ricardo-promo-hero-portable-speakers.mp4";
 
 const ease = [0.76, 0, 0.24, 1] as const;
 const stagger = { staggerChildren: 0.14, delayChildren: 1.5 };
@@ -25,21 +24,23 @@ export function RicardoPromoHero() {
 
   return (
     <section id="home-hero" className="relative flex flex-col">
-      <div className="relative flex h-[100vh] min-h-[100vh] w-full shrink-0 flex-col overflow-hidden bg-[#0a0a0a]">
+      <div className="relative flex h-[93vh] min-h-[93vh] w-full shrink-0 flex-col overflow-hidden bg-[#0a0a0a]">
         <div className="pointer-events-none absolute inset-0">
-          <Image
-            src={HERO_IMAGE}
-            alt=""
-            fill
-            priority
-            className="object-cover object-[center_28%]"
-            sizes="100vw"
-          />
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            className="absolute inset-0 h-full w-full object-cover object-[center_28%] opacity-90"
+            aria-hidden
+          >
+            <source src={HERO_VIDEO} type="video/mp4" />
+          </video>
           <div
-            className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 to-black/10 sm:from-black/75 sm:via-black/35"
+            className="absolute inset-0 bg-gradient-to-b from-transparent to-[#000]"
             aria-hidden
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/25 sm:from-black/40" aria-hidden />
         </div>
 
         <div className="relative z-10 flex h-full min-h-0 flex-col items-start justify-end px-4 pb-28 pt-24 sm:justify-center sm:px-6 sm:pb-16 sm:pt-20">

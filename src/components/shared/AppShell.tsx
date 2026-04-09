@@ -112,7 +112,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           )}
           style={
             isMd && !isFullscreen
-              ? { width: storefrontWidth }
+              ? {
+                  width: storefrontWidth,
+                  /* Inline width wins over `w-full`; without this, 1440px is used even when the
+                   * viewport is narrower (768px–1439px), causing horizontal overflow. */
+                  maxWidth: "100%",
+                }
               : undefined
           }
         >

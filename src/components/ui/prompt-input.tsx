@@ -109,6 +109,37 @@ export type PromptInputTextareaProps = {
   disableAutosize?: boolean
 } & React.ComponentProps<typeof Textarea>
 
+/** One-line floor from metrics — empty textareas often report scrollHeight below real line box, which causes overflow + scrollbar. */
+function minTextareaHeightPx(el: HTMLTextAreaElement): number {
+  const cs = getComputedStyle(el)
+  const lineHeight = parseFloat(cs.lineHeight)
+  const lh = Number.isFinite(lineHeight) ? lineHeight : 22
+  const padY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom)
+  return Math.max(Math.ceil(lh + padY), 28)
+}
+
+function applyTextareaAutosize(
+  el: HTMLTextAreaElement,
+  maxHeight: number | string,
+  disableAutosize: boolean,
+) {
+  if (disableAutosize) return
+
+  el.style.height = "auto"
+  const minH = minTextareaHeightPx(el)
+
+  if (typeof maxHeight === "number") {
+    const contentH = el.scrollHeight
+    const next = Math.min(Math.max(contentH, minH), maxHeight)
+    el.style.height = `${next}px`
+    el.style.overflowY = contentH > maxHeight ? "auto" : "hidden"
+  } else {
+    const contentH = Math.max(el.scrollHeight, minH)
+    el.style.height = `min(${contentH}px, ${maxHeight})`
+    el.style.overflowY = "auto"
+  }
+}
+
 function PromptInputTextarea({
   className,
   onKeyDown,
@@ -119,15 +150,8 @@ function PromptInputTextarea({
     usePromptInput()
 
   const adjustHeight = (el: HTMLTextAreaElement | null) => {
-    if (!el || disableAutosize) return
-
-    el.style.height = "auto"
-
-    if (typeof maxHeight === "number") {
-      el.style.height = `${Math.min(el.scrollHeight, maxHeight)}px`
-    } else {
-      el.style.height = `min(${el.scrollHeight}px, ${maxHeight})`
-    }
+    if (!el) return
+    applyTextareaAutosize(el, maxHeight, disableAutosize)
   }
 
   const handleRef = (el: HTMLTextAreaElement | null) => {
@@ -137,15 +161,7 @@ function PromptInputTextarea({
 
   useLayoutEffect(() => {
     if (!textareaRef.current || disableAutosize) return
-
-    const el = textareaRef.current
-    el.style.height = "auto"
-
-    if (typeof maxHeight === "number") {
-      el.style.height = `${Math.min(el.scrollHeight, maxHeight)}px`
-    } else {
-      el.style.height = `min(${el.scrollHeight}px, ${maxHeight})`
-    }
+    applyTextareaAutosize(textareaRef.current, maxHeight, disableAutosize)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, maxHeight, disableAutosize])
 
@@ -169,7 +185,8 @@ function PromptInputTextarea({
       onChange={handleChange}
       onKeyDown={handleKeyDown}
       className={cn(
-        "text-primary w-full min-h-[1lh] resize-none border-none bg-transparent py-0.5 text-[15px] leading-snug text-stone-800 shadow-none outline-none placeholder:text-stone-400 focus-visible:ring-0 focus-visible:ring-offset-0",
+        /* Base `Textarea` uses `field-sizing-content`, which fights JS autosize and can leave a bogus vertical scrollbar. */
+        "field-sizing-fixed block text-primary w-full min-h-[1lh] resize-none border-none bg-transparent py-0.5 text-[15px] leading-snug text-stone-800 shadow-none outline-none placeholder:text-stone-400 focus-visible:ring-0 focus-visible:ring-offset-0",
         className
       )}
       rows={1}
