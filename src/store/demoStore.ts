@@ -12,6 +12,9 @@ import { createJSONStorage, persist } from "zustand/middleware";
 const DEFAULT_QUERY =
   "Wireless speaker for ~3 m living room, best value, up to R$ 5000";
 
+/** Older releases used 1440 as default / desktop preset; persisted values stay until rehydration merge. */
+const LEGACY_DESKTOP_STOREFRONT_WIDTH = 1440;
+
 export type ColorMode = "dark" | "light";
 
 type DemoState = {
@@ -222,6 +225,23 @@ export const useDemoStore = create<DemoState>()(
         activeProfile: state.activeProfile,
         storefrontWidth: state.storefrontWidth,
       }),
+      merge: (persistedState, currentState) => {
+        const p =
+          persistedState &&
+          typeof persistedState === "object" &&
+          !Array.isArray(persistedState)
+            ? (persistedState as Partial<DemoState>)
+            : {};
+        const merged = { ...currentState, ...p };
+        const w = merged.storefrontWidth;
+        if (typeof w !== "number") return merged;
+        const clamped = clampStorefrontWidth(w);
+        const storefrontWidth =
+          clamped === LEGACY_DESKTOP_STOREFRONT_WIDTH
+            ? STOREFRONT_WIDTH.default
+            : clamped;
+        return { ...merged, storefrontWidth };
+      },
     },
   ),
 );

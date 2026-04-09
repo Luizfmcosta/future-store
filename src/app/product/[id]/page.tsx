@@ -27,8 +27,6 @@ export default function ProductPage() {
   const aiMode = useDemoStore((s) => s.aiMode);
   const setSelected = useDemoStore((s) => s.setSelectedProduct);
   const closePdpChatOverlay = useDemoStore((s) => s.closePdpChatOverlay);
-  const addPromptProductRef = useDemoStore((s) => s.addPromptProductRef);
-
   useEffect(() => {
     closePdpChatOverlay();
   }, [id, closePdpChatOverlay]);
@@ -48,11 +46,6 @@ export default function ProductPage() {
   useEffect(() => {
     if (product?.id) recordProductView(product.id);
   }, [product?.id]);
-
-  useEffect(() => {
-    if (!product?.id) return;
-    addPromptProductRef({ productId: product.id, label: product.title });
-  }, [product?.id, product?.title, addPromptProductRef]);
 
   if (!product) {
     return (

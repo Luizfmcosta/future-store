@@ -70,7 +70,7 @@ export default function RootLayout({
       lang="en"
       data-theme="dark"
       className={cn(
-        "h-full",
+        "h-full overflow-hidden scrollbar-none",
         "antialiased",
         manrope.variable,
         dmSans.variable,
@@ -79,7 +79,7 @@ export default function RootLayout({
         interSidebar.variable,
       )}
     >
-      <body className="min-h-full bg-[var(--app-canvas)] font-sans text-[var(--foreground)] scrollbar-none">
+      <body className="h-full min-h-0 overflow-hidden bg-[var(--app-canvas)] font-sans text-[var(--foreground)] scrollbar-none">
         <ClientProviders>{children}</ClientProviders>
       </body>
     </html>

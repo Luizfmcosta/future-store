@@ -8,7 +8,6 @@ import { cn, formatBRL } from "@/lib/utils";
 import type { Product, ShopperProfileId } from "@/types";
 import { useDemoStore } from "@/store/demoStore";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 function formatReviewCount(count: number) {
   return new Intl.NumberFormat("en-US").format(count);
@@ -33,7 +32,6 @@ export function PdpLeadColumn({
   onSelectedColorKeyChange: (labelKey: string) => void;
 }) {
   const t = useT();
-  const router = useRouter();
   const addToCart = useDemoStore((s) => s.addToCart);
 
   const { average, count } = product.reviewRating;
@@ -90,11 +88,7 @@ export function PdpLeadColumn({
         <button
           type="button"
           onClick={() => {
-            if (product.category === "tv" || product.category === "speaker") {
-              addToCart(product.id);
-            } else {
-              router.push(`/product/sp-era-100`);
-            }
+            addToCart(product.id);
           }}
           className="inline-flex h-11 w-full items-center justify-center rounded-full bg-neutral-900 px-6 text-[13px] font-semibold tracking-tight text-white transition hover:bg-neutral-800 sm:w-auto sm:min-w-[10.5rem]"
         >

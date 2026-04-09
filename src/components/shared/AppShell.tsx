@@ -95,16 +95,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const isAiAgent = activeProfile === "aiAgent";
 
   return (
-    <div className="flex min-h-dvh flex-col overflow-x-visible bg-[var(--app-canvas)] md:h-dvh md:max-h-dvh md:overflow-hidden">
+    <div className="flex h-dvh min-h-0 max-h-dvh flex-col overflow-hidden bg-[var(--app-canvas)]">
       <div
         className={cn(
-          "flex min-h-0 min-w-0 flex-1 overflow-x-visible p-3 sm:p-6 md:p-8 2xl:p-12",
+          "flex min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-hidden p-3 sm:p-6 md:p-8 2xl:p-12",
           isAiAgent ? "items-stretch justify-stretch" : "items-center justify-center",
         )}
       >
         <div
           className={cn(
-            "flex flex-col items-stretch overflow-visible",
+            "relative flex min-w-0 flex-col items-stretch overflow-x-hidden",
             isAiAgent ? "h-full min-h-0 w-full max-w-none flex-1" : "w-full max-w-[440px] md:max-w-none",
           )}
         >
@@ -122,7 +122,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   "md:h-[min(100dvh-4rem,960px)] md:max-h-[960px]",
                   "xl:h-[min(100dvh-5rem,1080px)] xl:max-h-[1080px]",
                   "2xl:h-[min(100dvh-6rem,1200px)] 2xl:max-h-[1200px]",
-                  "md:min-w-[340px] md:max-w-[1680px]",
+                  "md:min-w-[340px] md:max-w-[1920px]",
                 )}
                 style={
                   isMd && !isFullscreen
@@ -198,24 +198,23 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     </StorefrontPortalProvider>
                   </div>
                 </div>
+                <ResizeEdgeHandle
+                  edge="left"
+                  visual="none"
+                  theme="window-light"
+                  disabled={isFullscreen || !isMd}
+                  ariaLabel={t("appShell.resizeHandle")}
+                  onDelta={(dx) => setStorefrontWidth((w) => clampStorefrontWidth(w + dx))}
+                />
+                <ResizeEdgeHandle
+                  edge="right"
+                  visual="none"
+                  theme="window-light"
+                  disabled={isFullscreen || !isMd}
+                  ariaLabel={t("appShell.resizeHandle")}
+                  onDelta={(dx) => setStorefrontWidth((w) => clampStorefrontWidth(w + dx))}
+                />
               </div>
-
-              <ResizeEdgeHandle
-                edge="left"
-                visual="none"
-                theme="window-light"
-                disabled={isFullscreen || !isMd}
-                ariaLabel={t("appShell.resizeHandle")}
-                onDelta={(dx) => setStorefrontWidth((w) => clampStorefrontWidth(w + dx))}
-              />
-              <ResizeEdgeHandle
-                edge="right"
-                visual="none"
-                theme="window-light"
-                disabled={isFullscreen || !isMd}
-                ariaLabel={t("appShell.resizeHandle")}
-                onDelta={(dx) => setStorefrontWidth((w) => clampStorefrontWidth(w + dx))}
-              />
             </>
           )}
         </div>
