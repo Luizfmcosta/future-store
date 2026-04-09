@@ -31,7 +31,7 @@ function IntentFilterButton({ className, ariaLabel }: { className?: string; aria
 }
 
 const filterChipClass =
-  "inline-flex h-9 shrink-0 items-center gap-0.5 rounded-full border border-stone-200/90 bg-white px-3.5 text-[13px] font-medium text-stone-900 shadow-[0_1px_2px_rgba(15,23,42,0.06)] transition hover:bg-stone-50";
+  "inline-flex h-10 shrink-0 items-center gap-0.5 rounded-full border border-stone-200/90 bg-white px-3.5 text-[15px] font-medium text-stone-900 shadow-[0_1px_2px_rgba(15,23,42,0.06)] transition hover:bg-stone-50";
 
 /** Shop-style row: black circular control + scrollable white pills (below search headline). */
 function SerpFilterChipStrip({ resultsCount }: { resultsCount: number }) {
@@ -116,6 +116,10 @@ function intentDeliveryLabel(intent: SearchIntent, t: ReturnType<typeof useT>): 
   return t("searchSerp.intentDeliveryStandard");
 }
 
+function normalizeQueryForSerpTitle(q: string): string {
+  return q.trim().replace(/\s+/g, " ").toLowerCase();
+}
+
 export function IntentSummary({
   intent,
   profile: _profile,
@@ -131,7 +135,11 @@ export function IntentSummary({
   const t = useT();
 
   if (!aiMode) {
-    const headline = intent.rawQuery.trim() || t("searchSerp.browseFallback");
+    const raw = intent.rawQuery.trim();
+    const headline =
+      normalizeQueryForSerpTitle(raw) === "cheap headphones"
+        ? t("searchSerp.plpTitleCheapHeadphones")
+        : raw || t("searchSerp.browseFallback");
     return (
       <div className="flex w-full min-w-0 flex-col gap-3">
         <h1 className="pt-8 text-pretty text-xl font-semibold leading-snug tracking-tight text-stone-900 sm:text-2xl">
@@ -148,7 +156,7 @@ export function IntentSummary({
         <EyebrowPill>{t("searchSerp.intentSummaryTitle")}</EyebrowPill>
         <IntentFilterButton ariaLabel={t("searchSerp.filterIntentAria")} />
       </div>
-      <dl className="mt-4 grid gap-3 text-[13px] sm:grid-cols-2">
+      <dl className="mt-4 grid gap-3 text-[15px] sm:grid-cols-2 sm:text-[16px]">
         <div>
           <dt className="text-stone-500">{t("searchSerp.intentLabelDistance")}</dt>
           <dd className="font-medium text-stone-900">{intentSizeLabel(intent, t)}</dd>

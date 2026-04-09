@@ -68,7 +68,7 @@ function ReasoningLoading() {
       </MessageAvatar>
       <MessageContent className="space-y-3">
         <MessageMeta>{t("searchAiPanel.reasoning")}</MessageMeta>
-        <div className="text-[14px] leading-[1.65] text-stone-600 sm:text-[15px]">
+        <div className="text-[15px] leading-[1.65] text-stone-600 sm:text-[16px]">
           <p className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
             <span>{t("searchAiPanel.matchingLine")}</span>
             <span className="inline-flex gap-0.5" aria-hidden>
@@ -283,6 +283,7 @@ export function SearchAiPanel({
           className={cn(
             ui.floatingSearchPillText,
             "max-h-[160px] text-stone-800 placeholder:text-stone-400",
+            isPdp && "text-[15px] md:text-[15px]",
           )}
           aria-label={t("searchAiPanel.ariaMessage")}
         />
@@ -306,12 +307,12 @@ export function SearchAiPanel({
       {messages.length === 0 ? (
         isPdp ? (
           <div className="flex min-h-[min(32dvh,220px)] w-full flex-1 flex-col items-center justify-center px-5 sm:px-8">
-            <p className="max-w-[22rem] text-center text-[14px] leading-[1.65] tracking-tight text-stone-600 sm:text-[15px] sm:leading-[1.7]">
+            <p className="max-w-[22rem] text-center text-[15px] leading-[1.65] tracking-tight text-stone-600 sm:text-[16px] sm:leading-[1.7]">
               {t("searchAiPanel.emptyState")}
             </p>
           </div>
         ) : (
-          <p className="text-center text-[14px] leading-relaxed tracking-tight text-stone-600 sm:text-[15px]">
+          <p className="text-center text-[15px] leading-relaxed tracking-tight text-stone-600 sm:text-[16px]">
             {t("searchAiPanel.emptyState")}
           </p>
         )
@@ -322,7 +323,7 @@ export function SearchAiPanel({
           className={cn("flex w-full flex-col", m.role === "user" ? "items-end" : "items-stretch")}
         >
           {m.role === "user" ? (
-            <div className="max-w-[min(100%,85%)] rounded-2xl rounded-br-md border border-[rgba(245,245,245,0.9)] bg-gray-100 px-4 py-3 text-[14px] leading-[1.55] text-[rgba(41,41,41,1)] shadow-[0_1px_2px_rgba(0,0,0,0.04)] sm:text-[15px] sm:leading-[1.6]">
+            <div className="max-w-[min(100%,85%)] rounded-2xl rounded-br-md border border-[rgba(245,245,245,0.9)] bg-gray-100 px-4 py-3 text-[15px] leading-[1.55] text-[rgba(41,41,41,1)] shadow-[0_1px_2px_rgba(0,0,0,0.04)] sm:text-[16px] sm:leading-[1.6]">
               <p className="whitespace-pre-wrap text-pretty">{m.content}</p>
             </div>
           ) : (
@@ -331,7 +332,7 @@ export function SearchAiPanel({
                 <Sparkles className="size-[1.125rem] text-violet-500/90" strokeWidth={2} />
               </MessageAvatar>
               <MessageContent>
-                <div className="space-y-7 text-[15px] leading-[1.65] text-stone-800 sm:leading-[1.7]">
+                <div className="space-y-7 text-[16px] leading-[1.65] text-stone-800 sm:leading-[1.7]">
                   <p className="whitespace-pre-wrap text-pretty">{m.content}</p>
                   <ChatAssistantSources sources={m.sources} />
                   <ChatProductResults

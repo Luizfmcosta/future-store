@@ -18,7 +18,7 @@ export function PromptContextBadges({ className }: { className?: string }) {
       {refs.map((r) => (
         <span
           key={r.key}
-          className="inline-flex max-w-full items-center gap-1 rounded-full border border-stone-200/90 bg-white/70 px-2 py-0.5 pl-1.5 text-[12px] font-normal leading-snug text-stone-600 shadow-none backdrop-blur-[2px]"
+          className="inline-flex max-w-full items-center gap-1 rounded-full border border-stone-200/90 bg-white/70 px-2 py-0.5 pl-1.5 text-[15px] font-normal leading-snug text-stone-600 shadow-none backdrop-blur-[2px]"
         >
           <MousePointer2 className="size-3 shrink-0 text-stone-400" strokeWidth={2} aria-hidden />
           <span className="min-w-0 truncate tracking-normal">{r.label}</span>

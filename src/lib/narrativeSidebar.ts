@@ -1,12 +1,12 @@
 import { cn } from "@/lib/utils";
 
-/** Inter Medium 12px, −4% — section labels + Stage/Vision labels. */
+/** Section labels + Stage/Vision labels — Geist via `font-sans` inheritance. */
 export const narrativeSidebarText =
-  "text-[12px] font-medium leading-tight tracking-[-0.04em] font-[var(--font-narrative-sidebar)]";
+  "text-[12px] font-medium leading-tight tracking-[-0.04em]";
 
-/** Shopper name — Inter Medium 16px, −4%. */
+/** Shopper name — Geist via `font-sans` inheritance. */
 export const shopperNameText =
-  "text-[16px] font-medium leading-tight tracking-[-0.04em] font-[var(--font-narrative-sidebar)]";
+  "text-[16px] font-medium leading-tight tracking-[-0.04em]";
 
 /**
  * Shared border + background for sidebar controls (Shopper, Stage, Vision).

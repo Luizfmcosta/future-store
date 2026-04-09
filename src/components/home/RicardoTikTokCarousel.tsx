@@ -64,10 +64,10 @@ export function RicardoTikTokCarousel() {
         className="mx-auto max-w-[1200px] min-w-0 px-5 pb-10 pt-9 sm:px-6 sm:pb-12 sm:pt-10"
       >
         <EyebrowPill>{t("ricardoTiktok.eyebrow")}</EyebrowPill>
-        <h2 className="mt-1.5 font-[family-name:var(--font-display)] text-[clamp(1.1rem,3.2vw,1.35rem)] font-medium leading-snug tracking-[-0.02em] text-stone-900">
+        <h2 className="mt-1.5 text-[clamp(1.1rem,3.2vw,1.35rem)] font-medium leading-snug tracking-[-0.02em] text-stone-900">
           {t("ricardoTiktok.title")}
         </h2>
-        <p className="mt-1 max-w-[46ch] text-[11px] font-light leading-relaxed text-stone-400 sm:text-[12px]">
+        <p className="mt-1 max-w-[46ch] text-[15px] font-light leading-relaxed text-stone-400 sm:text-[16px]">
           {t("ricardoTiktok.subline")}
         </p>
 

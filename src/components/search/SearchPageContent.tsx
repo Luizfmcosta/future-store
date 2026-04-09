@@ -88,7 +88,7 @@ export function SearchPageContent() {
         <BestMatchCard product={best} profile={profile} aiMode={aiMode} />
 
         <section aria-labelledby="search-refine-heading" className="min-w-0">
-          <h2 id="search-refine-heading" className="mb-2 text-[11px] font-medium leading-snug tracking-tight text-stone-500">
+          <h2 id="search-refine-heading" className="mb-2 text-[15px] font-medium leading-snug tracking-tight text-stone-500">
             {t("searchOverlay.refineSearch")}
           </h2>
           <div className="-mx-4 min-w-0 sm:-mx-6">
@@ -101,7 +101,7 @@ export function SearchPageContent() {
                   <button
                     type="button"
                     onClick={() => applyDiscoveryQuery(q)}
-                    className="max-w-[min(20rem,85vw)] truncate rounded-full border border-stone-200/90 bg-white px-2.5 py-1 text-left text-[11px] font-medium text-stone-800 transition-colors hover:bg-stone-50"
+                    className="max-w-[min(20rem,85vw)] truncate rounded-full border border-stone-200/90 bg-white px-2.5 py-1 text-left text-[15px] font-medium text-stone-800 transition-colors hover:bg-stone-50"
                   >
                     {q.length > 42 ? `${q.slice(0, 40)}…` : q}
                   </button>
@@ -118,7 +118,7 @@ export function SearchPageContent() {
         <ResultsGrid products={displayResults} profile={profile} />
 
         <section aria-labelledby="search-trending-heading" className="border-t border-stone-200/80 pt-8">
-          <h2 id="search-trending-heading" className="mb-2 text-[11px] font-medium leading-snug tracking-tight text-stone-500">
+          <h2 id="search-trending-heading" className="mb-2 text-[15px] font-medium leading-snug tracking-tight text-stone-500">
             {t("searchOverlay.trendingNow")}
           </h2>
           <ul className="space-y-0.5">
@@ -127,7 +127,7 @@ export function SearchPageContent() {
                 <button
                   type="button"
                   onClick={() => applyDiscoveryQuery(p.title)}
-                  className="flex w-full items-start gap-2.5 rounded-lg px-2 py-2 text-left text-[13px] text-stone-800 transition-colors hover:bg-stone-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-stone-300"
+                  className="flex w-full items-start gap-2.5 rounded-lg px-2 py-2 text-left text-[15px] text-stone-800 transition-colors hover:bg-stone-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-stone-300"
                 >
                   <Package className="mt-0.5 size-4 shrink-0 text-stone-400" strokeWidth={2} aria-hidden />
                   <span className="line-clamp-2 leading-snug">{p.title}</span>

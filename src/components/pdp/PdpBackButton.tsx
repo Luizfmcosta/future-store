@@ -16,7 +16,7 @@ export function PdpBackButton() {
       type="button"
       onClick={() => router.back()}
       className={cn(
-        "group inline-flex items-center gap-2 rounded-full border border-transparent bg-transparent px-3 py-2 text-[13px] font-medium text-neutral-500 transition-[transform,background-color,color]",
+        "group inline-flex items-center gap-2 rounded-full border border-transparent bg-transparent px-3 py-2 text-[15px] font-medium text-neutral-500 transition-[transform,background-color,color]",
         "hover:bg-neutral-100/80 hover:text-neutral-900",
         "active:scale-[0.98] active:bg-neutral-100",
         ui.home.focusRing,

@@ -157,8 +157,9 @@ body {
    * Preview frame scales on wide `@container` widths (large monitors) so UI doesn’t stay
    * phone-sized; `cqw` is relative to `[data-storefront-container]` (see AppShell).
    */
+  /* Slightly larger default band (~16–17px) so copy + controls read comfortably in the preview frame. */
   [data-storefront-window] {
-    font-size: clamp(0.875rem, calc(0.68rem + 0.28cqw), 1.0625rem);
+    font-size: clamp(1rem, calc(0.84rem + 0.22cqw), 1.075rem);
   }
 }
 

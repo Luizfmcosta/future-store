@@ -86,7 +86,7 @@ export function ContinueJourney() {
           <motion.div variants={fadeUp} className="mt-3.5 w-full">
             <h2
               className={cn(
-                "text-left font-[family-name:var(--font-display)] text-[clamp(1.2rem,3.8vw,1.85rem)] font-medium leading-[1.15] tracking-[-0.02em] text-[#1a1a1a]",
+                "text-left text-[clamp(1.2rem,3.8vw,1.85rem)] font-medium leading-[1.15] tracking-[-0.02em] text-[#1a1a1a]",
                 profile === "marina" || (useRicardoEntryCopy && profile === "ricardo")
                   ? "text-balance whitespace-normal text-pretty"
                   : "whitespace-pre-line",
@@ -94,7 +94,7 @@ export function ContinueJourney() {
             >
               {headline}
             </h2>
-            <p className="mt-2.5 font-[family-name:var(--font-display)] text-[clamp(1.05rem,3.2vw,1.25rem)] font-medium leading-snug tracking-[-0.015em] text-[#444]">
+            <p className="mt-2.5 text-[clamp(1.05rem,3.2vw,1.25rem)] font-medium leading-snug tracking-[-0.015em] text-[#444]">
               {profile === "marina"
                 ? t("continueJourney.marinaProductLine")
                 : useRicardoEntryCopy && profile === "ricardo"
@@ -104,11 +104,11 @@ export function ContinueJourney() {
           </motion.div>
 
           <motion.div variants={fadeUp} className="mt-5 w-full">
-            <p className="max-w-[42ch] text-left text-[12px] font-light leading-[1.7] text-[#888] sm:text-[13px]">{body}</p>
+            <p className="max-w-[42ch] text-left text-[15px] font-light leading-[1.65] text-[#888] sm:text-[17px] sm:leading-[1.65]">{body}</p>
 
             <Link
               href={`/product/${product.id}`}
-              className="mt-5 inline-flex h-10 w-fit items-center justify-center rounded-full bg-[#1a1a1a] px-6 text-[11px] font-medium text-white transition-transform duration-300 hover:scale-[1.03] active:scale-[0.97] sm:text-[12px]"
+              className="mt-5 inline-flex h-11 w-fit items-center justify-center rounded-full bg-[#1a1a1a] px-6 text-[15px] font-medium text-white transition-transform duration-300 hover:scale-[1.03] active:scale-[0.97] sm:text-[16px]"
             >
               {cta}
             </Link>

@@ -34,7 +34,7 @@ export function AdaptiveHero() {
 
   return (
     <section id="home-hero" className="relative flex flex-col">
-      <div className="relative flex h-[95svh] min-h-[500px] items-end justify-center overflow-hidden bg-[#0c0c0c]">
+      <div className="relative flex h-[95svh] min-h-[500px] w-full shrink-0 flex-col overflow-hidden bg-[#0c0c0c]">
         <video
           ref={videoRef}
           key={STOREFRONT_HERO_VIDEO_SRC}
@@ -53,34 +53,37 @@ export function AdaptiveHero() {
           aria-hidden
         />
 
-        <motion.div
-          variants={{ hidden: {}, show: stagger }}
-          initial="hidden"
-          animate="show"
-          className="relative z-10 flex w-full -translate-y-8 flex-col items-center px-4 pb-36 text-center @min-[480px]:px-8"
-        >
-          <motion.p
-            variants={child}
-            className="text-[14px] font-normal tracking-normal text-white/70 @min-[480px]:text-[16px]"
+        {/* Same horizontal + vertical framing as `RicardoPromoHero` so copy stays centered in the preview. */}
+        <div className="relative z-10 flex h-full min-h-0 flex-col items-center justify-end px-4 pb-28 pt-24 sm:justify-center sm:px-6 sm:pb-16 sm:pt-20">
+          <motion.div
+            variants={{ hidden: {}, show: stagger }}
+            initial="hidden"
+            animate="show"
+            className="@container flex w-full max-w-[min(28rem,calc(100cqw-2rem))] translate-y-6 flex-col items-center text-center"
           >
-            {copy.kicker}
-          </motion.p>
+            <motion.p
+              variants={child}
+              className="max-w-full text-[15px] font-normal tracking-normal text-white/70 @min-[480px]:text-[17px]"
+            >
+              {copy.kicker}
+            </motion.p>
 
-          {/* Smaller type + wrap on narrow viewports so long headlines don’t overflow the storefront frame */}
-          <motion.h1
-            variants={child}
-            className="mt-2 min-w-0 max-w-[min(100%,22rem)] font-[family-name:var(--font-display)] font-medium tracking-[-0.02em] text-white @min-[480px]:max-w-full @min-[480px]:leading-[0.94]"
-          >
-            <span className="block text-balance text-[clamp(1.65rem,7.8cqi,2.55rem)] leading-[1.12] @min-[480px]:text-[clamp(1.9rem,7cqi,3.15rem)] @min-[480px]:leading-[0.94]">
-              {copy.titleLine1}
-            </span>
-            {copy.titleLine2 ? (
-              <span className="block text-balance py-1 text-[clamp(1.5rem,7.2cqi,2.35rem)] leading-[1.12] text-white/70 @min-[480px]:py-[6px] @min-[480px]:text-[clamp(1.75rem,6.5cqi,2.85rem)] @min-[480px]:leading-[0.94]">
-                {copy.titleLine2}
+            {/* Smaller type + wrap on narrow viewports so long headlines don’t overflow the storefront frame */}
+            <motion.h1
+              variants={child}
+              className="mt-2 w-full min-w-0 text-center font-medium tracking-[-0.02em] text-white @min-[480px]:leading-[0.94]"
+            >
+              <span className="block text-balance text-center text-[clamp(1.78rem,8cqi,2.72rem)] leading-[1.12] @min-[480px]:text-[clamp(2.02rem,7.2cqi,3.35rem)] @min-[480px]:leading-[0.94]">
+                {copy.titleLine1}
               </span>
-            ) : null}
-          </motion.h1>
-        </motion.div>
+              {copy.titleLine2 ? (
+                <span className="block text-balance py-1 text-center text-[clamp(1.62rem,7.4cqi,2.5rem)] leading-[1.12] text-white/70 @min-[480px]:py-[6px] @min-[480px]:text-[clamp(1.88rem,6.7cqi,3rem)] @min-[480px]:leading-[0.94]">
+                  {copy.titleLine2}
+                </span>
+              ) : null}
+            </motion.h1>
+          </motion.div>
+        </div>
       </div>
     </section>
   );

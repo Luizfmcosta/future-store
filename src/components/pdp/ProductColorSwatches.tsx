@@ -57,7 +57,7 @@ export function ProductColorSwatches({
           );
         })}
       </div>
-      <span className="min-w-0 max-w-[min(100%,14rem)] truncate text-[13px] font-medium leading-snug text-neutral-600 sm:max-w-none sm:text-[14px]">
+      <span className="min-w-0 max-w-[min(100%,14rem)] truncate text-[15px] font-medium leading-snug text-neutral-600 sm:max-w-none">
         {activeLabel}
       </span>
     </div>

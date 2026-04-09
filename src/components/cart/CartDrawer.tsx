@@ -89,13 +89,13 @@ function CartDrawerBody({ titleId, onClose }: { titleId: string; onClose: () => 
           <div>
             {product ? (
               <>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-stone-500">{t("cart.label")}</p>
+                <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-stone-500">{t("cart.label")}</p>
                 <h2 id={titleId} className="mt-1 text-xl font-semibold text-stone-900">
                   {t("cart.title")}
                 </h2>
               </>
             ) : (
-              <h2 id={titleId} className="text-xl font-semibold text-stone-900">
+              <h2 id={titleId} className="text-2xl font-semibold tracking-tight text-stone-900">
                 {t("cart.label")}
               </h2>
             )}
@@ -128,39 +128,39 @@ function CartDrawerBody({ titleId, onClose }: { titleId: string; onClose: () => 
 
               {bundles?.primary ? (
                 <div>
-                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-500">{t("cart.recommendedBundle")}</p>
+                  <p className="mb-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-stone-500">{t("cart.recommendedBundle")}</p>
                   <BundleCard option={bundles.primary} highlight />
                 </div>
               ) : null}
 
               {bundles?.premium ? (
                 <div>
-                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-500">{t("cart.premiumAlternative")}</p>
+                  <p className="mb-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-stone-500">{t("cart.premiumAlternative")}</p>
                   <PremiumOptionCard option={bundles.premium} />
                 </div>
               ) : null}
 
               {bundles?.cheaper ? (
                 <div>
-                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-500">{t("cart.cheaperAlternative")}</p>
+                  <p className="mb-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-stone-500">{t("cart.cheaperAlternative")}</p>
                   <CheaperOptionCard option={bundles.cheaper} />
                 </div>
               ) : null}
 
               <div>
-                <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-500">{t("cart.extendedPeace")}</p>
+                <p className="mb-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-stone-500">{t("cart.extendedPeace")}</p>
                 <LoyaltyCard />
               </div>
             </div>
           ) : (
-            <div className="flex min-h-[min(60vh,28rem)] flex-1 flex-col items-center justify-center py-6 text-center">
+            <div className="flex min-h-[min(60vh,28rem)] flex-1 flex-col items-center justify-center py-8 text-center">
               <div
-                className="mb-2 flex size-16 items-center justify-center rounded-full bg-stone-100 text-stone-400"
+                className="mb-4 flex size-[4.5rem] items-center justify-center rounded-full bg-stone-100 text-stone-400"
                 aria-hidden
               >
-                <ShoppingBag className="size-8 stroke-[1.25]" />
+                <ShoppingBag className="size-9 stroke-[1.25]" />
               </div>
-              <p className="max-w-[18rem] text-[14px] leading-relaxed text-stone-600">
+              <p className="max-w-[22rem] px-1 text-[17px] leading-[1.65] text-stone-600 sm:text-[18px]">
                 {t("cart.emptyDescription")}
               </p>
               <button
@@ -168,7 +168,7 @@ function CartDrawerBody({ titleId, onClose }: { titleId: string; onClose: () => 
                 type="button"
                 onClick={onClose}
                 className={cn(
-                  "mt-8 inline-flex min-h-11 w-full max-w-[16rem] items-center justify-center rounded-full bg-stone-900 px-6 text-[13px] font-semibold text-white transition-colors hover:bg-stone-800",
+                  "mt-9 inline-flex min-h-12 w-full max-w-[18rem] items-center justify-center rounded-full bg-stone-900 px-7 text-[16px] font-semibold text-white transition-colors hover:bg-stone-800 sm:text-[17px]",
                   ui.home.focusRing,
                 )}
               >
@@ -179,7 +179,7 @@ function CartDrawerBody({ titleId, onClose }: { titleId: string; onClose: () => 
         </div>
         {product ? (
           <div className="border-t border-stone-200/90 p-5">
-            <p className="mb-3 flex items-baseline justify-between gap-2 text-[13px] text-stone-600">
+            <p className="mb-3 flex items-baseline justify-between gap-2 text-[14px] text-stone-600">
               <span>{t("cart.subtotal")}</span>
               <span className="tabular-nums text-[15px] font-semibold text-stone-900">
                 {formatBRL(product.price * cartQuantity)}
@@ -188,7 +188,7 @@ function CartDrawerBody({ titleId, onClose }: { titleId: string; onClose: () => 
             <button
               type="button"
               className={cn(
-                "w-full rounded-full bg-stone-200 py-3 text-sm font-semibold text-stone-700 opacity-60",
+                "w-full rounded-full bg-stone-200 py-3 text-[14px] font-semibold text-stone-700 opacity-60",
                 ui.home.focusRing,
                 "focus-visible:opacity-100",
               )}
@@ -234,23 +234,23 @@ function CartLineCard({
                 unoptimized
               />
             ) : (
-              <div className="flex h-full w-full items-center justify-center bg-stone-100 text-[11px] text-stone-400">
+              <div className="flex h-full w-full items-center justify-center bg-stone-100 text-[12px] text-stone-400">
                 —
               </div>
             )}
           </div>
           <div className="flex min-w-0 flex-1 flex-col gap-2">
             <div>
-              <p className="text-[12px] font-medium text-stone-500">{t("cart.inBag")}</p>
+              <p className="text-[14px] font-medium text-stone-500">{t("cart.inBag")}</p>
               <p className="mt-0.5 line-clamp-2 text-[15px] font-semibold leading-snug text-stone-900">{product.title}</p>
             </div>
             <div className="flex flex-wrap items-baseline gap-2">
               <p className="text-lg font-semibold tabular-nums text-stone-900">{formatBRL(product.price)}</p>
               {product.oldPrice ? (
-                <p className={cn(ui.home.priceMuted, "text-base")}>{formatBRL(product.oldPrice)}</p>
+                <p className={ui.home.priceMuted}>{formatBRL(product.oldPrice)}</p>
               ) : null}
             </div>
-            <p className="text-[13px] text-stone-600">{product.installmentText}</p>
+            <p className="text-[14px] text-stone-600">{product.installmentText}</p>
           </div>
         </div>
         <div className="flex w-full flex-row items-center justify-between gap-3 border-t border-stone-200/60 pt-3 sm:w-auto sm:flex-col sm:items-end sm:justify-between sm:self-stretch sm:border-0 sm:pt-0">
@@ -286,7 +286,7 @@ function CartLineCard({
             type="button"
             onClick={onRemove}
             className={cn(
-              "inline-flex items-center gap-1.5 rounded-full px-2 py-1.5 text-[12px] font-semibold text-stone-600 transition hover:bg-stone-200/60 hover:text-stone-900",
+              "inline-flex items-center gap-1.5 rounded-full px-2 py-1.5 text-[14px] font-semibold text-stone-600 transition hover:bg-stone-200/60 hover:text-stone-900",
               ui.home.focusRing,
               "focus-visible:rounded-full",
             )}

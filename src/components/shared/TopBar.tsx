@@ -135,7 +135,7 @@ export function TopBar({ className }: TopBarProps) {
         type="button"
         onClick={openCart}
         className={cn(
-          "relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full",
+          "relative inline-flex h-11 w-11 min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full",
           /* Same glass as `ui.promptInputKit` / floating search — white, border, blur, soft shadow */
           "border border-stone-200/60 bg-white/86 text-stone-700 shadow-[0_8px_28px_rgba(15,23,42,0.08)] backdrop-blur-md backdrop-saturate-150",
           "transition-[border-color,background-color,box-shadow] duration-200 hover:border-stone-300/80 hover:bg-white/92 active:bg-white/94",
@@ -143,9 +143,9 @@ export function TopBar({ className }: TopBarProps) {
         )}
         aria-label={t("common.cart")}
       >
-        <ShoppingBag className="size-[17px]" strokeWidth={1.75} aria-hidden />
+        <ShoppingBag className="size-[19px]" strokeWidth={1.75} aria-hidden />
         {cartLineId ? (
-          <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-[14px] items-center justify-center rounded-full bg-stone-900 px-0.5 text-[8px] font-bold text-white">
+          <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-[14px] items-center justify-center rounded-full bg-stone-900 px-0.5 text-[9px] font-bold text-white">
             1
           </span>
         ) : null}

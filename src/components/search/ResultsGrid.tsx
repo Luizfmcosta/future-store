@@ -27,7 +27,7 @@ export function ResultsGrid({ products, profile }: { products: Product[]; profil
           onClick={() => setRefineOpen(true)}
           className={cn(
             "inline-flex shrink-0 items-center gap-1.5 rounded-full border border-stone-200/90 bg-white px-3 py-1.5",
-            "text-[12px] font-semibold text-stone-700 shadow-sm transition hover:border-stone-300/90 hover:bg-stone-50",
+            "text-[15px] font-semibold text-stone-700 shadow-sm transition hover:border-stone-300/90 hover:bg-stone-50",
             ui.home.focusRing,
             "focus-visible:rounded-full",
           )}
@@ -64,23 +64,23 @@ export function ResultsGrid({ products, profile }: { products: Product[]; profil
               </AskImageButton>
               <div className="flex min-h-0 flex-1 flex-col space-y-1.5 p-2.5 sm:space-y-2 sm:p-4">
                 <div className="flex items-center justify-between gap-2">
-                  <p className="text-[12px] font-medium text-stone-500">{p.brand}</p>
+                  <p className="text-[15px] font-medium text-stone-500">{p.brand}</p>
                   {p.sponsored ? (
-                    <span className="rounded-full bg-stone-100 px-2 py-0.5 text-[11px] font-medium text-stone-600">
+                    <span className="rounded-full bg-stone-100 px-2 py-0.5 text-[15px] font-medium text-stone-600">
                       {t("searchSerp.sponsored")}
                     </span>
                   ) : null}
                 </div>
-                <p className="line-clamp-2 text-[13px] font-semibold leading-snug text-stone-900 sm:text-[15px]">{p.title}</p>
-                <p className="line-clamp-2 text-[11px] text-stone-500 sm:text-[13px]">
+                <p className="line-clamp-2 text-[15px] font-semibold leading-snug text-stone-900 sm:text-[17px]">{p.title}</p>
+                <p className="line-clamp-2 text-[15px] text-stone-500 sm:text-[16px]">
                   {profile === "marina" ? p.bestFor[0] : p.deliveryETA}
                 </p>
                 <div className="flex flex-wrap items-baseline gap-1.5 pt-1 sm:gap-2">
-                  <span className="text-[14px] font-semibold tabular-nums text-stone-900 sm:text-[16px]">
+                  <span className="text-[15px] font-semibold tabular-nums text-stone-900 sm:text-[17px]">
                     {formatBRL(p.price)}
                   </span>
                   {p.oldPrice ? (
-                    <span className="text-[11px] tabular-nums text-stone-400 line-through sm:text-[13px]">
+                    <span className="text-[15px] tabular-nums text-stone-400 line-through sm:text-[16px]">
                       {formatBRL(p.oldPrice)}
                     </span>
                   ) : null}
@@ -89,7 +89,7 @@ export function ResultsGrid({ products, profile }: { products: Product[]; profil
                   <Link
                     href={href}
                     className={cn(
-                      "flex h-10 min-h-0 flex-1 items-center justify-center rounded-full border border-stone-200/90 text-[12px] font-medium text-stone-800 transition-colors hover:border-stone-400 hover:bg-stone-50 sm:text-[13px]",
+                      "flex h-11 min-h-0 flex-1 items-center justify-center rounded-full border border-stone-200/90 text-[15px] font-medium text-stone-800 transition-colors hover:border-stone-400 hover:bg-stone-50 sm:text-[16px]",
                       ui.home.focusRing,
                       "focus-visible:rounded-full",
                     )}
@@ -99,7 +99,7 @@ export function ResultsGrid({ products, profile }: { products: Product[]; profil
                   <Link
                     href={href}
                     className={cn(
-                      "flex h-10 min-h-0 flex-1 items-center justify-center rounded-full bg-[#1a1a1a] text-[12px] font-medium text-white transition-transform hover:scale-[1.02] active:scale-[0.98] sm:text-[13px]",
+                      "flex h-11 min-h-0 flex-1 items-center justify-center rounded-full bg-[#1a1a1a] text-[15px] font-medium text-white transition-transform hover:scale-[1.02] active:scale-[0.98] sm:text-[16px]",
                       ui.home.focusRing,
                       "focus-visible:rounded-full",
                     )}

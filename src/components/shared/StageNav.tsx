@@ -14,7 +14,7 @@ const DEMO_PDP_HREF = "/product/sp-era-300";
 function stageButtonClass(active: boolean, light: boolean) {
   return cn(
     narrativeSidebarText,
-    "flex min-h-9 w-full items-center justify-center px-2 text-center text-[11px] transition",
+    "flex min-h-9 w-full items-center justify-center px-2 text-center text-[12px] transition",
     sidebarRailSurfaceClass(active, light),
   );
 }

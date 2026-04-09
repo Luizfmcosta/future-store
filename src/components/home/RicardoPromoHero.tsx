@@ -65,13 +65,13 @@ export function RicardoPromoHero() {
           >
             <motion.p
               variants={child}
-              className="max-w-full text-[15px] font-normal tracking-normal text-white/70 @min-[480px]:text-[16px]"
+              className="max-w-full text-[16px] font-normal tracking-normal text-white/70 @min-[480px]:text-[17px]"
             >
               {t("hero.ricardoPromo.kicker")}
             </motion.p>
             <motion.h1
               variants={child}
-              className="mt-2 w-full min-w-0 font-[family-name:var(--font-display)] font-medium tracking-[-0.02em] text-white"
+              className="mt-2 w-full min-w-0 font-medium tracking-[-0.02em] text-white"
             >
               {/*
                * Query no próprio bloco (@container no pai): &lt; ~24rem = duas linhas;
@@ -82,7 +82,7 @@ export function RicardoPromoHero() {
                   <span
                     key={i}
                     className={cn(
-                      "block hyphens-none text-[clamp(1.65rem,6.4cqw,2.45rem)] leading-[1.12]",
+                      "block hyphens-none text-[clamp(1.78rem,6.6cqw,2.62rem)] leading-[1.12]",
                       i > 0 && "mt-[0.28em]",
                     )}
                   >
@@ -90,13 +90,13 @@ export function RicardoPromoHero() {
                   </span>
                 ))}
               </span>
-              <span className="hidden min-w-0 max-w-full text-center hyphens-none @min-[24rem]:block @min-[24rem]:whitespace-nowrap @min-[24rem]:text-[36px] @min-[24rem]:leading-[1.04]">
+              <span className="hidden min-w-0 max-w-full text-center hyphens-none @min-[24rem]:block @min-[24rem]:whitespace-nowrap @min-[24rem]:text-[38px] @min-[24rem]:leading-[1.04]">
                 {headlineOneLine}
               </span>
             </motion.h1>
             <motion.p
               variants={child}
-              className="mt-2 text-[20px] font-semibold tabular-nums text-white @min-[480px]:text-[21px]"
+              className="mt-2 text-[22px] font-semibold tabular-nums text-white @min-[480px]:text-[24px]"
             >
               <span className="font-normal text-white/75">{t("hero.ricardoPromo.fromLabel")} </span>
               {fromPrice}
@@ -105,7 +105,7 @@ export function RicardoPromoHero() {
             <motion.div variants={child} className="mt-5 flex w-full justify-center">
               <Link
                 href="/search"
-                className="inline-flex h-11 min-h-11 w-full shrink-0 items-center justify-center rounded-full bg-white px-5 text-[14px] font-semibold text-[#0c0c0c] shadow-[0_12px_40px_-16px_rgba(0,0,0,0.45)] transition-transform hover:scale-[1.02] active:scale-[0.98] @min-[480px]:text-[15px] sm:w-auto sm:min-w-[9rem]"
+                className="inline-flex h-12 min-h-12 w-full shrink-0 items-center justify-center rounded-full bg-white px-6 text-[15px] font-semibold text-[#0c0c0c] shadow-[0_12px_40px_-16px_rgba(0,0,0,0.45)] transition-transform hover:scale-[1.02] active:scale-[0.98] @min-[480px]:text-[16px] sm:w-auto sm:min-w-[9.5rem]"
               >
                 {t("hero.ricardoPromo.cta")}
               </Link>

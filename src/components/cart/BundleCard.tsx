@@ -30,16 +30,16 @@ export function BundleCard({ option, highlight }: { option: BundleOption; highli
           </div>
         </AskImageButton>
         <div className="min-w-0 flex-1">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">{t("cart.bundleEyebrow")}</p>
+          <p className="text-[12px] font-semibold uppercase tracking-wider text-stone-500">{t("cart.bundleEyebrow")}</p>
           <p className="mt-1 line-clamp-2 text-[14px] font-semibold leading-snug text-stone-900">{option.title}</p>
-          <p className="mt-2 text-[12px] text-stone-600">{option.blurb}</p>
+          <p className="mt-2 text-[14px] text-stone-600">{option.blurb}</p>
           <div className="mt-2 flex flex-wrap items-baseline gap-2">
             <span className={cn(ui.home.price, "text-[15px]")}>{formatBRL(option.comboPrice)}</span>
-            <span className="text-[12px] text-stone-500">{t("cart.saveAmount", { amount: formatBRL(option.savings) })}</span>
+            <span className="text-[14px] text-stone-500">{t("cart.saveAmount", { amount: formatBRL(option.savings) })}</span>
           </div>
           <Link
             href={`/product/${option.soundbar.id}`}
-            className="mt-2 inline-block rounded-md px-1 py-0.5 text-[12px] font-semibold text-stone-600 transition-colors duration-150 ease-out hover:bg-stone-100 hover:text-stone-900"
+            className="mt-2 inline-block rounded-md px-1 py-0.5 text-[14px] font-semibold text-stone-600 transition-colors duration-150 ease-out hover:bg-stone-100 hover:text-stone-900"
           >
             {t("cart.viewBundlePart")}
           </Link>

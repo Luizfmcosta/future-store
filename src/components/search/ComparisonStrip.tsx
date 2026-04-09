@@ -49,7 +49,7 @@ function ComparisonCard({ row }: { row: ComparisonCardModel }) {
       <div className="flex min-h-0 flex-1 flex-col p-4">
         <EyebrowPill>{t(FIT_KEY_TO_MSG[row.fitKey])}</EyebrowPill>
         <p className="mt-2 text-[15px] font-semibold leading-snug text-stone-900">{p.title}</p>
-        <ul className="mt-3 space-y-1.5 text-[12px] leading-relaxed text-stone-600">
+        <ul className="mt-3 space-y-1.5 text-[15px] leading-relaxed text-stone-600">
           {row.pros.map((x) => (
             <li key={x}>+ {x}</li>
           ))}
@@ -63,7 +63,7 @@ function ComparisonCard({ row }: { row: ComparisonCardModel }) {
           <Link
             href={href}
             className={cn(
-              "flex h-10 min-h-0 flex-1 items-center justify-center rounded-full border border-stone-200/90 text-[12px] font-medium text-stone-800 transition-colors hover:border-stone-400 hover:bg-stone-50 sm:text-[13px]",
+              "flex h-11 min-h-0 flex-1 items-center justify-center rounded-full border border-stone-200/90 text-[15px] font-medium text-stone-800 transition-colors hover:border-stone-400 hover:bg-stone-50 sm:text-[16px]",
               ui.home.focusRing,
               "focus-visible:rounded-full",
             )}
@@ -73,7 +73,7 @@ function ComparisonCard({ row }: { row: ComparisonCardModel }) {
           <Link
             href={href}
             className={cn(
-              "flex h-10 min-h-0 flex-1 items-center justify-center rounded-full bg-[#1a1a1a] text-[12px] font-medium text-white transition-transform hover:scale-[1.02] active:scale-[0.98] sm:text-[13px]",
+              "flex h-11 min-h-0 flex-1 items-center justify-center rounded-full bg-[#1a1a1a] text-[15px] font-medium text-white transition-transform hover:scale-[1.02] active:scale-[0.98] sm:text-[16px]",
               ui.home.focusRing,
               "focus-visible:rounded-full",
             )}

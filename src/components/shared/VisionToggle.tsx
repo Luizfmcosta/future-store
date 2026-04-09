@@ -8,7 +8,7 @@ import { useDemoStore } from "@/store/demoStore";
 function visionButtonClass(active: boolean, light: boolean) {
   return cn(
     narrativeSidebarText,
-    "flex min-h-9 w-full items-center justify-center px-2 text-[11px] transition",
+    "flex min-h-9 w-full items-center justify-center px-2 text-[12px] transition",
     sidebarRailSurfaceClass(active, light),
   );
 }

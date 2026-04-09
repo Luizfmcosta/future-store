@@ -24,7 +24,7 @@ export function AgentLayerPanel({ skuId, profile }: { skuId: string | null; prof
   ];
 
   return (
-    <div className="rounded-2xl border border-white/[0.1] bg-white/[0.03] p-4 font-mono text-[11px] text-[#c5ccdf]">
+    <div className="rounded-2xl border border-white/[0.1] bg-white/[0.03] p-4 font-sans text-[11px] tabular-nums text-[#c5ccdf]">
       <pre className="overflow-x-auto whitespace-pre-wrap scrollbar-none">
         {JSON.stringify(
           Object.fromEntries(rows.map((r) => [r.k, r.v])),

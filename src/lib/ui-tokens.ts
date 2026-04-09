@@ -11,15 +11,15 @@ const PILL_TRACK_INSET =
   "rounded-full bg-white/[0.05] p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]";
 
 export const ui = {
-  /** Muted line on dark chrome — sentence case, no wide tracking */
-  eyebrow: "text-[13px] font-medium leading-snug text-[#9ca8b8] tracking-normal",
+  /** Muted line on dark chrome — sentence case, no wide tracking. */
+  eyebrow: "text-[15px] font-medium leading-snug text-[#9ca8b8] tracking-normal",
   sectionTitle:
-    "text-lg font-semibold leading-tight tracking-tight text-[#eef1f6] sm:text-xl",
-  label: "text-[12px] font-medium text-[#9ca8b8]",
-  cardTitle: "text-[14px] font-semibold leading-snug text-[#e8ecf4]",
-  body: "text-[13px] leading-relaxed text-[#b8c0ce]",
-  price: "text-[15px] font-semibold tabular-nums text-[#eef1f6]",
-  priceMuted: "text-[12px] font-medium text-[#7d8898] line-through",
+    "text-xl font-semibold leading-tight tracking-tight text-[#eef1f6] sm:text-2xl",
+  label: "text-[15px] font-medium text-[#9ca8b8]",
+  cardTitle: "text-[15px] font-semibold leading-snug text-[#e8ecf4]",
+  body: "text-[16px] leading-relaxed text-[#b8c0ce] sm:text-[17px]",
+  price: "text-[16px] font-semibold tabular-nums text-[#eef1f6]",
+  priceMuted: "text-[15px] font-medium text-[#7d8898] line-through",
 
   /** Default 1px edge on dark chrome */
   hairline: "border border-white/[0.06]",
@@ -83,14 +83,14 @@ export const ui = {
    */
   floatingSearchBarRowPad: "pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2",
 
-  /** 13px — floating search pill + IA (texto sobre vidro claro). */
-  floatingSearchPillText: "text-[13px] leading-normal text-stone-600 md:text-[13px]",
+  /** Floating search pill + IA (secondary / meta tier). */
+  floatingSearchPillText: "text-[15px] leading-normal text-stone-600 md:text-[15px]",
 
   /**
    * Bottom floating search pill — vidro branco leve (`FloatingSearchDock` + `SearchAiPanel`).
    */
   floatingSearchPill:
-    "flex w-full max-w-xl min-h-10 items-center gap-2.5 rounded-full border border-stone-200/60 bg-white/86 backdrop-blur-md px-3.5 text-left shadow-[0_8px_28px_rgba(15,23,42,0.08)] transition-colors hover:bg-white/92 focus-within:bg-white/94",
+    "flex w-full max-w-xl min-h-11 items-center gap-2.5 rounded-full border border-stone-200/60 bg-white/86 backdrop-blur-md px-3.5 text-left shadow-[0_8px_28px_rgba(15,23,42,0.08)] transition-colors hover:bg-white/92 focus-within:bg-white/94",
 
   /**
    * Prompt estilo ChatGPT: coluna (textarea em cima, barra de ações embaixo), vidro leve (blur + alpha).
@@ -100,8 +100,8 @@ export const ui = {
 
   narrativeSectionLabel: (light: boolean) =>
     light
-      ? "mb-1.5 text-[13px] font-medium leading-snug text-slate-600 tracking-normal"
-      : "mb-1.5 text-[13px] font-medium leading-snug text-[#9ca8bb] tracking-normal",
+      ? "mb-1.5 text-[15px] font-medium leading-snug text-slate-600 tracking-normal"
+      : "mb-1.5 text-[15px] font-medium leading-snug text-[#9ca8bb] tracking-normal",
 
   focusRing: "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-white/20",
   focusRingInset: "ring-2 ring-white/15 ring-offset-2 ring-offset-[#060708]",
@@ -112,18 +112,18 @@ export const ui = {
   /** Warm editorial home (Saki-like light storefront) */
   home: {
     /**
-     * Text-only kicker on white — same as `<EyebrowPill />` (e.g. ContinueJourney “A strong foundation”).
+     * Text-only kicker on white — same as `<EyebrowPill />` (e.g. ContinueJourney “A strong foundation for you”).
      * Prefer the component; this string is the single source of truth for class names.
      * Do not replace with `uppercase` + wide `tracking-*` — that is not our storefront eyebrow.
      */
     eyebrowPill:
-      "inline-flex w-fit max-w-full items-center text-[11px] font-normal tracking-[0.1px] text-[#666]",
-    sectionTitle: "text-lg font-semibold leading-tight tracking-tight text-stone-900 sm:text-xl",
-    label: "text-[12px] font-medium text-stone-600",
-    cardTitle: "text-[14px] font-semibold leading-snug text-stone-900",
-    body: "text-[13px] leading-relaxed text-stone-600",
-    price: "text-[15px] font-semibold tabular-nums text-stone-900",
-    priceMuted: "text-[12px] font-medium text-stone-400 line-through",
+      "inline-flex w-fit max-w-full items-center text-[15px] font-normal tracking-normal text-[#666]",
+    sectionTitle: "text-xl font-semibold leading-tight tracking-tight text-stone-900 sm:text-2xl",
+    label: "text-[15px] font-medium text-stone-600",
+    cardTitle: "text-[15px] font-semibold leading-snug text-stone-900",
+    body: "text-[16px] leading-relaxed text-stone-600 sm:text-[17px]",
+    price: "text-[16px] font-semibold tabular-nums text-stone-900",
+    priceMuted: "text-[15px] font-medium text-stone-400 line-through",
     hairline: "border border-stone-200/90",
     focusRing: "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-stone-400/40",
   },

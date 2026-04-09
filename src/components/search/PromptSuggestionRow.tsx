@@ -50,8 +50,8 @@ export function PromptSuggestionRow({
           title={text}
           onClick={() => onSelect(text)}
           className={cn(
-            "max-w-[min(100%,24rem)] truncate rounded-full border border-stone-200/95 bg-white px-2.5 py-1 text-left text-[11px] font-medium text-stone-800 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-colors hover:bg-stone-50",
-            "sm:max-w-[min(100%,28rem)] sm:px-3 sm:py-1.5 sm:text-xs",
+            "max-w-[min(100%,24rem)] truncate rounded-full border border-stone-200/95 bg-white px-2.5 py-1 text-left text-[15px] font-medium text-stone-800 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-colors hover:bg-stone-50",
+            "sm:max-w-[min(100%,28rem)] sm:px-3 sm:py-1.5",
             ui.home.focusRing,
             "focus-visible:ring-offset-2",
           )}

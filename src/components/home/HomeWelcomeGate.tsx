@@ -117,6 +117,7 @@ export function HomeWelcomeGate() {
           role="dialog"
           aria-modal="true"
           aria-labelledby="home-welcome-title"
+          aria-describedby="home-welcome-tagline"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, scale: reduceMotion ? 1 : 0.992 }}
@@ -130,26 +131,34 @@ export function HomeWelcomeGate() {
             {t("homeWelcome.title")}
           </h2>
           <motion.div
-            className="flex flex-col items-center gap-8 px-6"
+            className="flex flex-col items-center gap-10 px-6"
             initial={{ opacity: 0, y: reduceMotion ? 0 : 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: enterMs, delay: reduceMotion ? 0 : 0.06, ease }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/branding/fs-reduced.svg" alt="" className="h-10 w-auto opacity-90" />
-            <button
-              type="button"
-              onClick={handleStart}
-              disabled={startLocked}
-              className={cn(
-                ui.floatingChrome.segmentFocus,
-                ui.glassChrome.clusterShell,
-                "min-w-[7rem] rounded-full px-8 py-2.5 text-[13px] font-semibold tracking-tight text-white transition hover:bg-white/[0.06]",
-                startLocked && "pointer-events-none opacity-70",
-              )}
-            >
-              {t("homeWelcome.start")}
-            </button>
+            <img src="/branding/fs-reduced.svg" alt="" className="h-12 w-auto opacity-90 sm:h-[3.25rem]" />
+            <div className="flex flex-col items-center gap-5">
+              <p
+                id="home-welcome-tagline"
+                className="max-w-[min(24rem,calc(100vw-3rem))] text-center text-[17px] font-light leading-[1.55] tracking-tight text-white/[0.72] sm:text-[18px] sm:leading-[1.6]"
+              >
+                {t("homeWelcome.tagline")}
+              </p>
+              <button
+                type="button"
+                onClick={handleStart}
+                disabled={startLocked}
+                className={cn(
+                  ui.floatingChrome.segmentFocus,
+                  ui.glassChrome.clusterShell,
+                  "min-w-[8.5rem] rounded-full px-9 py-3.5 text-[16px] font-semibold tracking-tight text-white transition hover:bg-white/[0.06] sm:text-[17px]",
+                  startLocked && "pointer-events-none opacity-70",
+                )}
+              >
+                {t("homeWelcome.start")}
+              </button>
+            </div>
           </motion.div>
         </motion.div>
       ) : null}

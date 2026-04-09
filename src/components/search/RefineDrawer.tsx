@@ -34,7 +34,7 @@ export function RefineDrawer() {
           <X className="h-4 w-4" />
         </button>
       </div>
-      <p className="mt-4 text-[14px] leading-relaxed text-stone-600">{t("searchSerp.refineBody")}</p>
+      <p className="mt-4 text-[15px] leading-relaxed text-stone-600">{t("searchSerp.refineBody")}</p>
     </StorefrontRightSheet>
   );
 }

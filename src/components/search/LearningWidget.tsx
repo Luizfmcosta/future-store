@@ -17,11 +17,11 @@ export function LearningWidget({ variant }: { variant: LearningWidgetVariant }) 
           <h3 className="mt-2 text-lg font-semibold text-stone-900">
             {isSurround ? t("searchSerp.learningSurroundTitle") : t("searchSerp.learningPortableTitle")}
           </h3>
-          <p className="mt-2 text-[14px] leading-relaxed text-stone-600">
+          <p className="mt-2 text-[15px] leading-relaxed text-stone-600 sm:text-[17px] sm:leading-[1.65]">
             {isSurround ? t("searchSerp.learningSurroundBody") : t("searchSerp.learningPortableBody")}
           </p>
         </div>
-        <span className="shrink-0 rounded-full border border-stone-200/90 bg-stone-50 px-2.5 py-1 text-[11px] font-semibold text-stone-600">
+        <span className="shrink-0 rounded-full border border-stone-200/90 bg-stone-50 px-2.5 py-1 text-[15px] font-semibold text-stone-600">
           {isSurround ? t("searchSerp.learningSurroundTag") : t("searchSerp.learningPortableTag")}
         </span>
       </div>

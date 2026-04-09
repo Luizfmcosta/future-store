@@ -48,7 +48,7 @@ export function PresenterPanel() {
   };
 
   const btn =
-    "w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 py-2.5 text-left text-[13px] font-medium text-[#e8ecf6] transition hover:bg-white/[0.07]";
+    "w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3 py-2.5 text-left text-[14px] font-medium text-[#e8ecf6] transition hover:bg-white/[0.07]";
 
   return (
     <StorefrontOverlayPortal>
@@ -70,8 +70,8 @@ export function PresenterPanel() {
           >
             <div className="mb-4 flex items-center justify-between">
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#7d869c]">Presenter</p>
-                <p className="text-sm font-semibold text-white">Demo controls</p>
+                <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-[#7d869c]">Presenter</p>
+                <p className="text-[14px] font-semibold text-white">Demo controls</p>
               </div>
               <button
                 type="button"
@@ -122,7 +122,7 @@ export function PresenterPanel() {
                 Reset app state
               </button>
             </div>
-            <p className="mt-3 text-[11px] text-[#6f778a]">Shortcut: Ctrl+Shift+. · ⌘+Shift+.</p>
+            <p className="mt-3 text-[13px] text-[#6f778a]">Shortcut: Ctrl+Shift+. · ⌘+Shift+.</p>
           </motion.div>
         </motion.div>
         ) : null}

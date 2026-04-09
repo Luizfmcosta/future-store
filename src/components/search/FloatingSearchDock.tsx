@@ -44,7 +44,7 @@ export function FloatingSearchDock() {
   }, [hideFloatingPill]);
 
   if (hideFloatingPill) return null;
-  /** Prompt is rendered inside {@link StorefrontCartOverlay} at the same z-index as the cart. */
+  /** Prompt is rendered below the cart bottom sheet inside {@link StorefrontCartOverlay} (same z layer). */
   if (cartDrawerOpen) return null;
 
   return (

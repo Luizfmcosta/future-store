@@ -49,14 +49,14 @@ export function CompareModule() {
 
           <motion.h2
             variants={fadeUp}
-            className="mt-3.5 whitespace-pre-line text-balance text-pretty text-left font-[family-name:var(--font-display)] text-[clamp(1.3rem,4vw,1.8rem)] font-medium leading-[1.2] tracking-[-0.02em] text-[#1a1a1a]"
+            className="mt-3.5 whitespace-pre-line text-balance text-pretty text-left text-[clamp(1.3rem,4vw,1.8rem)] font-medium leading-[1.2] tracking-[-0.02em] text-[#1a1a1a]"
           >
             {profile === "marina" ? t("compare.marinaHeadline") : t("compare.ricardoHeadline")}
           </motion.h2>
 
           <motion.p
             variants={fadeUp}
-            className="mt-3 max-w-[40ch] text-left text-[12px] font-light leading-[1.7] text-[#888] sm:text-[13px]"
+            className="mt-3 max-w-[40ch] text-left text-[15px] font-light leading-[1.65] text-[#888] sm:text-[17px] sm:leading-[1.65]"
           >
             {profile === "marina" ? t("compare.marinaBody") : t("compare.ricardoBody")}
           </motion.p>
@@ -64,7 +64,7 @@ export function CompareModule() {
           <motion.div variants={fadeUp}>
             <Link
               href={`/product/${product.id}`}
-              className="mt-5 inline-flex h-10 w-fit items-center justify-center rounded-full bg-[#1a1a1a] px-6 text-[11px] font-medium text-white transition-transform duration-300 hover:scale-[1.03] active:scale-[0.97] sm:text-[12px]"
+              className="mt-5 inline-flex h-11 w-fit items-center justify-center rounded-full bg-[#1a1a1a] px-6 text-[15px] font-medium text-white transition-transform duration-300 hover:scale-[1.03] active:scale-[0.97] sm:text-[16px]"
             >
               {experienceCtx
                 ? t(experienceCtx.experience.copy.compareCta)

@@ -28,7 +28,7 @@ export function MessageMeta({ className, ...props }: ComponentProps<"p">) {
   return (
     <p
       className={cn(
-        "text-[11px] font-medium leading-none tracking-tight text-stone-500",
+        "text-[14px] font-medium leading-snug tracking-tight text-stone-500",
         className,
       )}
       {...props}

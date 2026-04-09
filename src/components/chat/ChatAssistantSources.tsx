@@ -20,8 +20,8 @@ export function ChatAssistantSources({ sources }: { sources: AssistantSource[] }
               label={s.label}
               showFavicon
               className={cn(
-                "max-w-[9.5rem] border border-stone-200/90 bg-stone-50 text-stone-700",
-                "hover:border-stone-300 hover:bg-white hover:text-stone-900"
+                "h-6 max-w-[9.5rem] border border-stone-200/90 bg-stone-50 text-[14px] leading-tight text-stone-700",
+                "hover:border-stone-300 hover:bg-white hover:text-stone-900",
               )}
             />
             <SourceContent

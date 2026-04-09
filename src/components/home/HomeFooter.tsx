@@ -39,7 +39,7 @@ export function HomeFooter() {
 
       {/* Bottom bar — overlaps the logo */}
       <div className="relative z-10 -mt-12 flex flex-col gap-2.5 px-5 pb-5 sm:-mt-16 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3 sm:px-6 sm:pb-6">
-        <p className="text-[12px] font-light text-[#696969]">{t("footer.rights")}</p>
+        <p className="text-[15px] font-light text-[#696969]">{t("footer.rights")}</p>
 
         <VtexLogo />
       </div>

@@ -113,7 +113,7 @@ export function AIVisionOverlay() {
           <header className="flex shrink-0 items-start justify-between gap-3 border-b border-white/[0.08] px-4 pb-3 pt-4 sm:px-5 sm:pt-5">
             <div className="min-w-0 text-left">
               <p className="text-[11px] font-medium leading-snug text-white/50">{t("aiVision.eyebrow")}</p>
-              <h2 id="ai-vision-title" className="mt-1.5 font-[family-name:var(--font-display)] text-[1.05rem] font-medium leading-snug tracking-[-0.02em] text-white">
+              <h2 id="ai-vision-title" className="mt-1.5 text-[1.05rem] font-medium leading-snug tracking-[-0.02em] text-white">
                 {t("aiVision.title")}
               </h2>
             </div>

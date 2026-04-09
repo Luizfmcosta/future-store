@@ -6,7 +6,7 @@ import { Layers } from "lucide-react";
 import { useDemoStore } from "@/store/demoStore";
 
 const narrativeBtn =
-  "flex h-9 w-full items-center justify-center gap-2 rounded-lg border border-white/[0.06] bg-white/[0.04] px-2 text-[11px] font-medium tracking-tight transition hover:bg-white/[0.08]";
+  "flex h-9 w-full items-center justify-center gap-2 rounded-lg border border-white/[0.06] bg-white/[0.04] px-2 text-[12px] font-medium tracking-tight transition hover:bg-white/[0.08]";
 
 export function RayXToggle({ className, variant }: { className?: string; variant?: "default" | "narrative" }) {
   const rayXMode = useDemoStore((s) => s.rayXMode);

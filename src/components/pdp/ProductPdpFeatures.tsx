@@ -48,7 +48,7 @@ export function ProductPdpFeatures({ product }: { product: Product }) {
               <span className="flex h-10 w-10 items-center justify-center rounded-full border border-black/[0.06] bg-neutral-50 text-neutral-800">
                 <Icon className="size-5" strokeWidth={1.5} aria-hidden />
               </span>
-              <span className="text-[13px] font-medium leading-snug text-neutral-800 sm:text-[14px]">{tag}</span>
+              <span className="text-[15px] font-medium leading-snug text-neutral-800">{tag}</span>
             </li>
           );
         })}

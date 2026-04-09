@@ -5,7 +5,7 @@ import { useDemoStore } from "@/store/demoStore";
 import { Moon, Sun } from "lucide-react";
 
 const btn =
-  "flex h-9 w-full items-center justify-center gap-2 rounded-lg border px-2 text-[11px] font-medium tracking-tight transition";
+  "flex h-9 w-full items-center justify-center gap-2 rounded-lg border px-2 text-[12px] font-medium tracking-tight transition";
 
 export function ThemeToggle() {
   const colorMode = useDemoStore((s) => s.colorMode);

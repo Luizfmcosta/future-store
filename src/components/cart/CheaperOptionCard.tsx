@@ -29,10 +29,10 @@ export function CheaperOptionCard({ option }: { option: BundleOption }) {
           </div>
         </AskImageButton>
         <div className="min-w-0">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">{t("cart.leanerAddOn")}</p>
+          <p className="text-[12px] font-semibold uppercase tracking-wider text-stone-500">{t("cart.leanerAddOn")}</p>
           <p className="mt-1 text-[14px] font-semibold text-stone-900">{option.title}</p>
           <p className="mt-1 text-[18px] font-semibold tabular-nums text-stone-900">{formatBRL(option.comboPrice)}</p>
-          <Link href={`/product/${option.soundbar.id}`} className="mt-2 inline-block text-[12px] font-semibold text-stone-600 transition hover:text-stone-900">
+          <Link href={`/product/${option.soundbar.id}`} className="mt-2 inline-block text-[14px] font-semibold text-stone-600 transition hover:text-stone-900">
             {t("cart.details")}
           </Link>
         </div>

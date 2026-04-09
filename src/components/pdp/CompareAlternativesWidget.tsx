@@ -45,7 +45,7 @@ export function CompareAlternativesWidget({
         <Link href={`/product/${alt.id}`} className="min-w-0 flex-1 transition-opacity hover:opacity-90">
           <p className="line-clamp-2 text-[15px] font-medium leading-snug text-neutral-900">{alt.title}</p>
           <p className="mt-3 text-base font-semibold tabular-nums text-neutral-900">{formatBRL(alt.price)}</p>
-          <p className="mt-2 text-[13px] leading-relaxed text-neutral-600">
+          <p className="mt-2 text-[15px] leading-relaxed text-neutral-600">
             {profile === "marina"
               ? alt.technology && product.technology
                 ? `What changes: ${alt.technology} vs ${product.technology} — ${alt.reviewStrengths[0]}`

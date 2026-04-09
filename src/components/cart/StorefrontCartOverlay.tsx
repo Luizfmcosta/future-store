@@ -9,13 +9,34 @@ import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import type { ReactNode } from "react";
 
-const panelTransition = { duration: 0.32, ease: [0.22, 1, 0.36, 1] as const };
-const panelExitTransition = { duration: 0.22, ease: [0.4, 0, 1, 1] as const };
+/** Gentle slide: ease-out into place (no y>1 control points — avoids overshoot “snap”). */
+const sheetEnterTransition = {
+  type: "tween" as const,
+  duration: 0.5,
+  ease: [0.32, 0.72, 0, 1] as const,
+};
+const sheetExitTransition = {
+  type: "tween" as const,
+  duration: 0.42,
+  ease: [0.4, 0, 0.55, 1] as const,
+};
 
-const MODAL_TO_PROMPT_GAP_PX = 32;
+/** Slide down on close — viewport-based, not `%` of element height (see storefrontSheetMotion). */
+const SHEET_EXIT_Y = "100dvh" as const;
 
 /**
- * Cart modal + floating prompt in one `z-[75]` stacking context (same z-index layer; 32px gap in layout).
+ * Enter: clip from the top so the sheet reveals bottom → top (anchored to the bottom edge).
+ * `translateY` on a `top`+`bottom` panel reads like the sheet grows downward; clip-path avoids that.
+ */
+const sheetEnterClip = {
+  initial: { clipPath: "inset(100% 0 0 0)" },
+  animate: { clipPath: "inset(0% 0 0 0)" },
+} as const;
+
+/**
+ * Cart bottom sheet: panel is `absolute` with `bottom-0` flush to the storefront window frame;
+ * {@link FloatingPromptDock} is `z-[20]` on the same bottom edge so it stacks above the sheet.
+ * {@link FloatingSearchDock} hides its pill while this is open.
  */
 export function StorefrontCartOverlay({
   open,
@@ -37,12 +58,12 @@ export function StorefrontCartOverlay({
   backdropLabel: string;
   backdropClassName?: string;
   panelClassName?: string;
-  children: ReactNode;
   role?: React.AriaRole;
   "aria-modal"?: boolean | "true" | "false";
   "aria-labelledby"?: string;
   "aria-describedby"?: string;
   id?: string;
+  children: ReactNode;
 }) {
   return (
     <div className="pointer-events-none absolute inset-0 z-[75] overflow-hidden">
@@ -63,53 +84,44 @@ export function StorefrontCartOverlay({
                 )}
                 onClick={onDismiss}
               />,
+              /* Direct child of AnimatePresence so exit slide runs reliably. */
               <motion.div
-                key={`${modalKey}-stack`}
+                key={`${modalKey}-sheet`}
                 role="presentation"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0, transition: storefrontSheetBackdropExitTransition }}
-                transition={storefrontSheetBackdropTransition}
-                className="pointer-events-none absolute inset-0 z-10 flex min-h-0 flex-col overflow-hidden"
+                layout={false}
+                initial={{ y: 0, ...sheetEnterClip.initial }}
+                animate={{ y: 0, ...sheetEnterClip.animate }}
+                exit={{ y: SHEET_EXIT_Y, transition: sheetExitTransition }}
+                transition={sheetEnterTransition}
+                className={cn(
+                  "pointer-events-auto absolute inset-x-[20px] bottom-0 top-3 z-[1] flex min-h-0 flex-col overflow-hidden rounded-t-[1.5rem] border-x border-t border-stone-200/60 bg-white/88 text-stone-900 shadow-[0_-12px_48px_-18px_rgba(15,23,42,0.2)] backdrop-blur-xl backdrop-saturate-150 sm:rounded-t-[1.75rem] will-change-transform",
+                  panelClassName,
+                )}
+                onClick={(e) => e.stopPropagation()}
               >
-                <div className="flex min-h-0 min-w-0 flex-1 flex-col px-4 sm:px-6">
+                {role ? (
                   <div
-                    className="flex min-h-0 flex-1 flex-col items-center justify-end overflow-y-auto overflow-x-hidden"
-                    style={{ paddingTop: MODAL_TO_PROMPT_GAP_PX }}
+                    role={role}
+                    aria-modal={ariaModal}
+                    aria-labelledby={ariaLabelledBy}
+                    aria-describedby={ariaDescribedBy}
+                    id={id}
+                    className="flex min-h-0 flex-1 flex-col outline-none"
                   >
-                    <motion.div
-                      layout={false}
-                      initial={{ opacity: 0, scale: 0.96, y: 8 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.98, y: 6, transition: panelExitTransition }}
-                      transition={panelTransition}
-                      style={{ marginBottom: MODAL_TO_PROMPT_GAP_PX }}
-                      className={cn(
-                        "pointer-events-auto flex max-h-full min-h-0 w-full max-w-md flex-col overflow-hidden rounded-2xl border border-stone-200/60 bg-white/86 text-stone-900 shadow-[0_12px_40px_rgba(15,23,42,0.1)] backdrop-blur-md backdrop-saturate-150 md:w-[80vw] md:max-w-[720px]",
-                        panelClassName,
-                      )}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {role ? (
-                        <div
-                          role={role}
-                          aria-modal={ariaModal}
-                          aria-labelledby={ariaLabelledBy}
-                          aria-describedby={ariaDescribedBy}
-                          id={id}
-                          className="flex min-h-0 flex-1 flex-col outline-none"
-                        >
-                          {children}
-                        </div>
-                      ) : (
-                        children
-                      )}
-                    </motion.div>
+                    {children}
                   </div>
-                </div>
-                <div className="pointer-events-none relative z-10 shrink-0">
-                  <FloatingPromptDock />
-                </div>
+                ) : (
+                  children
+                )}
+              </motion.div>,
+              <motion.div
+                key={`${modalKey}-prompt`}
+                initial={{ opacity: 1 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0, transition: { duration: 0.2, ease: [0.4, 0, 0.2, 1] } }}
+                className="pointer-events-none absolute inset-x-0 bottom-0 z-[20] px-[20px]"
+              >
+                <FloatingPromptDock className="px-0 sm:px-0" />
               </motion.div>,
             ]
           : null}

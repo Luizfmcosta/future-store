@@ -71,7 +71,7 @@ function TopBarProfileInitialsMark({
   compact: boolean;
 }) {
   const shell = cn(
-    "relative flex shrink-0 items-center justify-center rounded-full font-semibold tabular-nums leading-none text-[13px]",
+    "relative flex shrink-0 items-center justify-center rounded-full font-semibold tabular-nums leading-none text-[15px]",
     compact ? "size-full min-h-0" : "size-8",
     active
       ? "bg-[#323234] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.07)]"
@@ -82,7 +82,7 @@ function TopBarProfileInitialsMark({
     return (
       <span className={shell} aria-hidden>
         <Sparkles
-          className={cn(compact ? "size-[17px]" : "size-4", active ? "text-violet-200" : "text-violet-400/55")}
+          className={cn(compact ? "size-[17px]" : "size-4", active ? "text-zinc-200" : "text-zinc-500/55")}
           strokeWidth={2}
         />
       </span>
@@ -183,7 +183,7 @@ export function TopBarProfileCluster({ className }: { className?: string }) {
               <div className="flex flex-col gap-3 px-3.5 pb-4 pt-2.5 sm:pb-5">
                 <span className="relative flex aspect-square w-[7.25rem] max-w-full shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#1a1a1a] ring-1 ring-white/[0.08]">
                   {shopperUsesIconAvatar(activeProfile) ? (
-                    <Sparkles className="size-[3.25rem] text-violet-300/90" strokeWidth={1.35} aria-hidden />
+                    <Sparkles className="size-[3.25rem] text-zinc-400/90" strokeWidth={1.35} aria-hidden />
                   ) : (
                     <Image
                       src={SHOPPER_PORTRAIT[activeProfile]}
@@ -199,18 +199,18 @@ export function TopBarProfileCluster({ className }: { className?: string }) {
                   {profileTagKeys.map((key) => (
                     <span
                       key={`${activeProfile}-${key}`}
-                      className="rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] font-medium tracking-tight text-[#d0d0d3]"
+                      className="rounded-full bg-white/[0.06] px-2.5 py-1 text-[15px] font-medium tracking-tight text-[#d0d0d3]"
                     >
                       {t(`profileCard.${activeProfile}.${key}` as `profileCard.${ShopperProfileId}.${typeof key}`)}
                     </span>
                   ))}
                 </div>
                 <div className="space-y-2">
-                  <p className="text-[12px] font-light leading-relaxed text-[#c8c8cb] [&_strong]:font-medium [&_strong]:text-[#e4e4e6]">
+                  <p className="text-[15px] font-light leading-relaxed text-[#c8c8cb] [&_strong]:font-medium [&_strong]:text-[#e4e4e6]">
                     {bio}
                   </p>
                   {bio2 ? (
-                    <p className="text-[12px] font-light leading-relaxed text-[#9e9ea3]">{bio2}</p>
+                    <p className="text-[15px] font-light leading-relaxed text-[#9e9ea3]">{bio2}</p>
                   ) : null}
                 </div>
               </div>
@@ -223,7 +223,7 @@ export function TopBarProfileCluster({ className }: { className?: string }) {
 }
 
 const narrativeCell =
-  "flex h-9 items-center justify-center rounded-lg border border-white/[0.06] bg-[#0c0e12]/80 text-[11px] font-medium tracking-tight transition hover:bg-white/[0.06]";
+  "flex h-10 items-center justify-center rounded-lg border border-white/[0.06] bg-[#0c0e12]/80 text-[13px] font-medium tracking-tight transition hover:bg-white/[0.06]";
 
 function SidebarProfileCards({ light }: { light: boolean }) {
   const activeProfile = useDemoStore((s) => s.activeProfile);
@@ -251,7 +251,7 @@ function SidebarProfileCards({ light }: { light: boolean }) {
               )}
             >
               {shopperUsesIconAvatar(id) ? (
-                <Sparkles className="size-[1.125rem] text-violet-500/90" strokeWidth={2} aria-hidden />
+                <Sparkles className="size-[1.125rem] text-zinc-500/85" strokeWidth={2} aria-hidden />
               ) : (
                 <Image
                   src={SHOPPER_PORTRAIT[id]}
@@ -263,7 +263,7 @@ function SidebarProfileCards({ light }: { light: boolean }) {
                 />
               )}
             </span>
-            <span className={cn(shopperNameText, "min-w-0 flex-1 text-[14px] leading-tight text-inherit")}>
+            <span className={cn(shopperNameText, "min-w-0 flex-1 text-[15px] leading-tight text-inherit")}>
               {name}
             </span>
           </button>
@@ -306,7 +306,7 @@ export function ProfileSwitcher({
             onClick={() => setProfile(id)}
             className={cn(
               light
-                ? "flex h-9 items-center justify-center rounded-lg border border-slate-200/90 bg-white text-[10px] font-medium tracking-tight shadow-sm transition hover:bg-slate-50 sm:text-[11px]"
+                ? "flex h-10 items-center justify-center rounded-lg border border-slate-200/90 bg-white text-[14px] font-medium tracking-tight shadow-sm transition hover:bg-slate-50 sm:text-[15px]"
                 : narrativeCell,
               activeProfile === id
                 ? light
@@ -333,7 +333,7 @@ export function ProfileSwitcher({
   );
   /** Pills em coluna: cada linha ocupa a largura inteira (iniciais + nome). */
   const topBarBtnExpanded = cn(
-    "relative z-10 flex w-full min-w-0 shrink-0 flex-row items-center justify-start gap-1.5 rounded-full px-2 py-1 text-[11px] font-medium outline-none transition-colors duration-200 sm:px-2.5 sm:py-1.5 sm:text-[12px]",
+    "relative z-10 flex w-full min-w-0 shrink-0 flex-row items-center justify-start gap-1.5 rounded-full px-2 py-1 text-[13px] font-medium outline-none transition-colors duration-200 sm:px-2.5 sm:py-1.5 sm:text-[15px]",
     ui.floatingChrome.segmentFocus,
   );
 
@@ -342,7 +342,7 @@ export function ProfileSwitcher({
       ? topBarStripCollapsed
         ? topBarBtnCollapsed
         : topBarBtnExpanded
-      : "rounded-full px-2 py-1 text-[10px] font-semibold tracking-tight transition-colors sm:px-3 sm:py-1.5 sm:text-[12px]";
+      : "rounded-full px-2 py-1 text-[12px] font-semibold tracking-tight transition-colors sm:px-3 sm:py-1.5 sm:text-[14px]";
 
   if (variant === "topBar") {
     /* Coluna de avatares: o vidro/blur vem do `clusterShell` no `TopBarProfileCluster`. */

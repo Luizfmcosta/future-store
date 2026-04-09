@@ -54,7 +54,7 @@ export function RayXOverlay() {
                 >
                   <div className="flex items-center justify-between border-b border-white/[0.06] px-5 py-4">
                     <div>
-                      <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#7d869c]">X-Ray</p>
+                      <p className="text-[12px] font-semibold uppercase tracking-[0.28em] text-[#7d869c]">X-Ray</p>
                       <p className="text-lg font-semibold text-white">Two-faced storefront</p>
                     </div>
                     <button type="button" onClick={() => setOpen(false)} className="rounded-full p-2 text-[#9aa3b8] hover:bg-white/[0.06]">
@@ -63,19 +63,19 @@ export function RayXOverlay() {
                   </div>
                   <div className="flex-1 space-y-8 overflow-y-auto scrollbar-none px-5 py-5">
                     <section>
-                      <h3 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8b93a7]">What the shopper sees</h3>
+                      <h3 className="text-[12px] font-semibold uppercase tracking-[0.2em] text-[#8b93a7]">What the shopper sees</h3>
                       <div className="mt-3">
                         <HumanLayerPanel />
                       </div>
                     </section>
                     <section>
-                      <h3 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8b93a7]">What the merchant controls</h3>
+                      <h3 className="text-[12px] font-semibold uppercase tracking-[0.2em] text-[#8b93a7]">What the merchant controls</h3>
                       <div className="mt-3">
                         <MerchantLayerPanel />
                       </div>
                     </section>
                     <section>
-                      <h3 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8b93a7]">What the agent consumes</h3>
+                      <h3 className="text-[12px] font-semibold uppercase tracking-[0.2em] text-[#8b93a7]">What the agent consumes</h3>
                       <p className="mt-2 text-[12px] text-[#7d869c]">Structured surface derived from the same product record.</p>
                       <div className="mt-3">
                         <AgentLayerPanel skuId={selected} profile={profile} />

@@ -83,10 +83,10 @@ export function ProductSpotlight() {
     >
       <motion.div variants={fadeUp} className="flex flex-col px-5 pt-10 sm:px-6">
         <EyebrowPill>{eyebrow}</EyebrowPill>
-        <h2 className="mt-3.5 max-w-[40ch] font-[family-name:var(--font-display)] text-[clamp(1.3rem,4vw,1.8rem)] font-medium leading-[1.1] tracking-[-0.02em] text-[#1a1a1a]">
+        <h2 className="mt-3.5 max-w-[40ch] text-[clamp(1.3rem,4vw,1.8rem)] font-medium leading-[1.1] tracking-[-0.02em] text-[#1a1a1a]">
           {headline}
         </h2>
-        <p className="mt-2.5 max-w-[min(100%,42ch)] text-[12px] font-light leading-[1.7] text-[#888]">{body}</p>
+        <p className="mt-2.5 max-w-[min(100%,42ch)] text-[15px] font-light leading-[1.65] text-[#888] sm:text-[17px]">{body}</p>
       </motion.div>
 
       <motion.div
@@ -139,7 +139,7 @@ export function ProductSpotlight() {
       <motion.div variants={fadeUp} className="px-5 pb-10 pt-4 sm:px-6">
         <Link
           href={`/product/${product.id}`}
-          className="inline-flex h-10 items-center justify-center rounded-full bg-[#1a1a1a] px-6 text-[11px] font-medium text-white transition-transform duration-300 hover:scale-[1.03] active:scale-[0.97]"
+          className="inline-flex h-11 items-center justify-center rounded-full bg-[#1a1a1a] px-6 text-[15px] font-medium text-white transition-transform duration-300 hover:scale-[1.03] active:scale-[0.97] sm:text-[16px]"
         >
           {ctaLabel}
         </Link>

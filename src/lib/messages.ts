@@ -35,8 +35,8 @@ export const messages: Record<string, string | Record<string, string | Record<st
     hero: {
       marina: {
         kicker: "Continue where you left off",
-        titleLine1: "Build the dream setup",
-        titleLine2: "you were exploring",
+        titleLine1: "Build the dream setup you were exploring, Marina",
+        titleLine2: "",
         subtitle:
           "At Future Store, we blend innovation with tradition to elevate your home entertainment, crafting experiences for extraordinary moments.",
         cta: "Meet Future Store",
@@ -66,7 +66,7 @@ export const messages: Record<string, string | Record<string, string | Record<st
     continueJourney: {
       exploreBrand: "Explore {brand}",
       headline: "Continue where\nyou left off",
-      marinaEyebrow: "A strong foundation",
+      marinaEyebrow: "A strong foundation for you",
       marinaHeadline: "Start with a soundbar that defines your system",
       marinaProductLine: "Stage Compact soundbar",
       marinaCta: "View product",
@@ -82,7 +82,7 @@ export const messages: Record<string, string | Record<string, string | Record<st
       ricardoEntryCta: "View product",
     },
     compare: {
-      marinaEyebrow: "An alternative approach",
+      marinaEyebrow: "Because you like eco-friendly materials",
       marinaHeadline: "Consider a standalone\nspeaker instead of a soundbar",
       marinaBody:
         "A single-speaker setup can deliver wide, room-filling sound — while a soundbar is more focused on TV audio. See which approach fits your space better.",
@@ -226,6 +226,7 @@ export const messages: Record<string, string | Record<string, string | Record<st
     },
     homeWelcome: {
       title: "Welcome",
+      tagline: "More personalization. More precision. Less noise.",
       start: "Start",
       ariaResetDemo: "Return to the welcome screen",
     },
@@ -251,46 +252,33 @@ export const messages: Record<string, string | Record<string, string | Record<st
       },
       aiAgent: {
         tag1: "Architecture demo",
-        tag2: "Dual surface",
+        tag2: "API-first",
         tag3: "Agent-ready",
-        bio: "Same platform: polished experiences for people today, machine contracts for agents tomorrow.",
-        bio2: "Unified catalog, context, content, pricing rules, and open protocols.",
+        bio: "Machine-readable catalog, context APIs, and open protocols built for agent commerce.",
+        bio2: "Unified data investment: catalog, pricing rules, and interoperability standards.",
       },
     },
     agentBento: {
       pageAria: "Agent commerce architecture overview",
-      humanSurface: "Human surface",
-      agentSurface: "Agent surface",
-      hero: "One architecture. One data investment. Human experience today — agent commerce tomorrow.",
+      hero: "One architecture. One data investment. Agent commerce on unified catalog, context, and open protocols.",
       p1: {
-        index: "01",
         title: "Unified product data",
-        human:
-          "Rich content layer — editorial, promo, and technical depth served per audience profile",
         agent: "Machine-readable catalog — SKU, price, stock, SLA, specs, bundle rules",
       },
       p2: {
-        index: "02",
         title: "Context & personalization engine",
-        human: "Adaptive UI — layout, tone, and product depth inferred from visitor context",
         agent: "API context response — query params replace layout; ranked results, no chrome",
       },
       p3: {
-        index: "03",
         title: "Agent-generated content",
-        human: "Dynamic storefront — copy, hero, and comparisons written per visitor in real time",
         agent: "Content generation API — prompt templates + catalog data, brand guardrails as rules",
       },
       p4: {
-        index: "04",
         title: "Dynamic pricing & bundle rules",
-        human: "Contextual cross-sell — bundle offer at cart moment, discount logic per profile",
         agent: "Negotiation API — price floor, bundle margin, agent-to-agent ruleset",
       },
       p5: {
-        index: "05",
         title: "Open agent protocols",
-        human: "Seamless handoff — human delegates to their agent",
         agent: "MCP · A2A · ACP · UCP — standardized agent discovery and interoperability",
       },
     },
@@ -343,6 +331,8 @@ export const messages: Record<string, string | Record<string, string | Record<st
       intentSummaryTitle: "Intent summary",
       resultsFor: "Results for:",
       browseFallback: "Browse catalog",
+      /** PLP H1 when query normalizes to “cheap headphones” (see `IntentSummary`). */
+      plpTitleCheapHeadphones: "Budget-friendly headphones for you",
       filterIntentAria: "Open filters",
       filterIntentLabel: "Filter",
       filterBarAria: "Filters and sort",

@@ -98,8 +98,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="flex h-dvh min-h-0 max-h-dvh flex-col overflow-hidden bg-[var(--app-canvas)]">
       <div
         className={cn(
-          "flex min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-hidden p-3 sm:p-6 md:p-8 2xl:p-12",
-          isAiAgent ? "items-stretch justify-stretch" : "items-center justify-center",
+          "flex min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-hidden",
+          isAiAgent
+            ? "items-stretch justify-stretch p-0"
+            : "items-center justify-center p-3 sm:p-6 md:p-8 2xl:p-12",
         )}
       >
         <div
@@ -109,9 +111,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           )}
         >
           {isAiAgent ? (
-            <div className="flex min-h-[min(100dvh-2.5rem,1200px)] w-full flex-1 flex-col overflow-hidden rounded-2xl shadow-[0_24px_56px_-28px_rgba(0,0,0,0.22)] md:min-h-[min(100dvh-5rem,1200px)] md:flex-1">
-              <AgentArchitectureBento className="min-h-0 flex-1 rounded-2xl" />
-            </div>
+            <AgentArchitectureBento className="h-full min-h-0 w-full flex-1" />
           ) : (
             <>
               <div
@@ -155,7 +155,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                         type="button"
                         onClick={exitFullscreen}
                         className={cn(
-                          "absolute left-3 top-3 z-[70] flex items-center gap-2 rounded-lg border px-3 py-2 text-[12px] font-medium backdrop-blur-md transition",
+                          "absolute left-3 top-3 z-[70] flex items-center gap-2 rounded-lg border px-3 py-2 text-[14px] font-medium backdrop-blur-md transition",
                           "border-stone-200/90 bg-white/90 text-stone-800 hover:bg-stone-50",
                         )}
                         aria-label={t("appShell.exitFullscreen")}

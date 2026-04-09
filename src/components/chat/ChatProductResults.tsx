@@ -35,7 +35,9 @@ export function ChatProductResults({
 
   return (
     <div className="w-full min-w-0 space-y-2">
-      <EyebrowPill id="chat-top-matches-heading">{t("searchAiPanel.topMatches")}</EyebrowPill>
+      <EyebrowPill id="chat-top-matches-heading">
+        {t("searchAiPanel.topMatches")}
+      </EyebrowPill>
       <div
         role="group"
         aria-labelledby="chat-top-matches-heading"
@@ -58,7 +60,9 @@ export function ChatProductResults({
 
       {onFollowUp && followUps.length > 0 ? (
         <div className="space-y-2 pt-3">
-          <EyebrowPill id="chat-followup-heading">{t("searchAiPanel.followUpHeading")}</EyebrowPill>
+          <EyebrowPill id="chat-followup-heading">
+            {t("searchAiPanel.followUpHeading")}
+          </EyebrowPill>
           <div className="min-w-0 overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch] scrollbar-none">
             <ul
               role="list"
@@ -73,8 +77,8 @@ export function ChatProductResults({
                     disabled={followUpDisabled}
                     onClick={() => onFollowUp(text)}
                     className={cn(
-                      "max-w-[min(85vw,22rem)] truncate rounded-full border border-stone-200/95 bg-white px-2.5 py-1 text-left text-[11px] font-medium text-stone-800 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-colors hover:bg-stone-50",
-                      "sm:max-w-[min(75vw,24rem)] sm:px-3 sm:py-1.5 sm:text-xs",
+                      "max-w-[min(85vw,22rem)] truncate rounded-full border border-stone-200/95 bg-white px-2.5 py-1 text-left text-[14px] font-medium text-stone-800 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-colors hover:bg-stone-50",
+                      "sm:max-w-[min(75vw,24rem)] sm:px-3 sm:py-1.5",
                       ui.home.focusRing,
                       "focus-visible:ring-offset-2",
                       followUpDisabled && "pointer-events-none opacity-50",
@@ -123,19 +127,19 @@ function ProductRowCard({ product: p, profile }: { product: Product; profile: Sh
           "focus-visible:rounded-b-xl",
         )}
       >
-        <p className="shrink-0 truncate text-[11px] font-medium leading-snug text-stone-500">{p.brand}</p>
+        <p className="shrink-0 truncate text-[14px] font-medium leading-snug text-stone-500">{p.brand}</p>
         <div className="mt-1 flex min-h-0 flex-1 flex-col gap-1">
-          <p className="shrink-0 text-pretty text-[12px] font-semibold leading-snug text-stone-900 sm:text-[13px]">
+          <p className="shrink-0 text-pretty text-[14px] font-semibold leading-snug text-stone-900">
             {p.title}
           </p>
           <div className="mt-auto space-y-1 pt-0.5">
-            <p className="text-pretty text-[11px] leading-snug text-stone-600 sm:text-[12px]">{meta}</p>
+            <p className="text-pretty text-[14px] leading-snug text-stone-600">{meta}</p>
             <div className="flex flex-wrap items-baseline gap-1.5">
-              <span className="text-[13px] font-semibold tabular-nums leading-none text-stone-900 sm:text-sm">
+              <span className="text-[14px] font-semibold tabular-nums leading-none text-stone-900">
                 {formatBRL(p.price)}
               </span>
               {p.oldPrice ? (
-                <span className="text-[11px] tabular-nums leading-none text-stone-400 line-through sm:text-xs">
+                <span className="text-[14px] tabular-nums leading-none text-stone-400 line-through">
                   {formatBRL(p.oldPrice)}
                 </span>
               ) : null}

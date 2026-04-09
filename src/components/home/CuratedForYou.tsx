@@ -57,7 +57,7 @@ function MarinaCompareCard({
       className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-2xl border border-stone-200/90 bg-white shadow-[0_8px_28px_-18px_rgba(0,0,0,0.12)]"
     >
       <div className="border-b border-stone-100 bg-stone-50/90 px-3 py-2.5 sm:px-4 sm:py-3">
-        <p className="text-[13px] font-semibold leading-snug text-stone-700 sm:text-[14px]">{tierLabel}</p>
+        <p className="text-[15px] font-semibold leading-snug text-stone-700 sm:text-[16px]">{tierLabel}</p>
       </div>
 
       <AskImageButton
@@ -87,25 +87,25 @@ function MarinaCompareCard({
             {title}
           </h3>
           {displaySubline ? (
-            <p className="text-[12px] font-medium leading-snug text-stone-500 sm:text-[13px]">{displaySubline}</p>
+            <p className="text-[15px] font-medium leading-snug text-stone-500 sm:text-[16px]">{displaySubline}</p>
           ) : null}
           <p className="text-[15px] font-semibold tabular-nums tracking-tight text-stone-900 sm:text-[16px]">
             {formatBRL(product.price)}
           </p>
-          <p className="text-[13px] font-normal leading-relaxed text-stone-600 line-clamp-3 sm:text-[14px]">
+          <p className="text-[15px] font-normal leading-relaxed text-stone-600 line-clamp-3 sm:text-[17px] sm:leading-[1.65]">
             {blurb}
           </p>
         </div>
         <div className="mt-auto flex flex-col gap-2.5 @sm:flex-row">
           <Link
             href={`/product/${product.id}`}
-            className="flex h-10 min-h-0 flex-1 items-center justify-center rounded-full border border-stone-200/90 text-[12px] font-medium text-stone-800 transition-colors hover:border-stone-400 hover:bg-stone-50 sm:text-[13px]"
+            className="flex h-11 min-h-0 flex-1 items-center justify-center rounded-full border border-stone-200/90 text-[15px] font-medium text-stone-800 transition-colors hover:border-stone-400 hover:bg-stone-50 sm:text-[16px]"
           >
             {t("common.explore")}
           </Link>
           <Link
             href={`/product/${product.id}`}
-            className="flex h-10 min-h-0 flex-1 items-center justify-center rounded-full bg-[#1a1a1a] text-[12px] font-medium text-white transition-transform hover:scale-[1.02] active:scale-[0.98] sm:text-[13px]"
+            className="flex h-11 min-h-0 flex-1 items-center justify-center rounded-full bg-[#1a1a1a] text-[15px] font-medium text-white transition-transform hover:scale-[1.02] active:scale-[0.98] sm:text-[16px]"
           >
             {t("common.buyNow")}
           </Link>
@@ -147,20 +147,20 @@ function RicardoPickCard({ product }: { product: Product }) {
       </AskImageButton>
       <div className="flex flex-col gap-3 p-3 sm:p-4">
         <div>
-          <h3 className="text-[13px] font-medium leading-snug text-[#1a1a1a]">{shortTitle(product)}</h3>
-          <p className="mt-1 text-[11px] font-light leading-relaxed text-stone-500 line-clamp-2">{blurb}</p>
-          <p className="mt-2 text-[12px] font-semibold tabular-nums text-stone-900">{formatBRL(product.price)}</p>
+          <h3 className="text-[15px] font-medium leading-snug text-[#1a1a1a]">{shortTitle(product)}</h3>
+          <p className="mt-1 text-[15px] font-light leading-relaxed text-stone-500 line-clamp-2">{blurb}</p>
+          <p className="mt-2 text-[16px] font-semibold tabular-nums text-stone-900">{formatBRL(product.price)}</p>
         </div>
         <div className="flex gap-2">
           <Link
             href={`/product/${product.id}`}
-            className="flex h-9 flex-1 items-center justify-center rounded-full border border-stone-200/90 text-[10px] font-medium text-stone-800 transition-colors hover:border-stone-400 hover:bg-stone-50"
+            className="flex h-11 flex-1 items-center justify-center rounded-full border border-stone-200/90 text-[15px] font-medium text-stone-800 transition-colors hover:border-stone-400 hover:bg-stone-50"
           >
             {t("common.explore")}
           </Link>
           <Link
             href={`/product/${product.id}`}
-            className="flex h-9 flex-1 items-center justify-center rounded-full bg-[#1a1a1a] text-[10px] font-medium text-white transition-transform hover:scale-[1.02]"
+            className="flex h-11 flex-1 items-center justify-center rounded-full bg-[#1a1a1a] text-[15px] font-medium text-white transition-transform hover:scale-[1.02]"
           >
             {t("common.buyNow")}
           </Link>
@@ -210,14 +210,14 @@ export function CuratedForYou() {
         transition={{ duration: 0.65, ease }}
         className="flex flex-col items-center px-4 pb-6 pt-8 text-center sm:px-6 sm:pb-7 sm:pt-9"
       >
-        <h2 className="max-w-[min(100%,22rem)] whitespace-pre-line font-[family-name:var(--font-display)] text-[clamp(1.35rem,3.5vw,1.8rem)] font-medium leading-[1.2] tracking-[-0.015em] text-[#1a1a1a]">
+        <h2 className="max-w-[min(100%,22rem)] whitespace-pre-line text-[clamp(1.42rem,3.6vw,1.92rem)] font-medium leading-[1.2] tracking-[-0.015em] text-[#1a1a1a]">
           {isRicardoPromoFirstVisit
             ? t("curated.ricardoPromoHeadline")
             : profile === "marina"
               ? t("curated.marinaHeadline")
               : t("curated.ricardoHeadline")}
         </h2>
-        <p className="mt-2.5 max-w-[min(100%,26rem)] text-[13px] font-light leading-[22px] text-[#888]">
+        <p className="mt-2.5 max-w-[min(100%,26rem)] text-[15px] font-light leading-relaxed text-[#888] sm:text-[16px] sm:leading-[1.65]">
           {isRicardoPromoFirstVisit
             ? t("curated.ricardoPromoBody")
             : profile === "marina"

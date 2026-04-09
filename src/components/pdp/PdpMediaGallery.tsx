@@ -9,8 +9,8 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 
 /**
- * Hero image: a single `overflow-hidden rounded-2xl` shell clips the photo.
- * The `<img>` is `absolute inset-0` + `object-contain` inside padded box — parent clips square corners.
+ * Hero image: a single `overflow-hidden rounded-2xl` shell; frame is always **square** (`aspect-square`).
+ * The `<img>` uses `object-contain` inside the padded box.
  * (clip-path / bg-image / Next `fill` were all flaky here.)
  *
  * When the product has 2+ color options, thumbnail strip shows the same hero with each finish tint
@@ -52,12 +52,7 @@ export function PdpMediaGallery({
     <div className="w-full min-w-0">
       {heroSrc && hasMediaUrl(heroSrc) ? (
         <figure className="relative w-full overflow-hidden rounded-2xl bg-[#f5f5f5] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)]">
-          <div
-            className={cn(
-              "relative aspect-[5/6] w-full sm:aspect-[4/5] sm:min-h-[min(70vh,560px)]",
-              "lg:min-h-0 lg:max-h-[min(520px,52vh)]",
-            )}
-          >
+          <div className="relative aspect-square w-full">
             <div className="absolute inset-0 flex items-center justify-center p-6 sm:p-10">
               {/* `isolate` keeps `mix-blend-mode: hue` scoped to photo + tint (see ProductColorTintOverlay). */}
               <span className="relative isolate inline-block max-h-full max-w-full">
@@ -77,13 +72,8 @@ export function PdpMediaGallery({
         </figure>
       ) : (
         <figure className="relative w-full overflow-hidden rounded-2xl bg-[#f5f5f5] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)]">
-          <div
-            className={cn(
-              "relative flex aspect-[5/6] w-full min-h-0 flex-col sm:aspect-[4/5] sm:min-h-[min(70vh,560px)]",
-              "lg:min-h-0 lg:max-h-[min(520px,52vh)]",
-            )}
-          >
-            <EmptyMediaSlot className="relative min-h-[20rem] w-full flex-1 sm:min-h-[28rem]" variant="light" />
+          <div className="relative flex aspect-square w-full min-h-0 flex-col">
+            <EmptyMediaSlot className="relative min-h-0 w-full flex-1" variant="light" />
           </div>
         </figure>
       )}

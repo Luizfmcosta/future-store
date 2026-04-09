@@ -45,32 +45,32 @@ export function SearchModeTabs({ active, className }: SearchModeTabsProps) {
 
   const segmentClass = (isOn: boolean) =>
     cn(
-      "relative z-10 flex h-full min-h-0 min-w-0 flex-1 items-center justify-center gap-0 rounded-full px-1 py-0 text-[12px] font-medium leading-none transition-colors duration-200 @md:gap-1.5 @md:px-1.5 @md:text-[13px]",
+      "relative z-10 flex h-full min-h-0 min-w-0 flex-1 items-center justify-center gap-1 rounded-full px-2.5 py-1 text-[15px] font-medium leading-none transition-colors duration-200 @md:gap-2 @md:px-3.5 @md:py-1.5 @md:text-[16px]",
       /* Colors align with `ui.home` label / card title (search lives on the same light storefront). */
       isOn ? "font-semibold text-stone-900" : "text-stone-600",
     );
 
   const iconClass = (isOn: boolean) =>
-    cn("size-[15px] shrink-0 @md:size-[17px]", isOn ? "text-stone-900" : "text-stone-400");
+    cn("size-[17px] shrink-0 @md:size-[19px]", isOn ? "text-stone-900" : "text-stone-400");
 
   return (
     <div className={cn("flex w-full items-center justify-center px-0.5", className)}>
       <nav
         role="tablist"
         aria-label={t("searchSerp.modeAria")}
-        className="relative w-full max-w-[10.5rem] @md:max-w-[19.5rem]"
+        className="relative w-full max-w-[11.75rem] @md:max-w-[21rem]"
       >
         <div
           className={cn(
-            "relative flex h-9 w-full items-stretch rounded-full p-0.5",
+            "relative flex h-12 min-h-12 w-full items-stretch rounded-full p-1",
             /* Same gray family as eyebrow label text / editorial chips on white. */
             "bg-[#f0f0f0] shadow-[inset_0_1px_0_rgba(0,0,0,0.05)]",
           )}
         >
           <motion.div
             aria-hidden
-            className="pointer-events-none absolute left-0.5 top-0.5 z-0 h-[calc(100%-4px)] rounded-full border border-stone-200/80 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.06)]"
-            style={{ width: "calc((100% - 4px) / 2)" }}
+            className="pointer-events-none absolute left-1 top-1 z-0 h-[calc(100%-8px)] rounded-full border border-stone-200/80 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.06)]"
+            style={{ width: "calc((100% - 8px) / 2)" }}
             initial={false}
             animate={{ x: active === "results" ? 0 : "100%" }}
             transition={thumbSpring}

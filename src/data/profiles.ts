@@ -35,6 +35,6 @@ export const profiles: Record<ShopperProfileId, ShopperProfile> = {
     tone: "editorial",
     proofPreference: "technical",
     merchandisingBias: "premium",
-    interests: ["MCP", "Catalog APIs", "Human + agent surfaces"],
+    interests: ["MCP", "Catalog APIs", "Agent interoperability"],
   },
 };
