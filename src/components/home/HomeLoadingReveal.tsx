@@ -9,14 +9,9 @@ const ease = [0.76, 0, 0.24, 1] as const;
 
 const SPLASH_MS = 1600;
 
-/** Set after the first-visit splash has finished (persists across sessions). */
-const FIRST_HOME_VISIT_KEY = "fs-storefront-home-first-visit";
-
 /**
- * Home splash when:
- * - First time this browser has completed the home welcome (localStorage), or
- * - Marina ↔ Ricardo profile change while home is mounted.
- * Does not run when returning to `/` from other routes if first visit already completed.
+ * Home splash when Marina ↔ Ricardo profile change while home is mounted.
+ * Initial entry uses `HomeWelcomeGate` (logo + Start) instead of a timed first-visit splash.
  */
 export function HomeLoadingReveal() {
   const activeProfile = useDemoStore((s) => s.activeProfile);
@@ -38,25 +33,6 @@ export function HomeLoadingReveal() {
   /* Resolve portal host before paint — avoids rendering the overlay inline in HomeView (white flash). */
   useLayoutEffect(() => {
     setHost(document.querySelector<HTMLElement>("[data-storefront-window]"));
-  }, []);
-
-  /* First load of home in this browser — once per lifetime (until localStorage cleared). */
-  useEffect(() => {
-    try {
-      if (localStorage.getItem(FIRST_HOME_VISIT_KEY) === "1") return;
-      runSplash(() => {
-        try {
-          localStorage.setItem(FIRST_HOME_VISIT_KEY, "1");
-        } catch {
-          /* private mode */
-        }
-      });
-    } catch {
-      /* private mode */
-    }
-    return () => {
-      if (splashTimerRef.current) clearTimeout(splashTimerRef.current);
-    };
   }, []);
 
   /* Marina ↔ Ricardo while home is already mounted */

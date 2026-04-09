@@ -14,7 +14,7 @@ import type { ShopperProfileId } from "@/types";
 import { useDemoStore } from "@/store/demoStore";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const profileTagKeys = ["tag1", "tag2", "tag3"] as const;
 
@@ -92,6 +92,29 @@ export function TopBarProfileCluster({ className }: { className?: string }) {
   const t = useT();
   const [expanded, setExpanded] = useState(false);
   const activeProfile = useDemoStore((s) => s.activeProfile);
+  const profileClusterExpandNonce = useDemoStore((s) => s.profileClusterExpandNonce);
+
+  useEffect(() => {
+    if (profileClusterExpandNonce === 0) return;
+    setExpanded(true);
+  }, [profileClusterExpandNonce]);
+
+  useEffect(() => {
+    if (!expanded) return;
+    if (typeof window === "undefined") return;
+    const main = document.querySelector("[data-storefront-window] main");
+    if (!main) return;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const onScroll = () => {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => setExpanded(false), 100);
+    };
+    main.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      main.removeEventListener("scroll", onScroll);
+      if (timer) clearTimeout(timer);
+    };
+  }, [expanded]);
   const bio = t(`profileCard.${activeProfile}.bio` as `profileCard.${ShopperProfileId}.bio`);
   const bio2 = t(`profileCard.${activeProfile}.bio2` as `profileCard.${ShopperProfileId}.bio`);
 
@@ -246,6 +269,7 @@ export function ProfileSwitcher({
   const activeProfile = useDemoStore((s) => s.activeProfile);
   const setProfile = useDemoStore((s) => s.setProfile);
   const light = useDemoStore((s) => s.colorMode === "light");
+  const requestProfileClusterExpand = useDemoStore((s) => s.requestProfileClusterExpand);
 
   if (variant === "sidebar") {
     return (
@@ -325,7 +349,12 @@ export function ProfileSwitcher({
                 type="button"
                 aria-label={name}
                 aria-pressed={active}
-                onClick={() => setProfile(id)}
+                onClick={() => {
+                  if (id !== activeProfile) {
+                    setProfile(id);
+                    requestProfileClusterExpand();
+                  }
+                }}
                 className={cn(
                   btnClass,
                   active && !topBarStripCollapsed && ui.floatingChrome.segmentActive,

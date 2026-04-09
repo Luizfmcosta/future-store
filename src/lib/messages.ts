@@ -52,9 +52,8 @@ export const messages: Record<string, string | Record<string, string | Record<st
       },
       ricardoPromo: {
         kicker: "Weekend offers",
-        headline: "Up to 30% off speakers",
-        subhead:
-          "Portable and living room models with Wi‑Fi and Bluetooth. Up to 12 installments. Limited stock.",
+        /** Line break avoids awkward wraps on narrow storefront; \\u00a0 keeps “30% off” together. */
+        headline: "Up to 30%\u00a0off\nspeakers",
         fromLabel: "Starting from",
         cta: "View offers",
       },
@@ -218,6 +217,11 @@ export const messages: Record<string, string | Record<string, string | Record<st
       widthPresetsGroup: "Quick storefront width",
       widthPresetMobile: "Mobile",
       widthPresetDesktop: "Desktop",
+    },
+    homeWelcome: {
+      title: "Welcome",
+      start: "Start",
+      ariaResetDemo: "Return to the welcome screen",
     },
     profileCard: {
       expand: "Expand",

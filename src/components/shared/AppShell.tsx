@@ -18,8 +18,8 @@ import { cn } from "@/lib/utils";
 import { useDemoStore } from "@/store/demoStore";
 import { AnimatePresence, motion } from "framer-motion";
 import dynamic from "next/dynamic";
-import { usePathname } from "next/navigation";
-import { Minimize2, Monitor, Smartphone } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { Minimize2, Monitor, RotateCcw, Smartphone } from "lucide-react";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 
 const AIVisionOverlay = dynamic(
@@ -43,13 +43,16 @@ async function exitFullscreenDoc() {
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const aiMode = useDemoStore((s) => s.aiMode);
+  const triggerHomeWelcomeReset = useDemoStore((s) => s.triggerHomeWelcomeReset);
   const setScreen = useDemoStore((s) => s.setCurrentScreen);
+  const storefrontWidth = useDemoStore((s) => s.storefrontWidth);
+  const setStorefrontWidth = useDemoStore((s) => s.setStorefrontWidth);
   const storefrontRef = useRef<HTMLDivElement>(null);
   const [storefrontPortalMount, setStorefrontPortalMount] = useState<HTMLDivElement | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const isMd = useMediaQuery("(min-width: 768px)");
-  const [storefrontWidth, setStorefrontWidth] = useState<number>(STOREFRONT_WIDTH.default);
   const t = useT();
 
   useEffect(() => {
@@ -212,14 +215,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       <div
         className={cn(
-          /* Above storefront portal (z-[100]) + home splash (z-[200]). */
-          "pointer-events-auto fixed right-4 z-[220] hidden md:flex items-center",
+          /* Above storefront portal (z-[100]), splash (z-[200]), welcome gate (z-[250]). */
+          "pointer-events-auto fixed right-4 z-[280] hidden md:flex items-center",
           "top-[max(1rem,env(safe-area-inset-top))]",
         )}
         role="group"
         aria-label={t("appShell.widthPresetsGroup")}
       >
-        <div className={cn(ui.glassChrome.widthPresetShell, "inline-flex min-w-[5.25rem]")}>
+        <div className={cn(ui.glassChrome.clusterShell, "inline-flex min-w-[5.25rem]")}>
           <div className={ui.glassChrome.widthPresetTrack}>
             <motion.div
               className={cn(
@@ -276,11 +279,33 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </div>
 
       <div
-        className="pointer-events-auto fixed left-4 z-[220] top-[max(1rem,env(safe-area-inset-top))]"
+        className="pointer-events-auto fixed left-4 z-[280] top-[max(1rem,env(safe-area-inset-top))]"
         role="group"
         aria-label={t("appShell.profileSwitcherGroup")}
       >
         <TopBarProfileCluster />
+      </div>
+
+      <div className="pointer-events-auto fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-[280] flex items-center">
+        <div className={cn(ui.glassChrome.clusterShell, "inline-flex min-w-0")}>
+          <div className={cn(ui.glassChrome.widthPresetTrack, "inline-flex w-auto min-w-[2.25rem]")}>
+            <button
+              type="button"
+              onClick={() => {
+                triggerHomeWelcomeReset();
+                router.push("/");
+              }}
+              className={cn(
+                "relative z-10 flex flex-1 items-center justify-center rounded-full outline-none transition-colors duration-200",
+                ui.floatingChrome.segmentFocus,
+                ui.floatingChrome.segmentInactive,
+              )}
+              aria-label={t("homeWelcome.ariaResetDemo")}
+            >
+              <RotateCcw className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
+            </button>
+          </div>
+        </div>
       </div>
 
     </div>

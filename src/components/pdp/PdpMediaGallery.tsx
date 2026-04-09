@@ -1,7 +1,7 @@
 "use client";
 
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
-import { hasMediaUrl } from "@/lib/utils";
+import { cn, hasMediaUrl } from "@/lib/utils";
 import type { Product } from "@/types";
 import Image from "next/image";
 import { useMemo, useState } from "react";
@@ -25,7 +25,12 @@ export function PdpMediaGallery({ product }: { product: Product }) {
     <div className="w-full min-w-0">
       {imgs.length > 0 && src ? (
         <figure className="relative isolate w-full overflow-hidden rounded-2xl bg-[#f5f5f5] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)]">
-          <div className="relative aspect-[5/6] w-full sm:aspect-[4/5] sm:min-h-[min(70vh,560px)]">
+          <div
+            className={cn(
+              "relative aspect-[5/6] w-full sm:aspect-[4/5] sm:min-h-[min(70vh,560px)]",
+              "lg:min-h-0 lg:max-h-[min(520px,52vh)]",
+            )}
+          >
             <div className="absolute inset-0 flex items-center justify-center p-6 sm:p-10">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -41,7 +46,12 @@ export function PdpMediaGallery({ product }: { product: Product }) {
         </figure>
       ) : (
         <figure className="relative isolate w-full overflow-hidden rounded-2xl bg-[#f5f5f5] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)]">
-          <div className="relative flex aspect-[5/6] w-full min-h-0 flex-col sm:aspect-[4/5] sm:min-h-[min(70vh,560px)]">
+          <div
+            className={cn(
+              "relative flex aspect-[5/6] w-full min-h-0 flex-col sm:aspect-[4/5] sm:min-h-[min(70vh,560px)]",
+              "lg:min-h-0 lg:max-h-[min(520px,52vh)]",
+            )}
+          >
             <EmptyMediaSlot className="relative min-h-[20rem] w-full flex-1 sm:min-h-[28rem]" variant="light" />
           </div>
         </figure>
