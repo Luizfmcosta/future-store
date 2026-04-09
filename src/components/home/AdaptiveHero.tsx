@@ -48,7 +48,10 @@ export function AdaptiveHero() {
           <source src={STOREFRONT_HERO_VIDEO_SRC} type="video/mp4" />
         </video>
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/28 via-black/[0.06] to-black/10" aria-hidden />
+        <div
+          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-[#000]"
+          aria-hidden
+        />
 
         <motion.div
           variants={{ hidden: {}, show: stagger }}
