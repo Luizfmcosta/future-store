@@ -1,6 +1,15 @@
 /**
  * Cool neutrals + white alpha. Borders: one hairline — no inset shadow + border stacks.
  */
+
+/** Profile cluster + todos os controles flutuantes externos (largura, reset, etc.). */
+const CLUSTER_GLASS_OUTER =
+  "overflow-hidden rounded-3xl border border-white/[0.11] bg-[#08080a]/30 backdrop-blur-2xl shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)]";
+
+/** Faixa horizontal de pills (se usada) — tint sutil; o topBar do perfil não usa esta faixa. */
+const PILL_TRACK_INSET =
+  "rounded-full bg-white/[0.05] p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]";
+
 export const ui = {
   /** Muted line on dark chrome — sentence case, no wide tracking */
   eyebrow: "text-[13px] font-medium leading-snug text-[#9ca8b8] tracking-normal",
@@ -31,24 +40,20 @@ export const ui = {
       "relative flex h-9 min-h-9 w-full min-w-0 flex-nowrap items-stretch overflow-x-auto rounded-full bg-[#18181a]/95 p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-sm scrollbar-none",
 
     /**
-     * Cluster fixo (seletor + card): um único vidro no contorno inteiro (substitui edgePanel opaco + fill empilhados).
-     * Presets de largura usam `widthPresetShell` (mesmo vidro, formato pill).
+     * Cluster fixo (seletor + card) e shell único para presets de largura / reset — mesmo vidro.
      */
-    clusterShell:
-      "overflow-hidden rounded-3xl border border-white/[0.11] bg-[#08080a]/30 backdrop-blur-2xl shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)]",
+    clusterShell: CLUSTER_GLASS_OUTER,
     /**
      * Faixa das pills dentro do cluster — só tint sutil, sem segundo backdrop-blur (o blur vem do `clusterShell`).
      */
-    fillPillTrackCluster:
-      "relative flex h-12 min-h-12 w-full min-w-0 flex-nowrap items-stretch overflow-x-auto rounded-full bg-white/[0.05] p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] scrollbar-none",
+    fillPillTrackCluster: `relative flex h-12 min-h-12 w-full min-w-0 flex-nowrap items-stretch overflow-x-auto scrollbar-none ${PILL_TRACK_INSET}`,
 
     /**
-     * Presets de largura da vitrine (AppShell): mesmo vidro que `clusterShell`, formato pill.
+     * Track interno dos presets de largura / reset (AppShell): só `p-1` sobre o `clusterShell`,
+     * sem segunda camada clara — alinhado ao interior do profile cluster (coluna com `p-1`).
      */
-    widthPresetShell:
-      "overflow-hidden rounded-full border border-white/[0.11] bg-[#08080a]/30 backdrop-blur-2xl shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)]",
     widthPresetTrack:
-      "relative inline-flex h-9 min-w-[5.25rem] w-full items-stretch overflow-hidden rounded-full bg-white/[0.05] p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]",
+      "relative inline-flex h-9 min-w-[5.25rem] w-full items-stretch overflow-hidden rounded-full p-1",
   },
 
   /** Botões flutuantes fora da vitrine (perfil, largura) — cinza neutro, sem tom azulado do zinc. */

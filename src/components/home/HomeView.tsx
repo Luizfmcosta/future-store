@@ -6,6 +6,7 @@ import { ContinueJourney } from "@/components/home/ContinueJourney";
 import { CuratedForYou } from "@/components/home/CuratedForYou";
 import { HomeFooter } from "@/components/home/HomeFooter";
 import { HomeLoadingReveal } from "@/components/home/HomeLoadingReveal";
+import { HomeWelcomeGate } from "@/components/home/HomeWelcomeGate";
 import { MerchStrip } from "@/components/home/MerchStrip";
 import { ProductSpotlight } from "@/components/home/ProductSpotlight";
 import { RicardoTikTokCarousel } from "@/components/home/RicardoTikTokCarousel";
@@ -29,6 +30,7 @@ export function HomeView() {
 
   return (
     <div className="relative flex flex-col">
+      <HomeWelcomeGate />
       <HomeLoadingReveal />
       {order.map((key) => {
         const node = map[key];
