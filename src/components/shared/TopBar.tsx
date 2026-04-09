@@ -114,7 +114,7 @@ export function TopBar({ className }: TopBarProps) {
   );
 
   const rightActions = (
-    <div className="flex shrink-0 items-center gap-1.5">
+    <div className="flex shrink-0 items-center gap-3">
       {activeProfile === "marina" ? (
         <span
           className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full bg-[#1a1a1a] ring-1 ring-white/15"
