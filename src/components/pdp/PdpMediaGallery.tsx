@@ -1,5 +1,6 @@
 "use client";
 
+import { ProductColorTintOverlay } from "@/components/pdp/ProductColorTintOverlay";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { cn, hasMediaUrl } from "@/lib/utils";
 import type { Product } from "@/types";
@@ -11,7 +12,14 @@ import { useMemo, useState } from "react";
  * The `<img>` is `absolute inset-0` + `object-contain` inside padded box — parent clips square corners.
  * (clip-path / bg-image / Next `fill` were all flaky here.)
  */
-export function PdpMediaGallery({ product }: { product: Product }) {
+export function PdpMediaGallery({
+  product,
+  tintHex,
+}: {
+  product: Product;
+  /** Selected color swatch — blended over the hero for a finish preview */
+  tintHex?: string;
+}) {
   const [idx, setIdx] = useState(0);
   const imgs = useMemo(() => {
     const g = product.gallery.filter(hasMediaUrl);
@@ -24,7 +32,7 @@ export function PdpMediaGallery({ product }: { product: Product }) {
   return (
     <div className="w-full min-w-0">
       {imgs.length > 0 && src ? (
-        <figure className="relative isolate w-full overflow-hidden rounded-2xl bg-[#f5f5f5] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)]">
+        <figure className="relative w-full overflow-hidden rounded-2xl bg-[#f5f5f5] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)]">
           <div
             className={cn(
               "relative aspect-[5/6] w-full sm:aspect-[4/5] sm:min-h-[min(70vh,560px)]",
@@ -32,20 +40,24 @@ export function PdpMediaGallery({ product }: { product: Product }) {
             )}
           >
             <div className="absolute inset-0 flex items-center justify-center p-6 sm:p-10">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={src}
-                alt=""
-                className="max-h-full max-w-full object-contain"
-                loading="eager"
-                decoding="async"
-                draggable={false}
-              />
+              {/* `isolate` keeps `mix-blend-mode: hue` scoped to photo + tint (see ProductColorTintOverlay). */}
+              <span className="relative isolate inline-block max-h-full max-w-full">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={src}
+                  alt=""
+                  className="relative z-0 block max-h-full max-w-full object-contain"
+                  loading="eager"
+                  decoding="async"
+                  draggable={false}
+                />
+                {tintHex ? <ProductColorTintOverlay hex={tintHex} maskImageSrc={src} maskFit="contain" /> : null}
+              </span>
             </div>
           </div>
         </figure>
       ) : (
-        <figure className="relative isolate w-full overflow-hidden rounded-2xl bg-[#f5f5f5] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)]">
+        <figure className="relative w-full overflow-hidden rounded-2xl bg-[#f5f5f5] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)]">
           <div
             className={cn(
               "relative flex aspect-[5/6] w-full min-h-0 flex-col sm:aspect-[4/5] sm:min-h-[min(70vh,560px)]",

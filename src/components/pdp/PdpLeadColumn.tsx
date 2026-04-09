@@ -6,8 +6,9 @@ import { EyebrowPill } from "@/components/shared/EyebrowPill";
 import { useT } from "@/lib/useT";
 import { cn, formatBRL } from "@/lib/utils";
 import type { Product, ShopperProfileId } from "@/types";
+import { useDemoStore } from "@/store/demoStore";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 function formatReviewCount(count: number) {
   return new Intl.NumberFormat("en-US").format(count);
@@ -22,17 +23,18 @@ export function PdpLeadColumn({
   product,
   profile,
   className,
+  selectedColorKey,
+  onSelectedColorKeyChange,
 }: {
   product: Product;
   profile: ShopperProfileId;
   className?: string;
+  selectedColorKey: string;
+  onSelectedColorKeyChange: (labelKey: string) => void;
 }) {
   const t = useT();
-  const [colorKey, setColorKey] = useState(() => product.colorOptions?.[0]?.labelKey ?? "");
-
-  useEffect(() => {
-    queueMicrotask(() => setColorKey(product.colorOptions?.[0]?.labelKey ?? ""));
-  }, [product.id, product.colorOptions]);
+  const router = useRouter();
+  const addToCart = useDemoStore((s) => s.addToCart);
 
   const { average, count } = product.reviewRating;
   const tagline = firstSentence(product.description);
@@ -73,8 +75,8 @@ export function PdpLeadColumn({
         <ProductColorSwatches
           key={product.id}
           options={product.colorOptions}
-          value={colorKey}
-          onChange={setColorKey}
+          value={selectedColorKey}
+          onChange={onSelectedColorKeyChange}
         />
       ) : null}
 
@@ -83,6 +85,22 @@ export function PdpLeadColumn({
           ? `${product.deliveryETA} · Stock: ${product.stock}`
           : `${product.deliveryETA} · ${product.stock} in regional pool`}
       </p>
+
+      <div className="pt-2 sm:pt-1">
+        <button
+          type="button"
+          onClick={() => {
+            if (product.category === "tv" || product.category === "speaker") {
+              addToCart(product.id);
+            } else {
+              router.push(`/product/sp-era-100`);
+            }
+          }}
+          className="inline-flex h-11 w-full items-center justify-center rounded-full bg-neutral-900 px-6 text-[13px] font-semibold tracking-tight text-white transition hover:bg-neutral-800 sm:w-auto sm:min-w-[10.5rem]"
+        >
+          {t("pdp.buyNow")}
+        </button>
+      </div>
     </div>
   );
 }

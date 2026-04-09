@@ -58,6 +58,9 @@ type DemoState = {
   openCart: () => void;
   closeCart: () => void;
   addToCart: (productId: string, quantity?: number) => void;
+  incrementCartQuantity: () => void;
+  decrementCartQuantity: () => void;
+  removeFromCart: () => void;
   setPresenterOpen: (v: boolean) => void;
   togglePresenter: () => void;
   setRefineOpen: (v: boolean) => void;
@@ -139,12 +142,34 @@ export const useDemoStore = create<DemoState>()(
   openCart: () => set({ cartDrawerOpen: true }),
   closeCart: () => set({ cartDrawerOpen: false }),
   addToCart: (productId, quantity = 1) =>
-    set({
-      cartLineId: productId,
-      cartQuantity: Math.min(99, Math.max(1, Math.floor(quantity))),
-      cartDrawerOpen: true,
-      selectedProductId: productId,
+    set((state) => {
+      const add = Math.min(99, Math.max(1, Math.floor(quantity)));
+      if (state.cartLineId === productId) {
+        return {
+          cartLineId: productId,
+          cartQuantity: Math.min(99, state.cartQuantity + add),
+          cartDrawerOpen: true,
+          selectedProductId: productId,
+        };
+      }
+      return {
+        cartLineId: productId,
+        cartQuantity: add,
+        cartDrawerOpen: true,
+        selectedProductId: productId,
+      };
     }),
+  incrementCartQuantity: () =>
+    set((s) => (s.cartLineId ? { cartQuantity: Math.min(99, s.cartQuantity + 1) } : {})),
+  decrementCartQuantity: () =>
+    set((s) => {
+      if (!s.cartLineId) return {};
+      if (s.cartQuantity <= 1) {
+        return { cartLineId: null, cartQuantity: 1 };
+      }
+      return { cartQuantity: s.cartQuantity - 1 };
+    }),
+  removeFromCart: () => set({ cartLineId: null, cartQuantity: 1 }),
   setPresenterOpen: (v) => set({ presenterPanelOpen: v }),
   togglePresenter: () => set((s) => ({ presenterPanelOpen: !s.presenterPanelOpen })),
   setRefineOpen: (v) => set({ refineOpen: v }),

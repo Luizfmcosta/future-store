@@ -3,7 +3,6 @@
 import { CompareAlternativesWidget } from "@/components/pdp/CompareAlternativesWidget";
 import { CompatibilityWidget } from "@/components/pdp/CompatibilityWidget";
 import { PdpChatOverlay } from "@/components/pdp/PdpChatOverlay";
-import { PdpFixedBar } from "@/components/pdp/PdpFixedBar";
 import { FitInsightWidget } from "@/components/pdp/FitInsightWidget";
 import { PdpFirstSection } from "@/components/pdp/PdpFirstSection";
 import { PdpSection } from "@/components/pdp/PdpSection";
@@ -17,7 +16,7 @@ import { getPdpInsights } from "@/lib/recommendations";
 import { useT } from "@/lib/useT";
 import { useDemoStore } from "@/store/demoStore";
 import { useParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function ProductPage() {
   const params = useParams<{ id: string }>();
@@ -28,6 +27,7 @@ export default function ProductPage() {
   const aiMode = useDemoStore((s) => s.aiMode);
   const setSelected = useDemoStore((s) => s.setSelectedProduct);
   const closePdpChatOverlay = useDemoStore((s) => s.closePdpChatOverlay);
+  const addPromptProductRef = useDemoStore((s) => s.addPromptProductRef);
 
   useEffect(() => {
     closePdpChatOverlay();
@@ -49,6 +49,11 @@ export default function ProductPage() {
     if (product?.id) recordProductView(product.id);
   }, [product?.id]);
 
+  useEffect(() => {
+    if (!product?.id) return;
+    addPromptProductRef({ productId: product.id, label: product.title });
+  }, [product?.id, product?.title, addPromptProductRef]);
+
   if (!product) {
     return (
       <div className="rounded-2xl border border-stone-200/90 bg-stone-50 p-10 text-center text-stone-600">
@@ -59,14 +64,33 @@ export default function ProductPage() {
 
   const insights = getPdpInsights(profile, product);
 
+  const [selectedColorKey, setSelectedColorKey] = useState(
+    () => product.colorOptions?.[0]?.labelKey ?? "",
+  );
+
+  useEffect(() => {
+    setSelectedColorKey(product.colorOptions?.[0]?.labelKey ?? "");
+  }, [product.id, product.colorOptions]);
+
+  const imageTintHex = useMemo(
+    () => product.colorOptions?.find((o) => o.labelKey === selectedColorKey)?.swatchHex,
+    [product.colorOptions, selectedColorKey],
+  );
+
   return (
     <div className="relative flex min-h-0 w-full flex-1 flex-col bg-white">
       <div
         data-pdp-scroll
         className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden scroll-smooth scrollbar-none"
       >
-        <div className="pb-[calc(5.75rem+env(safe-area-inset-bottom,0px))] sm:pb-[calc(6rem+env(safe-area-inset-bottom,0px))]">
-          <PdpFirstSection product={product} profile={profile} />
+        <div className="pb-32 sm:pb-32">
+          <PdpFirstSection
+            product={product}
+            profile={profile}
+            selectedColorKey={selectedColorKey}
+            onSelectedColorKeyChange={setSelectedColorKey}
+            imageTintHex={imageTintHex}
+          />
 
           <PdpSection className="mt-6 border-t border-black/[0.06] sm:mt-10">
             <div className="mx-auto max-w-2xl">
@@ -116,7 +140,6 @@ export default function ProductPage() {
         </div>
       </div>
 
-      <PdpFixedBar product={product} />
       <PdpChatOverlay product={product} />
     </div>
   );

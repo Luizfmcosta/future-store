@@ -16,33 +16,23 @@ const ease = [0.76, 0, 0.24, 1] as const;
 const EMBED_W = 325;
 const EMBED_H = 708;
 
-/** Mobile: cartão mais estreito que o iframe; escala uniforme (altura do shell = iframe × scale). */
-const CARD_W_MOBILE = 240;
-const MOBILE_SCALE = CARD_W_MOBILE / EMBED_W;
-const MOBILE_SHELL_H = Math.round(EMBED_H * MOBILE_SCALE);
-
+/**
+ * Fills the column width: fixed 325×708 embed scaled by `100cqw / 325px` from the `@container` shell.
+ */
 function TikTokFrame({ videoId, title }: { videoId: string; title: string }) {
   const src = `https://www.tiktok.com/embed/v2/${videoId}`;
   return (
     <div
       className={cn(
-        "relative shrink-0 overflow-hidden rounded-xl bg-[#0f0f0f]",
-        "ring-0 outline-none",
-        "w-[240px] md:w-[325px]",
-        "h-[var(--shell)] md:h-[var(--embed-h)]",
+        "@container relative w-full overflow-hidden rounded-xl bg-[#0f0f0f]",
+        "ring-0 outline-none [aspect-ratio:325/708]",
       )}
-      style={{
-        ["--shell" as string]: `${MOBILE_SHELL_H}px`,
-        ["--embed-h" as string]: `${EMBED_H}px`,
-        ["--mobile-scale" as string]: String(MOBILE_SCALE),
-      }}
     >
-      {/* Mobile: escala = CARD_W_MOBILE / EMBED_W; md: iframe 1:1 no cartão */}
       <div
         className={cn(
           "absolute left-1/2 top-0 origin-top",
-          "max-md:[transform:translateX(-50%)_scale(var(--mobile-scale))]",
-          "md:relative md:left-0 md:top-0 md:translate-x-0 md:scale-100 md:transform-none",
+          "h-[708px] w-[325px] -translate-x-1/2",
+          "[transform:translateX(-50%)_scale(calc(100cqw/325px))]",
         )}
       >
         <iframe
@@ -81,21 +71,13 @@ export function RicardoTikTokCarousel() {
           {t("ricardoTiktok.subline")}
         </p>
 
-        <div className="relative mt-6 min-w-0 -mx-5 sm:mx-0">
-          <div
-            className={cn(
-              "overflow-x-auto overflow-y-hidden overscroll-x-contain",
-              "scroll-smooth touch-pan-x pl-5 pr-6 sm:pl-0 sm:pr-0",
-              "scrollbar-none",
-            )}
-          >
-            <div className="flex w-max snap-x snap-mandatory gap-3.5 sm:gap-5">
-              {RICARDO_TIKTOK_CLIPS.map((clip) => (
-                <article key={clip.videoId} className="shrink-0 snap-start">
-                  <TikTokFrame videoId={clip.videoId} title={t("ricardoTiktok.embedTitle")} />
-                </article>
-              ))}
-            </div>
+        <div className="mt-6 w-full min-w-0">
+          <div className="flex w-full flex-col gap-3.5 sm:flex-row sm:gap-5">
+            {RICARDO_TIKTOK_CLIPS.map((clip) => (
+              <article key={clip.videoId} className="min-w-0 flex-1 basis-0">
+                <TikTokFrame videoId={clip.videoId} title={t("ricardoTiktok.embedTitle")} />
+              </article>
+            ))}
           </div>
         </div>
       </motion.div>

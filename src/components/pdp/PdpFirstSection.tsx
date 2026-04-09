@@ -13,9 +13,15 @@ import type { ShopperProfileId } from "@/types";
 export function PdpFirstSection({
   product,
   profile,
+  selectedColorKey,
+  onSelectedColorKeyChange,
+  imageTintHex,
 }: {
   product: Product;
   profile: ShopperProfileId;
+  selectedColorKey: string;
+  onSelectedColorKeyChange: (labelKey: string) => void;
+  imageTintHex?: string;
 }) {
   return (
     <section className="w-full min-w-0" aria-label="Product details">
@@ -28,10 +34,16 @@ export function PdpFirstSection({
       {/* Mobile / small: stacked. lg+: image + title row to save vertical space. */}
       <div className="mt-4 flex w-full min-w-0 flex-col gap-8 lg:mt-6 lg:flex-row lg:items-start lg:gap-10 xl:gap-12">
         <div className="min-w-0 w-full shrink-0 lg:max-w-[min(100%,30rem)] xl:max-w-[min(100%,36rem)] 2xl:max-w-[min(100%,42rem)]">
-          <PdpMediaGallery product={product} />
+          <PdpMediaGallery product={product} tintHex={imageTintHex} />
         </div>
         <div className="mx-auto w-full min-w-0 max-w-2xl flex-1 lg:mx-0 lg:max-w-lg xl:max-w-xl">
-          <PdpLeadColumn product={product} profile={profile} className="lg:pt-0" />
+          <PdpLeadColumn
+            product={product}
+            profile={profile}
+            className="lg:pt-0"
+            selectedColorKey={selectedColorKey}
+            onSelectedColorKeyChange={onSelectedColorKeyChange}
+          />
         </div>
       </div>
     </section>

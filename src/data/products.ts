@@ -10,6 +10,7 @@ const RR = (average: number, count: number) => ({ average, count });
 const COLORS_SPEAKER_BW: ProductColorOption[] = [
   { labelKey: "matteBlack", swatchHex: "#1c1c1c" },
   { labelKey: "lunarWhite", swatchHex: "#e8e6e1" },
+  { labelKey: "graphite", swatchHex: "#3d3d42" },
 ];
 const COLORS_SPEAKER_BW_OLIVE: ProductColorOption[] = [
   ...COLORS_SPEAKER_BW,
@@ -19,6 +20,13 @@ const COLORS_SB: ProductColorOption[] = COLORS_SPEAKER_BW;
 const COLORS_TV: ProductColorOption[] = [
   { labelKey: "titanGray", swatchHex: "#4a4f56" },
   { labelKey: "matteBlack", swatchHex: "#1a1d21" },
+  { labelKey: "silverMist", swatchHex: "#8b9099" },
+];
+/** Subwoofers — three dark finishes (tint preview uses blend on PDP imagery). */
+const COLORS_SUB: ProductColorOption[] = [
+  { labelKey: "matteBlack", swatchHex: "#1a1a1a" },
+  { labelKey: "graphite", swatchHex: "#3d3d42" },
+  { labelKey: "gunmetal", swatchHex: "#5c5c62" },
 ];
 
 /** Wireless speaker and soundbar catalog — demo storefront. */
@@ -84,8 +92,8 @@ export const products: Product[] = [
     heroImage: media("Era 300 Speaker.png"),
     gallery: [
       media("Stronger sound with more presence in the room.png"),
-      media("82ce8697780924b067d289793981db85c83b2b00-2000x2000.avif"),
-      media("1178ce56bf752b5183fed1c6429e3a15b6770216-2480x2480.avif"),
+      media("Era 300 Speaker.png"),
+      media("Explore the full range of speakers.png"),
     ],
     description:
       "Horizon Three is the flagship room speaker for open living spaces: spatial and Dolby Atmos music, bold output, and a premium driver layout. It is the natural step up when Horizon One is not enough for your room size or listening level.",
@@ -120,7 +128,7 @@ export const products: Product[] = [
     gallery: [
       media("Move Outdoor Speaker.png"),
       media("sonos-move-2-lifestyle.png"),
-      media("87e816c0a480d8a27c1d379e02e84d84f6db5041-1280x1280.avif"),
+      media("Music that goes with you, wherever you are.png"),
     ],
     description:
       "Trail Max is the large portable for patios, parties, and room-to-room listening: long battery life, stereo imaging from a single enclosure, and weather resistance for outdoor use. Use it on WiFi at home and Bluetooth on the go.",
@@ -188,8 +196,8 @@ export const products: Product[] = [
     marginTier: "high",
     heroImage: media("Arc + Sub + Rear Speakers.png"),
     gallery: [
-      media("3cb78a6f04f3125c38ee0c37dfa78c4591916da1-2480x2480.avif"),
-      media("1dfecdf1513cd96cd28e789adac4957b97adf50b-1800x1800.avif"),
+      media("Clearer dialogue and more immersive TV sound.png"),
+      media("Start with a soundbar that defines your system.png"),
     ],
     description:
       "Cinema Surround System bundles Stage Ultra with matched rear satellites for true surround and Dolby Atmos in one purchase. Control everything from a single app and enjoy cohesive timbre from front to back.",
@@ -222,8 +230,8 @@ export const products: Product[] = [
     heroImage: media("Era 100 Speaker.png"),
     gallery: [
       media("A great place to start.png"),
-      media("ba7417c9ec5d2dcf54f46a4b3481eb1d5d55d1b5-2000x2000.avif"),
-      media("0d3373d97722b8b9728b95026895d089f9241ae8-1920x1920.avif"),
+      media("Core 100 Speaker.png"),
+      media("Era 100 Wireless Speaker.png"),
     ],
     description:
       "Listening Set pairs a quality turntable with Horizon One so vinyl reaches every room on your wireless system. The stack stays minimal while giving you a credible hi-fi entry point and a path to expand with more speakers later.",
@@ -257,7 +265,7 @@ export const products: Product[] = [
     heroImage: media("Era 100 Speaker.png"),
     gallery: [
       media("Stronger sound with more presence in the room.png"),
-      media("77350061ddcfded38dcce31526b3ec45ded63743-1280x1280.avif"),
+      media("Era 100 Speaker.png"),
     ],
     description:
       "Two Horizon One units for stereo imaging in one room or one speaker per room under the same account. The bundle saves versus buying separately and is ideal for office plus bedroom or small living stereo setups.",
@@ -292,7 +300,7 @@ export const products: Product[] = [
     heroImage: media("Roam 2 Portable Speaker.png"),
     gallery: [
       media("Music that goes with you, wherever you are.png"),
-      media("a2481284c5700c238a123168458f74c2b19e1bed-2379x2379.avif"),
+      media("Roam Lite Speaker.png"),
     ],
     description:
       "Two Trail Mini speakers for stereo on a table outdoors or flexible placement indoors. Compact travel size makes this bundle popular for students and hosts who want a quick stereo pair without full-size gear.",
@@ -301,11 +309,11 @@ export const products: Product[] = [
   },
   /** TVs — entry / mid tier for promo funnels (Ricardo). */
   {
-    id: "tv-samsung-crystal-50",
-    sku: "FS-TV-SAM-C50",
+    id: "tv-led-50-entry",
+    sku: "FS-TV-ENT-50",
     category: "tv",
-    title: "Samsung Crystal UHD 50\" — Smart TV LED 4K",
-    brand: "Samsung",
+    title: "Future View Entry 50\" — Smart LED 4K",
+    brand: "Future View",
     price: 2799,
     oldPrice: 3999,
     installmentText: "12x R$ 233,25 sem juros",
@@ -315,32 +323,29 @@ export const products: Product[] = [
     technology: "LED",
     reviewStrengths: [
       "Painel 4K com bom contraste em salas iluminadas",
-      "Tizen com apps de streaming e espelhamento",
+      "Hub smart com apps de streaming e espelhamento",
       "3 HDMI — ideal para console e soundbar",
     ],
-    reviewWeaknesses: ["Sem zona local dimming avançada dos modelos QLED superiores"],
+    reviewWeaknesses: ["Sem local dimming avançado dos modelos mini-LED premium"],
     returnPolicyShort: "7 dias (lacrado)",
     warrantyShort: "12 meses fabricante",
     compatibilityTags: ["4K", "HDR10+", "WiFi", "Bluetooth"],
     bestFor: ["Salas compactas", "Séries e filmes", "Primeiro 4K"],
     marginTier: "mid",
     sponsored: true,
-    heroImage:
-      "https://images.unsplash.com/photo-1593784991095-a205069470b6?w=1200&h=800&fit=crop&q=80",
-    gallery: [
-      "https://images.unsplash.com/photo-1593784991095-a205069470b6?w=800&h=600&fit=crop&q=80",
-    ],
+    heroImage: media("Clearer dialogue and more immersive TV sound.png"),
+    gallery: [media("Stronger sound with more presence in the room.png")],
     description:
-      "Crystal UHD 50\" balances 4K clarity and smart streaming in a footprint suited to compact living rooms and bedrooms. Multiple HDMI inputs make it easy to add a console and a soundbar without a hub.",
+      "This 50\" LED 4K balances clarity and smart streaming in a footprint suited to compact living rooms and bedrooms. Multiple HDMI inputs make it easy to add a console and a soundbar without a hub.",
     colorOptions: COLORS_TV,
     reviewRating: RR(4.3, 5620),
   },
   {
-    id: "tv-tcl-led-50",
-    sku: "FS-TV-TCL-50",
+    id: "tv-led-50-stream",
+    sku: "FS-TV-STR-50",
     category: "tv",
-    title: "TCL P755 50\" — Google TV LED 4K",
-    brand: "TCL",
+    title: "Future View Stream 50\" — Smart LED 4K",
+    brand: "Future View",
     price: 3199,
     installmentText: "12x R$ 266,58 sem juros",
     deliveryETA: "4–8 dias úteis",
@@ -348,32 +353,29 @@ export const products: Product[] = [
     inches: 50,
     technology: "LED",
     reviewStrengths: [
-      "Google TV com busca por voz em português",
+      "SO smart com busca por voz em português",
       "Boa relação polegada/preço para salas médias",
       "Modo jogo com baixa latência",
     ],
     reviewWeaknesses: ["Alto-falantes básicos — combine com soundbar para filmes"],
     returnPolicyShort: "7 dias (lacrado)",
     warrantyShort: "12 meses fabricante",
-    compatibilityTags: ["4K", "Dolby Vision", "WiFi", "Bluetooth"],
+    compatibilityTags: ["4K", "HDR dinâmico", "WiFi", "Bluetooth"],
     bestFor: ["Streaming diário", "Games casuais", "Quarto grande"],
     marginTier: "mid",
-    heroImage:
-      "https://images.unsplash.com/photo-1461158534919-315852b3bc76?w=1200&h=800&fit=crop&q=80",
-    gallery: [
-      "https://images.unsplash.com/photo-1461158534919-315852b3bc76?w=800&h=600&fit=crop&q=80",
-    ],
+    heroImage: media("Stronger sound with more presence in the room.png"),
+    gallery: [media("Clearer dialogue and more immersive TV sound.png")],
     description:
-      "Google TV 50\" with voice search and a strong value for streaming and casual gaming. Low-latency game mode helps consoles feel responsive; plan a soundbar if you want cinema-level audio from the sofa.",
+      "This 50\" model pairs a built-in smart platform with voice search and strong value for streaming and casual gaming. Low-latency game mode helps consoles feel responsive; plan a soundbar if you want cinema-level audio from the sofa.",
     colorOptions: COLORS_TV,
     reviewRating: RR(4.4, 3180),
   },
   {
-    id: "tv-lg-uhd-55",
-    sku: "FS-TV-LG-55",
+    id: "tv-led-55-living",
+    sku: "FS-TV-LIV-55",
     category: "tv",
-    title: "LG UHD 55\" — Smart TV LED 4K",
-    brand: "LG",
+    title: "Future View Living 55\" — Smart LED 4K",
+    brand: "Future View",
     price: 3649,
     oldPrice: 4599,
     installmentText: "12x R$ 304,08 sem juros",
@@ -382,24 +384,21 @@ export const products: Product[] = [
     inches: 55,
     technology: "LED",
     reviewStrengths: [
-      "WebOS rápido e controle mágico incluso",
+      "SO smart rápido e controle com ponteiro incluso",
       "55\" confortável a ~2,5 m de distância",
-      "Filmmaker Mode para séries com cor natural",
+      "Modo cinema para séries com cor natural",
     ],
-    reviewWeaknesses: ["Painel IPS — contraste menor que OLED em salas escuras"],
+    reviewWeaknesses: ["Painel IPS — contraste menor que painéis de alto contraste em salas escuras"],
     returnPolicyShort: "7 dias (lacrado)",
     warrantyShort: "12 meses fabricante",
     compatibilityTags: ["4K", "HDR10", "WiFi", "Bluetooth"],
     bestFor: ["Sala de estar", "Esportes", "Famílias"],
     marginTier: "mid",
     sponsored: true,
-    heroImage:
-      "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=1200&h=800&fit=crop&q=80",
-    gallery: [
-      "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=800&h=600&fit=crop&q=80",
-    ],
+    heroImage: media("Start with a soundbar that defines your system.png"),
+    gallery: [media("Consider a standalone speaker instead of a soundbar.png")],
     description:
-      "55\" UHD with webOS and the Magic Remote for quick app switching and pointer control. Filmmaker Mode helps movies look natural in the living room; IPS viewing angles suit wide seating.",
+      "55\" UHD with a responsive smart OS and pointer-style remote for quick app switching. Cinema mode helps movies look natural in the living room; IPS viewing angles suit wide seating.",
     colorOptions: COLORS_TV,
     reviewRating: RR(4.5, 2890),
   },
@@ -427,8 +426,8 @@ export const products: Product[] = [
     sponsored: true,
     heroImage: media("Clearer dialogue and more immersive TV sound.png"),
     gallery: [
-      media("fe8be07f006292560731a3bfb4481f9758bd44dc-2000x1020.avif"),
-      media("63597b504e8affad7de8e6c7d440011016fe1ff3-2000x1341.avif"),
+      media("Arc + Sub + Rear Speakers.png"),
+      media("Beam Compact Soundbar.png"),
     ],
     description:
       "Stage Ultra is the premium smart soundbar for large TVs and serious movie nights: Dolby Atmos, Sound Motion architecture, and eARC for full-quality audio from modern sets. Expand with SubStage Pro and wireless surrounds when you are ready.",
@@ -491,8 +490,8 @@ export const products: Product[] = [
     sponsored: true,
     heroImage: media("Ray Compact Soundbar.png"),
     gallery: [
-      media("b11fda58212ffc54736af5412c8be6e52d976e84-701x509.avif"),
-      media("47a0e60ac5d697e707fcda68c77d9e460c1d5233-732x481.avif"),
+      media("Beam Soundbar.png"),
+      media("Start with a soundbar that defines your system.png"),
     ],
     description:
       "Stage Essential is the affordable dialogue upgrade for smaller TVs and tight furniture. It keeps setup simple with optical or HDMI ARC and leaves a clear upgrade path to Stage Compact or Stage Ultra later.",
@@ -520,10 +519,10 @@ export const products: Product[] = [
     compatibilityTags: ["Line-in", "WiFi", "AirPlay 2", "Trueplay"],
     bestFor: ["Hi-fi stacks", "Turntable rigs", "Large kitchens"],
     marginTier: "high",
-    heroImage: media("66e3cfe30d0b259876278d17a526295d43f044e5-2480x2480.avif"),
+    heroImage: media("Era 500 Speaker.png"),
     gallery: [
       media("Explore the full range of speakers.png"),
-      media("72e9843281b069391d73240660b11acb66ccdac3-2000x2000.avif"),
+      media("Stronger sound with more presence in the room.png"),
     ],
     description:
       "Studio Reference is the hi-fi wireless speaker for serious listening: stereo pair capable, line-in for turntables or DJ decks, and deep bass without a sub in most rooms. Plan shelf depth—it is larger than Horizon models.",
@@ -551,14 +550,14 @@ export const products: Product[] = [
     compatibilityTags: ["WiFi", "Trueplay", "Pairs with Stage Ultra", "Pairs with Stage Compact"],
     bestFor: ["Stage Ultra sets", "Action movies", "Electronic music"],
     marginTier: "high",
-    heroImage: media("64e817c257b5ed55e7809343c628082a64ea1a7e-2000x2000.avif"),
+    heroImage: media("Arc + Sub + Rear Speakers.png"),
     gallery: [
-      media("15eb79929a07495b06be5ed9c60c2293bc4df9d9-568x1087.avif"),
-      media("3a521e77055da0268f5a2ae72a52bab268d40e5a-2480x2480.avif"),
+      media("Beam + Sub Mini.png"),
+      media("Stronger sound with more presence in the room.png"),
     ],
     description:
       "SubStage Pro adds authoritative sub-bass to Stage Ultra and Stage Compact systems with force-canceling drivers and wireless pairing. Hide it beside the sofa and enjoy movies and music with real low-end impact.",
-    colorOptions: [{ labelKey: "matteBlack", swatchHex: "#1a1a1a" }],
+    colorOptions: COLORS_SUB,
     reviewRating: RR(4.7, 892),
   },
 ];

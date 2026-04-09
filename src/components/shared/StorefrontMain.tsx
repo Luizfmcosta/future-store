@@ -12,7 +12,7 @@ export function StorefrontMain({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isSearchAiMode = pathname === "/search" && searchParams.get("view") === "ai";
-  /** PDP pins the cart bar to the bottom of the window; inner column scrolls (see product page). */
+  /** PDP: inner column scrolls; bottom inset for floating prompt matches other white routes (see product page `pb-32`). */
   const isPdp = pathname.startsWith("/product/");
 
   const isHome = pathname === "/";
