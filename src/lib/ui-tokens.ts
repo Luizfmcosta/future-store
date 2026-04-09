@@ -53,8 +53,9 @@ export const ui = {
 
   /** Botões flutuantes fora da vitrine (perfil, largura) — cinza neutro, sem tom azulado do zinc. */
   floatingChrome: {
+    /** Selected profile pill — lighter than inactive avatar disks so initials read clearly on top. */
     segmentActive:
-      "bg-[#3d3d40] text-white shadow-[0_1px_2px_rgba(0,0,0,0.38)]",
+      "bg-[#4a4a4f] text-white shadow-[0_1px_2px_rgba(0,0,0,0.32)]",
     segmentInactive: "text-[#b8b8bc] hover:text-[#f0f0f1]",
     segmentFocus:
       "focus-visible:ring-2 focus-visible:ring-[#5a5a5d]/75 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--app-canvas)]",

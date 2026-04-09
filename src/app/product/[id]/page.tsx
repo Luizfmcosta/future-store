@@ -5,9 +5,7 @@ import { CompatibilityWidget } from "@/components/pdp/CompatibilityWidget";
 import { PdpChatOverlay } from "@/components/pdp/PdpChatOverlay";
 import { PdpFixedBar } from "@/components/pdp/PdpFixedBar";
 import { FitInsightWidget } from "@/components/pdp/FitInsightWidget";
-import { PdpBackButton } from "@/components/pdp/PdpBackButton";
-import { PdpLeadColumn } from "@/components/pdp/PdpLeadColumn";
-import { PdpMediaGallery } from "@/components/pdp/PdpMediaGallery";
+import { PdpFirstSection } from "@/components/pdp/PdpFirstSection";
 import { PdpSection } from "@/components/pdp/PdpSection";
 import { PolicySummaryWidget } from "@/components/pdp/PolicySummaryWidget";
 import { ProductPdpFeatures } from "@/components/pdp/ProductPdpFeatures";
@@ -65,31 +63,12 @@ export default function ProductPage() {
     <div className="relative flex min-h-0 w-full flex-1 flex-col bg-white">
       <div
         data-pdp-scroll
-        className="min-h-0 flex-1 overflow-y-auto overflow-x-clip scroll-smooth scrollbar-none"
+        className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden scroll-smooth scrollbar-none"
       >
         <div className="pb-[calc(5.75rem+env(safe-area-inset-bottom,0px))] sm:pb-[calc(6rem+env(safe-area-inset-bottom,0px))]">
-          <div className="max-w-3xl pt-6 sm:pt-9">
-            <div className="mb-3 sm:mb-4">
-              <PdpBackButton />
-            </div>
-          </div>
+          <PdpFirstSection product={product} profile={profile} />
 
-          <div className="-mx-4 sm:-mx-6">
-            <PdpMediaGallery product={product} />
-          </div>
-
-          <div className="mx-auto mt-8 max-w-2xl">
-            <PdpLeadColumn product={product} profile={profile} />
-          </div>
-
-          {!aiMode ? (
-            <div className="mx-auto mt-6 max-w-2xl text-[15px] leading-relaxed text-neutral-600">
-              <span className="font-medium text-neutral-900">{t("pdp.recommendedFor")}</span>{" "}
-              {product.bestFor[0] ?? "—"}
-            </div>
-          ) : null}
-
-          <PdpSection>
+          <PdpSection className="mt-6 border-t border-black/[0.06] sm:mt-10">
             <div className="mx-auto max-w-2xl">
               <ProductPdpFeatures product={product} />
             </div>

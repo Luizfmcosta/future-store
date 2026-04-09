@@ -18,6 +18,9 @@ function barTitle(full: string): string {
 /**
  * Sticky to the storefront window bottom (not the browser viewport): parent must be `relative`.
  * Layout: thumbnail + title (left) · Ask pill (center) · Buy now (right) — aligned with Sonos PDP bar.
+ *
+ * Use `@md:` / `@lg:` (container queries) for “small vs large” — the storefront frame is `@container`,
+ * not the browser viewport. Plain `md:` would be wrong when the preview is narrow on a wide monitor.
  */
 export function PdpFixedBar({ product }: { product: Product }) {
   const t = useT();
@@ -42,7 +45,8 @@ export function PdpFixedBar({ product }: { product: Product }) {
   return (
     <div
       className={cn(
-        "absolute inset-x-0 bottom-0 z-30",
+        /* Bleed past `main` horizontal padding so the bar spans the full storefront width */
+        "absolute bottom-0 left-[-1rem] right-[-1rem] z-30 sm:left-[-1.5rem] sm:right-[-1.5rem]",
         "border-t border-neutral-200/90 bg-white",
         "shadow-[0_-4px_24px_rgba(0,0,0,0.04)]",
       )}
@@ -52,10 +56,10 @@ export function PdpFixedBar({ product }: { product: Product }) {
           "px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 sm:px-6 sm:pt-3.5",
         )}
       >
-        <div className="mx-auto flex w-full max-w-2xl items-center gap-2 sm:gap-4">
-          {/* Left: product name; thumbnail only from `sm` — hidden on narrow phones to save space */}
-          <div className="flex min-w-0 flex-1 items-center gap-2.5 sm:gap-3">
-            <div className="relative hidden size-10 shrink-0 overflow-hidden rounded-lg bg-neutral-100 sm:block sm:size-11">
+        <div className="flex w-full items-center justify-center gap-2 sm:gap-4 @md:justify-start">
+          {/* Left: hidden when storefront frame is narrow (`@md` = container width, see SearchModeTabs) */}
+          <div className="hidden min-w-0 flex-1 items-center gap-2.5 sm:gap-3 @md:flex">
+            <div className="relative size-10 shrink-0 overflow-hidden rounded-lg bg-neutral-100 sm:size-11">
               {thumbSrc ? (
                 <Image
                   src={thumbSrc}

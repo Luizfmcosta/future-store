@@ -164,7 +164,7 @@ export function SearchAiPanel() {
           className="h-full min-h-[min(36dvh,280px)]"
           stickInitial={false}
         >
-          <ChatContainerContent className="gap-8 pt-6 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))]">
+          <ChatContainerContent className="gap-8 pt-6 pb-[calc(5.5rem+0.5rem+env(safe-area-inset-bottom,0px))]">
             <ScrollToBottomOnBump bump={scrollBump} threadKey={threadKey} />
             {messages.length === 0 ? (
               <p className="text-center text-[14px] leading-relaxed tracking-tight text-stone-600 sm:text-[15px]">
@@ -214,8 +214,9 @@ export function SearchAiPanel() {
 
       <div
         className={cn(
-          "pointer-events-none absolute inset-x-0 bottom-0 z-40 flex justify-center",
+          "pointer-events-none absolute inset-x-0 z-40 flex justify-center",
           ui.floatingSearchBarRowPad,
+          "bottom-2",
         )}
       >
         <div className="pointer-events-auto w-full max-w-xl px-0">

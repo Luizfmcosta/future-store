@@ -1,29 +1,80 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useDemoStore } from "@/store/demoStore";
 
 const ease = [0.76, 0, 0.24, 1] as const;
 
+const SPLASH_MS = 1600;
+
+/** Set after the first-visit splash has finished (persists across sessions). */
+const FIRST_HOME_VISIT_KEY = "fs-storefront-home-first-visit";
+
 /**
- * Loading reveal scoped to the storefront window.
- * Renders into the [data-storefront-window] container via a portal
- * so it covers only the site preview, not the whole page.
+ * Home splash when:
+ * - First time this browser has completed the home welcome (localStorage), or
+ * - Marina ↔ Ricardo profile change while home is mounted.
+ * Does not run when returning to `/` from other routes if first visit already completed.
  */
 export function HomeLoadingReveal() {
-  const [show, setShow] = useState(true);
+  const activeProfile = useDemoStore((s) => s.activeProfile);
+  const [show, setShow] = useState(false);
   const [host, setHost] = useState<HTMLElement | null>(null);
+  const prevProfileRef = useRef<typeof activeProfile | undefined>(undefined);
+  const splashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    const el = document.querySelector<HTMLElement>("[data-storefront-window]");
-    queueMicrotask(() => setHost(el));
+  const runSplash = (onComplete?: () => void) => {
+    setShow(true);
+    if (splashTimerRef.current) clearTimeout(splashTimerRef.current);
+    splashTimerRef.current = setTimeout(() => {
+      setShow(false);
+      onComplete?.();
+      splashTimerRef.current = null;
+    }, SPLASH_MS);
+  };
+
+  /* Resolve portal host before paint — avoids rendering the overlay inline in HomeView (white flash). */
+  useLayoutEffect(() => {
+    setHost(document.querySelector<HTMLElement>("[data-storefront-window]"));
   }, []);
 
+  /* First load of home in this browser — once per lifetime (until localStorage cleared). */
   useEffect(() => {
-    const t = setTimeout(() => setShow(false), 1600);
-    return () => clearTimeout(t);
+    try {
+      if (localStorage.getItem(FIRST_HOME_VISIT_KEY) === "1") return;
+      runSplash(() => {
+        try {
+          localStorage.setItem(FIRST_HOME_VISIT_KEY, "1");
+        } catch {
+          /* private mode */
+        }
+      });
+    } catch {
+      /* private mode */
+    }
+    return () => {
+      if (splashTimerRef.current) clearTimeout(splashTimerRef.current);
+    };
   }, []);
+
+  /* Marina ↔ Ricardo while home is already mounted */
+  useEffect(() => {
+    const prev = prevProfileRef.current;
+    prevProfileRef.current = activeProfile;
+
+    if (prev === undefined) return;
+    if (prev === activeProfile) return;
+
+    const pair = new Set(["marina", "ricardo"] as const);
+    if (!pair.has(prev) || !pair.has(activeProfile)) return;
+
+    runSplash();
+    return () => {
+      if (splashTimerRef.current) clearTimeout(splashTimerRef.current);
+    };
+  }, [activeProfile]);
 
   const content = (
     <AnimatePresence>
@@ -32,7 +83,7 @@ export function HomeLoadingReveal() {
           key="splash"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.6, ease }}
+          transition={{ duration: 0.2, ease }}
           className="pointer-events-none absolute inset-0 z-[200] flex items-center justify-center rounded-[inherit] bg-[#0c0c0c]"
         >
           <motion.div
@@ -60,6 +111,6 @@ export function HomeLoadingReveal() {
     </AnimatePresence>
   );
 
-  if (host) return createPortal(content, host);
-  return content;
+  if (!host) return null;
+  return createPortal(content, host);
 }

@@ -22,7 +22,6 @@ export function ProductColorSwatches({
 
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-2 sm:gap-x-4">
-      <span className={cn(ui.home.label, "shrink-0")}>{t("pdp.colorLabel")}</span>
       <div
         role="radiogroup"
         aria-label={t("pdp.colorLabel")}
