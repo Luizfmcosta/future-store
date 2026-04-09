@@ -3,6 +3,16 @@ import type { Metadata } from "next";
 import { DM_Sans, Inter, Manrope, Geist } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { messages } from "@/lib/messages";
+
+const metaTitle =
+  typeof messages.metaTitle === "string" ? messages.metaTitle : "";
+const metaDescription =
+  typeof messages.metaDescription === "string"
+    ? messages.metaDescription
+    : "";
+
+const socialPreviewImage = "/branding/Social%20Preview.png";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -27,9 +37,27 @@ const interSidebar = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Future Store — AI-first storefront",
-  description:
-    "Premium, adaptive storefront prototype — interface-first commerce.",
+  metadataBase:
+    typeof process.env.VERCEL_URL === "string"
+      ? new URL(`https://${process.env.VERCEL_URL}`)
+      : new URL("http://localhost:3000"),
+  title: metaTitle,
+  description: metaDescription,
+  icons: {
+    icon: "/branding/Favicon-Future.png",
+    apple: "/branding/Favicon-Future.png",
+  },
+  openGraph: {
+    title: metaTitle,
+    description: metaDescription,
+    images: [socialPreviewImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: metaTitle,
+    description: metaDescription,
+    images: [socialPreviewImage],
+  },
 };
 
 export default function RootLayout({

@@ -3,7 +3,8 @@
  */
 export const messages: Record<string, string | Record<string, string | Record<string, string>>> = {
     metaTitle: "Future Store — AI-first storefront",
-    metaDescription: "Premium, adaptive storefront prototype — interface-first commerce.",
+    metaDescription:
+      "Explore how AI transforms customer experience, monetization, and operations in a new era of commerce.",
     common: {
       uploadImage: "Upload image",
       voiceInput: "Voice input",
