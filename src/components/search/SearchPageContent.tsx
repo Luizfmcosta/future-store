@@ -7,7 +7,6 @@ import { LearningWidget } from "@/components/search/LearningWidget";
 import { ResultsGrid } from "@/components/search/ResultsGrid";
 import { SearchAiPanel } from "@/components/search/SearchAiPanel";
 import { getSearchViewParam } from "@/components/search/SearchViewTabs";
-import { useLocale } from "@/context/LocaleContext";
 import { products } from "@/data/products";
 import { getSearchResultsPath } from "@/lib/getSearchResultsPath";
 import { parseIntent } from "@/lib/parseIntent";
@@ -30,7 +29,6 @@ export function SearchPageContent() {
   const searchParams = useSearchParams();
   const view = getSearchViewParam(searchParams);
   const mParam = searchParams.get("m");
-  const { locale } = useLocale();
   const t = useT();
 
   const currentQuery = useDemoStore((s) => s.currentQuery);
@@ -63,8 +61,8 @@ export function SearchPageContent() {
   const compare = getComparisonCards(profile, results);
   const learningVariant = getLearningWidgetVariant(intent);
 
-  const quickSearches = useMemo(() => getQuickSearchQueries(locale), [locale]);
-  const trendingProducts = useMemo(() => localizeProducts(products.slice(0, 4), locale), [locale]);
+  const quickSearches = useMemo(() => getQuickSearchQueries(), []);
+  const trendingProducts = useMemo(() => localizeProducts(products.slice(0, 4)), []);
 
   const applyDiscoveryQuery = useCallback(
     (q: string) => {

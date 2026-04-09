@@ -3,7 +3,6 @@
 import { AskImageButton } from "@/components/shared/AskImageButton";
 import { Card } from "@/components/shared/Card";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
-import { useLocale } from "@/context/LocaleContext";
 import { localizeProduct } from "@/lib/product-i18n";
 import { ui } from "@/lib/ui-tokens";
 import { useT } from "@/lib/useT";
@@ -16,7 +15,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 export function ResultsGrid({ products, profile }: { products: Product[]; profile: ShopperProfileId }) {
-  const { locale } = useLocale();
   const t = useT();
   const setRefineOpen = useDemoStore((s) => s.setRefineOpen);
 
@@ -41,7 +39,7 @@ export function ResultsGrid({ products, profile }: { products: Product[]; profil
       </div>
       <div className="grid grid-cols-1 gap-2.5 sm:gap-4 @md:grid-cols-2">
         {products.map((product) => {
-          const p = localizeProduct(product, locale);
+          const p = localizeProduct(product);
           const href = `/product/${p.id}`;
           return (
             <Card

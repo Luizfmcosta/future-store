@@ -1,6 +1,5 @@
 "use client";
 
-import { LanguageSelector } from "@/components/shared/LanguageSelector";
 import { useT } from "@/lib/useT";
 
 function VtexLogo() {
@@ -28,10 +27,6 @@ export function HomeFooter() {
 
   return (
     <footer className="relative flex flex-col overflow-hidden rounded-b-[calc(1.75rem-2px)] bg-[#121212]">
-      <div className="flex flex-col gap-3 px-5 pt-6 sm:px-6 sm:pt-8">
-        <LanguageSelector />
-      </div>
-
       {/* Giant watermark logo — #171717 on #121212 */}
       <div className="flex items-end justify-center pt-4 sm:pt-8" aria-hidden>
         {/* eslint-disable-next-line @next/next/no-img-element */}

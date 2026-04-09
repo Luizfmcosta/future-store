@@ -17,6 +17,17 @@ export type ProductCategory = "tv" | "soundbar" | "speaker" | "accessory";
 
 export type DisplayTechnology = "OLED" | "QLED" | "LED";
 
+export type ProductColorOption = {
+  /** Key under `pdp.colors.{labelKey}` in messages */
+  labelKey: string;
+  swatchHex: string;
+};
+
+export type ProductReviewRating = {
+  average: number;
+  count: number;
+};
+
 export type Product = {
   id: string;
   sku: string;
@@ -30,6 +41,12 @@ export type Product = {
   technology?: DisplayTechnology;
   deliveryETA: string;
   stock: number;
+  /** Long-form PDP copy */
+  description: string;
+  /** Finishes / finishes — demo; imagery may not change per swatch */
+  colorOptions?: ProductColorOption[];
+  /** Aggregated buyer ratings (demo) */
+  reviewRating: ProductReviewRating;
   reviewStrengths: string[];
   reviewWeaknesses: string[];
   returnPolicyShort: string;
@@ -42,7 +59,7 @@ export type Product = {
   gallery: string[];
 };
 
-/** Semantic keys for SERP / assistant — labels come from `messages` by locale. */
+/** Semantic keys for SERP / assistant — labels come from `messages`. */
 export type SearchIntentRoomDistanceKey = "3m_listening";
 export type SearchIntentRoomTypeKey = "living_room";
 export type SearchIntentSizePreferenceKey =

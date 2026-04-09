@@ -1,38 +1,39 @@
-import type { AppLocale } from "@/lib/locale-types";
 import { getQuickSearchQueries } from "@/lib/searchCopy";
 
 /**
  * Extra prompts merged with quick searches so typing filters a richer pool
  * (prompt-kit style: pills above the composer).
  */
-const EXTRA_PROMPTS: Record<AppLocale, string[]> = {
-  "en-US": [
-    "Compare Horizon One and Trail Mini",
-    "Best speaker for a small apartment",
-    "Is Dolby Atmos worth it for music only?",
-    "Waterproof options for patio or pool",
-    "Cheapest way to start a multi-room setup",
-    "What is Trueplay and when does it help?",
-    "Soundbar or stereo pair for the living room",
-    "Trail Max battery life vs Trail Mini",
-  ],
-  "pt-BR": [
-    "Comparar Horizon One e Trail Mini",
-    "Melhor caixa para apartamento pequeno",
-    "Dolby Atmos vale a pena só para música?",
-    "Opções à prova d'água para área externa",
-    "Forma mais acessível de começar um setup multiambiente",
-    "O que é Trueplay e quando ajuda?",
-    "Soundbar ou par estéreo na sala",
-    "Autonomia Trail Max vs Trail Mini",
-  ],
-};
+const EXTRA_PROMPTS: string[] = [
+  "Compare Horizon One and Trail Mini",
+  "Best speaker for a small apartment",
+  "Is Dolby Atmos worth it for music only?",
+  "Waterproof options for patio or pool",
+  "Cheapest way to start a multi-room setup",
+  "What is Trueplay and when does it help?",
+  "Soundbar or stereo pair for the living room",
+  "Trail Max battery life vs Trail Mini",
+];
 
 /** Minimum typed length before showing chips (avoids noisy single-character matches). */
 export const PROMPT_SUGGESTION_MIN_LENGTH = 2;
 
-export function getPromptSuggestionPool(locale: AppLocale): string[] {
-  return [...getQuickSearchQueries(locale), ...EXTRA_PROMPTS[locale]];
+export function getPromptSuggestionPool(): string[] {
+  return [...getQuickSearchQueries(), ...EXTRA_PROMPTS];
+}
+
+/** Short follow-up prompts shown under chat “top matches” (not filtered by composer text). */
+const CHAT_FOLLOW_UP: string[] = [
+  "Compare the top two for my room",
+  "Best for movies vs music here?",
+  "Any bundles that pair with these?",
+  "Which has the strongest bass?",
+  "Waterproof options at a similar price",
+  "What’s the warranty on these models?",
+];
+
+export function getChatFollowUpSuggestions(): readonly string[] {
+  return CHAT_FOLLOW_UP;
 }
 
 /**

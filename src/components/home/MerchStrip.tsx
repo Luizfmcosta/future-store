@@ -3,7 +3,6 @@
 import { AskImageButton } from "@/components/shared/AskImageButton";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { EyebrowPill } from "@/components/shared/EyebrowPill";
-import { useLocale } from "@/context/LocaleContext";
 import { useShopperExperienceOptional } from "@/context/ShopperExperienceContext";
 import { products } from "@/data/products";
 import { sortProducts } from "@/lib/catalogSort";
@@ -19,7 +18,6 @@ import { useMemo, useRef } from "react";
 const ease = [0.76, 0, 0.24, 1] as const;
 
 export function MerchStrip() {
-  const { locale } = useLocale();
   const t = useT();
   const profile = useDemoStore((s) => s.activeProfile);
   const experienceCtx = useShopperExperienceOptional();
@@ -36,8 +34,8 @@ export function MerchStrip() {
     const sorted = experienceCtx
       ? sortProducts(base, experienceCtx.experience.merchSort)
       : base;
-    return localizeProducts(sorted.slice(0, 10), locale);
-  }, [locale, experienceCtx?.experience.merchSort, isRicardoPromoFirstVisit, experienceCtx]);
+    return localizeProducts(sorted.slice(0, 10));
+  }, [experienceCtx?.experience.merchSort, isRicardoPromoFirstVisit, experienceCtx]);
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.08 });
 

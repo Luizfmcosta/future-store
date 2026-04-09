@@ -87,7 +87,7 @@ const SEGMENT_MSG_KEY: Record<HomeSegmentId, string> = {
   ricardo_value: "ricardoValue",
 };
 
-/** Copy paths under `messages[locale].experience.<camelSegment>.*` */
+/** Copy paths under `messages.experience.<camelSegment>.*` */
 function copyForSegment(segment: HomeSegmentId): HomeExperienceConfig["copy"] {
   const base = `experience.${SEGMENT_MSG_KEY[segment]}`;
   return {

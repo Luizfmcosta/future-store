@@ -5,7 +5,6 @@ import { CheaperOptionCard } from "@/components/cart/CheaperOptionCard";
 import { LoyaltyCard } from "@/components/cart/LoyaltyCard";
 import { PremiumOptionCard } from "@/components/cart/PremiumOptionCard";
 import { StorefrontRightSheet } from "@/components/shared/StorefrontRightSheet";
-import { useLocale } from "@/context/LocaleContext";
 import { getProductById } from "@/data/products";
 import { getBundleOptions } from "@/lib/bundles";
 import { localizeProduct } from "@/lib/product-i18n";
@@ -18,7 +17,7 @@ import { useEffect, useId, useRef } from "react";
 
 /**
  * Shell subscribes only to open/close so `StorefrontRightSheet` does not re-render when cart
- * line / locale updates (that was fighting the slide animation).
+ * line updates (that was fighting the slide animation).
  */
 export function CartDrawer() {
   const open = useDemoStore((s) => s.cartDrawerOpen);
@@ -45,17 +44,17 @@ export function CartDrawer() {
 function CartDrawerBody({ titleId, onClose }: { titleId: string; onClose: () => void }) {
   const open = useDemoStore((s) => s.cartDrawerOpen);
   const cartLineId = useDemoStore((s) => s.cartLineId);
+  const cartQuantity = useDemoStore((s) => s.cartQuantity);
   const profile = useDemoStore((s) => s.activeProfile);
-  const { locale } = useLocale();
   const t = useT();
 
   const closeBtnRef = useRef<HTMLButtonElement>(null);
 
   const productRaw = cartLineId ? getProductById(cartLineId) : undefined;
-  const product = productRaw ? localizeProduct(productRaw, locale) : undefined;
+  const product = productRaw ? localizeProduct(productRaw) : undefined;
   const bundles =
     product && (product.category === "tv" || product.category === "speaker")
-      ? getBundleOptions(profile, product, locale)
+      ? getBundleOptions(profile, product)
       : null;
 
   useEffect(() => {
@@ -102,6 +101,7 @@ function CartDrawerBody({ titleId, onClose }: { titleId: string; onClose: () => 
               <div className="rounded-2xl border border-stone-200/90 bg-stone-50/90 p-4">
                 <p className="text-[12px] font-medium text-stone-500">{t("cart.inBag")}</p>
                 <p className="mt-1 text-[15px] font-semibold text-stone-900">{product.title}</p>
+                <p className="mt-1 text-[15px] font-semibold text-stone-900">{t("cart.quantityLine", { qty: cartQuantity })}</p>
                 <div className="mt-2 flex flex-wrap items-baseline gap-2">
                   <p className="text-lg font-semibold tabular-nums text-stone-900">{formatBRL(product.price)}</p>
                   {product.oldPrice ? (
@@ -145,7 +145,9 @@ function CartDrawerBody({ titleId, onClose }: { titleId: string; onClose: () => 
           {product ? (
             <p className="mb-3 flex items-baseline justify-between gap-2 text-[13px] text-stone-600">
               <span>{t("cart.subtotal")}</span>
-              <span className="tabular-nums text-[15px] font-semibold text-stone-900">{formatBRL(product.price)}</span>
+              <span className="tabular-nums text-[15px] font-semibold text-stone-900">
+                {formatBRL(product.price * cartQuantity)}
+              </span>
             </p>
           ) : null}
           <button

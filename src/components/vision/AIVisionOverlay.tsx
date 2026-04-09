@@ -1,6 +1,5 @@
 "use client";
 
-import { useLocale } from "@/context/LocaleContext";
 import { getProductById } from "@/data/products";
 import { useShopperSignals } from "@/hooks/useShopperSignals";
 import { generateAIExplanation, type PageKind } from "@/lib/aiExplanation";
@@ -40,7 +39,6 @@ function kindFromPath(pathname: string): PageKind {
 export function AIVisionOverlay() {
   const pathname = usePathname() ?? "/";
   const params = useParams<{ id?: string }>();
-  const { locale } = useLocale();
   const t = useT();
   const profile = useDemoStore((s) => s.activeProfile);
   const setAiMode = useDemoStore((s) => s.setAiMode);
@@ -69,9 +67,8 @@ export function AIVisionOverlay() {
           intent: parsedIntent,
           product,
         },
-        locale,
       ),
-    [profile, signals, kind, pathname, productId, currentQuery, parsedIntent, product, locale],
+    [profile, signals, kind, pathname, productId, currentQuery, parsedIntent, product],
   );
 
   const close = useCallback(() => setAiMode(false), [setAiMode]);

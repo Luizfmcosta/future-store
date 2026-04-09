@@ -3,7 +3,6 @@
 import { AskImageButton } from "@/components/shared/AskImageButton";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { EyebrowPill } from "@/components/shared/EyebrowPill";
-import { useLocale } from "@/context/LocaleContext";
 import { getProductByIdLocalized } from "@/lib/product-i18n";
 import { useT } from "@/lib/useT";
 import { cn, hasMediaUrl } from "@/lib/utils";
@@ -27,12 +26,11 @@ const MARINA_SPOTLIGHT_VIDEO_SRC = "/media/home/marina-how-to-choose.mp4";
 export function ProductSpotlight() {
   const profile = useDemoStore((s) => s.activeProfile);
   const experienceCtx = useShopperExperienceOptional();
-  const { locale } = useLocale();
   const t = useT();
   const id =
     experienceCtx?.spotlightProductId ??
     (profile === "marina" ? "sp-move-2" : "sp-era-100");
-  const product = getProductByIdLocalized(id, locale);
+  const product = getProductByIdLocalized(id);
   const isMarinaGuide = profile === "marina";
   const isRicardoSpotlight = profile === "ricardo";
   const marinaVideoRef = useRef<HTMLVideoElement>(null);
@@ -44,7 +42,7 @@ export function ProductSpotlight() {
     el.play().catch(() => {
       /* muted + playsInline usually allows autoplay; ignore if blocked */
     });
-  }, [isMarinaGuide, id, locale]);
+  }, [isMarinaGuide, id]);
 
   if (!product) return null;
 

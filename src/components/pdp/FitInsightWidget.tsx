@@ -1,14 +1,15 @@
 "use client";
 
-import { Card } from "@/components/shared/Card";
 import { EyebrowPill } from "@/components/shared/EyebrowPill";
+import { useT } from "@/lib/useT";
 
 export function FitInsightWidget({ title, body }: { title: string; body: string }) {
+  const t = useT();
   return (
-    <Card className="p-5 sm:p-6">
-      <EyebrowPill>Ideal for you</EyebrowPill>
-      <h3 className="mt-2 text-lg font-semibold text-stone-900">{title}</h3>
-      <p className="mt-2 text-[14px] leading-relaxed text-stone-600">{body}</p>
-    </Card>
+    <div>
+      <EyebrowPill>{t("pdp.idealEyebrow")}</EyebrowPill>
+      <h3 className="mt-4 text-2xl font-light text-neutral-900 sm:text-3xl">{title}</h3>
+      <p className="mt-4 text-[15px] leading-relaxed text-neutral-600 sm:text-[16px]">{body}</p>
+    </div>
   );
 }

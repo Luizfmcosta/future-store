@@ -6,7 +6,6 @@ import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { EyebrowPill } from "@/components/shared/EyebrowPill";
 import { HorizontalScroll } from "@/components/shared/HorizontalScroll";
 import { SectionTitle } from "@/components/shared/SectionTitle";
-import { useLocale } from "@/context/LocaleContext";
 import type { ComparisonCardModel, ComparisonFitKey } from "@/lib/recommendations";
 import { localizeProduct } from "@/lib/product-i18n";
 import { useT } from "@/lib/useT";
@@ -25,9 +24,8 @@ const FIT_KEY_TO_MSG: Record<ComparisonFitKey, string> = {
 };
 
 function ComparisonCard({ row }: { row: ComparisonCardModel }) {
-  const { locale } = useLocale();
   const t = useT();
-  const p = localizeProduct(row.product, locale);
+  const p = localizeProduct(row.product);
   const href = `/product/${row.product.id}`;
 
   return (

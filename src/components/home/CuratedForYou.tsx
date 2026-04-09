@@ -2,7 +2,6 @@
 
 import { AskImageButton } from "@/components/shared/AskImageButton";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
-import { useLocale } from "@/context/LocaleContext";
 import {
   getCuratedMarinaCardHeroOverride,
   getProductById,
@@ -174,7 +173,6 @@ function RicardoPickCard({ product }: { product: Product }) {
 export function CuratedForYou() {
   const profile = useDemoStore((s) => s.activeProfile);
   const experienceCtx = useShopperExperienceOptional();
-  const { locale } = useLocale();
   const t = useT();
 
   const isRicardoPromoFirstVisit =
@@ -184,24 +182,24 @@ export function CuratedForYou() {
 
   const pair = useMemo(() => {
     if (isRicardoPromoFirstVisit) {
-      return localizeProducts(getPromoTvsUnder(5000).slice(0, 2), locale);
+      return localizeProducts(getPromoTvsUnder(5000).slice(0, 2));
     }
     /* Marina: fixed pair matches curated card titles (Stage Compact + sub vs Stage Ultra surround). */
     if (profile === "marina") {
       const a = getProductById("sb-beam-g2");
       const b = getProductById("sp-home-theater");
       if (!a || !b) return [];
-      return localizeProducts([a, b], locale);
+      return localizeProducts([a, b]);
     }
     /* Ricardo: pair matches “around R$ 2.000” headline (portable + compact smart speaker). */
     if (profile === "ricardo") {
       const a = getProductById("sp-roam-2");
       const b = getProductById("sp-era-100");
       if (!a || !b) return [];
-      return localizeProducts([a, b], locale);
+      return localizeProducts([a, b]);
     }
     return [];
-  }, [profile, locale, isRicardoPromoFirstVisit]);
+  }, [profile, isRicardoPromoFirstVisit]);
 
   return (
     <section className="flex flex-col bg-white">

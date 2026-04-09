@@ -2,34 +2,45 @@
 
 import { CompareAlternativesWidget } from "@/components/pdp/CompareAlternativesWidget";
 import { CompatibilityWidget } from "@/components/pdp/CompatibilityWidget";
+import { PdpChatOverlay } from "@/components/pdp/PdpChatOverlay";
+import { PdpFixedBar } from "@/components/pdp/PdpFixedBar";
 import { FitInsightWidget } from "@/components/pdp/FitInsightWidget";
+import { PdpBackButton } from "@/components/pdp/PdpBackButton";
+import { PdpLeadColumn } from "@/components/pdp/PdpLeadColumn";
+import { PdpMediaGallery } from "@/components/pdp/PdpMediaGallery";
+import { PdpSection } from "@/components/pdp/PdpSection";
 import { PolicySummaryWidget } from "@/components/pdp/PolicySummaryWidget";
-import { ProductHero } from "@/components/pdp/ProductHero";
+import { ProductPdpFeatures } from "@/components/pdp/ProductPdpFeatures";
+import { ProductStorySection } from "@/components/pdp/ProductStorySection";
 import { ReviewSummaryWidget } from "@/components/pdp/ReviewSummaryWidget";
-import { useLocale } from "@/context/LocaleContext";
 import { getProductById } from "@/data/products";
-import { getProductByIdLocalized } from "@/lib/product-i18n";
 import { recordProductView } from "@/lib/shopperSignalsStorage";
 import { getPdpInsights } from "@/lib/recommendations";
 import { useT } from "@/lib/useT";
-import { cn } from "@/lib/utils";
 import { useDemoStore } from "@/store/demoStore";
-import { motion } from "framer-motion";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEffect } from "react";
-import { ArrowLeft, Search } from "lucide-react";
 
 export default function ProductPage() {
   const params = useParams<{ id: string }>();
-  const router = useRouter();
-  const { locale } = useLocale();
   const t = useT();
   const id = typeof params?.id === "string" ? params.id : "";
-  const product = id ? getProductByIdLocalized(id, locale) : undefined;
+  const product = id ? getProductById(id) : undefined;
   const profile = useDemoStore((s) => s.activeProfile);
   const aiMode = useDemoStore((s) => s.aiMode);
   const setSelected = useDemoStore((s) => s.setSelectedProduct);
-  const addToCart = useDemoStore((s) => s.addToCart);
+  const closePdpChatOverlay = useDemoStore((s) => s.closePdpChatOverlay);
+
+  useEffect(() => {
+    closePdpChatOverlay();
+  }, [id, closePdpChatOverlay]);
+
+  useEffect(() => {
+    return () => {
+      closePdpChatOverlay();
+    };
+  }, [closePdpChatOverlay]);
+
   useEffect(() => {
     if (!id) return;
     const p = getProductById(id);
@@ -51,73 +62,83 @@ export default function ProductPage() {
   const insights = getPdpInsights(profile, product);
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
-      <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden scroll-smooth scrollbar-none pb-4">
-        <div className="flex flex-col space-y-8">
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="inline-flex items-center gap-2 rounded-lg px-1 py-1 text-[13px] font-semibold text-stone-600 transition-colors duration-150 ease-out hover:bg-stone-100 hover:text-stone-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-stone-400/40"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              {t("pdp.back")}
-            </button>
-          </motion.div>
+    <div className="relative flex min-h-0 w-full flex-1 flex-col bg-white">
+      <div
+        data-pdp-scroll
+        className="min-h-0 flex-1 overflow-y-auto overflow-x-clip scroll-smooth scrollbar-none"
+      >
+        <div className="pb-[calc(5.75rem+env(safe-area-inset-bottom,0px))] sm:pb-[calc(6rem+env(safe-area-inset-bottom,0px))]">
+          <div className="max-w-3xl pt-6 sm:pt-9">
+            <div className="mb-3 sm:mb-4">
+              <PdpBackButton />
+            </div>
+          </div>
 
-          <ProductHero product={product} profile={profile} />
+          <div className="-mx-4 sm:-mx-6">
+            <PdpMediaGallery product={product} />
+          </div>
 
-          {aiMode ? (
-            <FitInsightWidget title={insights.idealTitle} body={insights.idealBody} />
-          ) : (
-            <div className="rounded-[1.75rem] border border-stone-200/90 bg-stone-50/90 p-5 text-[14px] text-stone-600">
-              <span className="font-medium text-stone-800">{t("pdp.recommendedFor")}</span>{" "}
+          <div className="mx-auto mt-8 max-w-2xl">
+            <PdpLeadColumn product={product} profile={profile} />
+          </div>
+
+          {!aiMode ? (
+            <div className="mx-auto mt-6 max-w-2xl text-[15px] leading-relaxed text-neutral-600">
+              <span className="font-medium text-neutral-900">{t("pdp.recommendedFor")}</span>{" "}
               {product.bestFor[0] ?? "—"}
             </div>
-          )}
-
-          {aiMode ? (
-            <CompareAlternativesWidget product={product} alt={insights.valueAlt} profile={profile} />
           ) : null}
 
-          <ReviewSummaryWidget product={product} profile={profile} />
+          <PdpSection>
+            <div className="mx-auto max-w-2xl">
+              <ProductPdpFeatures product={product} />
+            </div>
+          </PdpSection>
 
-          <PolicySummaryWidget product={product} />
+          <PdpSection>
+            <div className="mx-auto max-w-2xl">
+              <ProductStorySection product={product} />
+            </div>
+          </PdpSection>
 
-          <CompatibilityWidget product={product} />
+          {aiMode ? (
+            <PdpSection>
+              <div className="mx-auto max-w-2xl">
+                <FitInsightWidget title={insights.idealTitle} body={insights.idealBody} />
+              </div>
+            </PdpSection>
+          ) : null}
+
+          {aiMode ? (
+            <PdpSection>
+              <div className="mx-auto max-w-2xl">
+                <CompareAlternativesWidget product={product} alt={insights.valueAlt} profile={profile} />
+              </div>
+            </PdpSection>
+          ) : null}
+
+          <PdpSection>
+            <div className="mx-auto max-w-2xl">
+              <ReviewSummaryWidget product={product} profile={profile} />
+            </div>
+          </PdpSection>
+
+          <PdpSection>
+            <div className="mx-auto max-w-2xl">
+              <PolicySummaryWidget product={product} />
+            </div>
+          </PdpSection>
+
+          <PdpSection className="border-b-0">
+            <div className="mx-auto max-w-2xl">
+              <CompatibilityWidget product={product} />
+            </div>
+          </PdpSection>
         </div>
       </div>
 
-      <div className="relative z-20 shrink-0 border-t border-stone-200/90 bg-white/95 px-1 py-4 backdrop-blur-xl supports-[backdrop-filter]:bg-white/90 sm:px-2">
-        <div className="flex min-h-0 items-center gap-3">
-          <button
-            type="button"
-            onClick={() => router.push("/search")}
-            className={cn(
-              "inline-flex h-11 shrink-0 items-center justify-center gap-1 rounded-full border border-stone-200/90 bg-stone-50 text-[11px] font-semibold leading-none text-stone-700 shadow-sm transition hover:border-stone-300/90 hover:bg-stone-100",
-              locale === "pt-BR" ? "w-[6.75rem] px-3" : "w-[5.25rem] px-2.5",
-            )}
-          >
-            <Search className="size-3.5 shrink-0 opacity-90" strokeWidth={2} aria-hidden />
-            <span className="leading-none">{t("pdp.ask")}</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              if (product.category === "tv" || product.category === "speaker") {
-                addToCart(product.id);
-              } else {
-                router.push(`/product/sp-era-100`);
-              }
-            }}
-            className="inline-flex h-11 min-w-0 flex-1 items-center justify-center rounded-full bg-stone-900 px-4 text-[12px] font-semibold leading-none tracking-tight text-white transition hover:bg-stone-800"
-          >
-            {product.category === "tv" || product.category === "speaker"
-              ? t("pdp.addToCart")
-              : t("pdp.pairSpeakers")}
-          </button>
-        </div>
-      </div>
+      <PdpFixedBar product={product} />
+      <PdpChatOverlay product={product} />
     </div>
   );
 }
