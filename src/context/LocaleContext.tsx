@@ -37,7 +37,9 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<AppLocale>(DEFAULT_LOCALE);
 
   useEffect(() => {
-    setLocaleState(readStoredLocale());
+    queueMicrotask(() => {
+      setLocaleState(readStoredLocale());
+    });
   }, []);
 
   const setLocale = useCallback((next: AppLocale) => {

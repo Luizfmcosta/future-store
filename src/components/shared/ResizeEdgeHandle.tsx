@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 type ResizeEdgeHandleTheme = "rail-light" | "rail-dark" | "window" | "window-light";
 
@@ -29,7 +29,9 @@ export function ResizeEdgeHandle({
   visual = "grip",
 }: ResizeEdgeHandleProps) {
   const onDeltaRef = useRef(onDelta);
-  onDeltaRef.current = onDelta;
+  useEffect(() => {
+    onDeltaRef.current = onDelta;
+  }, [onDelta]);
 
   const startDrag = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {

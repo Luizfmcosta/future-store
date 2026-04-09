@@ -46,10 +46,10 @@ function useTopBarLogoOnDark(pathname: string) {
 
   useEffect(() => {
     if (!measureDarkHero) {
-      setOnDark(false);
+      queueMicrotask(() => setOnDark(false));
       return;
     }
-    measure();
+    queueMicrotask(() => measure());
     const main = document.querySelector<HTMLElement>("[data-storefront-window] main");
     if (main) {
       main.addEventListener("scroll", measure, { passive: true });

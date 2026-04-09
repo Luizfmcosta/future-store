@@ -107,22 +107,24 @@ export function SearchAiPanel() {
   }, []);
 
   useEffect(() => {
-    const q = currentQuery.trim();
-    if (!q) {
-      setMessages([]);
-      lastSeedKeyRef.current = null;
+    queueMicrotask(() => {
+      const q = currentQuery.trim();
+      if (!q) {
+        setMessages([]);
+        lastSeedKeyRef.current = null;
+        setScrollBump(0);
+        return;
+      }
+      const key = `${q}|${profile}|${locale}`;
+      if (lastSeedKeyRef.current === key) return;
+      lastSeedKeyRef.current = key;
       setScrollBump(0);
-      return;
-    }
-    const key = `${q}|${profile}|${locale}`;
-    if (lastSeedKeyRef.current === key) return;
-    lastSeedKeyRef.current = key;
-    setScrollBump(0);
-    const { text, products, sources } = assistantReplyForQuery(q, profile, true, locale);
-    setMessages([
-      { role: "user", content: q },
-      { role: "assistant", content: text, products, sources },
-    ]);
+      const { text, products, sources } = assistantReplyForQuery(q, profile, true, locale);
+      setMessages([
+        { role: "user", content: q },
+        { role: "assistant", content: text, products, sources },
+      ]);
+    });
   }, [currentQuery, profile, locale]);
 
   useEffect(() => {

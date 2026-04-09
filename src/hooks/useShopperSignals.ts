@@ -23,15 +23,17 @@ export function useShopperSignals(options: { incrementVisitOnMount?: boolean } =
   const [trafficChannel, setTrafficChannel] = useState<TrafficChannel>("direct");
 
   useEffect(() => {
-    const traffic = readOrCaptureTraffic();
-    setTrafficChannel(traffic.channel);
-    if (incrementVisitOnMount) {
-      const v = incrementVisitCount();
-      setVisitCount(v);
-    } else {
-      const v = getVisitCount();
-      setVisitCount(v > 0 ? v : 1);
-    }
+    queueMicrotask(() => {
+      const traffic = readOrCaptureTraffic();
+      setTrafficChannel(traffic.channel);
+      if (incrementVisitOnMount) {
+        const v = incrementVisitCount();
+        setVisitCount(v);
+      } else {
+        const v = getVisitCount();
+        setVisitCount(v > 0 ? v : 1);
+      }
+    });
   }, [incrementVisitOnMount]);
 
   return useMemo(

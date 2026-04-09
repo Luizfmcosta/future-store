@@ -17,7 +17,7 @@ export function HomeLoadingReveal() {
 
   useEffect(() => {
     const el = document.querySelector<HTMLElement>("[data-storefront-window]");
-    setHost(el);
+    queueMicrotask(() => setHost(el));
   }, []);
 
   useEffect(() => {
