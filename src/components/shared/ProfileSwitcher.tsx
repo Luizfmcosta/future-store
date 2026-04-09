@@ -13,7 +13,6 @@ import { cn } from "@/lib/utils";
 import type { ShopperProfileId } from "@/types";
 import { useDemoStore } from "@/store/demoStore";
 import { motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -36,6 +35,25 @@ const panelEase = [0.22, 1, 0.36, 1] as const;
 const caretMotion = {
   rotate: { duration: PANEL_MS / 1000, ease: panelEase },
 };
+
+/** Inline chevron — avoids Turbopack dev chunk issues with `lucide-react` per-icon modules. */
+function ProfileClusterChevronDown({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  );
+}
 
 /** Rótulo acessível do perfil ativo — repete o texto do pill selecionado (única ocorrência do nome). */
 export const TOPBAR_PROFILE_ACTIVE_LABEL_ID = "topbar-profile-active-label";
@@ -111,7 +129,7 @@ export function TopBarProfileCluster({ className }: { className?: string }) {
                 transition={caretMotion.rotate}
                 aria-hidden
               >
-                <ChevronDown className="size-3.5" strokeWidth={2} />
+                <ProfileClusterChevronDown className="size-3.5" />
               </motion.span>
             </button>
           </div>
