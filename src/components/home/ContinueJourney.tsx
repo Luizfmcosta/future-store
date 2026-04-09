@@ -3,7 +3,6 @@
 import { AskImageButton } from "@/components/shared/AskImageButton";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { EyebrowPill } from "@/components/shared/EyebrowPill";
-import { useLocale } from "@/context/LocaleContext";
 import { getProductByIdLocalized } from "@/lib/product-i18n";
 import { useT } from "@/lib/useT";
 import { cn, hasMediaUrl } from "@/lib/utils";
@@ -23,14 +22,13 @@ const fadeUp = {
 export function ContinueJourney() {
   const profile = useDemoStore((s) => s.activeProfile);
   const experienceCtx = useShopperExperienceOptional();
-  const { locale } = useLocale();
   const t = useT();
   /* Marina copy is always Stage/soundbar editorial; don’t pair it with “recent PDP” IDs. */
   const id =
     profile === "marina"
       ? "sb-beam-g2"
       : (experienceCtx?.continueProductId ?? "sp-era-300");
-  const product = getProductByIdLocalized(id, locale);
+  const product = getProductByIdLocalized(id);
   if (!product) return null;
 
   const heroSrc = hasMediaUrl(product.heroImage) ? product.heroImage : null;

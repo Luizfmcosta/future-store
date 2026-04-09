@@ -4,7 +4,6 @@ import { PromptContextBadges } from "@/components/search/PromptContextBadges";
 import { PromptSuggestionRow } from "@/components/search/PromptSuggestionRow";
 import { PromptInput, PromptInputTextarea } from "@/components/ui/prompt-input";
 import { PromptInputChatToolbar } from "@/components/search/PromptInputChatToolbar";
-import { useLocale } from "@/context/LocaleContext";
 import { getSearchResultsPath } from "@/lib/getSearchResultsPath";
 import { getPromptSuggestionPool } from "@/lib/promptSuggestions";
 import { useT } from "@/lib/useT";
@@ -18,7 +17,6 @@ const AI_FOLLOWUP_SELECTOR = "[data-ai-followup-input]";
 
 export function FloatingSearchDock() {
   const t = useT();
-  const { locale } = useLocale();
   const fileInputId = useId();
   const router = useRouter();
   const pathname = usePathname();
@@ -34,7 +32,7 @@ export function FloatingSearchDock() {
     [pathname, searchParams],
   );
 
-  const suggestionPool = useMemo(() => getPromptSuggestionPool(locale), [locale]);
+  const suggestionPool = useMemo(() => getPromptSuggestionPool(), []);
 
   const isPdp = pathname.startsWith("/product/");
   /** Chips only on non-SERP routes; hide after submit / on results (same route). */

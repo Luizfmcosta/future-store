@@ -1,8 +1,6 @@
 import { bundles as bundleDefs } from "@/data/bundles";
 import { getProductById } from "@/data/products";
 import { formatMessage, getMessage } from "@/lib/messages";
-import type { AppLocale } from "@/lib/locale-types";
-import { localizeProduct } from "@/lib/product-i18n";
 import type { Product } from "@/types";
 import type { ShopperProfileId } from "@/types";
 
@@ -25,15 +23,14 @@ const BUNDLE_DEF_I18N: Record<string, { titleKey: string; bodyKey: string }> = {
   "bnd-five-era300": { titleKey: "cart.bundleDefBndFiveEra300Title", bodyKey: "cart.bundleDefBndFiveEra300Body" },
 };
 
-function T(locale: AppLocale, path: string, params?: Record<string, string | number>): string {
-  const raw = getMessage(locale, path) ?? "";
+function T(path: string, params?: Record<string, string | number>): string {
+  const raw = getMessage(path) ?? "";
   return params ? formatMessage(raw, params) : raw;
 }
 
 export function getBundleOptions(
   profile: ShopperProfileId,
   tv: Product,
-  locale: AppLocale,
 ): {
   primary: BundleOption | null;
   premium: BundleOption | null;
@@ -48,8 +45,8 @@ export function getBundleOptions(
   const make = (def: (typeof bundleDefs)[0] | undefined, sb: Product | undefined): BundleOption | null => {
     if (!def || !sb) return null;
     const keys = BUNDLE_DEF_I18N[def.id];
-    const title = keys ? T(locale, keys.titleKey) : def.title;
-    const blurb = keys ? T(locale, keys.bodyKey) : def.blurb;
+    const title = keys ? T(keys.titleKey) : def.title;
+    const blurb = keys ? T(keys.bodyKey) : def.blurb;
     return {
       bundleId: def.id,
       title,
@@ -71,35 +68,33 @@ export function getBundleOptions(
     profile === "marina" && sbPremium
       ? ({
           bundleId: "virtual-premium",
-          title: T(locale, "cart.virtualPremiumMarinaTitle"),
+          title: T("cart.virtualPremiumMarinaTitle"),
           soundbar: sbPremium,
           savings: Math.min(400, Math.round(tv.price * 0.04)),
-          blurb: T(locale, "cart.virtualPremiumMarinaBlurb"),
+          blurb: T("cart.virtualPremiumMarinaBlurb"),
           comboPrice: tv.price + sbPremium.price - Math.min(400, Math.round(tv.price * 0.04)),
         } satisfies BundleOption)
       : sbPremium
         ? ({
             bundleId: "virtual-premium",
-            title: T(locale, "cart.virtualPremiumRicardoTitle"),
+            title: T("cart.virtualPremiumRicardoTitle"),
             soundbar: sbPremium,
             savings: 280,
-            blurb: T(locale, "cart.virtualPremiumRicardoBlurb"),
+            blurb: T("cart.virtualPremiumRicardoBlurb"),
             comboPrice: tv.price + sbPremium.price - 280,
           } satisfies BundleOption)
         : null;
 
   const cheaperSb = profile === "ricardo" ? sbPulse ?? sbEcho : sbEcho ?? sbPulse;
-  const cheaperSbLoc = cheaperSb ? localizeProduct(cheaperSb, locale) : undefined;
-  const cheaperName = cheaperSbLoc?.title.split("—")[0].trim() ?? "Trail Mini";
+  const cheaperName = cheaperSb?.title.split("—")[0].trim() ?? "Trail Mini";
   const cheaperOpt =
     cheaperSb && cheaperSb.id !== primaryOpt?.soundbar.id
       ? ({
           bundleId: "virtual-value",
-          title: T(locale, "cart.virtualCheaperTitle", { name: cheaperName }),
+          title: T("cart.virtualCheaperTitle", { name: cheaperName }),
           soundbar: cheaperSb,
           savings: 120,
           blurb: T(
-            locale,
             profile === "ricardo" ? "cart.virtualCheaperBlurbRicardo" : "cart.virtualCheaperBlurbMarina",
           ),
           comboPrice: tv.price + cheaperSb.price - 120,

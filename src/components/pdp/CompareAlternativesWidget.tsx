@@ -1,9 +1,9 @@
 "use client";
 
 import { AskImageButton } from "@/components/shared/AskImageButton";
-import { Card } from "@/components/shared/Card";
 import { EyebrowPill } from "@/components/shared/EyebrowPill";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
+import { useT } from "@/lib/useT";
 import { formatBRL, hasMediaUrl } from "@/lib/utils";
 import type { Product } from "@/types";
 import type { ShopperProfileId } from "@/types";
@@ -19,35 +19,33 @@ export function CompareAlternativesWidget({
   alt?: Product;
   profile: ShopperProfileId;
 }) {
+  const t = useT();
   if (!alt) return null;
 
   return (
-    <Card className="p-5 sm:p-6">
-      <EyebrowPill>Worth considering too</EyebrowPill>
-      <h3 className="mt-2 text-lg font-semibold text-stone-900">
+    <div>
+      <EyebrowPill>{t("pdp.compareEyebrow")}</EyebrowPill>
+      <h3 className="mt-4 text-xl font-light text-neutral-900 sm:text-2xl">
         {profile === "marina" ? "Compared to a path you might like" : "Lower monthly alternative"}
       </h3>
-      <div className="mt-4 flex gap-4 rounded-2xl border border-stone-200/90 bg-stone-50/90 p-3">
+      <div className="mt-8 flex gap-4 border border-black/[0.06] bg-[#fafafa] p-4 sm:p-5">
         <AskImageButton
           productLabel={alt.title}
           productId={alt.id}
-          className="h-20 w-28 shrink-0 overflow-hidden rounded-xl bg-[#f5f5f5]"
+          className="h-24 w-32 shrink-0 overflow-hidden rounded-xl bg-[#f5f5f5] sm:h-28 sm:w-36"
         >
           <div className="relative h-full w-full">
             {hasMediaUrl(alt.heroImage) ? (
-              <Image src={alt.heroImage} alt="" fill className="object-contain" sizes="112px" unoptimized />
+              <Image src={alt.heroImage} alt="" fill className="object-contain" sizes="144px" unoptimized />
             ) : (
-              <EmptyMediaSlot className="absolute inset-0 rounded-xl" />
+              <EmptyMediaSlot className="absolute inset-0" />
             )}
           </div>
         </AskImageButton>
-        <Link
-          href={`/product/${alt.id}`}
-          className="min-w-0 flex-1 rounded-xl transition-colors hover:bg-stone-100/80"
-        >
-          <p className="line-clamp-2 text-[14px] font-semibold leading-snug text-stone-900">{alt.title}</p>
-          <p className="mt-2 text-sm font-semibold text-stone-900">{formatBRL(alt.price)}</p>
-          <p className="mt-1 text-[12px] text-stone-500">
+        <Link href={`/product/${alt.id}`} className="min-w-0 flex-1 transition-opacity hover:opacity-90">
+          <p className="line-clamp-2 text-[15px] font-medium leading-snug text-neutral-900">{alt.title}</p>
+          <p className="mt-3 text-base font-semibold tabular-nums text-neutral-900">{formatBRL(alt.price)}</p>
+          <p className="mt-2 text-[13px] leading-relaxed text-neutral-600">
             {profile === "marina"
               ? alt.technology && product.technology
                 ? `What changes: ${alt.technology} vs ${product.technology} — ${alt.reviewStrengths[0]}`
@@ -56,6 +54,6 @@ export function CompareAlternativesWidget({
           </p>
         </Link>
       </div>
-    </Card>
+    </div>
   );
 }

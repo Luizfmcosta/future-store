@@ -12,9 +12,8 @@ import { PromptContextBadges } from "@/components/search/PromptContextBadges";
 import { PromptSuggestionRow } from "@/components/search/PromptSuggestionRow";
 import { PromptInputChatToolbar } from "@/components/search/PromptInputChatToolbar";
 import { PromptInput, PromptInputTextarea } from "@/components/ui/prompt-input";
-import { useLocale } from "@/context/LocaleContext";
 import { assistantReplyForQuery, type AssistantSource } from "@/lib/chatAssistant";
-import { getPromptSuggestionPool } from "@/lib/promptSuggestions";
+import { getChatFollowUpSuggestions, getPromptSuggestionPool } from "@/lib/promptSuggestions";
 import { ui } from "@/lib/ui-tokens";
 import { useT } from "@/lib/useT";
 import { cn } from "@/lib/utils";
@@ -82,7 +81,6 @@ function ReasoningLoading() {
 }
 
 export function SearchAiPanel() {
-  const { locale } = useLocale();
   const t = useT();
   const promptFileInputId = useId();
   const profile = useDemoStore((s) => s.activeProfile);
@@ -97,10 +95,11 @@ export function SearchAiPanel() {
   const lastSeedKeyRef = useRef<string | null>(null);
   const replyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const suggestionPool = useMemo(() => getPromptSuggestionPool(locale), [locale]);
+  const suggestionPool = useMemo(() => getPromptSuggestionPool(), []);
+  const chatFollowUps = useMemo(() => getChatFollowUpSuggestions(), []);
 
   const threadKey =
-    currentQuery.trim().length > 0 ? `${currentQuery.trim()}|${profile}|${locale}` : "empty";
+    currentQuery.trim().length > 0 ? `${currentQuery.trim()}|${profile}` : "empty";
 
   const bumpScroll = useCallback(() => {
     setScrollBump((n) => n + 1);
@@ -115,17 +114,17 @@ export function SearchAiPanel() {
         setScrollBump(0);
         return;
       }
-      const key = `${q}|${profile}|${locale}`;
+      const key = `${q}|${profile}`;
       if (lastSeedKeyRef.current === key) return;
       lastSeedKeyRef.current = key;
       setScrollBump(0);
-      const { text, products, sources } = assistantReplyForQuery(q, profile, true, locale);
+      const { text, products, sources } = assistantReplyForQuery(q, profile, true);
       setMessages([
         { role: "user", content: q },
         { role: "assistant", content: text, products, sources },
       ]);
     });
-  }, [currentQuery, profile, locale]);
+  }, [currentQuery, profile]);
 
   useEffect(() => {
     return () => {
@@ -148,13 +147,13 @@ export function SearchAiPanel() {
 
     if (replyTimerRef.current) clearTimeout(replyTimerRef.current);
     replyTimerRef.current = setTimeout(() => {
-      const { text: reply, products, sources } = assistantReplyForQuery(merged, profile, true, locale);
+      const { text: reply, products, sources } = assistantReplyForQuery(merged, profile, true);
       setMessages((prev) => [...prev, { role: "assistant", content: reply, products, sources }]);
       setReplying(false);
       replyTimerRef.current = null;
       bumpScroll();
     }, REASONING_MIN_MS);
-  }, [draft, profile, replying, locale, bumpScroll, clearPromptProductRefs]);
+  }, [draft, profile, replying, bumpScroll, clearPromptProductRefs]);
 
   return (
     <div className="relative flex min-h-0 flex-1 flex-col">
@@ -190,7 +189,13 @@ export function SearchAiPanel() {
                       <div className="space-y-7 text-[15px] leading-[1.65] text-stone-800 sm:leading-[1.7]">
                         <p className="whitespace-pre-wrap text-pretty">{m.content}</p>
                         <ChatAssistantSources sources={m.sources} />
-                        <ChatProductResults products={m.products} profile={profile} />
+                        <ChatProductResults
+                          products={m.products}
+                          profile={profile}
+                          followUpSuggestions={chatFollowUps}
+                          onFollowUp={setDraft}
+                          followUpDisabled={replying}
+                        />
                       </div>
                     </MessageContent>
                   </Message>

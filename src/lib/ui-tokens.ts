@@ -108,9 +108,10 @@ export const ui = {
     /**
      * Pill kicker on white — same as `<EyebrowPill />` (e.g. ContinueJourney “A strong foundation”).
      * Prefer the component; this string is the single source of truth for class names.
+     * Do not replace with `uppercase` + wide `tracking-*` — that is not our storefront eyebrow.
      */
     eyebrowPill:
-      "inline-flex w-fit items-center rounded-full bg-[#f0f0f0] px-3 py-1 text-[11px] font-normal tracking-[0.1px] text-[#666]",
+      "inline-flex w-fit max-w-full items-center rounded-full bg-[#f0f0f0] px-3 py-1 text-[11px] font-normal tracking-[0.1px] text-[#666]",
     sectionTitle: "text-lg font-semibold leading-tight tracking-tight text-stone-900 sm:text-xl",
     label: "text-[12px] font-medium text-stone-600",
     cardTitle: "text-[14px] font-semibold leading-snug text-stone-900",

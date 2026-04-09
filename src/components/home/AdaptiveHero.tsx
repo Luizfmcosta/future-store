@@ -1,7 +1,6 @@
 "use client";
 
 import { RicardoPromoHero } from "@/components/home/RicardoPromoHero";
-import { useLocale } from "@/context/LocaleContext";
 import { heroCopy } from "@/lib/copy";
 import { STOREFRONT_HERO_VIDEO_SRC } from "@/lib/storefrontHeroVideo";
 import { useDemoStore } from "@/store/demoStore";
@@ -17,8 +16,7 @@ const child = {
 
 export function AdaptiveHero() {
   const profile = useDemoStore((s) => s.activeProfile);
-  const { locale } = useLocale();
-  const copy = heroCopy(profile, locale);
+  const copy = heroCopy(profile);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {

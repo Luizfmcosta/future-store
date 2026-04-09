@@ -1,25 +1,15 @@
 import { formatMessage, getMessage } from "@/lib/messages";
-import type { AppLocale } from "@/lib/locale-types";
-import { localizeProduct } from "@/lib/product-i18n";
 import type { Product } from "@/types";
 
-const QUICK_SEARCHES: Record<AppLocale, string[]> = {
-  "pt-BR": [
-    "Caixa sem fio para sala de 3 m, melhor custo-benefício",
-    "Horizon One ou Trail Mini",
-    "Som espacial Dolby Atmos portátil",
-    "Trail Max para área externa",
-  ],
-  "en-US": [
-    "Wireless speaker for a 3m living room, best value",
-    "Horizon One vs Trail Mini",
-    "Spatial audio smart speaker under 5000",
-    "Trail Max for patio listening",
-  ],
-};
+const QUICK_SEARCHES: string[] = [
+  "Wireless speaker for a 3m living room, best value",
+  "Horizon One vs Trail Mini",
+  "Spatial audio smart speaker under 5000",
+  "Trail Max for patio listening",
+];
 
-export function getQuickSearchQueries(locale: AppLocale): string[] {
-  return QUICK_SEARCHES[locale];
+export function getQuickSearchQueries(): string[] {
+  return QUICK_SEARCHES;
 }
 
 export type SearchCategoryRow = {
@@ -28,30 +18,30 @@ export type SearchCategoryRow = {
   hint: string;
 };
 
-export function getSearchCategoryRows(locale: AppLocale): SearchCategoryRow[] {
+export function getSearchCategoryRows(): SearchCategoryRow[] {
   return [
     {
       key: "speaker",
-      label: getMessage(locale, "searchCategories.speaker") ?? "Speakers",
-      hint: getMessage(locale, "searchCategories.speakerHint") ?? "",
+      label: getMessage("searchCategories.speaker") ?? "Speakers",
+      hint: getMessage("searchCategories.speakerHint") ?? "",
     },
     {
       key: "soundbar",
-      label: getMessage(locale, "searchCategories.soundbar") ?? "",
-      hint: getMessage(locale, "searchCategories.soundbarHint") ?? "",
+      label: getMessage("searchCategories.soundbar") ?? "",
+      hint: getMessage("searchCategories.soundbarHint") ?? "",
     },
     {
       key: "accessory",
-      label: getMessage(locale, "searchCategories.accessory") ?? "",
-      hint: getMessage(locale, "searchCategories.accessoryHint") ?? "",
+      label: getMessage("searchCategories.accessory") ?? "",
+      hint: getMessage("searchCategories.accessoryHint") ?? "",
     },
   ];
 }
 
-export function buildPdpQuickChips(product: Product, locale: AppLocale): string[] {
-  const p = localizeProduct(product, locale);
+export function buildPdpQuickChips(product: Product): string[] {
+  const p = product;
   const t = (path: string, params?: Record<string, string | number>) => {
-    const raw = getMessage(locale, path) ?? path;
+    const raw = getMessage(path) ?? path;
     return params ? formatMessage(raw, params) : raw;
   };
 

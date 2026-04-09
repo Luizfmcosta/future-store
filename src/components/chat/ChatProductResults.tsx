@@ -4,7 +4,6 @@ import { AskImageButton } from "@/components/shared/AskImageButton";
 import { Card } from "@/components/shared/Card";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { EyebrowPill } from "@/components/shared/EyebrowPill";
-import { useLocale } from "@/context/LocaleContext";
 import { localizeProduct } from "@/lib/product-i18n";
 import { useT } from "@/lib/useT";
 import { ui } from "@/lib/ui-tokens";
@@ -17,15 +16,22 @@ import Link from "next/link";
 export function ChatProductResults({
   products,
   profile,
+  followUpSuggestions,
+  onFollowUp,
+  followUpDisabled,
 }: {
   products: Product[];
   profile: ShopperProfileId;
+  /** Shown as chips below top matches; fills the composer when clicked. */
+  followUpSuggestions?: readonly string[];
+  onFollowUp?: (text: string) => void;
+  followUpDisabled?: boolean;
 }) {
-  const { locale } = useLocale();
   const t = useT();
   if (products.length === 0) return null;
 
   const shown = products.slice(0, 4);
+  const followUps = followUpSuggestions?.length ? followUpSuggestions : [];
 
   return (
     <div className="w-full min-w-0 space-y-2">
@@ -37,7 +43,7 @@ export function ChatProductResults({
       >
         <ul className="flex w-max list-none items-stretch gap-3 pb-1 pr-1 pt-0.5">
           {shown.map((raw) => {
-            const p = localizeProduct(raw, locale);
+            const p = localizeProduct(raw);
             return (
               <li
                 key={p.id}
@@ -49,6 +55,39 @@ export function ChatProductResults({
           })}
         </ul>
       </div>
+
+      {onFollowUp && followUps.length > 0 ? (
+        <div className="space-y-2 pt-3">
+          <EyebrowPill id="chat-followup-heading">{t("searchAiPanel.followUpHeading")}</EyebrowPill>
+          <div className="min-w-0 overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch] scrollbar-none">
+            <ul
+              role="list"
+              aria-labelledby="chat-followup-heading"
+              className="flex w-max list-none gap-1.5 pb-1 pr-1 pt-0.5 sm:gap-2"
+            >
+              {followUps.map((text) => (
+                <li key={text} className="shrink-0">
+                  <button
+                    type="button"
+                    title={text}
+                    disabled={followUpDisabled}
+                    onClick={() => onFollowUp(text)}
+                    className={cn(
+                      "max-w-[min(85vw,22rem)] truncate rounded-full border border-stone-200/95 bg-white px-2.5 py-1 text-left text-[11px] font-medium text-stone-800 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-colors hover:bg-stone-50",
+                      "sm:max-w-[min(75vw,24rem)] sm:px-3 sm:py-1.5 sm:text-xs",
+                      ui.home.focusRing,
+                      "focus-visible:ring-offset-2",
+                      followUpDisabled && "pointer-events-none opacity-50",
+                    )}
+                  >
+                    {text}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -29,6 +29,9 @@ type DemoState = {
   compareSelection: string[];
   currentScreen: ScreenId;
   cartLineId: string | null;
+  cartQuantity: number;
+  /** PDP: AI chat sheet over the product page (not full-screen search). */
+  pdpChatOverlayOpen: boolean;
 
   setParsedIntent: (intent: SearchIntent | null) => void;
   setProfile: (id: ShopperProfileId) => void;
@@ -39,11 +42,13 @@ type DemoState = {
   addPromptProductRef: (ref: { productId?: string; label: string }) => void;
   removePromptProductRef: (key: string) => void;
   clearPromptProductRefs: () => void;
-  runSearch: (q?: string) => void;
+  runSearch: (q?: string, options?: { stayOnPdp?: boolean }) => void;
+  openPdpChatOverlay: () => void;
+  closePdpChatOverlay: () => void;
   setSelectedProduct: (id: string | null) => void;
   openCart: () => void;
   closeCart: () => void;
-  addToCart: (productId: string) => void;
+  addToCart: (productId: string, quantity?: number) => void;
   setPresenterOpen: (v: boolean) => void;
   togglePresenter: () => void;
   setRefineOpen: (v: boolean) => void;
@@ -72,6 +77,8 @@ export const useDemoStore = create<DemoState>()(
   compareSelection: [],
   currentScreen: "home",
   cartLineId: null,
+  cartQuantity: 1,
+  pdpChatOverlayOpen: false,
 
   setParsedIntent: (intent) => set({ parsedIntent: intent }),
   setProfile: (id) => set({ activeProfile: id }),
@@ -92,25 +99,29 @@ export const useDemoStore = create<DemoState>()(
       promptProductRefs: state.promptProductRefs.filter((r) => r.key !== key),
     })),
   clearPromptProductRefs: () => set({ promptProductRefs: [] }),
-  runSearch: (q) => {
+  runSearch: (q, options) => {
     const text = (q ?? get().currentQuery).trim();
     const refs = get().promptProductRefs;
     if (!text && !refs.length) return;
     const merged = mergePromptRefsIntoQuery(text, refs);
+    const stayOnPdp = Boolean(options?.stayOnPdp && get().selectedProductId);
     set({
       /** Mesma string que o intent e o painel Chat — senão “Ask” só com chip deixava `currentQuery` vazio e o Chat em branco. */
       currentQuery: merged,
       promptProductRefs: [],
       parsedIntent: parseIntent(merged),
-      currentScreen: "search",
+      currentScreen: stayOnPdp ? "pdp" : "search",
     });
   },
+  openPdpChatOverlay: () => set({ pdpChatOverlayOpen: true }),
+  closePdpChatOverlay: () => set({ pdpChatOverlayOpen: false }),
   setSelectedProduct: (id) => set({ selectedProductId: id, currentScreen: id ? "pdp" : get().currentScreen }),
   openCart: () => set({ cartDrawerOpen: true }),
   closeCart: () => set({ cartDrawerOpen: false }),
-  addToCart: (productId) =>
+  addToCart: (productId, quantity = 1) =>
     set({
       cartLineId: productId,
+      cartQuantity: Math.min(99, Math.max(1, Math.floor(quantity))),
       cartDrawerOpen: true,
       selectedProductId: productId,
     }),
@@ -135,6 +146,8 @@ export const useDemoStore = create<DemoState>()(
       compareSelection: [],
       currentScreen: "home",
       cartLineId: null,
+      cartQuantity: 1,
+      pdpChatOverlayOpen: false,
     }),
   presetSearch: () => {
     const query = DEFAULT_QUERY;

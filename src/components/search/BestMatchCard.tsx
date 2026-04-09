@@ -4,7 +4,6 @@ import { AskImageButton } from "@/components/shared/AskImageButton";
 import { Card } from "@/components/shared/Card";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { EyebrowPill } from "@/components/shared/EyebrowPill";
-import { useLocale } from "@/context/LocaleContext";
 import { localizeProduct } from "@/lib/product-i18n";
 import { useT } from "@/lib/useT";
 import { ui } from "@/lib/ui-tokens";
@@ -24,11 +23,10 @@ export function BestMatchCard({
   profile: ShopperProfileId;
   aiMode: boolean;
 }) {
-  const { locale } = useLocale();
   const t = useT();
   if (!product) return null;
 
-  const p = localizeProduct(product, locale);
+  const p = localizeProduct(product);
   const detailMarina =
     p.technology && p.inches
       ? `${p.technology} · ${p.inches}" · ${p.compatibilityTags.slice(0, 2).join(" · ")}`

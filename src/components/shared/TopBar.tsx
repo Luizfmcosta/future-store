@@ -77,6 +77,7 @@ export function TopBar({ className }: TopBarProps) {
 
   const isSearchPage = pathname === "/search";
   const searchView = isSearchPage ? getSearchViewParam(searchParams) : "results";
+  const isPdp = pathname.startsWith("/product/");
 
   const logo = (
     <Link
@@ -159,6 +160,8 @@ export function TopBar({ className }: TopBarProps) {
           isSearchPage
             ? "flex w-full items-center gap-x-2 px-4 py-3.5 sm:gap-x-3 sm:px-6 sm:py-4"
             : "flex w-full items-center justify-between px-4 py-3.5 sm:px-6 sm:py-4",
+          isPdp &&
+            "border-b border-black/[0.06] bg-white/72 shadow-[0_8px_32px_rgba(15,23,42,0.06)] backdrop-blur-xl backdrop-saturate-150",
         )}
       >
         {isSearchPage ? (
