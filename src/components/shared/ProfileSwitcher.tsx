@@ -13,14 +13,14 @@ import { cn } from "@/lib/utils";
 import type { ShopperProfileId } from "@/types";
 import { useDemoStore } from "@/store/demoStore";
 import { motion } from "framer-motion";
-import { ChevronUp } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
 const profileTagKeys = ["tag1", "tag2", "tag3"] as const;
 
-/** Só avatares na faixa — o mais estreito possível. */
-const profileTopClusterWidthCollapsed = "w-[min(120px,calc(100vw-2rem))]";
+/** Avatares empilhados — coluna estreita para não invadir o logo da loja no TopBar. */
+const profileTopClusterWidthCollapsed = "w-[min(2.75rem,calc(100vw-2rem))]";
 /** Foto + bio — largura “cheia” como antes. */
 const profileTopClusterWidthExpanded = "w-[min(248px,calc(100vw-2rem))]";
 
@@ -47,22 +47,20 @@ function TopBarProfileInitialsMark({
 }: {
   id: ShopperProfileId;
   active: boolean;
+  /** `true`: preenche o botão `size-8` da coluna. `false`: disco `size-8` na linha expandida — mesma pintura nos dois. */
   compact: boolean;
 }) {
-  /** Colapsado + ativo: o fundo vem do botão circular (`segmentActive`), só o texto aqui. */
-  const collapsedActive = compact && active;
+  /**
+   * Ativo: disco sólido + branco. Inativo: fundo mais escuro, texto bem apagado — leitura clara de “desligado”.
+   */
   return (
     <span
       className={cn(
-        "relative flex shrink-0 items-center justify-center rounded-full font-semibold tabular-nums leading-none ring-1 ring-inset",
-        compact ? "size-full min-h-0 text-[13px]" : "size-7 bg-[#2a2a2c] text-[11px]",
-        collapsedActive
-          ? "bg-transparent ring-0 text-white"
-          : compact
-            ? "bg-[#2a2a2c] ring-white/[0.08] text-[#c4c4c8]"
-            : active
-              ? "ring-white/25 text-white"
-              : "ring-white/[0.08] text-[#c4c4c8]",
+        "relative flex shrink-0 items-center justify-center rounded-full font-semibold tabular-nums leading-none text-[13px]",
+        compact ? "size-full min-h-0" : "size-8",
+        active
+          ? "bg-[#323234] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.07)]"
+          : "bg-[#141418] text-[#5c5c62] ring-1 ring-inset ring-white/[0.07]",
       )}
       aria-hidden
     >
@@ -71,7 +69,7 @@ function TopBarProfileInitialsMark({
   );
 }
 
-/** Pills + detalhe do perfil num único bloco (mesmo chrome). Ancorado no canto inferior: detalhe abre para cima; caret acima dos pills; pills no fundo. */
+/** Pills + detalhe do perfil num único bloco (mesmo chrome). Ancorado no canto superior: pills em cima; detalhe expande para baixo. */
 export function TopBarProfileCluster({ className }: { className?: string }) {
   const t = useT();
   const [expanded, setExpanded] = useState(false);
@@ -95,8 +93,29 @@ export function TopBarProfileCluster({ className }: { className?: string }) {
         <span id={TOPBAR_PROFILE_ACTIVE_LABEL_ID} className="sr-only">
           {shopperDisplayName(activeProfile)}
         </span>
-        <div className="flex flex-col overflow-hidden">
-          {/* grid 0fr↔1fr: detalhe no topo; com painel fixo no rodapé da viewport, o crescimento vai para cima. */}
+        <div className="flex flex-col overflow-hidden pt-1">
+          <ProfileSwitcher variant="topBar" topBarStripCollapsed={!expanded} />
+          <div className="flex justify-center px-2 py-0.5">
+            <button
+              type="button"
+              className={toggleBtnClass}
+              aria-expanded={expanded}
+              aria-controls={expanded ? "profile-detail-body" : undefined}
+              aria-label={expanded ? t("profileCard.ariaCollapse") : t("profileCard.ariaExpand")}
+              onClick={() => setExpanded((v) => !v)}
+            >
+              <motion.span
+                className="inline-flex will-change-transform"
+                initial={false}
+                animate={{ rotate: expanded ? 180 : 0 }}
+                transition={caretMotion.rotate}
+                aria-hidden
+              >
+                <ChevronDown className="size-3.5" strokeWidth={2} />
+              </motion.span>
+            </button>
+          </div>
+          {/* grid 0fr↔1fr: detalhe abaixo dos pills; o crescimento vai para baixo. */}
           <div
             className={cn(
               "grid overflow-hidden transition-[grid-template-rows] [transition-duration:var(--panel-ms)] [transition-timing-function:cubic-bezier(0.22,1,0.36,1)]",
@@ -111,7 +130,7 @@ export function TopBarProfileCluster({ className }: { className?: string }) {
               )}
               aria-hidden={!expanded}
             >
-              <div className="flex flex-col gap-3 px-3.5 pb-2.5 pt-4 sm:pt-5">
+              <div className="flex flex-col gap-3 px-3.5 pb-4 pt-2.5 sm:pb-5">
                 <span className="relative block aspect-square w-[7.25rem] max-w-full shrink-0 overflow-hidden rounded-2xl bg-[#1a1a1a] ring-1 ring-white/[0.08]">
                   <Image
                     src={SHOPPER_PORTRAIT[activeProfile]}
@@ -143,27 +162,6 @@ export function TopBarProfileCluster({ className }: { className?: string }) {
               </div>
             </div>
           </div>
-          <div className="flex justify-center px-2 py-0.5">
-            <button
-              type="button"
-              className={toggleBtnClass}
-              aria-expanded={expanded}
-              aria-controls={expanded ? "profile-detail-body" : undefined}
-              aria-label={expanded ? t("profileCard.ariaCollapse") : t("profileCard.ariaExpand")}
-              onClick={() => setExpanded((v) => !v)}
-            >
-              <motion.span
-                className="inline-flex will-change-transform"
-                initial={false}
-                animate={{ rotate: expanded ? 180 : 0 }}
-                transition={caretMotion.rotate}
-                aria-hidden
-              >
-                <ChevronUp className="size-3.5" strokeWidth={2} />
-              </motion.span>
-            </button>
-          </div>
-          <ProfileSwitcher variant="topBar" topBarStripCollapsed={!expanded} />
         </div>
       </section>
     </div>
@@ -270,13 +268,13 @@ export function ProfileSwitcher({
   const pillShell =
     "flex rounded-full border border-white/[0.06] bg-[#0c0e12]/70 p-0.5 backdrop-blur-md";
 
-  /** Círculos fixos (não pill esticada): mesmo tamanho da marca de iniciais. */
   const topBarBtnCollapsed = cn(
     "relative z-10 flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full p-0 outline-none transition-colors duration-200",
     ui.floatingChrome.segmentFocus,
   );
+  /** Pills em coluna: cada linha ocupa a largura inteira (iniciais + nome). */
   const topBarBtnExpanded = cn(
-    "relative z-10 flex min-w-0 flex-1 basis-0 flex-row items-center justify-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-medium outline-none transition-colors duration-200 sm:px-2.5 sm:text-[12px]",
+    "relative z-10 flex w-full min-w-0 shrink-0 flex-row items-center justify-start gap-1.5 rounded-full px-2 py-1 text-[11px] font-medium outline-none transition-colors duration-200 sm:px-2.5 sm:py-1.5 sm:text-[12px]",
     ui.floatingChrome.segmentFocus,
   );
 
@@ -288,14 +286,14 @@ export function ProfileSwitcher({
       : "rounded-full px-2 py-1 text-[10px] font-semibold tracking-tight transition-colors sm:px-3 sm:py-1.5 sm:text-[12px]";
 
   if (variant === "topBar") {
-    /* Uma faixa só: o vidro/blur vem do `clusterShell` no `TopBarProfileCluster`. */
+    /* Coluna de avatares: o vidro/blur vem do `clusterShell` no `TopBarProfileCluster`. */
     return (
       <div className={cn("w-full min-w-0", className)}>
         <div
           className={cn(
-            ui.glassChrome.fillPillTrackCluster,
-            "w-full overflow-hidden rounded-full",
-            topBarStripCollapsed && "items-center justify-center gap-1.5",
+            /* Sem segundo fundo — o vidro único vem do `clusterShell` no `TopBarProfileCluster`. */
+            "relative flex w-full min-w-0 flex-col flex-nowrap items-stretch gap-1.5 overflow-hidden p-1 scrollbar-none",
+            topBarStripCollapsed && "items-center",
           )}
           role="group"
           aria-label="Profile"
@@ -312,7 +310,11 @@ export function ProfileSwitcher({
                 onClick={() => setProfile(id)}
                 className={cn(
                   btnClass,
-                  active ? ui.floatingChrome.segmentActive : ui.floatingChrome.segmentInactive,
+                  active && !topBarStripCollapsed && ui.floatingChrome.segmentActive,
+                  !active && ui.floatingChrome.segmentInactive,
+                  !active &&
+                    !topBarStripCollapsed &&
+                    "bg-white/[0.04] hover:bg-white/[0.07]",
                 )}
               >
                 {topBarStripCollapsed ? (
@@ -320,7 +322,7 @@ export function ProfileSwitcher({
                 ) : (
                   <>
                     <TopBarProfileInitialsMark id={id} active={active} compact={false} />
-                    <span className="min-w-0 truncate">{name}</span>
+                    <span className="min-w-0 flex-1 truncate text-left">{name}</span>
                   </>
                 )}
               </button>

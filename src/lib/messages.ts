@@ -402,7 +402,6 @@ export const messages: Record<string, string | Record<string, string | Record<st
       notFound: "Product not found.",
       pairTvs: "Pair with soundbars",
       pairSpeakers: "Pair with speakers",
-      recommendedFor: "Recommended for:",
       descriptionHeading: "About this product",
       colorLabel: "Color",
       quantityLabel: "Quantity",

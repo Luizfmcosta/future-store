@@ -4,8 +4,8 @@ export const STOREFRONT_WIDTH = {
   min: 340,
   /** Drag + CSS `max-w` on the frame (`AppShell`) — keep in sync. */
   max: 1680,
-  /** Initial frame width on md+ — matches mobile preset so the demo loads in “phone” mode. */
-  default: 390,
+  /** Initial frame width on md+ — matches desktop preset so the demo loads wide by default. */
+  default: 1440,
   /** ~iPhone 14 Pro width */
   presetMobile: 390,
   /** Wide desktop preview (monitor preset) — comfortable on large monitors without browser zoom. */

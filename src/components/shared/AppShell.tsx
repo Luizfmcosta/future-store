@@ -212,8 +212,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       <div
         className={cn(
-          /* Above storefront portal (z-[100]) so external chrome stays on top of side sheets. */
-          "pointer-events-auto fixed right-4 z-[110] hidden md:flex items-center",
+          /* Above storefront portal (z-[100]) + home splash (z-[200]). */
+          "pointer-events-auto fixed right-4 z-[220] hidden md:flex items-center",
           "top-[max(1rem,env(safe-area-inset-top))]",
         )}
         role="group"
@@ -276,7 +276,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </div>
 
       <div
-        className="pointer-events-auto fixed right-4 z-[110] bottom-[max(1rem,env(safe-area-inset-bottom))]"
+        className="pointer-events-auto fixed left-4 z-[220] top-[max(1rem,env(safe-area-inset-top))]"
         role="group"
         aria-label={t("appShell.profileSwitcherGroup")}
       >

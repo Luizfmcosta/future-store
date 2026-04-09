@@ -28,7 +28,7 @@ export function ReviewSummaryWidget({ product, profile }: { product: Product; pr
       <h3 className="mt-8 text-xl font-light text-neutral-900 sm:text-2xl">
         {profile === "marina" ? t("pdp.reviewAngleMarina") : t("pdp.reviewAngleRicardo")}
       </h3>
-      <div className="mt-8 grid gap-10 sm:grid-cols-2 sm:gap-12">
+      <div className="mt-8 grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-12">
         <div>
           <p className={ui.home.label}>{t("pdp.reviewStrengthsLabel")}</p>
           <ul className="mt-4 space-y-3 text-[14px] leading-relaxed text-neutral-700">

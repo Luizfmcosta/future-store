@@ -87,7 +87,7 @@ export function AIVisionOverlay() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.25 }}
-        className="pointer-events-auto absolute inset-0 z-[85] flex flex-col justify-end p-0 sm:flex-row sm:items-center sm:justify-end sm:p-4"
+        className="pointer-events-auto absolute inset-0 z-[85] flex flex-col justify-end px-2.5 pb-0 pt-0 sm:flex-row sm:items-center sm:justify-end sm:p-4"
         role="dialog"
         aria-modal="true"
         aria-labelledby="ai-vision-title"

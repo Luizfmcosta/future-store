@@ -60,30 +60,32 @@ export function PdpChatOverlay({ product }: { product: Product }) {
           aria-label={t("pdp.chatCloseAria")}
           onClick={onClose}
         />
-        <div
-          className={cn(
-            "relative mt-auto flex h-[min(85dvh,720px)] w-full flex-col overflow-hidden rounded-t-[1.25rem] bg-white shadow-[0_-8px_40px_rgba(0,0,0,0.12)]",
-            "pb-[env(safe-area-inset-bottom,0px)]",
-          )}
-        >
-          <div className="flex shrink-0 items-center justify-between border-b border-neutral-200/90 px-4 py-3.5 sm:px-5">
-            <h2 id="pdp-chat-title" className="text-[15px] font-semibold tracking-tight text-neutral-900">
-              {t("pdp.chatOverlayTitle")}
-            </h2>
-            <button
-              type="button"
-              onClick={onClose}
-              className={cn(
-                "rounded-full p-2 text-neutral-500 transition hover:bg-neutral-100 hover:text-neutral-900",
-                ui.home.focusRing,
-              )}
-              aria-label={t("pdp.chatCloseAria")}
-            >
-              <X className="size-5" strokeWidth={2} />
-            </button>
-          </div>
-          <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-            <SearchAiPanel />
+        <div className="relative mt-auto w-full px-2.5 pb-0 pt-0 sm:px-4">
+          <div
+            className={cn(
+              "flex h-[min(85dvh,720px)] w-full flex-col overflow-hidden rounded-t-[1.35rem] bg-white shadow-[0_-8px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/[0.04]",
+              "pb-[env(safe-area-inset-bottom,0px)]",
+            )}
+          >
+            <div className="flex shrink-0 items-center justify-between border-b border-neutral-200/90 px-4 py-3.5 sm:px-5">
+              <h2 id="pdp-chat-title" className="text-[15px] font-semibold tracking-tight text-neutral-900">
+                {t("pdp.chatOverlayTitle")}
+              </h2>
+              <button
+                type="button"
+                onClick={onClose}
+                className={cn(
+                  "rounded-full p-2 text-neutral-500 transition hover:bg-neutral-100 hover:text-neutral-900",
+                  ui.home.focusRing,
+                )}
+                aria-label={t("pdp.chatCloseAria")}
+              >
+                <X className="size-5" strokeWidth={2} />
+              </button>
+            </div>
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+              <SearchAiPanel />
+            </div>
           </div>
         </div>
       </div>
