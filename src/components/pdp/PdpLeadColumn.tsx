@@ -4,7 +4,7 @@ import { ProductColorSwatches } from "@/components/pdp/ProductColorSwatches";
 import { ReviewStars } from "@/components/pdp/ReviewStars";
 import { EyebrowPill } from "@/components/shared/EyebrowPill";
 import { useT } from "@/lib/useT";
-import { formatBRL } from "@/lib/utils";
+import { cn, formatBRL } from "@/lib/utils";
 import type { Product, ShopperProfileId } from "@/types";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -21,9 +21,11 @@ function firstSentence(text: string): string {
 export function PdpLeadColumn({
   product,
   profile,
+  className,
 }: {
   product: Product;
   profile: ShopperProfileId;
+  className?: string;
 }) {
   const t = useT();
   const [colorKey, setColorKey] = useState(() => product.colorOptions?.[0]?.labelKey ?? "");
@@ -36,7 +38,7 @@ export function PdpLeadColumn({
   const tagline = firstSentence(product.description);
 
   return (
-    <div className="space-y-4 pt-2 sm:space-y-6 sm:pt-4">
+    <div className={cn("space-y-4 pt-2 sm:space-y-6 sm:pt-4 lg:space-y-5", className)}>
       <EyebrowPill>{product.brand}</EyebrowPill>
       <h1 className="text-[1.875rem] font-light leading-[1.12] tracking-tight text-neutral-900 sm:text-[2.75rem] sm:leading-[1.08]">
         {product.title}

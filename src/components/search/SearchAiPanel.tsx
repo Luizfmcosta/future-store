@@ -21,6 +21,7 @@ import { mergePromptRefsIntoQuery } from "@/lib/promptProductRefs";
 import { useDemoStore } from "@/store/demoStore";
 import type { Product } from "@/types";
 import { Bot } from "lucide-react";
+import { createPortal } from "react-dom";
 import { useStickToBottomContext } from "use-stick-to-bottom";
 import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 
@@ -80,7 +81,14 @@ function ReasoningLoading() {
   );
 }
 
-export function SearchAiPanel() {
+export function SearchAiPanel({
+  variant = "default",
+  composerHostEl,
+}: {
+  /** `pdp`: thread stays in the assistant card; composer is portaled to `composerHostEl` below the card. */
+  variant?: "default" | "pdp";
+  composerHostEl?: HTMLDivElement | null;
+} = {}) {
   const t = useT();
   const promptFileInputId = useId();
   const profile = useDemoStore((s) => s.activeProfile);
@@ -132,6 +140,8 @@ export function SearchAiPanel() {
     };
   }, []);
 
+  const isPdp = variant === "pdp";
+
   const onSend = useCallback(() => {
     const text = draft.trim();
     const refs = useDemoStore.getState().promptProductRefs;
@@ -155,6 +165,139 @@ export function SearchAiPanel() {
     }, REASONING_MIN_MS);
   }, [draft, profile, replying, bumpScroll, clearPromptProductRefs]);
 
+  const composerInner = (
+    <>
+      <PromptSuggestionRow
+        query={draft}
+        pool={suggestionPool}
+        onSelect={setDraft}
+        disabled={replying}
+      />
+      <PromptInput
+        value={draft}
+        onValueChange={setDraft}
+        onSubmit={onSend}
+        maxHeight={160}
+        disabled={replying}
+        className={cn(
+          ui.promptInputKit,
+          "transition-opacity duration-200",
+          replying && "pointer-events-none opacity-60",
+        )}
+      >
+        <PromptContextBadges />
+        <PromptInputTextarea
+          data-ai-followup-input=""
+          data-storefront-search-field=""
+          placeholder={replying ? t("searchAiPanel.placeholderReasoning") : t("searchAiPanel.placeholderAsk")}
+          disabled={replying}
+          className={cn(
+            ui.floatingSearchPillText,
+            "max-h-[160px] text-stone-800 placeholder:text-stone-400",
+          )}
+          aria-label={t("searchAiPanel.ariaMessage")}
+        />
+        <PromptInputChatToolbar
+          fileInputId={promptFileInputId}
+          disabled={replying}
+          onSend={onSend}
+          sendDisabled={!draft.trim() && promptProductRefs.length === 0}
+          sendLabel={t("searchAiPanel.sendAria")}
+          onMicClick={() => {
+            /* demo: entrada por voz */
+          }}
+        />
+      </PromptInput>
+    </>
+  );
+
+  const chatContent = (
+    <>
+      <ScrollToBottomOnBump bump={scrollBump} threadKey={threadKey} />
+      {messages.length === 0 ? (
+        isPdp ? (
+          <div className="flex min-h-[min(32dvh,220px)] w-full flex-1 flex-col items-center justify-center px-5 sm:px-8">
+            <p className="max-w-[22rem] text-center text-[14px] leading-[1.65] tracking-tight text-stone-600 sm:text-[15px] sm:leading-[1.7]">
+              {t("searchAiPanel.emptyState")}
+            </p>
+          </div>
+        ) : (
+          <p className="text-center text-[14px] leading-relaxed tracking-tight text-stone-600 sm:text-[15px]">
+            {t("searchAiPanel.emptyState")}
+          </p>
+        )
+      ) : null}
+      {messages.map((m, i) => (
+        <div
+          key={`${m.role}-${i}`}
+          className={cn("flex w-full flex-col", m.role === "user" ? "items-end" : "items-stretch")}
+        >
+          {m.role === "user" ? (
+            <div className="max-w-[min(100%,85%)] rounded-2xl rounded-br-md border border-[rgba(245,245,245,0.9)] bg-gray-100 px-4 py-3 text-[14px] leading-[1.55] text-[rgba(41,41,41,1)] shadow-[0_1px_2px_rgba(0,0,0,0.04)] sm:text-[15px] sm:leading-[1.6]">
+              <p className="whitespace-pre-wrap text-pretty">{m.content}</p>
+            </div>
+          ) : (
+            <Message className="items-start">
+              <MessageAvatar aria-hidden>
+                <Bot className="size-4 text-zinc-600" strokeWidth={2} />
+              </MessageAvatar>
+              <MessageContent>
+                <div className="space-y-7 text-[15px] leading-[1.65] text-stone-800 sm:leading-[1.7]">
+                  <p className="whitespace-pre-wrap text-pretty">{m.content}</p>
+                  <ChatAssistantSources sources={m.sources} />
+                  <ChatProductResults
+                    products={m.products}
+                    profile={profile}
+                    followUpSuggestions={chatFollowUps}
+                    onFollowUp={setDraft}
+                    followUpDisabled={replying}
+                  />
+                </div>
+              </MessageContent>
+            </Message>
+          )}
+        </div>
+      ))}
+      {replying ? (
+        <div className="flex w-full flex-col gap-1">
+          <ReasoningLoading />
+        </div>
+      ) : null}
+      <ChatContainerScrollAnchor />
+    </>
+  );
+
+  const contentBottomPad = isPdp
+    ? "pb-5 sm:pb-6"
+    : "pb-[calc(5.5rem+0.5rem+env(safe-area-inset-bottom,0px))]";
+
+  if (isPdp) {
+    return (
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="relative z-0 flex min-h-0 min-w-0 flex-1 flex-col overflow-x-hidden bg-transparent">
+          <ChatContainerRoot
+            key={threadKey}
+            data-storefront-ai-scroll=""
+            className="h-full min-h-[min(28dvh,200px)]"
+            stickInitial={false}
+          >
+            <ChatContainerContent className={cn("gap-8 pt-5 sm:pt-6", contentBottomPad)}>
+              {chatContent}
+            </ChatContainerContent>
+          </ChatContainerRoot>
+        </div>
+        {composerHostEl
+          ? createPortal(
+              <div className="w-full max-w-xl rounded-[1.25rem] bg-white/95 p-0.5 shadow-[0_8px_32px_rgba(15,23,42,0.12)] ring-1 ring-black/[0.06] backdrop-blur-sm">
+                <div className="pointer-events-auto w-full px-0">{composerInner}</div>
+              </div>,
+              composerHostEl,
+            )
+          : null}
+      </div>
+    );
+  }
+
   return (
     <div className="relative flex min-h-0 flex-1 flex-col">
       <div className="absolute inset-0 z-0 flex min-h-0 min-w-0 flex-col overflow-x-hidden bg-white">
@@ -164,51 +307,7 @@ export function SearchAiPanel() {
           className="h-full min-h-[min(36dvh,280px)]"
           stickInitial={false}
         >
-          <ChatContainerContent className="gap-8 pt-6 pb-[calc(5.5rem+0.5rem+env(safe-area-inset-bottom,0px))]">
-            <ScrollToBottomOnBump bump={scrollBump} threadKey={threadKey} />
-            {messages.length === 0 ? (
-              <p className="text-center text-[14px] leading-relaxed tracking-tight text-stone-600 sm:text-[15px]">
-                {t("searchAiPanel.emptyState")}
-              </p>
-            ) : null}
-            {messages.map((m, i) => (
-              <div
-                key={`${m.role}-${i}`}
-                className={cn("flex w-full flex-col", m.role === "user" ? "items-end" : "items-stretch")}
-              >
-                {m.role === "user" ? (
-                  <div className="max-w-[min(100%,85%)] rounded-2xl rounded-br-md border border-[rgba(245,245,245,0.9)] bg-gray-100 px-4 py-3 text-[14px] leading-[1.55] text-[rgba(41,41,41,1)] shadow-[0_1px_2px_rgba(0,0,0,0.04)] sm:text-[15px] sm:leading-[1.6]">
-                    <p className="whitespace-pre-wrap text-pretty">{m.content}</p>
-                  </div>
-                ) : (
-                  <Message className="items-start">
-                    <MessageAvatar aria-hidden>
-                      <Bot className="size-4 text-zinc-600" strokeWidth={2} />
-                    </MessageAvatar>
-                    <MessageContent>
-                      <div className="space-y-7 text-[15px] leading-[1.65] text-stone-800 sm:leading-[1.7]">
-                        <p className="whitespace-pre-wrap text-pretty">{m.content}</p>
-                        <ChatAssistantSources sources={m.sources} />
-                        <ChatProductResults
-                          products={m.products}
-                          profile={profile}
-                          followUpSuggestions={chatFollowUps}
-                          onFollowUp={setDraft}
-                          followUpDisabled={replying}
-                        />
-                      </div>
-                    </MessageContent>
-                  </Message>
-                )}
-              </div>
-            ))}
-            {replying ? (
-              <div className="flex w-full flex-col gap-1">
-                <ReasoningLoading />
-              </div>
-            ) : null}
-            <ChatContainerScrollAnchor />
-          </ChatContainerContent>
+          <ChatContainerContent className={cn("gap-8 pt-6", contentBottomPad)}>{chatContent}</ChatContainerContent>
         </ChatContainerRoot>
       </div>
 
@@ -219,49 +318,7 @@ export function SearchAiPanel() {
           "bottom-2",
         )}
       >
-        <div className="pointer-events-auto w-full max-w-xl px-0">
-          <PromptSuggestionRow
-            query={draft}
-            pool={suggestionPool}
-            onSelect={setDraft}
-            disabled={replying}
-          />
-          <PromptInput
-            value={draft}
-            onValueChange={setDraft}
-            onSubmit={onSend}
-            maxHeight={160}
-            disabled={replying}
-            className={cn(
-              ui.promptInputKit,
-              "transition-opacity duration-200",
-              replying && "pointer-events-none opacity-60",
-            )}
-          >
-            <PromptContextBadges />
-            <PromptInputTextarea
-              data-ai-followup-input=""
-              data-storefront-search-field=""
-              placeholder={replying ? t("searchAiPanel.placeholderReasoning") : t("searchAiPanel.placeholderAsk")}
-              disabled={replying}
-              className={cn(
-                ui.floatingSearchPillText,
-                "max-h-[160px] text-stone-800 placeholder:text-stone-400",
-              )}
-              aria-label={t("searchAiPanel.ariaMessage")}
-            />
-            <PromptInputChatToolbar
-              fileInputId={promptFileInputId}
-              disabled={replying}
-              onSend={onSend}
-              sendDisabled={!draft.trim() && promptProductRefs.length === 0}
-              sendLabel={t("searchAiPanel.sendAria")}
-              onMicClick={() => {
-                /* demo: entrada por voz */
-              }}
-            />
-          </PromptInput>
-        </div>
+        <div className="pointer-events-auto w-full max-w-xl px-0">{composerInner}</div>
       </div>
     </div>
   );

@@ -185,8 +185,8 @@ function PromptInputTextarea({
       onChange={handleChange}
       onKeyDown={handleKeyDown}
       className={cn(
-        /* Base `Textarea` uses `field-sizing-content`, which fights JS autosize and can leave a bogus vertical scrollbar. */
-        "field-sizing-fixed block text-primary w-full min-h-[1lh] resize-none border-none bg-transparent py-0.5 text-[15px] leading-snug text-stone-800 shadow-none outline-none placeholder:text-stone-400 focus-visible:ring-0 focus-visible:ring-offset-0",
+        /* Base `Textarea` uses `field-sizing-content`, which fights JS autosize; overflow-y is set in applyTextareaAutosize. */
+        "field-sizing-fixed block text-primary scrollbar-none w-full min-h-[1lh] resize-none border-none bg-transparent py-0.5 text-[15px] leading-snug text-stone-800 shadow-none outline-none placeholder:text-stone-400 focus-visible:ring-0 focus-visible:ring-offset-0",
         className
       )}
       rows={1}

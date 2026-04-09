@@ -2,6 +2,7 @@
 
 import { mergePromptRefsIntoQuery, type PromptProductRef } from "@/lib/promptProductRefs";
 import { parseIntent } from "@/lib/parseIntent";
+import { clampStorefrontWidth, STOREFRONT_WIDTH } from "@/lib/storefrontViewport";
 import type { SearchIntent } from "@/types";
 import type { ScreenId } from "@/types";
 import type { ShopperProfileId } from "@/types";
@@ -15,6 +16,8 @@ export type ColorMode = "dark" | "light";
 
 type DemoState = {
   activeProfile: ShopperProfileId;
+  /** Demo frame width on md+ (resize + presets); persisted across reloads. */
+  storefrontWidth: number;
   aiMode: boolean;
   rayXMode: boolean;
   colorMode: ColorMode;
@@ -33,8 +36,14 @@ type DemoState = {
   /** PDP: AI chat sheet over the product page (not full-screen search). */
   pdpChatOverlayOpen: boolean;
 
+  /** Bump to re-open welcome gate from the Reset control (session key cleared in `triggerHomeWelcomeReset`). */
+  homeWelcomeResetNonce: number;
+  /** Bump so `TopBarProfileCluster` expands when Start / profile change requests it. */
+  profileClusterExpandNonce: number;
+
   setParsedIntent: (intent: SearchIntent | null) => void;
   setProfile: (id: ShopperProfileId) => void;
+  setStorefrontWidth: (value: number | ((prev: number) => number)) => void;
   setAiMode: (v: boolean) => void;
   setColorMode: (m: ColorMode) => void;
   setRayX: (v: boolean) => void;
@@ -56,6 +65,8 @@ type DemoState = {
   setCompareSelection: (ids: string[]) => void;
   reset: () => void;
   presetSearch: () => void;
+  triggerHomeWelcomeReset: () => void;
+  requestProfileClusterExpand: () => void;
 };
 
 export type { PromptProductRef } from "@/lib/promptProductRefs";
@@ -64,6 +75,7 @@ export const useDemoStore = create<DemoState>()(
   persist(
     (set, get) => ({
   activeProfile: "marina",
+  storefrontWidth: STOREFRONT_WIDTH.default,
   aiMode: false,
   rayXMode: false,
   colorMode: "dark",
@@ -79,9 +91,17 @@ export const useDemoStore = create<DemoState>()(
   cartLineId: null,
   cartQuantity: 1,
   pdpChatOverlayOpen: false,
+  homeWelcomeResetNonce: 0,
+  profileClusterExpandNonce: 0,
 
   setParsedIntent: (intent) => set({ parsedIntent: intent }),
   setProfile: (id) => set({ activeProfile: id }),
+  setStorefrontWidth: (value) =>
+    set((state) => {
+      const next =
+        typeof value === "function" ? value(state.storefrontWidth) : value;
+      return { storefrontWidth: clampStorefrontWidth(next) };
+    }),
   setAiMode: (v) => set({ aiMode: v }),
   setColorMode: (m) => set({ colorMode: m }),
   setRayX: (v) => set({ rayXMode: v }),
@@ -133,6 +153,7 @@ export const useDemoStore = create<DemoState>()(
   reset: () =>
     set({
       activeProfile: "marina",
+      storefrontWidth: STOREFRONT_WIDTH.default,
       aiMode: false,
       rayXMode: false,
       colorMode: "dark",
@@ -157,11 +178,25 @@ export const useDemoStore = create<DemoState>()(
       currentScreen: "search",
     });
   },
+  triggerHomeWelcomeReset: () => {
+    try {
+      sessionStorage.removeItem("fs-home-welcome-dismissed");
+    } catch {
+      /* private mode */
+    }
+    set((s) => ({ homeWelcomeResetNonce: s.homeWelcomeResetNonce + 1 }));
+  },
+  requestProfileClusterExpand: () =>
+    set((s) => ({ profileClusterExpandNonce: s.profileClusterExpandNonce + 1 })),
 }),
     {
       name: "future-store-demo",
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ aiMode: state.aiMode }),
+      partialize: (state) => ({
+        aiMode: state.aiMode,
+        activeProfile: state.activeProfile,
+        storefrontWidth: state.storefrontWidth,
+      }),
     },
   ),
 );
