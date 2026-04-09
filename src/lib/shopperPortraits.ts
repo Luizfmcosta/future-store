@@ -1,12 +1,17 @@
 import type { ShopperProfileId } from "@/types";
 
-/** Order of profiles in the UI switcher (Marina, Ricardo). */
-export const SHOPPER_PROFILE_ORDER = ["marina", "ricardo"] as const satisfies readonly ShopperProfileId[];
+/** Order of profiles in the UI switcher (Marina, Ricardo, AI Agent). */
+export const SHOPPER_PROFILE_ORDER = ["marina", "ricardo", "aiAgent"] as const satisfies readonly ShopperProfileId[];
 
-export const SHOPPER_PORTRAIT: Record<ShopperProfileId, string> = {
+/** Photo avatars — human shoppers only; {@link shopperUsesIconAvatar} for AI Agent. */
+export const SHOPPER_PORTRAIT: Record<Exclude<ShopperProfileId, "aiAgent">, string> = {
   marina: "/media/avatars/marina.png",
   ricardo: "/media/avatars/ricardo.png",
 };
+
+export function shopperUsesIconAvatar(id: ShopperProfileId): id is "aiAgent" {
+  return id === "aiAgent";
+}
 
 export function shopperDisplayName(id: ShopperProfileId): string {
   switch (id) {
@@ -14,6 +19,8 @@ export function shopperDisplayName(id: ShopperProfileId): string {
       return "Marina";
     case "ricardo":
       return "Ricardo";
+    case "aiAgent":
+      return "AI Agent";
     default:
       return id;
   }
@@ -21,6 +28,7 @@ export function shopperDisplayName(id: ShopperProfileId): string {
 
 /** Iniciais para avatar placeholder (tabs, chips): duas letras se nome composto; senão a inicial. */
 export function shopperTabInitials(id: ShopperProfileId): string {
+  if (id === "aiAgent") return "AI";
   const name = shopperDisplayName(id).trim();
   const parts = name.split(/\s+/).filter(Boolean);
   if (parts.length >= 2) {

@@ -249,6 +249,50 @@ export const messages: Record<string, string | Record<string, string | Record<st
         bio: "Wants fast decisions guided by deals and what’s trending.",
         bio2: "Sees promos, bestsellers, and strong value picks first.",
       },
+      aiAgent: {
+        tag1: "Architecture demo",
+        tag2: "Dual surface",
+        tag3: "Agent-ready",
+        bio: "Same platform: polished experiences for people today, machine contracts for agents tomorrow.",
+        bio2: "Unified catalog, context, content, pricing rules, and open protocols.",
+      },
+    },
+    agentBento: {
+      pageAria: "Agent commerce architecture overview",
+      humanSurface: "Human surface",
+      agentSurface: "Agent surface",
+      hero: "One architecture. One data investment. Human experience today — agent commerce tomorrow.",
+      p1: {
+        index: "01",
+        title: "Unified product data",
+        human:
+          "Rich content layer — editorial, promo, and technical depth served per audience profile",
+        agent: "Machine-readable catalog — SKU, price, stock, SLA, specs, bundle rules",
+      },
+      p2: {
+        index: "02",
+        title: "Context & personalization engine",
+        human: "Adaptive UI — layout, tone, and product depth inferred from visitor context",
+        agent: "API context response — query params replace layout; ranked results, no chrome",
+      },
+      p3: {
+        index: "03",
+        title: "Agent-generated content",
+        human: "Dynamic storefront — copy, hero, and comparisons written per visitor in real time",
+        agent: "Content generation API — prompt templates + catalog data, brand guardrails as rules",
+      },
+      p4: {
+        index: "04",
+        title: "Dynamic pricing & bundle rules",
+        human: "Contextual cross-sell — bundle offer at cart moment, discount logic per profile",
+        agent: "Negotiation API — price floor, bundle margin, agent-to-agent ruleset",
+      },
+      p5: {
+        index: "05",
+        title: "Open agent protocols",
+        human: "Seamless handoff — human delegates to their agent",
+        agent: "MCP · A2A · ACP · UCP — standardized agent discovery and interoperability",
+      },
     },
     searchOverlay: {
       placeholder: "Ask about wireless speakers, portables, or accessories…",

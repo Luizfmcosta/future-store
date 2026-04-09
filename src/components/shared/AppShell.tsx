@@ -1,5 +1,6 @@
 "use client";
 
+import { AgentArchitectureBento } from "@/components/agent/AgentArchitectureBento";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { RefineDrawer } from "@/components/search/RefineDrawer";
 import { PresenterPanel } from "@/components/shared/PresenterPanel";
@@ -45,6 +46,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const aiMode = useDemoStore((s) => s.aiMode);
+  const activeProfile = useDemoStore((s) => s.activeProfile);
   const triggerHomeWelcomeReset = useDemoStore((s) => s.triggerHomeWelcomeReset);
   const setScreen = useDemoStore((s) => s.setCurrentScreen);
   const storefrontWidth = useDemoStore((s) => s.storefrontWidth);
@@ -90,131 +92,132 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const desktopPresetActive =
     isMd && Math.abs(storefrontWidth - STOREFRONT_WIDTH.presetDesktop) < 18;
   const presetHighlightVisible = mobilePresetActive || desktopPresetActive;
+  const isAiAgent = activeProfile === "aiAgent";
 
   return (
     <div className="flex min-h-dvh flex-col overflow-x-visible bg-[var(--app-canvas)] md:h-dvh md:max-h-dvh md:overflow-hidden">
       <div
         className={cn(
-          "flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-x-visible p-3 sm:p-6 md:p-8 2xl:p-12",
+          "flex min-h-0 min-w-0 flex-1 overflow-x-visible p-3 sm:p-6 md:p-8 2xl:p-12",
+          isAiAgent ? "items-stretch justify-stretch" : "items-center justify-center",
         )}
       >
         <div
           className={cn(
-            "flex w-full max-w-[440px] flex-col items-stretch overflow-visible md:max-w-none",
+            "flex flex-col items-stretch overflow-visible",
+            isAiAgent ? "h-full min-h-0 w-full max-w-none flex-1" : "w-full max-w-[440px] md:max-w-none",
           )}
         >
-        <div
-          data-storefront-container
-          className={cn(
-            "@container relative mx-auto w-full max-w-[440px] overflow-visible",
-            "h-[min(100dvh-2rem,880px)] max-h-[880px]",
-            "md:h-[min(100dvh-4rem,960px)] md:max-h-[960px]",
-            "xl:h-[min(100dvh-5rem,1080px)] xl:max-h-[1080px]",
-            "2xl:h-[min(100dvh-6rem,1200px)] 2xl:max-h-[1200px]",
-            "md:min-w-[340px] md:max-w-[1680px]",
-          )}
-          style={
-            isMd && !isFullscreen
-              ? {
-                  width: storefrontWidth,
-                  /* Inline width wins over `w-full`; without this, 1440px is used even when the
-                   * viewport is narrower (768px–1439px), causing horizontal overflow. */
-                  maxWidth: "100%",
-                }
-              : undefined
-          }
-        >
-          {/* Canvas mat (2px); h-full restores scroll height chain for flex/min-h-0. */}
-          <div
-            className={cn(
-              "flex h-full min-h-0 w-full flex-col rounded-[1.75rem] bg-[var(--app-canvas)] p-0.5",
-              "shadow-[0_24px_56px_-28px_rgba(0,0,0,0.18)]",
-              isFullscreen && "!rounded-none !p-0 shadow-none"
-            )}
-          >
-            <div
-              ref={storefrontRef}
-              data-storefront-window
-              data-home-editorial="true"
-              className={cn(
-                "relative flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden rounded-[calc(1.75rem-2px)] border-0",
-                /* #121212 matches HomeFooter — avoids white AA fringe vs canvas at rounded corners. */
-                "bg-[#121212]",
-                isFullscreen &&
-                  "!h-screen !max-h-none !w-screen !max-w-none !rounded-none"
-              )}
-            >
-              {isFullscreen ? (
-                <button
-                  type="button"
-                  onClick={exitFullscreen}
-                  className={cn(
-                    "absolute left-3 top-3 z-[70] flex items-center gap-2 rounded-lg border px-3 py-2 text-[12px] font-medium backdrop-blur-md transition",
-                    "border-stone-200/90 bg-white/90 text-stone-800 hover:bg-stone-50"
-                  )}
-                  aria-label={t("appShell.exitFullscreen")}
-                >
-                  <Minimize2 className="h-4 w-4 shrink-0 opacity-90" />
-                  {t("appShell.exitFullscreen")}
-                </button>
-              ) : null}
-
-              <StorefrontPortalProvider mountNode={storefrontPortalMount}>
-                <div
-                  className={cn(
-                    "relative z-10 flex min-h-0 flex-1 flex-col",
-                    isFullscreen && "pt-12"
-                  )}
-                >
-                  <Suspense fallback={null}>
-                    <TopBar />
-                  </Suspense>
-                  <div className="relative min-h-0 flex flex-1 flex-col">
-                    <Suspense
-                      fallback={
-                        <main className="min-h-0 flex-1 overflow-y-auto scrollbar-none bg-white px-4 pb-32 pt-5 sm:px-6 sm:pb-32 sm:pt-6">
-                          {children}
-                        </main>
-                      }
-                    >
-                      <StorefrontMain>{children}</StorefrontMain>
-                    </Suspense>
-                    <AnimatePresence>{aiMode ? <AIVisionOverlay key="ai-vision" /> : null}</AnimatePresence>
-                  </div>
-                  <Suspense fallback={null}>
-                    <FloatingSearchDock />
-                  </Suspense>
-                </div>
-                <div
-                  ref={setStorefrontPortalMount}
-                  className="pointer-events-none absolute inset-0 z-[100]"
-                  aria-hidden
-                />
-                <RayXOverlay />
-                <RefineDrawer />
-                <CartDrawer />
-                <PresenterPanel />
-              </StorefrontPortalProvider>
+          {isAiAgent ? (
+            <div className="flex min-h-[min(100dvh-2.5rem,1200px)] w-full flex-1 flex-col overflow-hidden rounded-2xl shadow-[0_24px_56px_-28px_rgba(0,0,0,0.22)] md:min-h-[min(100dvh-5rem,1200px)] md:flex-1">
+              <AgentArchitectureBento className="min-h-0 flex-1 rounded-2xl" />
             </div>
-          </div>
+          ) : (
+            <>
+              <div
+                data-storefront-container
+                className={cn(
+                  "@container relative mx-auto w-full max-w-[440px] overflow-visible",
+                  "h-[min(100dvh-2rem,880px)] max-h-[880px]",
+                  "md:h-[min(100dvh-4rem,960px)] md:max-h-[960px]",
+                  "xl:h-[min(100dvh-5rem,1080px)] xl:max-h-[1080px]",
+                  "2xl:h-[min(100dvh-6rem,1200px)] 2xl:max-h-[1200px]",
+                  "md:min-w-[340px] md:max-w-[1680px]",
+                )}
+                style={
+                  isMd && !isFullscreen
+                    ? {
+                        width: storefrontWidth,
+                        maxWidth: "100%",
+                      }
+                    : undefined
+                }
+              >
+                <div
+                  className={cn(
+                    "flex h-full min-h-0 w-full flex-col rounded-[1.75rem] bg-[var(--app-canvas)] p-0.5",
+                    "shadow-[0_24px_56px_-28px_rgba(0,0,0,0.18)]",
+                    isFullscreen && "!rounded-none !p-0 shadow-none",
+                  )}
+                >
+                  <div
+                    ref={storefrontRef}
+                    data-storefront-window
+                    data-home-editorial="true"
+                    className={cn(
+                      "relative flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden rounded-[calc(1.75rem-2px)] border-0",
+                      "bg-[#121212]",
+                      isFullscreen && "!h-screen !max-h-none !w-screen !max-w-none !rounded-none",
+                    )}
+                  >
+                    {isFullscreen ? (
+                      <button
+                        type="button"
+                        onClick={exitFullscreen}
+                        className={cn(
+                          "absolute left-3 top-3 z-[70] flex items-center gap-2 rounded-lg border px-3 py-2 text-[12px] font-medium backdrop-blur-md transition",
+                          "border-stone-200/90 bg-white/90 text-stone-800 hover:bg-stone-50",
+                        )}
+                        aria-label={t("appShell.exitFullscreen")}
+                      >
+                        <Minimize2 className="h-4 w-4 shrink-0 opacity-90" />
+                        {t("appShell.exitFullscreen")}
+                      </button>
+                    ) : null}
 
-          <ResizeEdgeHandle
-            edge="left"
-            visual="none"
-            theme="window-light"
-            disabled={isFullscreen || !isMd}
-            ariaLabel={t("appShell.resizeHandle")}
-            onDelta={(dx) => setStorefrontWidth((w) => clampStorefrontWidth(w + dx))}
-          />
-          <ResizeEdgeHandle
-            edge="right"
-            visual="none"
-            theme="window-light"
-            disabled={isFullscreen || !isMd}
-            ariaLabel={t("appShell.resizeHandle")}
-            onDelta={(dx) => setStorefrontWidth((w) => clampStorefrontWidth(w + dx))}
-          />
-        </div>
+                    <StorefrontPortalProvider mountNode={storefrontPortalMount}>
+                      <div className={cn("relative z-10 flex min-h-0 flex-1 flex-col", isFullscreen && "pt-12")}>
+                        <Suspense fallback={null}>
+                          <TopBar />
+                        </Suspense>
+                        <div className="relative min-h-0 flex flex-1 flex-col">
+                          <Suspense
+                            fallback={
+                              <main className="min-h-0 flex-1 overflow-y-auto scrollbar-none bg-white px-4 pb-32 pt-5 sm:px-6 sm:pb-32 sm:pt-6">
+                                {children}
+                              </main>
+                            }
+                          >
+                            <StorefrontMain>{children}</StorefrontMain>
+                          </Suspense>
+                          <AnimatePresence>{aiMode ? <AIVisionOverlay key="ai-vision" /> : null}</AnimatePresence>
+                        </div>
+                        <Suspense fallback={null}>
+                          <FloatingSearchDock />
+                        </Suspense>
+                      </div>
+                      <div
+                        ref={setStorefrontPortalMount}
+                        className="pointer-events-none absolute inset-0 z-[100]"
+                        aria-hidden
+                      />
+                      <RayXOverlay />
+                      <RefineDrawer />
+                      <CartDrawer />
+                      <PresenterPanel />
+                    </StorefrontPortalProvider>
+                  </div>
+                </div>
+              </div>
+
+              <ResizeEdgeHandle
+                edge="left"
+                visual="none"
+                theme="window-light"
+                disabled={isFullscreen || !isMd}
+                ariaLabel={t("appShell.resizeHandle")}
+                onDelta={(dx) => setStorefrontWidth((w) => clampStorefrontWidth(w + dx))}
+              />
+              <ResizeEdgeHandle
+                edge="right"
+                visual="none"
+                theme="window-light"
+                disabled={isFullscreen || !isMd}
+                ariaLabel={t("appShell.resizeHandle")}
+                onDelta={(dx) => setStorefrontWidth((w) => clampStorefrontWidth(w + dx))}
+              />
+            </>
+          )}
         </div>
       </div>
 
@@ -223,6 +226,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           /* Above storefront portal (z-[100]), splash (z-[200]), welcome gate (z-[250]). */
           "pointer-events-auto fixed right-4 z-[280] hidden md:flex items-center",
           "top-[max(1rem,env(safe-area-inset-top))]",
+          isAiAgent && "!hidden",
         )}
         role="group"
         aria-label={t("appShell.widthPresetsGroup")}

@@ -36,6 +36,9 @@ export function getBundleOptions(
   premium: BundleOption | null;
   cheaper: BundleOption | null;
 } {
+  if (profile === "aiAgent") {
+    return { primary: null, premium: null, cheaper: null };
+  }
   const related = bundleDefs.filter((b) => b.productIds[0] === tv.id);
   const primary = related[0];
   const sbPremium = getProductById("sp-era-300");

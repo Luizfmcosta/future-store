@@ -25,4 +25,16 @@ export const profiles: Record<ShopperProfileId, ShopperProfile> = {
     merchandisingBias: "cost-benefit",
     interests: ["Installments", "Popular sizes", "Fast delivery"],
   },
+  aiAgent: {
+    id: "aiAgent",
+    name: "AI Agent",
+    device: "desktop",
+    segment: "premium-researcher",
+    returning: false,
+    source: "Architecture demo · agent commerce",
+    tone: "editorial",
+    proofPreference: "technical",
+    merchandisingBias: "premium",
+    interests: ["MCP", "Catalog APIs", "Human + agent surfaces"],
+  },
 };

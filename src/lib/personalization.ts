@@ -45,6 +45,7 @@ const DEFAULT_MODULES: HomeModuleKey[] = ["hero", "continue", "compare", "curate
  * - Ricardo + returning → value / popularity framing (“continue” faz sentido).
  */
 export function resolveHomeSegment(profile: ShopperProfileId, signals: ShopperSignals): HomeSegmentId {
+  if (profile === "aiAgent") return "marina_research";
   if (profile === "marina") {
     if (signals.isReturning || signals.device === "desktop") return "marina_research";
     return "marina_explore";

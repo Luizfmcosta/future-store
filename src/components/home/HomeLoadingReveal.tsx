@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useDemoStore } from "@/store/demoStore";
+import type { ShopperProfileId } from "@/types";
 
 const ease = [0.76, 0, 0.24, 1] as const;
 
@@ -43,8 +44,8 @@ export function HomeLoadingReveal() {
     if (prev === undefined) return;
     if (prev === activeProfile) return;
 
-    const pair = new Set(["marina", "ricardo"] as const);
-    if (!pair.has(prev) || !pair.has(activeProfile)) return;
+    const isHuman = (p: ShopperProfileId) => p === "marina" || p === "ricardo";
+    if (!isHuman(prev) || !isHuman(activeProfile)) return;
 
     runSplash();
     return () => {

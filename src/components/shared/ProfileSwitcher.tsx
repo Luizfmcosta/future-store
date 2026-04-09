@@ -6,6 +6,7 @@ import {
   SHOPPER_PROFILE_ORDER,
   shopperDisplayName,
   shopperTabInitials,
+  shopperUsesIconAvatar,
 } from "@/lib/shopperPortraits";
 import { ui } from "@/lib/ui-tokens";
 import { useT } from "@/lib/useT";
@@ -13,6 +14,7 @@ import { cn } from "@/lib/utils";
 import type { ShopperProfileId } from "@/types";
 import { useDemoStore } from "@/store/demoStore";
 import { motion } from "framer-motion";
+import { Sparkles } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
@@ -68,20 +70,27 @@ function TopBarProfileInitialsMark({
   /** `true`: preenche o botão `size-8` da coluna. `false`: disco `size-8` na linha expandida — mesma pintura nos dois. */
   compact: boolean;
 }) {
-  /**
-   * Ativo: disco sólido + branco. Inativo: fundo mais escuro, texto bem apagado — leitura clara de “desligado”.
-   */
+  const shell = cn(
+    "relative flex shrink-0 items-center justify-center rounded-full font-semibold tabular-nums leading-none text-[13px]",
+    compact ? "size-full min-h-0" : "size-8",
+    active
+      ? "bg-[#323234] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.07)]"
+      : "bg-[#141418] text-[#5c5c62] ring-1 ring-inset ring-white/[0.07]",
+  );
+
+  if (shopperUsesIconAvatar(id)) {
+    return (
+      <span className={shell} aria-hidden>
+        <Sparkles
+          className={cn(compact ? "size-[17px]" : "size-4", active ? "text-violet-200" : "text-violet-400/55")}
+          strokeWidth={2}
+        />
+      </span>
+    );
+  }
+
   return (
-    <span
-      className={cn(
-        "relative flex shrink-0 items-center justify-center rounded-full font-semibold tabular-nums leading-none text-[13px]",
-        compact ? "size-full min-h-0" : "size-8",
-        active
-          ? "bg-[#323234] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.07)]"
-          : "bg-[#141418] text-[#5c5c62] ring-1 ring-inset ring-white/[0.07]",
-      )}
-      aria-hidden
-    >
+    <span className={shell} aria-hidden>
       {shopperTabInitials(id)}
     </span>
   );
@@ -172,15 +181,19 @@ export function TopBarProfileCluster({ className }: { className?: string }) {
               aria-hidden={!expanded}
             >
               <div className="flex flex-col gap-3 px-3.5 pb-4 pt-2.5 sm:pb-5">
-                <span className="relative block aspect-square w-[7.25rem] max-w-full shrink-0 overflow-hidden rounded-2xl bg-[#1a1a1a] ring-1 ring-white/[0.08]">
-                  <Image
-                    src={SHOPPER_PORTRAIT[activeProfile]}
-                    alt=""
-                    width={116}
-                    height={116}
-                    className="size-full object-cover"
-                    unoptimized
-                  />
+                <span className="relative flex aspect-square w-[7.25rem] max-w-full shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#1a1a1a] ring-1 ring-white/[0.08]">
+                  {shopperUsesIconAvatar(activeProfile) ? (
+                    <Sparkles className="size-[3.25rem] text-violet-300/90" strokeWidth={1.35} aria-hidden />
+                  ) : (
+                    <Image
+                      src={SHOPPER_PORTRAIT[activeProfile]}
+                      alt=""
+                      width={116}
+                      height={116}
+                      className="size-full object-cover"
+                      unoptimized
+                    />
+                  )}
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {profileTagKeys.map((key) => (
@@ -233,18 +246,22 @@ function SidebarProfileCards({ light }: { light: boolean }) {
           >
             <span
               className={cn(
-                "relative block size-9 shrink-0 overflow-hidden rounded-lg bg-[#1a1a1a]",
+                "relative flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-[#1a1a1a]",
                 light ? "ring-1 ring-slate-200/80" : "ring-1 ring-white/[0.08]",
               )}
             >
-              <Image
-                src={SHOPPER_PORTRAIT[id]}
-                alt=""
-                width={36}
-                height={36}
-                className="size-full object-cover"
-                unoptimized
-              />
+              {shopperUsesIconAvatar(id) ? (
+                <Sparkles className="size-[1.125rem] text-violet-500/90" strokeWidth={2} aria-hidden />
+              ) : (
+                <Image
+                  src={SHOPPER_PORTRAIT[id]}
+                  alt=""
+                  width={36}
+                  height={36}
+                  className="size-full object-cover"
+                  unoptimized
+                />
+              )}
             </span>
             <span className={cn(shopperNameText, "min-w-0 flex-1 text-[14px] leading-tight text-inherit")}>
               {name}
@@ -281,7 +298,7 @@ export function ProfileSwitcher({
 
   if (variant === "narrative") {
     return (
-      <div className={cn("grid w-full grid-cols-3 gap-1", className)} role="group" aria-label="Profile">
+      <div className={cn("grid w-full grid-cols-2 gap-1 sm:grid-cols-4", className)} role="group" aria-label="Profile">
         {SHOPPER_PROFILE_ORDER.map((id) => (
           <button
             key={id}

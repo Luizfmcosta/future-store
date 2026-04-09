@@ -1,4 +1,4 @@
-export type ShopperProfileId = "marina" | "ricardo";
+export type ShopperProfileId = "marina" | "ricardo" | "aiAgent";
 
 export type ShopperProfile = {
   id: ShopperProfileId;
