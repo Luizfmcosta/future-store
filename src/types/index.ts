@@ -103,3 +103,15 @@ export type HomeModuleKey =
   | "tiktok";
 
 export type ScreenId = "home" | "search" | "pdp";
+
+/** Captured when the floating prompt submits from PLP / PDP / cart; consumed by the AI search tab for LLM context. */
+export type PromptSubmitPageContext =
+  | { kind: "plp"; pathname: string; searchParamsSnapshot: string }
+  | { kind: "pdp"; pathname: string; productId: string; productTitle?: string }
+  | {
+      kind: "cart";
+      pathname: string;
+      cartLineId: string | null;
+      cartQuantity: number;
+      cartProductTitle?: string;
+    };

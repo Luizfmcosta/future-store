@@ -39,35 +39,40 @@ export function PdpLeadColumn({
 
   return (
     <div className={cn("space-y-4 pt-2 sm:space-y-6 sm:pt-4 lg:space-y-5", className)}>
-      <EyebrowPill>{product.brand}</EyebrowPill>
-      <h1 className="text-[1.875rem] font-light leading-[1.12] tracking-tight text-neutral-900 sm:text-[2.75rem] sm:leading-[1.08]">
-        {product.title}
-      </h1>
-
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <span className="text-2xl font-semibold tabular-nums text-neutral-900 sm:text-3xl">{formatBRL(product.price)}</span>
-        {product.oldPrice ? (
-          <span className="text-lg text-neutral-400 line-through">{formatBRL(product.oldPrice)}</span>
-        ) : null}
-      </div>
-      <p className="text-[13px] text-neutral-500">{product.installmentText}</p>
-
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <ReviewStars rating={average} className="gap-1" />
-        <span className="text-[15px] font-medium tabular-nums text-neutral-900">
-          {average.toFixed(1)}/5
-        </span>
-        <Link
-          href="#pdp-reviews"
-          className="text-[13px] font-medium text-neutral-600 underline-offset-4 hover:text-neutral-900 hover:underline"
-        >
-          {t("pdp.reviewsCount", { count: formatReviewCount(count) })}
-        </Link>
+      <div className="flex flex-col gap-[8px]">
+        <EyebrowPill>{product.brand}</EyebrowPill>
+        <h1 className="text-[1.875rem] font-light leading-[1.12] tracking-tight text-neutral-900 sm:text-[2.75rem] sm:leading-[1.08]">
+          {product.title}
+        </h1>
       </div>
 
-      <p className="max-w-[42rem] text-[15px] leading-relaxed text-neutral-600 sm:text-[16px] sm:leading-[1.65]">
-        {tagline}
-      </p>
+      <div className="flex flex-col gap-[8px]">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <span className="text-2xl font-semibold tabular-nums text-neutral-900 sm:text-3xl">{formatBRL(product.price)}</span>
+          {product.oldPrice ? (
+            <span className="text-lg text-neutral-400 line-through">{formatBRL(product.oldPrice)}</span>
+          ) : null}
+        </div>
+        <p className="text-[13px] text-neutral-500">{product.installmentText}</p>
+      </div>
+
+      <div className="flex flex-col gap-[8px]">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <ReviewStars rating={average} className="gap-1" />
+          <span className="text-[15px] font-medium tabular-nums text-neutral-900">
+            {average.toFixed(1)}/5
+          </span>
+          <Link
+            href="#pdp-reviews"
+            className="text-[13px] font-medium text-neutral-600 underline-offset-4 hover:text-neutral-900 hover:underline"
+          >
+            {t("pdp.reviewsCount", { count: formatReviewCount(count) })}
+          </Link>
+        </div>
+        <p className="max-w-[42rem] text-[15px] leading-relaxed text-neutral-600 sm:text-[16px] sm:leading-[1.65]">
+          {tagline}
+        </p>
+      </div>
 
       {product.colorOptions?.length ? (
         <ProductColorSwatches

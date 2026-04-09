@@ -63,7 +63,7 @@ export function SearchModeTabs({ active, className }: SearchModeTabsProps) {
         <div
           className={cn(
             "relative flex h-9 w-full items-stretch rounded-full p-0.5",
-            /* Same gray family as EyebrowPill / editorial chips (`ui.home.eyebrowPill`). */
+            /* Same gray family as eyebrow label text / editorial chips on white. */
             "bg-[#f0f0f0] shadow-[inset_0_1px_0_rgba(0,0,0,0.05)]",
           )}
         >

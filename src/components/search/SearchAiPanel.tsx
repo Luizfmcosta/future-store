@@ -13,14 +13,15 @@ import { PromptSuggestionRow } from "@/components/search/PromptSuggestionRow";
 import { PromptInputChatToolbar } from "@/components/search/PromptInputChatToolbar";
 import { PromptInput, PromptInputTextarea } from "@/components/ui/prompt-input";
 import { assistantReplyForQuery, type AssistantSource } from "@/lib/chatAssistant";
+import { fetchAssistantLlmReply, type ChatTurn } from "@/lib/fetchAssistantLlm";
 import { getChatFollowUpSuggestions, getPromptSuggestionPool } from "@/lib/promptSuggestions";
 import { ui } from "@/lib/ui-tokens";
 import { useT } from "@/lib/useT";
 import { cn } from "@/lib/utils";
 import { mergePromptRefsIntoQuery } from "@/lib/promptProductRefs";
 import { useDemoStore } from "@/store/demoStore";
-import type { Product } from "@/types";
-import { Bot } from "lucide-react";
+import type { Product, PromptSubmitPageContext } from "@/types";
+import { Sparkles } from "lucide-react";
 import { createPortal } from "react-dom";
 import { useStickToBottomContext } from "use-stick-to-bottom";
 import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
@@ -29,7 +30,13 @@ type Msg =
   | { role: "user"; content: string }
   | { role: "assistant"; content: string; products: Product[]; sources: AssistantSource[] };
 
-const REASONING_MIN_MS = 1400;
+function messagesToApiHistory(msgs: Msg[]): ChatTurn[] {
+  return msgs.map((m) =>
+    m.role === "user"
+      ? { role: "user" as const, content: m.content }
+      : { role: "assistant" as const, content: m.content },
+  );
+}
 
 /** Must render inside ChatContainerContent. Bumps scroll to latest when the user sends or a reply lands (initial=false would otherwise skip resize auto-scroll). */
 function ScrollToBottomOnBump({ bump, threadKey }: { bump: number; threadKey: string }) {
@@ -57,7 +64,7 @@ function ReasoningLoading() {
   return (
     <Message className="items-start" role="status" aria-live="polite" aria-busy="true">
       <MessageAvatar aria-hidden>
-        <Bot className="size-4 text-zinc-600" strokeWidth={2} />
+        <Sparkles className="size-[1.125rem] text-violet-500/90" strokeWidth={2} />
       </MessageAvatar>
       <MessageContent className="space-y-3">
         <MessageMeta>{t("searchAiPanel.reasoning")}</MessageMeta>
@@ -100,8 +107,15 @@ export function SearchAiPanel({
   const [draft, setDraft] = useState("");
   const [replying, setReplying] = useState(false);
   const [scrollBump, setScrollBump] = useState(0);
-  const lastSeedKeyRef = useRef<string | null>(null);
-  const replyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const messagesRef = useRef<Msg[]>([]);
+  const threadOriginContextRef = useRef<PromptSubmitPageContext | null>(null);
+  const prevSeedQRef = useRef<string | null>(null);
+  const seedAbortRef = useRef<AbortController | null>(null);
+  const followUpAbortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
 
   const suggestionPool = useMemo(() => getPromptSuggestionPool(), []);
   const chatFollowUps = useMemo(() => getChatFollowUpSuggestions(), []);
@@ -114,29 +128,75 @@ export function SearchAiPanel({
   }, []);
 
   useEffect(() => {
-    queueMicrotask(() => {
+    seedAbortRef.current?.abort();
+    const ac = new AbortController();
+    seedAbortRef.current = ac;
+
+    const run = async () => {
       const q = currentQuery.trim();
       if (!q) {
+        prevSeedQRef.current = null;
+        threadOriginContextRef.current = null;
         setMessages([]);
-        lastSeedKeyRef.current = null;
+        setReplying(false);
         setScrollBump(0);
         return;
       }
-      const key = `${q}|${profile}`;
-      if (lastSeedKeyRef.current === key) return;
-      lastSeedKeyRef.current = key;
+
+      const qChanged = prevSeedQRef.current !== q;
+      prevSeedQRef.current = q;
+      const ctxSnapshot = useDemoStore.getState().lastPromptSubmitContext;
+      if (qChanged) {
+        threadOriginContextRef.current = ctxSnapshot;
+      } else if (ctxSnapshot) {
+        threadOriginContextRef.current = ctxSnapshot;
+      }
+
       setScrollBump(0);
-      const { text, products, sources } = assistantReplyForQuery(q, profile, true);
+      setMessages([{ role: "user", content: q }]);
+      setReplying(true);
+
+      const fallback = assistantReplyForQuery(q, profile, true);
+      let assistantText = fallback.text;
+      try {
+        const { reply } = await fetchAssistantLlmReply({
+          message: q,
+          profile,
+          pageContext: ctxSnapshot,
+          history: [],
+          signal: ac.signal,
+        });
+        if (!ac.signal.aborted && reply) assistantText = reply;
+      } catch {
+        /* demo: offline / API error → catalog narrative */
+      }
+
+      if (ac.signal.aborted) return;
+
+      if (ctxSnapshot) {
+        useDemoStore.getState().setPromptSubmitContext(null);
+      }
+
       setMessages([
         { role: "user", content: q },
-        { role: "assistant", content: text, products, sources },
+        {
+          role: "assistant",
+          content: assistantText,
+          products: fallback.products,
+          sources: fallback.sources,
+        },
       ]);
-    });
+      setReplying(false);
+      setScrollBump((n) => n + 1);
+    };
+
+    void run();
+    return () => ac.abort();
   }, [currentQuery, profile]);
 
   useEffect(() => {
     return () => {
-      if (replyTimerRef.current) clearTimeout(replyTimerRef.current);
+      followUpAbortRef.current?.abort();
     };
   }, []);
 
@@ -150,19 +210,48 @@ export function SearchAiPanel({
     const merged = mergePromptRefsIntoQuery(text, refs);
     clearPromptProductRefs();
 
-    setMessages((prev) => [...prev, { role: "user", content: merged }]);
+    followUpAbortRef.current?.abort();
+    const ac = new AbortController();
+    followUpAbortRef.current = ac;
+
+    const prev = messagesRef.current;
+    const history = messagesToApiHistory(prev);
+
+    setMessages((p) => [...p, { role: "user", content: merged }]);
     setDraft("");
     setReplying(true);
     bumpScroll();
 
-    if (replyTimerRef.current) clearTimeout(replyTimerRef.current);
-    replyTimerRef.current = setTimeout(() => {
-      const { text: reply, products, sources } = assistantReplyForQuery(merged, profile, true);
-      setMessages((prev) => [...prev, { role: "assistant", content: reply, products, sources }]);
+    const run = async () => {
+      const fallback = assistantReplyForQuery(merged, profile, true);
+      let assistantText = fallback.text;
+      try {
+        const { reply } = await fetchAssistantLlmReply({
+          message: merged,
+          profile,
+          pageContext: threadOriginContextRef.current,
+          history,
+          signal: ac.signal,
+        });
+        if (!ac.signal.aborted && reply) assistantText = reply;
+      } catch {
+        /* fallback narrative */
+      }
+      if (ac.signal.aborted) return;
+      setMessages((p) => [
+        ...p,
+        {
+          role: "assistant",
+          content: assistantText,
+          products: fallback.products,
+          sources: fallback.sources,
+        },
+      ]);
       setReplying(false);
-      replyTimerRef.current = null;
       bumpScroll();
-    }, REASONING_MIN_MS);
+    };
+
+    void run();
   }, [draft, profile, replying, bumpScroll, clearPromptProductRefs]);
 
   const composerInner = (
@@ -239,7 +328,7 @@ export function SearchAiPanel({
           ) : (
             <Message className="items-start">
               <MessageAvatar aria-hidden>
-                <Bot className="size-4 text-zinc-600" strokeWidth={2} />
+                <Sparkles className="size-[1.125rem] text-violet-500/90" strokeWidth={2} />
               </MessageAvatar>
               <MessageContent>
                 <div className="space-y-7 text-[15px] leading-[1.65] text-stone-800 sm:leading-[1.7]">

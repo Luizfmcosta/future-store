@@ -7,7 +7,7 @@ import type { ReactNode } from "react";
 export type EyebrowPillAs = "span" | "h2" | "h3" | "p" | "div";
 
 /**
- * Home editorial kicker — rounded pill on `#f0f0f0` (`ui.home.eyebrowPill`).
+ * Editorial kicker — small gray label text only (`ui.home.eyebrowPill`, no chip background).
  * Use on light storefront surfaces (home, PDP, search). Prefer this over ad-hoc
  * `uppercase tracking-[0.2em]` eyebrow strings.
  */

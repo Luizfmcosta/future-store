@@ -3,9 +3,7 @@
 import { mergePromptRefsIntoQuery, type PromptProductRef } from "@/lib/promptProductRefs";
 import { parseIntent } from "@/lib/parseIntent";
 import { clampStorefrontWidth, STOREFRONT_WIDTH } from "@/lib/storefrontViewport";
-import type { SearchIntent } from "@/types";
-import type { ScreenId } from "@/types";
-import type { ShopperProfileId } from "@/types";
+import type { PromptSubmitPageContext, SearchIntent, ScreenId, ShopperProfileId } from "@/types";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
@@ -43,6 +41,11 @@ type DemoState = {
   homeWelcomeResetNonce: number;
   /** Bump so `TopBarProfileCluster` expands when Start / profile change requests it. */
   profileClusterExpandNonce: number;
+  /**
+   * Set on floating prompt submit from PLP / PDP / cart; read by Search AI tab for LLM context.
+   * Not persisted.
+   */
+  lastPromptSubmitContext: PromptSubmitPageContext | null;
 
   setParsedIntent: (intent: SearchIntent | null) => void;
   setProfile: (id: ShopperProfileId) => void;
@@ -73,6 +76,7 @@ type DemoState = {
   presetSearch: () => void;
   triggerHomeWelcomeReset: () => void;
   requestProfileClusterExpand: () => void;
+  setPromptSubmitContext: (ctx: PromptSubmitPageContext | null) => void;
 };
 
 export type { PromptProductRef } from "@/lib/promptProductRefs";
@@ -99,6 +103,7 @@ export const useDemoStore = create<DemoState>()(
   pdpChatOverlayOpen: false,
   homeWelcomeResetNonce: 0,
   profileClusterExpandNonce: 0,
+  lastPromptSubmitContext: null,
 
   setParsedIntent: (intent) => set({ parsedIntent: intent }),
   setProfile: (id) => set({ activeProfile: id }),
@@ -197,6 +202,7 @@ export const useDemoStore = create<DemoState>()(
       cartLineId: null,
       cartQuantity: 1,
       pdpChatOverlayOpen: false,
+      lastPromptSubmitContext: null,
     }),
   presetSearch: () => {
     const query = DEFAULT_QUERY;
@@ -216,6 +222,7 @@ export const useDemoStore = create<DemoState>()(
   },
   requestProfileClusterExpand: () =>
     set((s) => ({ profileClusterExpandNonce: s.profileClusterExpandNonce + 1 })),
+  setPromptSubmitContext: (ctx) => set({ lastPromptSubmitContext: ctx }),
 }),
     {
       name: "future-store-demo",

@@ -16,6 +16,8 @@ export type ChatContainerRootProps = {
 export type ChatContainerContentProps = {
   children: React.ReactNode
   className?: string
+  /** Applied to the library’s scroll viewport (not the message column). */
+  scrollClassName?: string
 } & React.HTMLAttributes<HTMLDivElement>
 
 export type ChatContainerScrollAnchorProps = {
@@ -45,11 +47,16 @@ function ChatContainerRoot({
 function ChatContainerContent({
   children,
   className,
+  scrollClassName,
   ...props
 }: ChatContainerContentProps) {
   return (
     <StickToBottom.Content
       className={cn("flex w-full flex-col", className)}
+      scrollClassName={cn(
+        "scrollbar-none ![scrollbar-gutter:auto]",
+        scrollClassName,
+      )}
       {...props}
     >
       {children}
