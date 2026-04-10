@@ -20,12 +20,16 @@ export function FloatingSearchDock() {
     [pathname, searchParams],
   );
 
-  /** Fresh composer on home — query persists across search/PDP while the dock is hidden or other routes use it. */
+  /** Context badges are page-scoped — clear when the route changes (any page). */
+  useEffect(() => {
+    clearPromptProductRefs();
+  }, [pathname, clearPromptProductRefs]);
+
+  /** Fresh composer text on home; query still persists across search/PDP when not on home. */
   useEffect(() => {
     if (pathname !== "/") return;
     setQuery("");
-    clearPromptProductRefs();
-  }, [pathname, setQuery, clearPromptProductRefs]);
+  }, [pathname, setQuery]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
