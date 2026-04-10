@@ -14,7 +14,9 @@ void main() {
 
 /**
  * Glassy purple sphere — full square canvas; R≈0.34 so the disk sits smaller with transparent margin.
- * Stronger motion: breathing radius, orbiting key light, shimmering spec.
+ * Stronger motion: breathing radius, orbiting key light (no specular blob).
+ * Interior: layered sine “nebula” field on the sphere normal (gas wisps, slow drift).
+ * Interior emission ~#c2008e + soft outer halo around the rim.
  */
 const FS = `#version 300 es
 precision highp float;
@@ -22,6 +24,30 @@ uniform float u_time;
 uniform vec2 u_resolution;
 in vec2 v_uv;
 out vec4 fragColor;
+
+/** Brand emission #c2008e (sRGB → linear-ish in-shader coefficients). */
+const vec3 EMISSION = vec3(0.7608, 0.0, 0.5569);
+
+/** Fractal-ish nebula density on the unit sphere; cheap, no texture lookup. */
+float nebulaField(vec3 p, float t) {
+  float nt = t * 1.28;
+  vec3 q = p * 3.8 + vec3(nt * 0.11, nt * 0.07, nt * 0.09);
+  float w = 0.0;
+  w += sin(q.x * 1.7 + q.y * 2.3 + sin(q.z * 1.1));
+  w += sin(q.y * 2.1 - q.z * 1.9 + nt * 0.55) * 0.72;
+  w += sin(q.z * 1.6 + q.x * 2.4 + nt * 0.48) * 0.65;
+  w += sin(length(q.xy) * 4.2 - nt * 0.62) * 0.45;
+  w += sin(length(q.yz) * 3.5 + nt * 0.38) * 0.38;
+  float s = 0.5 + 0.5 * sin(w);
+  float f = pow(clamp(s, 0.0, 1.0), 1.35);
+  float wisp = smoothstep(0.25, 0.92, f) * (0.55 + 0.45 * sin(nt * 0.31 + p.x * 5.0));
+  return clamp(f * 0.55 + wisp * 0.45, 0.0, 1.0);
+}
+
+/** Screen blend — lightens dark colors clearly (soft/hard light stay near-black on dark nebula). */
+vec3 screenBlend(vec3 base, vec3 blend) {
+  return 1.0 - (1.0 - clamp(base, vec3(0.0), vec3(1.0))) * (1.0 - clamp(blend, vec3(0.0), vec3(1.0)));
+}
 
 void main() {
   vec2 uv = v_uv;
@@ -48,11 +74,6 @@ void main() {
       0.38 + 0.14 * cos(ang * 0.88),
       0.78 + 0.06 * sin(ang * 1.3)
     ));
-    vec3 Hv = normalize(L + V);
-    float specPow = 110.0 + 55.0 * sin(t * 1.35);
-    float spec = pow(max(dot(N, Hv), 0.0), specPow);
-    float specGain = 2.35 + 0.85 * sin(t * 2.1);
-    vec3 specCol = vec3(1.0, 0.96, 0.88) * spec * specGain;
 
     float depth = h / R;
     vec3 coreDark = vec3(0.07, 0.02, 0.13);
@@ -62,11 +83,61 @@ void main() {
     body += vec3(0.12, 0.04, 0.2) * diff * (0.35 + 0.12 * sin(t * 0.9));
 
     vec3 rim = vec3(0.58, 0.32, 1.0) * fresnel * (1.25 + 0.22 * sin(t * 1.6));
-    rgb = body + rim + specCol;
+    rgb = body + rim;
+
+    /* Nebula: emissive gas tinted with EMISSION — stronger when looking through the glass (low fresnel). */
+    vec3 Nn = normalize(N + vec3(sin(t * 0.21), cos(t * 0.17), sin(t * 0.27)) * 0.08);
+    float dens = nebulaField(Nn, t);
+    float dens2 = nebulaField(Nn.yzx * 1.07 + 0.33, t * 1.12 + 1.7);
+    float mixAmt = 0.5 + 0.5 * sin(t * 0.31 + Nn.x * 4.0);
+    vec3 gasA = mix(EMISSION * 0.42, EMISSION * 1.18, dens);
+    vec3 gasB = mix(EMISSION * 0.58, EMISSION * 1.28, dens2);
+    vec3 nebulaRgb = mix(gasA, gasB, mixAmt);
+    float inward = pow(1.0 - fresnel, 1.5);
+    float depthGlow = mix(0.55, 1.0, depth);
+    float nebWeight = dens * inward * depthGlow * 0.52 + dens2 * inward * 0.18;
+    rgb += nebulaRgb * nebWeight;
+    rgb += EMISSION * pow(dens, 3.0) * inward * 0.16;
+
+    /* Interior highlight: screen blend; tight angular × disk product = small localized patch. */
+    vec3 blobDir = normalize(vec3(
+      0.4 + 0.1 * sin(t * 0.22),
+      -0.16 + 0.07 * cos(t * 0.2),
+      0.82 + 0.05 * sin(t * 0.16)
+    ));
+    float nd = max(dot(N, blobDir), 0.0);
+    float angBlob = smoothstep(0.52, 0.98, nd) * pow(max(nd, 0.02), 1.9);
+    vec2 cBlob = c - vec2(0.05 * aspect + 0.02 * sin(t * 0.19), -0.048 + 0.016 * cos(t * 0.21));
+    float rc = length(cBlob) / max(R, 1e-4);
+    float diskBlob = 1.0 - smoothstep(0.42, 0.68, rc);
+    float blobMask = clamp(angBlob * diskBlob * smoothstep(0.0, 0.9, depth), 0.0, 1.0);
+    float lift = blobMask * 0.3;
+    rgb = clamp(screenBlend(rgb, vec3(lift)), vec3(0.0), vec3(1.0));
+
+    /* Inner glow — EMISSION-led bloom + inner shell (slightly boosted). */
+    vec3 innerGlowCol = mix(EMISSION, vec3(1.0, 0.94, 0.98), 0.22);
+    float innerCenter = pow(NdotV, 2.35);
+    float innerShell = pow(1.0 - fresnel, 2.85);
+    rgb += innerGlowCol * (0.21 * innerCenter + 0.17 * innerShell);
+  }
+
+  /* Outer glow: straight RGB × alpha must not double-apply exp falloff (SRC_ALPHA composites rgb*a). */
+  vec3 outerStraight = vec3(1.0, 0.94, 0.98) * 0.55;
+  float outerSigma = R * 0.34 + 0.056;
+  float outerAmt = 0.0;
+  if (r > R) {
+    outerAmt = exp(-(r - R) / outerSigma);
+  }
+  float outerA = outerAmt * 0.68;
+  if (r > R) {
+    rgb = outerStraight;
   }
 
   float w = max(fwidth(r) * 2.5, 0.003);
-  float alpha = smoothstep(R + w, R - w, r);
+  /* edge0 < edge1 — valid smoothstep; 1 inside disk, 0 outside */
+  float diskAlpha = 1.0 - smoothstep(R - w, R + w, r);
+  float alpha = max(diskAlpha, outerA);
+
   rgb = pow(rgb, vec3(0.96));
   fragColor = vec4(rgb, alpha);
 }
@@ -245,7 +316,7 @@ export function AgentWebGLHero({
       ref={wrapRef}
       className={cn(
         "relative mb-8 w-full overflow-hidden sm:mb-10",
-        heightClass ?? "mx-auto aspect-square max-w-[min(100%,280px)]",
+        heightClass ?? "mx-auto aspect-square max-w-[min(100%,360px)]",
         className,
       )}
     >

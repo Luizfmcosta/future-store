@@ -263,7 +263,8 @@ export const messages: Record<string, string | Record<string, string | Record<st
     },
     agentBento: {
       pageAria: "Agentic commerce architecture overview",
-      hero: "One architecture. One data investment. Agentic commerce on unified catalog, context, and open protocols.",
+      hero:
+        "One architecture, one data investment.\nAgentic commerce: catalog, context, open protocols.",
       p1: {
         title: "Unified product data",
         agent: "Machine-readable catalog — SKU, price, stock, SLA, specs, bundle rules",
