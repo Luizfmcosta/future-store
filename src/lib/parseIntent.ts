@@ -102,5 +102,25 @@ export function parseIntent(rawQuery: string): SearchIntent {
 
   if (!intent.priority) intent.priority = "best-value";
 
+  /* Price-ordered results (cheap → expensive or the reverse) — detected last so it wins over generic priority. */
+  const wantsCheapest =
+    /\b(cheapest|cheepest|chepest|cheap(est)?\s+(products?|speakers?|soundbars?|options?|picks|items?|stuff|gear)|lowest\s+prices?|lowest-priced|most\s+affordable|affordable(est)?|underpriced|budget\s+picks|price\s*asc|low\s+to\s+high|sort\s+by\s+(ascending\s+)?price|order\s+by\s+price)\b/i.test(
+      lower,
+    ) ||
+    /* “chap” is a common mistype of “cheap” in product queries (e.g. mobile keyboards). */
+    /\bchap\s+(products?|speakers?|soundbars?|options?|items?|stuff|gear)\b/i.test(lower) ||
+    /\b(mais\s+barato|mais\s+baratos|menor\s+pre[çc]o|menores\s+pre[çc]os|orden(ar|ado)\s+por\s+pre[çc]o|pre[çc]o\s+crescente|econ[ôo]mic[oa]s?|baratos?)\b/i.test(
+      lower,
+    );
+  const wantsPriciest =
+    /\b(most\s+expensive|highest\s+prices?|highest-priced|priciest|top\s+end\s+prices?|price\s*desc|high\s+to\s+low|sort\s+by\s+descending\s+price)\b/i.test(lower) ||
+    /\b(mais\s+caro|mais\s+caros|maior\s+pre[çc]o|maiores\s+pre[çc]os|pre[çc]o\s+decrescente)\b/i.test(lower);
+
+  if (wantsPriciest && !wantsCheapest) {
+    intent.sortBy = "price_desc";
+  } else if (wantsCheapest) {
+    intent.sortBy = "price_asc";
+  }
+
   return intent;
 }

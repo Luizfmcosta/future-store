@@ -68,6 +68,8 @@ export type SearchIntentSizePreferenceKey =
   | "room_3m_speakers";
 export type SearchIntentDeliveryKey = "sooner";
 
+export type SearchIntentSortBy = "relevance" | "price_asc" | "price_desc";
+
 export type SearchIntent = {
   rawQuery: string;
   budget?: number;
@@ -79,6 +81,11 @@ export type SearchIntent = {
   deliveryNeedKey?: SearchIntentDeliveryKey;
   /** e.g. spatial / Atmos interest */
   useCase?: string[];
+  /**
+   * When `price_asc` / `price_desc`, result order follows price instead of relevance scoring
+   * (e.g. “cheapest”, “lowest price”, “most expensive”).
+   */
+  sortBy?: SearchIntentSortBy;
 };
 
 export type AgentSurface = {

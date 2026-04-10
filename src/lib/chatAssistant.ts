@@ -185,6 +185,11 @@ function narrativeForResults(
       }),
     );
   }
+  if (intent.sortBy === "price_asc") {
+    lines.push("", getMessage("chatAssistant.narrativeSortPriceAsc") ?? "");
+  } else if (intent.sortBy === "price_desc") {
+    lines.push("", getMessage("chatAssistant.narrativeSortPriceDesc") ?? "");
+  }
 
   lines.push("", getMessage("chatAssistant.narrativeFooter") ?? "");
 
@@ -259,7 +264,10 @@ export function assistantReplyForQuery(
 
   const intent = parseIntent(userText);
   const results = getSearchResults(profile, intent);
-  const ordered = aiMode ? results : [...results].sort((a, b) => a.title.localeCompare(b.title));
+  const ordered =
+    aiMode || intent.sortBy === "price_asc" || intent.sortBy === "price_desc"
+      ? results
+      : [...results].sort((a, b) => a.title.localeCompare(b.title));
   const products = ordered.slice(0, MAX_PRODUCTS);
   const text = narrativeForResults(userText, intent, products);
   const sources = buildAssistantSources(products, intent);

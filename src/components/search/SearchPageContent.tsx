@@ -171,8 +171,8 @@ export function SearchPageContent() {
   );
   const results = getSearchResults(profile, intent);
   const displayResults = useMemo(
-    () => applyLlmProductRankOrder(results, plpLlmRankIds),
-    [results, plpLlmRankIds],
+    () => applyLlmProductRankOrder(results, plpLlmRankIds, intent),
+    [results, plpLlmRankIds, intent],
   );
   const best = getBestMatch(profile, displayResults, intent);
   const compare = getComparisonCards(profile, displayResults);
