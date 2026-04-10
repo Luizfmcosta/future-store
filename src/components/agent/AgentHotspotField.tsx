@@ -5,6 +5,7 @@
  * https://codepen.io/karlovidek/pen/ExjXKNV — Framer Motion + SVG, no GSAP/PIXI).
  */
 
+import { AgentHeroHeadline } from "@/components/agent/AgentHeroHeadline";
 import { AgentWebGLHero } from "@/components/agent/AgentWebGLHero";
 import { useT } from "@/lib/useT";
 import { cn } from "@/lib/utils";
@@ -152,7 +153,6 @@ function MagneticHotspot({
 }
 
 export function AgentHotspotField({ className }: { className?: string }) {
-  const t = useT();
   const reduceMotion = useReducedMotion() ?? false;
   const fieldRef = useRef<HTMLDivElement>(null);
   const sphereAnchorRef = useRef<HTMLDivElement>(null);
@@ -276,9 +276,7 @@ export function AgentHotspotField({ className }: { className?: string }) {
           <AgentWebGLHero className="pointer-events-none mb-0 w-full max-w-none sm:mb-0" />
         </div>
         <header className="pointer-events-auto absolute left-1/2 top-[calc(50%+clamp(12.5rem,30vw,14.5rem))] z-[22] w-full max-w-[min(100%,52rem)] -translate-x-1/2 px-4 text-center">
-          <h1 className="whitespace-pre-line text-[clamp(1.1rem,3vw,2rem)] font-semibold leading-[1.2] tracking-tight text-white/95">
-            {t("agentBento.hero")}
-          </h1>
+          <AgentHeroHeadline />
         </header>
       </div>
 

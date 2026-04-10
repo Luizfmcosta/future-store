@@ -110,7 +110,11 @@ function curatedSortForSegment(segment: HomeSegmentId): CuratedSortMode {
 }
 
 function merchSortForSegment(segment: HomeSegmentId): MerchSortMode {
-  if (segment === "ricardo_speed" || segment === "ricardo_value") return "price_asc";
+  /**
+   * Ricardo “Browse the line” matches production: fixed catalog order in `products` (editorial lineup),
+   * not price-sorted — `price_asc` surfaced headphones / entry SKUs first and diverged from live.
+   */
+  if (segment === "ricardo_speed" || segment === "ricardo_value") return "default";
   if (segment === "marina_research") return "price_desc";
   return "default";
 }
@@ -134,14 +138,19 @@ export function buildHomeExperience(
   };
 }
 
-/** Product slots — IDs from catalog; continue prefers recent PDP views when present. */
+/**
+ * Product slots — IDs from catalog.
+ * Marina: prefers the most recent PDP view when present (then Stage Compact fallback).
+ * Ricardo: always use segment defaults — recent views could surface a TV with “speaker” hero art
+ * and clash with “Standout value on display” copy; returning shoppers should see Trail Mini (`sp-roam-2`) on value.
+ */
 export function getContinueProductId(
   profile: ShopperProfileId,
   segment: HomeSegmentId,
   recentIds: string[] = getRecentProductIds(),
 ): string {
   const recent = recentIds;
-  if (recent[0]) return recent[0];
+  if (profile !== "ricardo" && recent[0]) return recent[0];
   if (profile === "marina") {
     return "sb-beam-g2";
   }

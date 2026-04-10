@@ -17,6 +17,8 @@ export function mergePromptRefsIntoQuery(text: string, refs: PromptProductRef[])
 /** Focus the main storefront prompt (floating dock or AI follow-up). */
 export function focusStorefrontPromptInput(): void {
   requestAnimationFrame(() => {
-    document.querySelector<HTMLElement>("[data-storefront-search-field]")?.focus();
+    document
+      .querySelector<HTMLElement>("[data-storefront-search-field]")
+      ?.focus({ preventScroll: true });
   });
 }

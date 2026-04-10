@@ -20,6 +20,8 @@ export function ChatProductResults({
   onFollowUp,
   followUpDisabled,
   showFollowUpSection = true,
+  presentation = "default",
+  anchorProduct,
 }: {
   products: Product[];
   profile: ShopperProfileId;
@@ -29,40 +31,96 @@ export function ChatProductResults({
   followUpDisabled?: boolean;
   /** When false, hides follow-up chips (e.g. after the shopper sent another message). */
   showFollowUpSection?: boolean;
+  /** PDP chat: larger cards, minimal copy; no top-matches label (follow-ups still shown). */
+  presentation?: "default" | "pdpChat";
+  /** PDP comparison: product being viewed — shown on its own row above alternatives. */
+  anchorProduct?: Product;
 }) {
   const t = useT();
-  if (products.length === 0) return null;
-
-  const shown = products.slice(0, 4);
+  const isPdpChat = presentation === "pdpChat";
+  const shown = products.slice(0, isPdpChat ? 3 : 4);
   const followUps = followUpSuggestions?.length ? followUpSuggestions : [];
 
+  const topMatchesHeadingId = "chat-top-matches-heading";
+  const anchorEyebrowId = "chat-pdp-anchor-eyebrow";
+  const altsEyebrowId = "chat-pdp-alts-eyebrow";
+
+  const anchorP = anchorProduct && isPdpChat ? localizeProduct(anchorProduct) : null;
+
+  if (shown.length === 0 && !anchorP) return null;
+
   return (
-    <div className="w-full min-w-0 space-y-2">
-      <EyebrowPill id="chat-top-matches-heading">
-        {t("searchAiPanel.topMatches")}
-      </EyebrowPill>
-      <div
-        role="group"
-        aria-labelledby="chat-top-matches-heading"
-        className="snap-x snap-mandatory w-full min-w-0 overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch] scrollbar-none"
-      >
-        <ul className="flex w-max list-none items-stretch gap-3 pb-1 pr-1 pt-0.5">
-          {shown.map((raw) => {
-            const p = localizeProduct(raw);
-            return (
-              <li
-                key={p.id}
-                className="flex w-[156px] shrink-0 snap-start snap-always self-stretch sm:w-[176px]"
-              >
-                <ProductRowCard product={p} profile={profile} />
-              </li>
-            );
-          })}
-        </ul>
-      </div>
+    <div
+      className={cn(
+        "w-full min-w-0",
+        isPdpChat && anchorP ? "space-y-4" : isPdpChat ? "space-y-0" : "space-y-2",
+      )}
+    >
+      {anchorP ? (
+        <div className="space-y-2">
+          <EyebrowPill id={anchorEyebrowId} as="p">
+            {t("pdp.chatComparisonAnchorEyebrow")}
+          </EyebrowPill>
+          <div className="flex w-full justify-start">
+            <div className="w-[200px] shrink-0 sm:w-[228px]">
+              <ProductRowCard product={anchorP} profile={profile} presentation="pdpChat" />
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {shown.length > 0 ? (
+        <div className="space-y-2">
+          {!isPdpChat ? (
+            <EyebrowPill id={topMatchesHeadingId}>{t("searchAiPanel.topMatches")}</EyebrowPill>
+          ) : anchorP ? (
+            <EyebrowPill id={altsEyebrowId} as="p">
+              {t("pdp.chatComparisonAlternativesEyebrow")}
+            </EyebrowPill>
+          ) : null}
+          <div
+            role="group"
+            aria-label={
+              isPdpChat && !anchorP ? t("pdp.chatComparisonProductsGroup") : undefined
+            }
+            aria-labelledby={
+              !isPdpChat
+                ? topMatchesHeadingId
+                : anchorP
+                  ? altsEyebrowId
+                  : undefined
+            }
+            className="snap-x snap-mandatory w-full min-w-0 overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch] scrollbar-none"
+          >
+            <ul
+              className={cn(
+                "flex w-max list-none items-stretch pb-1 pr-1 pt-0.5",
+                isPdpChat ? "gap-3.5" : "gap-3",
+              )}
+            >
+              {shown.map((raw) => {
+                const p = localizeProduct(raw);
+                return (
+                  <li
+                    key={p.id}
+                    className={cn(
+                      "flex shrink-0 snap-start snap-always self-stretch",
+                      isPdpChat
+                        ? "w-[200px] sm:w-[228px]"
+                        : "w-[156px] sm:w-[176px]",
+                    )}
+                  >
+                    <ProductRowCard product={p} profile={profile} presentation={presentation} />
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </div>
+      ) : null}
 
       {onFollowUp && followUps.length > 0 && showFollowUpSection ? (
-        <div className="space-y-2 pt-3">
+        <div className={cn("space-y-2", isPdpChat ? "pt-4 pb-4" : "pt-3")}>
           <EyebrowPill id="chat-followup-heading">
             {t("searchAiPanel.followUpHeading")}
           </EyebrowPill>
@@ -99,13 +157,29 @@ export function ChatProductResults({
   );
 }
 
-function ProductRowCard({ product: p, profile }: { product: Product; profile: ShopperProfileId }) {
+function ProductRowCard({
+  product: p,
+  profile,
+  presentation = "default",
+}: {
+  product: Product;
+  profile: ShopperProfileId;
+  presentation?: "default" | "pdpChat";
+}) {
+  const isPdpChat = presentation === "pdpChat";
   const meta = profile === "marina" ? p.bestFor[0] : p.deliveryETA;
   const label = [p.title, "—", p.brand, "—", formatBRL(p.price), "—", "view product details"].join(" ");
 
   return (
     <Card className="flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden rounded-xl p-0 transition hover:border-stone-300/90">
-      <AskImageButton productLabel={p.title} productId={p.id} className="h-16 w-full shrink-0 bg-[#f5f5f5] sm:h-[4.75rem]">
+      <AskImageButton
+        productLabel={p.title}
+        productId={p.id}
+        className={cn(
+          "w-full shrink-0 bg-[#f5f5f5]",
+          isPdpChat ? "h-[7.25rem] sm:h-32" : "h-16 sm:h-[4.75rem]",
+        )}
+      >
         <div className="relative h-full w-full">
           {hasMediaUrl(p.heroImage) ? (
             <Image
@@ -113,7 +187,7 @@ function ProductRowCard({ product: p, profile }: { product: Product; profile: Sh
               alt=""
               fill
               className="object-contain p-1"
-              sizes="(max-width:640px) 156px, 176px"
+              sizes={isPdpChat ? "(max-width:640px) 200px, 228px" : "(max-width:640px) 156px, 176px"}
               unoptimized
             />
           ) : (
@@ -125,23 +199,43 @@ function ProductRowCard({ product: p, profile }: { product: Product; profile: Sh
         href={`/product/${p.id}`}
         aria-label={label}
         className={cn(
-          "flex min-h-0 flex-1 flex-col p-2 outline-none",
+          "flex min-h-0 flex-1 flex-col outline-none",
+          isPdpChat ? "p-2.5" : "p-2",
           ui.home.focusRing,
           "focus-visible:rounded-b-xl",
         )}
       >
-        <div className="flex min-h-0 flex-1 flex-col gap-1">
-          <p className="shrink-0 text-pretty text-[14px] font-semibold leading-snug text-stone-900">
+        <div className={cn("flex min-h-0 flex-1 flex-col", isPdpChat ? "gap-1.5" : "gap-1")}>
+          <p
+            className={cn(
+              "shrink-0 text-pretty font-semibold text-stone-900",
+              isPdpChat
+                ? "line-clamp-2 text-[13px] leading-snug sm:text-[14px]"
+                : "text-[14px] leading-snug",
+            )}
+          >
             {p.title}
           </p>
-          <div className="mt-auto space-y-1 pt-0.5">
-            <p className="text-pretty text-[14px] leading-snug text-stone-600">{meta}</p>
+          <div className={cn("mt-auto", !isPdpChat && "space-y-1 pt-0.5")}>
+            {!isPdpChat ? (
+              <p className="text-pretty text-[14px] leading-snug text-stone-600">{meta}</p>
+            ) : null}
             <div className="flex flex-wrap items-baseline gap-1.5">
-              <span className="text-[14px] font-semibold tabular-nums leading-none text-stone-900">
+              <span
+                className={cn(
+                  "font-semibold tabular-nums leading-none text-stone-900",
+                  isPdpChat ? "text-[15px] sm:text-base" : "text-[14px]",
+                )}
+              >
                 {formatBRL(p.price)}
               </span>
               {p.oldPrice ? (
-                <span className="text-[14px] tabular-nums leading-none text-stone-400 line-through">
+                <span
+                  className={cn(
+                    "tabular-nums leading-none text-stone-400 line-through",
+                    isPdpChat ? "text-[13px]" : "text-[14px]",
+                  )}
+                >
                   {formatBRL(p.oldPrice)}
                 </span>
               ) : null}

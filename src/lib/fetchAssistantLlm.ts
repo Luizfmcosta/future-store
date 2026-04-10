@@ -8,6 +8,8 @@ export async function fetchAssistantLlmReply(args: {
   pageContext: PromptSubmitPageContext | null;
   history: ChatTurn[];
   signal?: AbortSignal;
+  /** When `pdpComparison`, the API uses a comparison-style system prompt for PDP assistant. */
+  responseStyle?: "pdpComparison";
 }): Promise<{ reply: string | null }> {
   const res = await fetch("/api/chat", {
     method: "POST",
@@ -17,6 +19,7 @@ export async function fetchAssistantLlmReply(args: {
       profile: args.profile,
       pageContext: args.pageContext,
       history: args.history.slice(-12),
+      ...(args.responseStyle ? { responseStyle: args.responseStyle } : {}),
     }),
     signal: args.signal,
   });

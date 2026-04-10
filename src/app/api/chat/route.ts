@@ -47,11 +47,26 @@ function isHistoryFixed(v: unknown): v is { role: "user" | "assistant"; content:
 
 type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 
+const PDP_COMPARISON_MODE = [
+  "",
+  "PDP comparison mode:",
+  "The customer is on a product detail page. Their message may include an \"About: …\" line naming the product they were viewing.",
+  "Open with exactly this structure (adapt the viewed product name and priority to context):",
+  "- Line 1: \"Here are 3 top matches ranked for Future Store vs [viewed product title].\"",
+  "- Line 2: \"You asked for other options and based on your profile we are prioritizing [priority signal, e.g. best value / premium / cinema / sports].\"",
+  "- Then at most 3 bullet lines naming alternatives with concrete trade-offs vs what they were viewing.",
+  "When suggesting alternatives, prefer lower-priced or similar-tier options in the same product category — do not steer toward more expensive upgrades unless the shopper explicitly asks for premium or a step-up.",
+  "If the viewed product is a room speaker or soundbar (not headphones), do not suggest headphones or earbuds — only comparable speakers, soundbars, or relevant home audio.",
+  "Do not use the old SERP-style intro (\"Here are 4 top matches…\") or separate \"You asked:\" / \"Priority:\" lines.",
+  "If you lack specs or prices, say the PDP lists details and avoid inventing numbers.",
+].join("\n");
+
 function buildMessages(
   profile: ShopperProfileId,
   pageContext: PromptSubmitPageContext | null,
   history: { role: "user" | "assistant"; content: string }[],
   message: string,
+  responseStyle?: string,
 ): ChatMessage[] {
   const pageBlock = formatPromptPageContextForLlm(pageContext);
   const system = [
@@ -63,7 +78,10 @@ function buildMessages(
     "",
     "Reply in the same language as the customer's message. Be helpful and specific to their question and the page context when relevant.",
     "If you lack product specs or prices, say the catalog page lists details and avoid inventing numbers.",
-  ].join("\n");
+    responseStyle === "pdpComparison" ? PDP_COMPARISON_MODE : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
 
   return [
     { role: "system", content: system },
@@ -76,6 +94,7 @@ async function callOpenAi(
   apiKey: string,
   model: string,
   messages: ChatMessage[],
+  maxTokens?: number,
 ): Promise<{ ok: true; text: string } | { ok: false; status: number; detail: string }> {
   const res = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -87,7 +106,7 @@ async function callOpenAi(
       model,
       messages,
       temperature: 0.65,
-      max_tokens: 900,
+      max_tokens: maxTokens ?? 900,
     }),
   });
   if (!res.ok) {
@@ -153,13 +172,14 @@ async function callGemini(
   apiKey: string,
   preferredModel: string,
   messages: ChatMessage[],
+  opts?: { maxOutputTokens?: number },
 ): Promise<{ ok: true; text: string } | { ok: false; status: number; detail: string }> {
   const systemMsg = messages.find((m) => m.role === "system");
   const rest = messages.filter((m) => m.role !== "system");
 
   const generationConfig = {
     temperature: 0.65,
-    maxOutputTokens: 900,
+    maxOutputTokens: opts?.maxOutputTokens ?? 900,
   };
 
   const buildContents = (mergeSystemIntoFirstUser: boolean) => {
@@ -244,6 +264,15 @@ export async function POST(req: Request) {
   }
   const history = isHistoryFixed(b.history) ? b.history : [];
 
+  let responseStyle: string | undefined;
+  if (b.responseStyle === undefined || b.responseStyle === null) {
+    responseStyle = undefined;
+  } else if (b.responseStyle === "pdpComparison") {
+    responseStyle = "pdpComparison";
+  } else {
+    return NextResponse.json({ error: "invalid_response_style", reply: null }, { status: 400 });
+  }
+
   const geminiKey = process.env.GEMINI_API_KEY?.trim();
   const openAiKey = process.env.OPENAI_API_KEY?.trim();
 
@@ -251,13 +280,18 @@ export async function POST(req: Request) {
     return NextResponse.json({ reply: null, skipped: true }, { status: 200 });
   }
 
-  const chatMessages = buildMessages(b.profile, pageContext, history, message);
+  const chatMessages = buildMessages(b.profile, pageContext, history, message, responseStyle);
 
   try {
     if (geminiKey) {
       /* 1.5-flash is widely enabled on AI Studio keys; 2.0 is tried as fallback inside `callGemini`. */
       const model = process.env.GEMINI_CHAT_MODEL?.trim() || GEMINI_DEFAULT_MODEL;
-      const out = await callGemini(geminiKey, model, chatMessages);
+      const out = await callGemini(
+        geminiKey,
+        model,
+        chatMessages,
+        responseStyle === "pdpComparison" ? { maxOutputTokens: 480 } : undefined,
+      );
       if (!out.ok) {
         return NextResponse.json({ reply: null, error: out.detail }, { status: out.status });
       }
@@ -265,7 +299,12 @@ export async function POST(req: Request) {
     }
 
     const model = process.env.OPENAI_CHAT_MODEL?.trim() || "gpt-4o-mini";
-    const out = await callOpenAi(openAiKey!, model, chatMessages);
+    const out = await callOpenAi(
+      openAiKey!,
+      model,
+      chatMessages,
+      responseStyle === "pdpComparison" ? 450 : undefined,
+    );
     if (!out.ok) {
       return NextResponse.json({ reply: null, error: out.detail }, { status: out.status });
     }

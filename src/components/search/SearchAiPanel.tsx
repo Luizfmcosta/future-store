@@ -1,6 +1,5 @@
 "use client";
 
-import { HomeFooterBleed } from "@/components/home/HomeFooter";
 import { ChatAssistantSources } from "@/components/chat/ChatAssistantSources";
 import { ChatProductResults } from "@/components/chat/ChatProductResults";
 import {
@@ -13,21 +12,23 @@ import { PromptContextBadges } from "@/components/search/PromptContextBadges";
 import { PromptSuggestionRow } from "@/components/search/PromptSuggestionRow";
 import { PromptInputChatToolbar } from "@/components/search/PromptInputChatToolbar";
 import { PromptInput, PromptInputTextarea } from "@/components/ui/prompt-input";
+import { DEFAULT_SEARCH_QUERY } from "@/lib/defaultSearchQuery";
 import { assistantReplyForQuery, type AssistantSource } from "@/lib/chatAssistant";
 import { fetchAssistantLlmReply, type ChatTurn } from "@/lib/fetchAssistantLlm";
 import { getChatFollowUpSuggestions, getPromptSuggestionPool } from "@/lib/promptSuggestions";
 import { ui } from "@/lib/ui-tokens";
 import { useT } from "@/lib/useT";
 import { cn } from "@/lib/utils";
+import { getProductById } from "@/data/products";
 import { mergePromptRefsIntoQuery } from "@/lib/promptProductRefs";
 import { useDemoStore } from "@/store/demoStore";
 import type { Product, PromptSubmitPageContext } from "@/types";
 import { Sparkles } from "lucide-react";
-import { createPortal } from "react-dom";
+import { usePathname } from "next/navigation";
 import { useStickToBottomContext, type GetTargetScrollTop } from "use-stick-to-bottom";
 import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 
-/** Marks end of chat for PLP AI: stick-to-bottom caps here so the footer can live below the fold. */
+/** Marks end of chat for search AI: stick-to-bottom caps scroll here. */
 const PLP_CHAT_SCROLL_CAP_SEL = "[data-storefront-chat-scroll-cap]";
 
 const plpChatTargetScrollTop: GetTargetScrollTop = (fullTarget, { scrollElement, contentElement }) => {
@@ -105,18 +106,18 @@ function ReasoningLoading() {
 
 export function SearchAiPanel({
   variant = "default",
-  composerHostEl,
 }: {
-  /** `pdp`: thread stays in the assistant card; composer is portaled to `composerHostEl` below the card. */
   variant?: "default" | "pdp";
-  composerHostEl?: HTMLDivElement | null;
 } = {}) {
   const t = useT();
   const promptFileInputId = useId();
   const profile = useDemoStore((s) => s.activeProfile);
   const currentQuery = useDemoStore((s) => s.currentQuery);
+  const parsedIntent = useDemoStore((s) => s.parsedIntent);
   const promptProductRefs = useDemoStore((s) => s.promptProductRefs);
   const clearPromptProductRefs = useDemoStore((s) => s.clearPromptProductRefs);
+  const addPromptProductRef = useDemoStore((s) => s.addPromptProductRef);
+  const pathname = usePathname();
 
   const [messages, setMessages] = useState<Msg[]>([]);
   const [draft, setDraft] = useState("");
@@ -135,8 +136,32 @@ export function SearchAiPanel({
   const suggestionPool = useMemo(() => getPromptSuggestionPool(), []);
   const chatFollowUps = useMemo(() => getChatFollowUpSuggestions(), []);
 
-  const threadKey =
-    currentQuery.trim().length > 0 ? `${currentQuery.trim()}|${profile}` : "empty";
+  /**
+   * Chat tab clears `currentQuery` on Results; PLP intent still holds the active query (`rawQuery`).
+   * PDP: after submit, `runSearch` sets `currentQuery` to the merged prompt (About + ask).
+   */
+  const plpSeedQuery = useMemo(() => {
+    const fromComposer = currentQuery.trim();
+    const fromResults = parsedIntent?.rawQuery?.trim() ?? "";
+    return fromComposer || fromResults || DEFAULT_SEARCH_QUERY;
+  }, [currentQuery, parsedIntent]);
+
+  const pdpAnchorProductId = useMemo(() => {
+    if (variant !== "pdp" || !pathname?.startsWith("/product/")) return undefined;
+    return pathname.slice("/product/".length).split("/")[0] || undefined;
+  }, [variant, pathname]);
+
+  const pdpAnchorProduct = useMemo(() => {
+    if (!pdpAnchorProductId) return undefined;
+    return getProductById(pdpAnchorProductId) ?? undefined;
+  }, [pdpAnchorProductId]);
+
+  const comparisonReplyOpts = useMemo(
+    () => (pdpAnchorProductId ? { comparisonAnchorProductId: pdpAnchorProductId } : undefined),
+    [pdpAnchorProductId],
+  );
+
+  const threadKey = `${variant}|${plpSeedQuery}|${profile}`;
 
   const bumpScroll = useCallback(() => {
     setScrollBump((n) => n + 1);
@@ -148,16 +173,7 @@ export function SearchAiPanel({
     seedAbortRef.current = ac;
 
     const run = async () => {
-      const q = currentQuery.trim();
-      if (!q) {
-        prevSeedQRef.current = null;
-        threadOriginContextRef.current = null;
-        setMessages([]);
-        setReplying(false);
-        setScrollBump(0);
-        return;
-      }
-
+      const q = plpSeedQuery;
       const qChanged = prevSeedQRef.current !== q;
       prevSeedQRef.current = q;
       const ctxSnapshot = useDemoStore.getState().lastPromptSubmitContext;
@@ -171,7 +187,7 @@ export function SearchAiPanel({
       setMessages([{ role: "user", content: q }]);
       setReplying(true);
 
-      const fallback = assistantReplyForQuery(q, profile, true);
+      const fallback = assistantReplyForQuery(q, profile, true, comparisonReplyOpts);
       let assistantText = fallback.text;
       try {
         const { reply } = await fetchAssistantLlmReply({
@@ -180,6 +196,7 @@ export function SearchAiPanel({
           pageContext: ctxSnapshot,
           history: [],
           signal: ac.signal,
+          responseStyle: variant === "pdp" ? "pdpComparison" : undefined,
         });
         if (!ac.signal.aborted && reply) assistantText = reply;
       } catch {
@@ -207,15 +224,13 @@ export function SearchAiPanel({
 
     void run();
     return () => ac.abort();
-  }, [currentQuery, profile]);
+  }, [comparisonReplyOpts, plpSeedQuery, profile, variant]);
 
   useEffect(() => {
     return () => {
       followUpAbortRef.current?.abort();
     };
   }, []);
-
-  const isPdp = variant === "pdp";
 
   const onSend = useCallback(() => {
     const text = draft.trim();
@@ -224,6 +239,11 @@ export function SearchAiPanel({
 
     const merged = mergePromptRefsIntoQuery(text, refs);
     clearPromptProductRefs();
+    if (variant === "pdp" && pathname?.startsWith("/product/")) {
+      const pid = pathname.slice("/product/".length).split("/")[0] ?? "";
+      const p = pid ? getProductById(pid) : undefined;
+      if (p) addPromptProductRef({ productId: p.id, label: p.title });
+    }
 
     followUpAbortRef.current?.abort();
     const ac = new AbortController();
@@ -238,7 +258,7 @@ export function SearchAiPanel({
     bumpScroll();
 
     const run = async () => {
-      const fallback = assistantReplyForQuery(merged, profile, true);
+      const fallback = assistantReplyForQuery(merged, profile, true, comparisonReplyOpts);
       let assistantText = fallback.text;
       try {
         const { reply } = await fetchAssistantLlmReply({
@@ -247,6 +267,7 @@ export function SearchAiPanel({
           pageContext: threadOriginContextRef.current,
           history,
           signal: ac.signal,
+          responseStyle: variant === "pdp" ? "pdpComparison" : undefined,
         });
         if (!ac.signal.aborted && reply) assistantText = reply;
       } catch {
@@ -266,7 +287,17 @@ export function SearchAiPanel({
     };
 
     void run();
-  }, [draft, profile, replying, bumpScroll, clearPromptProductRefs]);
+  }, [
+    addPromptProductRef,
+    bumpScroll,
+    comparisonReplyOpts,
+    clearPromptProductRefs,
+    draft,
+    pathname,
+    profile,
+    replying,
+    variant,
+  ]);
 
   const composerInner = (
     <>
@@ -297,7 +328,6 @@ export function SearchAiPanel({
           className={cn(
             ui.floatingSearchPillText,
             "max-h-[160px] text-stone-800 placeholder:text-stone-400",
-            isPdp && "text-[15px] md:text-[15px]",
           )}
           aria-label={t("searchAiPanel.ariaMessage")}
         />
@@ -319,19 +349,9 @@ export function SearchAiPanel({
     <>
       <ScrollToBottomOnBump bump={scrollBump} threadKey={threadKey} />
       {messages.length === 0 ? (
-        isPdp ? (
-          <div className="flex min-h-[min(32dvh,220px)] w-full flex-1 flex-col items-center justify-center px-5 sm:px-8">
-            <p className="max-w-[22rem] text-balance text-pretty text-center text-[15px] leading-[1.65] tracking-tight text-stone-600 sm:text-[16px] sm:leading-[1.7]">
-              {t("searchAiPanel.emptyState")}
-            </p>
-          </div>
-        ) : (
-          <div className="flex w-full flex-1 flex-col items-center justify-start pt-2 pb-96 sm:pb-[33rem] lg:pb-[42rem] sm:pt-4">
-            <p className="text-balance text-pretty text-center text-[15px] leading-relaxed tracking-tight text-stone-600 sm:text-[16px]">
-              {t("searchAiPanel.emptyState")}
-            </p>
-          </div>
-        )
+        <div className="flex min-h-[min(28dvh,200px)] w-full flex-1 flex-col items-center justify-center px-5 pb-96 sm:px-8 sm:pb-[33rem] lg:pb-[42rem]">
+          <ReasoningLoading />
+        </div>
       ) : null}
       {messages.map((m, i) => {
         const followUpChipsActive = m.role === "assistant" && i === messages.length - 1;
@@ -350,9 +370,16 @@ export function SearchAiPanel({
                   <Sparkles className="size-5 text-violet-500/90" strokeWidth={2} aria-hidden />
                 </MessageAvatar>
                 <MessageContent>
-                  <div className="space-y-5 pt-[max(0px,calc((3rem-1lh)/2))] text-[16px] leading-[1.45] text-stone-800 sm:leading-[1.5]">
+                  <div
+                    className={cn(
+                      "pt-[max(0px,calc((3rem-1lh)/2))] text-stone-800",
+                      variant === "pdp"
+                        ? "space-y-3 text-[15px] leading-snug sm:leading-[1.45]"
+                        : "space-y-5 text-[16px] leading-[1.45] sm:leading-[1.5]",
+                    )}
+                  >
                     <p className="whitespace-pre-wrap text-pretty">{m.content}</p>
-                    <ChatAssistantSources sources={m.sources} />
+                    {variant !== "pdp" ? <ChatAssistantSources sources={m.sources} /> : null}
                     <ChatProductResults
                       products={m.products}
                       profile={profile}
@@ -360,6 +387,8 @@ export function SearchAiPanel({
                       onFollowUp={setDraft}
                       followUpDisabled={replying}
                       showFollowUpSection={followUpChipsActive}
+                      presentation={variant === "pdp" ? "pdpChat" : "default"}
+                      anchorProduct={variant === "pdp" ? pdpAnchorProduct : undefined}
                     />
                   </div>
                 </MessageContent>
@@ -369,49 +398,15 @@ export function SearchAiPanel({
         );
       })}
       {replying ? (
-        <div
-          className={cn(
-            "flex w-full flex-col gap-1",
-            !isPdp && "mb-96 sm:mb-[33rem] lg:mb-[42rem]",
-          )}
-        >
+        <div className="mb-96 flex w-full flex-col gap-1 sm:mb-[33rem] lg:mb-[42rem]">
           <ReasoningLoading />
         </div>
       ) : null}
     </>
   );
 
-  const contentBottomPad = isPdp
-    ? "pb-5 sm:pb-6"
-    : "pb-[calc(6.25rem+0.5rem+env(safe-area-inset-bottom,0px))]";
-
-  if (isPdp) {
-    return (
-      <div className="flex min-h-0 flex-1 flex-col">
-        <div className="relative z-0 flex min-h-0 min-w-0 flex-1 flex-col overflow-x-hidden bg-transparent">
-          <ChatContainerRoot
-            key={threadKey}
-            data-storefront-ai-scroll=""
-            className="h-full min-h-[min(28dvh,200px)]"
-            stickInitial={false}
-          >
-            <ChatContainerContent className={cn("mx-auto w-full max-w-[1024px] gap-8 pt-10 sm:pt-12", contentBottomPad)}>
-              {chatThread}
-              <ChatContainerScrollAnchor />
-            </ChatContainerContent>
-          </ChatContainerRoot>
-        </div>
-        {composerHostEl
-          ? createPortal(
-              <div className="w-full max-w-xl rounded-[1.25rem] bg-white/95 p-0.5 shadow-[0_8px_32px_rgba(15,23,42,0.12)] ring-1 ring-black/[0.06] backdrop-blur-sm">
-                <div className="pointer-events-auto w-full px-0">{composerInner}</div>
-              </div>,
-              composerHostEl,
-            )
-          : null}
-      </div>
-    );
-  }
+  const contentBottomPad =
+    "pb-[calc(8.75rem+env(safe-area-inset-bottom,0px))] sm:pb-[calc(9.5rem+env(safe-area-inset-bottom,0px))]";
 
   return (
     <div className="relative flex min-h-0 flex-1 flex-col">
@@ -424,20 +419,21 @@ export function SearchAiPanel({
           targetScrollTop={plpChatTargetScrollTop}
         >
           <ChatContainerContent className="flex min-h-full w-full min-w-0 flex-col pb-0">
-            {/*
-              Shell-colored panel + white thread column: footer's rounded-b used to AA against white,
-              leaving thin white fringes at the device corners. Footer sits in a clipped #121212 block
-              matching the storefront inner radius (AppShell).
-            */}
             <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col bg-white pt-10 sm:pt-12">
               <div
                 className={cn(
                   "mx-auto flex min-h-0 w-full max-w-[1024px] flex-1 flex-col px-4 sm:px-6",
-                  "mb-60 sm:mb-[21rem] lg:mb-[27rem]",
                   contentBottomPad,
                 )}
               >
-                <div className="flex min-h-0 w-full flex-1 flex-col gap-8">{chatThread}</div>
+                <div
+                  className={cn(
+                    "flex min-h-0 w-full flex-1 flex-col",
+                    variant === "pdp" ? "gap-4" : "gap-8",
+                  )}
+                >
+                  {chatThread}
+                </div>
               </div>
               <div
                 className="h-px w-full shrink-0 scroll-mt-4"
@@ -445,9 +441,6 @@ export function SearchAiPanel({
                 data-storefront-chat-scroll-cap=""
               />
               <ChatContainerScrollAnchor />
-            </div>
-            <div className="shrink-0 overflow-hidden rounded-b-[calc(1.75rem-2px)] bg-[#121212]">
-              <HomeFooterBleed className="mt-16 sm:mt-20" bleed={false} dockClearance={false} />
             </div>
           </ChatContainerContent>
         </ChatContainerRoot>

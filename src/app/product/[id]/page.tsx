@@ -4,6 +4,7 @@ import { HomeFooterBleed } from "@/components/home/HomeFooter";
 import { CompareAlternativesWidget } from "@/components/pdp/CompareAlternativesWidget";
 import { CompatibilityWidget } from "@/components/pdp/CompatibilityWidget";
 import { PdpChatOverlay } from "@/components/pdp/PdpChatOverlay";
+import { PdpSearchResultsOverlay } from "@/components/pdp/PdpSearchResultsOverlay";
 import { FitInsightWidget } from "@/components/pdp/FitInsightWidget";
 import { PdpFirstSection } from "@/components/pdp/PdpFirstSection";
 import { PdpSection } from "@/components/pdp/PdpSection";
@@ -27,16 +28,20 @@ export default function ProductPage() {
   const profile = useDemoStore((s) => s.activeProfile);
   const aiMode = useDemoStore((s) => s.aiMode);
   const setSelected = useDemoStore((s) => s.setSelectedProduct);
+  const addPromptProductRef = useDemoStore((s) => s.addPromptProductRef);
   const closePdpChatOverlay = useDemoStore((s) => s.closePdpChatOverlay);
+  const closePdpSearchOverlay = useDemoStore((s) => s.closePdpSearchOverlay);
   useEffect(() => {
     closePdpChatOverlay();
-  }, [id, closePdpChatOverlay]);
+    closePdpSearchOverlay();
+  }, [id, closePdpChatOverlay, closePdpSearchOverlay]);
 
   useEffect(() => {
     return () => {
       closePdpChatOverlay();
+      closePdpSearchOverlay();
     };
-  }, [closePdpChatOverlay]);
+  }, [closePdpChatOverlay, closePdpSearchOverlay]);
 
   useEffect(() => {
     if (!id) return;
@@ -44,9 +49,30 @@ export default function ProductPage() {
     if (p) setSelected(p.id);
   }, [id, setSelected]);
 
+  /** Keep the current PDP product chip in the prompt for the whole session on this page. */
+  useEffect(() => {
+    if (!product) return;
+    addPromptProductRef({ productId: product.id, label: product.title });
+  }, [product, addPromptProductRef]);
+
   useEffect(() => {
     if (product?.id) recordProductView(product.id);
   }, [product?.id]);
+
+  const [colorChoice, setColorChoice] = useState<string | null>(null);
+
+  const selectedColorKey = useMemo(() => {
+    if (!product?.colorOptions?.length) return "";
+    if (colorChoice && product.colorOptions.some((o) => o.labelKey === colorChoice)) {
+      return colorChoice;
+    }
+    return product.colorOptions[0]?.labelKey ?? "";
+  }, [product, colorChoice]);
+
+  const imageTintHex = useMemo(
+    () => product?.colorOptions?.find((o) => o.labelKey === selectedColorKey)?.swatchHex,
+    [product?.colorOptions, selectedColorKey],
+  );
 
   if (!product) {
     return (
@@ -65,19 +91,6 @@ export default function ProductPage() {
 
   const insights = getPdpInsights(profile, product);
 
-  const [selectedColorKey, setSelectedColorKey] = useState(
-    () => product.colorOptions?.[0]?.labelKey ?? "",
-  );
-
-  useEffect(() => {
-    setSelectedColorKey(product.colorOptions?.[0]?.labelKey ?? "");
-  }, [product.id, product.colorOptions]);
-
-  const imageTintHex = useMemo(
-    () => product.colorOptions?.find((o) => o.labelKey === selectedColorKey)?.swatchHex,
-    [product.colorOptions, selectedColorKey],
-  );
-
   return (
     <div className="relative w-full min-w-0 bg-[#121212]">
       <div className="min-w-0 overflow-x-hidden bg-white px-4 sm:px-6">
@@ -85,7 +98,7 @@ export default function ProductPage() {
           product={product}
           profile={profile}
           selectedColorKey={selectedColorKey}
-          onSelectedColorKeyChange={setSelectedColorKey}
+          onSelectedColorKeyChange={setColorChoice}
           imageTintHex={imageTintHex}
         />
 
@@ -138,7 +151,8 @@ export default function ProductPage() {
 
       <HomeFooterBleed className="mt-16 sm:mt-20" bleed={false} dockClearance={false} />
 
-      <PdpChatOverlay product={product} />
+      <PdpChatOverlay />
+      <PdpSearchResultsOverlay />
     </div>
   );
 }

@@ -40,22 +40,27 @@ const caretMotion = {
 };
 
 /**
- * Filled sparkles mark (Lucide `Sparkles` is stroke-only). Same silhouette: star, plus, dot.
- * Inline SVG avoids Turbopack per-icon chunk issues.
+ * Robot mark for the AI shopper profile. Inline SVG avoids Turbopack per-icon chunk issues.
  */
-function AiProfileSparklesIcon({ className }: { className?: string }) {
+function AiProfileRobotIcon({ className }: { className?: string }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
-      fill="currentColor"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
       className={className}
       aria-hidden
     >
-      <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" />
-      <rect x="19" y="2" width="2" height="4" rx="1" />
-      <rect x="18" y="3" width="4" height="2" rx="1" />
-      <circle cx="4" cy="20" r="2" />
+      <path d="M12 8V4H8" />
+      <rect width="16" height="12" x="4" y="8" rx="2" />
+      <path d="M2 14h2" />
+      <path d="M20 14h2" />
+      <path d="M15 13v2" />
+      <path d="M9 13v2" />
     </svg>
   );
 }
@@ -106,7 +111,7 @@ function TopBarProfileInitialsMark({
   if (shopperUsesIconAvatar(id)) {
     return (
       <span className={shell} aria-hidden>
-        <AiProfileSparklesIcon
+        <AiProfileRobotIcon
           className={cn(
             "transition-colors duration-200",
             compact ? "size-[1.3125rem]" : "size-4",
@@ -248,7 +253,7 @@ export function TopBarProfileCluster({ className }: { className?: string }) {
               <div className="flex flex-col gap-3 px-3.5 pb-4 pt-2.5 sm:pb-5">
                 <span className="relative flex aspect-square w-[7.25rem] max-w-full shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#1a1a1a] ring-1 ring-white/[0.08]">
                   {shopperUsesIconAvatar(activeProfile) ? (
-                    <AiProfileSparklesIcon className="size-[3.25rem] text-zinc-400/90" />
+                    <AiProfileRobotIcon className="size-[3.25rem] text-zinc-400/90" />
                   ) : (
                     <Image
                       src={SHOPPER_PORTRAIT[activeProfile]}
@@ -316,7 +321,7 @@ function SidebarProfileCards({ light }: { light: boolean }) {
               )}
             >
               {shopperUsesIconAvatar(id) ? (
-                <AiProfileSparklesIcon className="size-[1.125rem] text-zinc-500/85" />
+                <AiProfileRobotIcon className="size-[1.125rem] text-zinc-500/85" />
               ) : (
                 <Image
                   src={SHOPPER_PORTRAIT[id]}

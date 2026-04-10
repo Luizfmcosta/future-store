@@ -120,6 +120,10 @@ export const messages: Record<string, string | Record<string, string | Record<st
       headlineLine1: "Sound in every room,",
       headlineLine2: "without wires",
       ricardoVolumeLine: "2,340 units sold this month on promo models",
+      /** Ricardo merch strip — minimal promo pill on cards */
+      discountOff: "{pct}% off",
+      /** Screen reader: sale vs list on Ricardo merch cards */
+      ricardoPromoPriceAria: "Sale price {sale}, was {list} ({pct}% off).",
     },
     ricardoTiktok: {
       eyebrow: "Customer videos",
@@ -263,8 +267,8 @@ export const messages: Record<string, string | Record<string, string | Record<st
     },
     agentBento: {
       pageAria: "Agentic commerce architecture overview",
-      hero:
-        "One architecture, one data investment.\nAgentic commerce: catalog, context, open protocols.",
+      heroLine1: "One architecture serving several commerce experiences.",
+      heroLine2: "AI APIs, Open Agent Protocols, Unified Data.",
       p1: {
         title: "Unified product data",
         agent: "Machine-readable catalog — SKU, price, stock, SLA, specs, bundle rules",
@@ -427,10 +431,18 @@ export const messages: Record<string, string | Record<string, string | Record<st
       sourceRtingsTitle: "RTINGS — speakers & soundbars",
       sourceRtingsDesc:
         "Measurement-led audio reviews aligned with the signals we use for frequency response, imaging, and output.",
+      /** PDP comparison fallback (see chatAssistant). */
+      pdpComparisonIntro:
+        "Here are 3 top matches ranked for Future Store vs {title}",
+      pdpComparisonProfileLine:
+        "You asked for other options and based on your profile we are prioritizing {priority}.",
+      pdpComparisonPriorityFallback: "best value",
+      pdpComparisonCheaper: "{amount} less than what you’re viewing",
+      pdpComparisonPricier: "{amount} more than what you’re viewing",
+      pdpComparisonSamePrice: "Same price tier as what you’re viewing",
+      pdpComparisonNoAlts: "No other catalog matches yet — refine your ask (room, budget, or form factor).",
     },
     searchAiPanel: {
-      emptyState:
-        "Type a question in the composer below, or run a search from the top bar. We ground picks in trusted reviews and surface matching products.",
       reasoning: "Reasoning",
       matchingLine: "Matching intent to products and editorial sources",
       placeholderReasoning: "Reasoning…",
@@ -445,7 +457,16 @@ export const messages: Record<string, string | Record<string, string | Record<st
       ask: "Ask",
       askHint: "Use Ask in the fixed bottom bar to open chat with this product in context.",
       chatOverlayTitle: "Assistant",
+      /** PDP: chat opened from the prompt (comparison-style assistant). Fallback when product is unknown. */
+      chatComparisonTitle: "Compare & explore",
+      /** PDP comparison sheet title — {title} is the product name on the current PDP. */
+      chatComparisonTitleWithProduct: "{title} Comparison",
+      /** PDP chat: horizontal product strip (no “Top matches” eyebrow). */
+      chatComparisonProductsGroup: "Products to compare",
+      chatComparisonAnchorEyebrow: "You’re viewing",
+      chatComparisonAlternativesEyebrow: "Other options",
       chatCloseAria: "Close chat",
+      searchResultsOverlayTitle: "Search results",
       addToCart: "Add to cart",
       buyNow: "Buy now",
       back: "Back",
@@ -538,8 +559,8 @@ export const messages: Record<string, string | Record<string, string | Record<st
         compareCta: "Shop speakers",
         spotlightCta: "View product",
         merchEyebrow: "Compare options",
-        merchLine1: "Choose the speaker",
-        merchLine2: "that fits you",
+        merchLine1: "Budget-Friendly Favorites",
+        merchLine2: "",
         socialHeadline: "Buyers are\nadding these",
         socialBody:
           "High order volume and fast delivery windows — built for quick decisions.",
@@ -553,8 +574,8 @@ export const messages: Record<string, string | Record<string, string | Record<st
         compareCta: "Shop speakers",
         spotlightCta: "View product",
         merchEyebrow: "Compare options",
-        merchLine1: "Choose the speaker",
-        merchLine2: "that fits you",
+        merchLine1: "Budget-Friendly Favorites",
+        merchLine2: "",
         socialHeadline: "Most chosen\nthis week",
         socialBody:
           "Ranked by sales volume and ratings — transparency for fast decisions.",

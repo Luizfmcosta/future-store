@@ -4,7 +4,7 @@ import { FloatingPromptDock } from "@/components/search/FloatingPromptDock";
 import { StorefrontOverlayPortal } from "@/components/shared/StorefrontOverlayPortal";
 import { useDemoStore } from "@/store/demoStore";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 const AI_FOLLOWUP_SELECTOR = "[data-ai-followup-input]";
 
@@ -12,8 +12,11 @@ export function FloatingSearchDock() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const cartDrawerOpen = useDemoStore((s) => s.cartDrawerOpen);
+  const pdpSearchOverlayOpen = useDemoStore((s) => s.pdpSearchOverlayOpen);
+  const pdpChatOverlayOpen = useDemoStore((s) => s.pdpChatOverlayOpen);
   const setQuery = useDemoStore((s) => s.setQuery);
   const clearPromptProductRefs = useDemoStore((s) => s.clearPromptProductRefs);
+  const prevPathnameRef = useRef<string | null>(null);
 
   const hideFloatingPill = useMemo(
     () => pathname === "/search" && searchParams.get("view") === "ai",
@@ -25,9 +28,15 @@ export function FloatingSearchDock() {
     clearPromptProductRefs();
   }, [pathname, clearPromptProductRefs]);
 
-  /** Fresh composer text on home; query still persists across search/PDP when not on home. */
+  /**
+   * Clear the floating prompt when navigating away from `/search`.
+   * Skip on first paint and when landing *on* `/search` so submit (`runSearch` + `router.push`) keeps the merged query.
+   */
   useEffect(() => {
-    if (pathname !== "/") return;
+    const prev = prevPathnameRef.current;
+    prevPathnameRef.current = pathname;
+    if (prev === null) return;
+    if (pathname === "/search") return;
     setQuery("");
   }, [pathname, setQuery]);
 
@@ -37,10 +46,12 @@ export function FloatingSearchDock() {
         e.preventDefault();
         if (hideFloatingPill) {
           const el = document.querySelector<HTMLElement>(AI_FOLLOWUP_SELECTOR);
-          el?.focus();
+          el?.focus({ preventScroll: true });
           return;
         }
-        document.querySelector<HTMLElement>("[data-storefront-search-field]")?.focus();
+        document
+          .querySelector<HTMLElement>("[data-storefront-search-field]")
+          ?.focus({ preventScroll: true });
       }
     };
     window.addEventListener("keydown", onKey);
@@ -50,6 +61,8 @@ export function FloatingSearchDock() {
   if (hideFloatingPill) return null;
   /** Prompt is rendered below the cart bottom sheet inside {@link StorefrontCartOverlay} (same z layer). */
   if (cartDrawerOpen) return null;
+  if (pdpSearchOverlayOpen) return null;
+  if (pdpChatOverlayOpen) return null;
 
   return (
     <StorefrontOverlayPortal>
