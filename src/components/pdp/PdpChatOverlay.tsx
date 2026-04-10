@@ -1,35 +1,35 @@
 "use client";
 
+import { StorefrontCartOverlay } from "@/components/cart/StorefrontCartOverlay";
 import { SearchAiPanel } from "@/components/search/SearchAiPanel";
 import { StorefrontOverlayPortal } from "@/components/shared/StorefrontOverlayPortal";
+import { getProductById } from "@/data/products";
+import { localizeProduct } from "@/lib/product-i18n";
 import { useT } from "@/lib/useT";
 import { ui } from "@/lib/ui-tokens";
 import { cn } from "@/lib/utils";
 import { useDemoStore } from "@/store/demoStore";
-import type { Product } from "@/types";
 import { X } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useCallback, useEffect, useId, useMemo } from "react";
 
-export function PdpChatOverlay({ product }: { product: Product }) {
+export function PdpChatOverlay() {
   const t = useT();
+  const pathname = usePathname();
   const open = useDemoStore((s) => s.pdpChatOverlayOpen);
   const closePdpChatOverlay = useDemoStore((s) => s.closePdpChatOverlay);
-  const addPromptProductRef = useDemoStore((s) => s.addPromptProductRef);
-  const removePromptProductRef = useDemoStore((s) => s.removePromptProductRef);
+  const titleId = useId();
 
-  useEffect(() => {
-    if (!open) return;
-    addPromptProductRef({ productId: product.id, label: product.title });
-    return () => {
-      removePromptProductRef(product.id);
-    };
-  }, [open, product.id, product.title, addPromptProductRef, removePromptProductRef]);
+  const comparisonTitle = useMemo(() => {
+    const id = pathname?.startsWith("/product/") ? pathname.slice("/product/".length).split("/")[0] : undefined;
+    const p = id ? getProductById(id) : undefined;
+    if (!p) return t("pdp.chatComparisonTitle");
+    return t("pdp.chatComparisonTitleWithProduct", { title: localizeProduct(p).title });
+  }, [pathname, t]);
 
   const onClose = useCallback(() => {
     closePdpChatOverlay();
   }, [closePdpChatOverlay]);
-
-  const [composerHost, setComposerHost] = useState<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -46,55 +46,44 @@ export function PdpChatOverlay({ product }: { product: Product }) {
     };
   }, [open, closePdpChatOverlay]);
 
-  if (!open) return null;
-
   return (
     <StorefrontOverlayPortal>
-      <div
-        className="pointer-events-auto absolute inset-0 z-[50] flex flex-col"
+      <StorefrontCartOverlay
+        open={open}
+        modalKey="pdp-chat"
+        showFloatingPromptDock={false}
+        onDismiss={onClose}
+        backdropLabel={t("pdp.chatCloseAria")}
         role="dialog"
         aria-modal="true"
-        aria-labelledby="pdp-chat-title"
+        aria-labelledby={titleId}
       >
-        <button
-          type="button"
-          className="absolute inset-0 bg-black/45 backdrop-blur-[1px]"
-          aria-label={t("pdp.chatCloseAria")}
-          onClick={onClose}
-        />
-        <div className="relative mt-auto w-full px-2.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-0 sm:px-4">
-          <div className="mx-auto flex w-full max-w-xl flex-col gap-3">
-            {/* Host mounts first (DOM order) so the composer portal target exists before the thread paints. */}
-            <div ref={setComposerHost} className="order-2 w-full shrink-0" />
-            <div
-              className={cn(
-                "order-1 flex min-h-0 w-full flex-col overflow-hidden rounded-t-[1.35rem] bg-white shadow-[0_-8px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/[0.04]",
-                "max-h-[min(58dvh,520px)] min-h-[200px]",
-              )}
+        <div className="flex min-h-0 flex-1 flex-col">
+          <div className="flex min-w-0 shrink-0 items-center justify-between gap-3 border-b border-stone-200/90 px-5 py-4">
+            <h2
+              id={titleId}
+              className="min-w-0 flex-1 text-balance text-xl font-semibold tracking-tight text-stone-900"
             >
-              <div className="flex shrink-0 items-center justify-between border-b border-neutral-200/90 px-4 py-3.5 sm:px-5">
-                <h2 id="pdp-chat-title" className="text-[15px] font-semibold tracking-tight text-neutral-900">
-                  {t("pdp.chatOverlayTitle")}
-                </h2>
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className={cn(
-                    "rounded-full p-2 text-neutral-500 transition hover:bg-neutral-100 hover:text-neutral-900",
-                    ui.home.focusRing,
-                  )}
-                  aria-label={t("pdp.chatCloseAria")}
-                >
-                  <X className="size-5" strokeWidth={2} />
-                </button>
-              </div>
-              <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-                <SearchAiPanel variant="pdp" composerHostEl={composerHost} />
-              </div>
-            </div>
+              {comparisonTitle}
+            </h2>
+            <button
+              type="button"
+              onClick={onClose}
+              className={cn(
+                "inline-flex h-11 w-11 min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full text-stone-500 hover:bg-stone-100 hover:text-stone-900",
+                ui.home.focusRing,
+                "focus-visible:rounded-full",
+              )}
+              aria-label={t("pdp.chatCloseAria")}
+            >
+              <X className="size-5" aria-hidden />
+            </button>
+          </div>
+          <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
+            <SearchAiPanel variant="pdp" />
           </div>
         </div>
-      </div>
+      </StorefrontCartOverlay>
     </StorefrontOverlayPortal>
   );
 }

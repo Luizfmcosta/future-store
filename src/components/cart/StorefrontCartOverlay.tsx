@@ -33,6 +33,7 @@ const sheetEnterClip = {
  * Cart bottom sheet: panel is `absolute` with `bottom-0` flush to the storefront window frame;
  * {@link FloatingPromptDock} is `z-[20]` on the same bottom edge so it stacks above the sheet.
  * {@link FloatingSearchDock} hides its pill while this is open.
+ * Set `showFloatingPromptDock={false}` when the sheet embeds its own composer (e.g. PDP chat).
  */
 export function StorefrontCartOverlay({
   open,
@@ -41,6 +42,7 @@ export function StorefrontCartOverlay({
   backdropLabel,
   backdropClassName,
   panelClassName,
+  showFloatingPromptDock = true,
   role,
   "aria-modal": ariaModal,
   "aria-labelledby": ariaLabelledBy,
@@ -54,6 +56,7 @@ export function StorefrontCartOverlay({
   backdropLabel: string;
   backdropClassName?: string;
   panelClassName?: string;
+  showFloatingPromptDock?: boolean;
   role?: React.AriaRole;
   "aria-modal"?: boolean | "true" | "false";
   "aria-labelledby"?: string;
@@ -109,15 +112,19 @@ export function StorefrontCartOverlay({
                   children
                 )}
               </motion.div>,
-              <motion.div
-                key={`${modalKey}-prompt`}
-                initial={{ opacity: 1 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0, transition: { duration: 0.2, ease: [0.4, 0, 0.2, 1] } }}
-                className="pointer-events-none absolute inset-x-0 bottom-0 z-[20] px-[20px]"
-              >
-                <FloatingPromptDock className="px-0 sm:px-0" />
-              </motion.div>,
+              ...(showFloatingPromptDock
+                ? [
+                    <motion.div
+                      key={`${modalKey}-prompt`}
+                      initial={{ opacity: 1 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0, transition: { duration: 0.2, ease: [0.4, 0, 0.2, 1] } }}
+                      className="pointer-events-none absolute inset-x-0 bottom-0 z-[20] px-[20px]"
+                    >
+                      <FloatingPromptDock className="px-0 sm:px-0" />
+                    </motion.div>,
+                  ]
+                : []),
             ]
           : null}
       </AnimatePresence>

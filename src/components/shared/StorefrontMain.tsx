@@ -1,7 +1,11 @@
 "use client";
 
+import { scrollStorefrontMainToTop } from "@/lib/scrollStorefrontMain";
 import { cn } from "@/lib/utils";
+import { useDemoStore } from "@/store/demoStore";
+import type { ShopperProfileId } from "@/types";
 import { usePathname, useSearchParams } from "next/navigation";
+import { useEffect, useRef } from "react";
 
 /**
  * Main scroll region. Search Chat: no bottom padding on `main` — the follow-up bar is `absolute`
@@ -11,6 +15,21 @@ import { usePathname, useSearchParams } from "next/navigation";
 export function StorefrontMain({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const activeProfile = useDemoStore((s) => s.activeProfile);
+  const prevProfileOnHomeRef = useRef<ShopperProfileId | null>(null);
+
+  /** Home: switching Marina ↔ Ricardo (or any profile) should land on the hero, not mid-page scroll. */
+  useEffect(() => {
+    if (pathname !== "/") {
+      prevProfileOnHomeRef.current = activeProfile;
+      return;
+    }
+    const prev = prevProfileOnHomeRef.current;
+    if (prev !== null && prev !== activeProfile) {
+      scrollStorefrontMainToTop();
+    }
+    prevProfileOnHomeRef.current = activeProfile;
+  }, [pathname, activeProfile]);
   const isSearchAiMode = pathname === "/search" && searchParams.get("view") === "ai";
   /** Search / PDP: `main` is `px-0` so footer can go edge-to-edge (negative margins are clipped otherwise). */
   const isSearch = pathname === "/search";
@@ -25,6 +44,7 @@ export function StorefrontMain({ children }: { children: React.ReactNode }) {
 
   return (
     <main
+      key={pathname}
       {...(isPdp ? { "data-pdp-scroll": "" } : {})}
       className={cn(
         "flex min-h-0 flex-1 flex-col overflow-x-hidden",

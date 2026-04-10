@@ -1,3 +1,4 @@
+import { getProductById } from "@/data/products";
 import { formatMessage, getMessage } from "@/lib/messages";
 import { parseIntent } from "@/lib/parseIntent";
 import { getSearchResults } from "@/lib/search";
@@ -7,6 +8,40 @@ import type { ShopperProfileId } from "@/types";
 import { formatBRL } from "@/lib/utils";
 
 const MAX_PRODUCTS = 4;
+const MAX_PDP_COMPARISON_PRODUCTS = 3;
+
+/** Headphone / earbuds SKUs in the demo catalog use `hp-*` ids while sharing `category: "speaker"`. */
+function isHeadphoneProduct(p: Product): boolean {
+  return p.id.startsWith("hp-");
+}
+
+/**
+ * When comparing from a **room speaker / soundbar / TV** PDP, drop headphone SKUs so alternatives stay on-speaker.
+ */
+function poolForPdpComparison(anchor: Product, rankedPool: Product[]): Product[] {
+  if (isHeadphoneProduct(anchor)) return rankedPool;
+  return rankedPool.filter((p) => !isHeadphoneProduct(p));
+}
+
+/**
+ * PDP comparison: prefer **cheaper** alternatives (same category first), then least expensive
+ * step-ups — not SERP “premium” ranking, which skewed toward pricier SKUs.
+ */
+function pickPdpComparisonAlternatives(anchor: Product, rankedPool: Product[]): Product[] {
+  const others = rankedPool.filter((p) => p.id !== anchor.id);
+  const cat = anchor.category;
+
+  const byAltPreference = (a: Product, b: Product) => {
+    const aSame = a.category === cat ? 0 : 1;
+    const bSame = b.category === cat ? 0 : 1;
+    if (aSame !== bSame) return aSame - bSame;
+    return a.price - b.price;
+  };
+
+  const cheaper = others.filter((p) => p.price < anchor.price).sort(byAltPreference);
+  const rest = others.filter((p) => p.price >= anchor.price).sort(byAltPreference);
+  return [...cheaper, ...rest].slice(0, MAX_PDP_COMPARISON_PRODUCTS);
+}
 
 export type AssistantSource = {
   href: string;
@@ -156,12 +191,72 @@ function narrativeForResults(
   return lines.join("\n");
 }
 
+function tradeoffVsAnchor(anchor: Product, alt: Product): string {
+  const d = alt.price - anchor.price;
+  const abs = Math.abs(d);
+  let priceNote: string;
+  if (abs < 1) {
+    priceNote = getMessage("chatAssistant.pdpComparisonSamePrice") ?? "";
+  } else if (d > 0) {
+    priceNote = formatMessage(getMessage("chatAssistant.pdpComparisonPricier") ?? "", {
+      amount: formatBRL(abs),
+    });
+  } else {
+    priceNote = formatMessage(getMessage("chatAssistant.pdpComparisonCheaper") ?? "", {
+      amount: formatBRL(abs),
+    });
+  }
+  const role = alt.bestFor[0] ?? alt.reviewStrengths[0] ?? alt.deliveryETA;
+  return [priceNote, role].filter(Boolean).join(" · ");
+}
+
+/** PDP comparison fallback: intro vs anchor, profile line, then up to 3 trade-off bullets. */
+function narrativePdpComparison(anchor: Product, alternatives: Product[], intent: SearchIntent): string {
+  if (alternatives.length === 0) {
+    return getMessage("chatAssistant.pdpComparisonNoAlts") ?? "";
+  }
+  const intro = formatMessage(getMessage("chatAssistant.pdpComparisonIntro") ?? "", {
+    title: anchor.title,
+  });
+  const priorityText = intent.priority
+    ? priorityLabel(intent.priority)
+    : (getMessage("chatAssistant.pdpComparisonPriorityFallback") ?? "best value");
+  const profileLine = formatMessage(getMessage("chatAssistant.pdpComparisonProfileLine") ?? "", {
+    priority: priorityText,
+  });
+  const bullets = alternatives.map((p) => {
+    const line = tradeoffVsAnchor(anchor, p);
+    return `• ${p.title} — ${line}`;
+  });
+  return [intro, "", profileLine, "", ...bullets].join("\n");
+}
+
+export type AssistantReplyOptions = {
+  /** When set, reply is shaped as a PDP comparison vs this catalog product (fallback when LLM is off). */
+  comparisonAnchorProductId?: string;
+};
+
 /** Demo assistant: same ranking as SERP, as chat + product cards + editorial sources. */
 export function assistantReplyForQuery(
   userText: string,
   profile: ShopperProfileId,
   aiMode: boolean,
+  opts?: AssistantReplyOptions,
 ): { text: string; products: Product[]; sources: AssistantSource[] } {
+  const anchorId = opts?.comparisonAnchorProductId?.trim();
+  if (anchorId) {
+    const anchor = getProductById(anchorId);
+    if (anchor) {
+      const intent = parseIntent(userText);
+      const results = getSearchResults(profile, intent);
+      const pool = poolForPdpComparison(anchor, results);
+      const products = pickPdpComparisonAlternatives(anchor, pool);
+      const text = narrativePdpComparison(anchor, products, intent);
+      const sources = buildAssistantSources(products, intent);
+      return { text, products, sources };
+    }
+  }
+
   const intent = parseIntent(userText);
   const results = getSearchResults(profile, intent);
   const ordered = aiMode ? results : [...results].sort((a, b) => a.title.localeCompare(b.title));

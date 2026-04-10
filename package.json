@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --hostname localhost",
+    "dev:turbo": "next dev --hostname localhost --turbo",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

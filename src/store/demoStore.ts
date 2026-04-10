@@ -1,5 +1,6 @@
 "use client";
 
+import { getProductById } from "@/data/products";
 import { mergePromptRefsIntoQuery, type PromptProductRef } from "@/lib/promptProductRefs";
 import { parseIntent } from "@/lib/parseIntent";
 import { clampStorefrontWidth, STOREFRONT_WIDTH } from "@/lib/storefrontViewport";
@@ -36,6 +37,8 @@ type DemoState = {
   cartQuantity: number;
   /** PDP: AI chat sheet over the product page (not full-screen search). */
   pdpChatOverlayOpen: boolean;
+  /** PDP: search results bottom sheet (same shell as cart). Mutually exclusive with {@link pdpChatOverlayOpen}. */
+  pdpSearchOverlayOpen: boolean;
 
   /** Bump to re-open welcome gate from the Reset control (session key cleared in `triggerHomeWelcomeReset`). */
   homeWelcomeResetNonce: number;
@@ -65,6 +68,8 @@ type DemoState = {
   runSearch: (q?: string, options?: { stayOnPdp?: boolean }) => void;
   openPdpChatOverlay: () => void;
   closePdpChatOverlay: () => void;
+  openPdpSearchOverlay: () => void;
+  closePdpSearchOverlay: () => void;
   setSelectedProduct: (id: string | null) => void;
   openCart: () => void;
   closeCart: () => void;
@@ -111,6 +116,7 @@ export const useDemoStore = create<DemoState>()(
   cartLineId: null,
   cartQuantity: 1,
   pdpChatOverlayOpen: false,
+  pdpSearchOverlayOpen: false,
   homeWelcomeResetNonce: 0,
   profileClusterExpandNonce: 0,
   lastPromptSubmitContext: null,
@@ -149,10 +155,14 @@ export const useDemoStore = create<DemoState>()(
     if (!text && !refs.length) return;
     const merged = mergePromptRefsIntoQuery(text, refs);
     const stayOnPdp = Boolean(options?.stayOnPdp && get().selectedProductId);
+    const pdpPin = stayOnPdp ? get().selectedProductId : null;
+    const pdpProduct = pdpPin ? getProductById(pdpPin) : undefined;
+    const nextRefs: PromptProductRef[] =
+      pdpProduct ? [{ key: pdpProduct.id, productId: pdpProduct.id, label: pdpProduct.title }] : [];
     set({
       /** Mesma string que o intent e o painel Chat — senão “Ask” só com chip deixava `currentQuery` vazio e o Chat em branco. */
       currentQuery: merged,
-      promptProductRefs: [],
+      promptProductRefs: nextRefs,
       parsedIntent: parseIntent(merged),
       plpLlmRankIds: null,
       plpLlmIntentPatch: null,
@@ -160,10 +170,21 @@ export const useDemoStore = create<DemoState>()(
       currentScreen: stayOnPdp ? "pdp" : "search",
     });
   },
-  openPdpChatOverlay: () => set({ pdpChatOverlayOpen: true }),
-  closePdpChatOverlay: () => set({ pdpChatOverlayOpen: false }),
+  openPdpChatOverlay: () => set({ pdpChatOverlayOpen: true, pdpSearchOverlayOpen: false }),
+  /** Clears the floating prompt + PDP submit context so the bar is editable after the sheet closes. */
+  closePdpChatOverlay: () =>
+    set({
+      pdpChatOverlayOpen: false,
+      currentQuery: "",
+      promptProductRefs: [],
+      parsedIntent: null,
+      lastPromptSubmitContext: null,
+    }),
+  openPdpSearchOverlay: () => set({ pdpSearchOverlayOpen: true, pdpChatOverlayOpen: false }),
+  closePdpSearchOverlay: () => set({ pdpSearchOverlayOpen: false }),
   setSelectedProduct: (id) => set({ selectedProductId: id, currentScreen: id ? "pdp" : get().currentScreen }),
-  openCart: () => set({ cartDrawerOpen: true }),
+  openCart: () =>
+    set({ cartDrawerOpen: true, pdpSearchOverlayOpen: false, pdpChatOverlayOpen: false }),
   closeCart: () => set({ cartDrawerOpen: false }),
   addToCart: (productId, quantity = 1) =>
     set((state) => {
@@ -173,6 +194,8 @@ export const useDemoStore = create<DemoState>()(
           cartLineId: productId,
           cartQuantity: Math.min(99, state.cartQuantity + add),
           cartDrawerOpen: true,
+          pdpSearchOverlayOpen: false,
+          pdpChatOverlayOpen: false,
           selectedProductId: productId,
         };
       }
@@ -180,6 +203,8 @@ export const useDemoStore = create<DemoState>()(
         cartLineId: productId,
         cartQuantity: add,
         cartDrawerOpen: true,
+        pdpSearchOverlayOpen: false,
+        pdpChatOverlayOpen: false,
         selectedProductId: productId,
       };
     }),
@@ -218,6 +243,7 @@ export const useDemoStore = create<DemoState>()(
       cartLineId: null,
       cartQuantity: 1,
       pdpChatOverlayOpen: false,
+      pdpSearchOverlayOpen: false,
       lastPromptSubmitContext: null,
       plpLlmRankIds: null,
       plpLlmIntentPatch: null,

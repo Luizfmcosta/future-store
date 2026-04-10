@@ -7,6 +7,7 @@ import { PromptInputChatToolbar } from "@/components/search/PromptInputChatToolb
 import { products } from "@/data/products";
 import { getSearchResultsPath } from "@/lib/getSearchResultsPath";
 import { shouldOpenAiSearchTab } from "@/lib/promptPageContext";
+import { scrollSearchSubmitSurfacesToTop } from "@/lib/scrollStorefrontMain";
 import { getPromptSuggestionPool } from "@/lib/promptSuggestions";
 import { getSearchViewParam } from "@/components/search/SearchViewTabs";
 import { useT } from "@/lib/useT";
@@ -37,6 +38,7 @@ function StorefrontPromptComposerInner({
   const setQuery = useDemoStore((s) => s.setQuery);
   const runSearch = useDemoStore((s) => s.runSearch);
   const setPromptSubmitContext = useDemoStore((s) => s.setPromptSubmitContext);
+  const openPdpChatOverlay = useDemoStore((s) => s.openPdpChatOverlay);
 
   const showPromptSuggestions = pathname !== "/search";
 
@@ -50,7 +52,9 @@ function StorefrontPromptComposerInner({
     if (!q && !useDemoStore.getState().promptProductRefs.length) return;
 
     const view = getSearchViewParam(searchParams);
-    const openAiTab = shouldOpenAiSearchTab({ pathname, searchView: view, cartDrawerOpen });
+    const openAiTab = cartDrawerOpen
+      ? true
+      : shouldOpenAiSearchTab({ pathname, searchView: view, cartDrawerOpen: false });
 
     let pageCtx: PromptSubmitPageContext | null = null;
     if (openAiTab) {
@@ -82,19 +86,38 @@ function StorefrontPromptComposerInner({
       }
     }
 
+    if (pathname.startsWith("/product/") && !cartDrawerOpen) {
+      const productId = pathname.slice("/product/".length).split("/")[0] ?? "";
+      const p = products.find((x) => x.id === productId);
+      setPromptSubmitContext({
+        kind: "pdp",
+        pathname,
+        productId,
+        productTitle: p?.title,
+      });
+      runSearch(q || undefined, { stayOnPdp: true });
+      openPdpChatOverlay();
+      scrollSearchSubmitSurfacesToTop();
+      return;
+    }
+
     setPromptSubmitContext(openAiTab ? pageCtx : null);
     runSearch(q || undefined);
     router.push(openAiTab ? "/search?view=ai" : getSearchResultsPath(pathname, searchParams));
+    if (!openAiTab) setQuery("");
+    scrollSearchSubmitSurfacesToTop();
   }, [
     cartDrawerOpen,
     cartLineId,
     cartQuantity,
     currentQuery,
+    openPdpChatOverlay,
     pathname,
     router,
     runSearch,
     searchParams,
     setPromptSubmitContext,
+    setQuery,
   ]);
 
   return (

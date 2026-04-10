@@ -1,63 +1,63 @@
 "use client";
 
-import { HomeFooterBleed } from "@/components/home/HomeFooter";
+import { StorefrontCartOverlay } from "@/components/cart/StorefrontCartOverlay";
 import { BestMatchCard } from "@/components/search/BestMatchCard";
-import { SearchPlpCoreSkeleton } from "@/components/search/SearchPlpCoreSkeleton";
 import { ComparisonStrip } from "@/components/search/ComparisonStrip";
 import { IntentSummary } from "@/components/search/IntentSummary";
 import { LearningWidget } from "@/components/search/LearningWidget";
 import { ResultsGrid } from "@/components/search/ResultsGrid";
-import { SearchAiPanel } from "@/components/search/SearchAiPanel";
-import { getSearchViewParam } from "@/components/search/SearchViewTabs";
+import { SearchPlpCoreSkeleton } from "@/components/search/SearchPlpCoreSkeleton";
+import { StorefrontOverlayPortal } from "@/components/shared/StorefrontOverlayPortal";
 import { products } from "@/data/products";
-import { getSearchResultsPath } from "@/lib/getSearchResultsPath";
-import { parseIntent } from "@/lib/parseIntent";
-import { localizeProducts } from "@/lib/product-i18n";
-import { getComparisonCards, getBestMatch, getLearningWidgetVariant } from "@/lib/recommendations";
 import { fetchPlpLlmAdaptation } from "@/lib/fetchPlpLlmAdaptation";
+import { localizeProducts } from "@/lib/product-i18n";
 import { applyLlmProductRankOrder, mergeSearchIntentWithLlmPatch } from "@/lib/plpLlmAdaptation";
-import { DEFAULT_SEARCH_QUERY } from "@/lib/defaultSearchQuery";
-import { scrollSearchSubmitSurfacesToTop, scrollStorefrontMainToTop } from "@/lib/scrollStorefrontMain";
+import { parseIntent } from "@/lib/parseIntent";
+import { scrollSearchSubmitSurfacesToTop } from "@/lib/scrollStorefrontMain";
+import { getComparisonCards, getBestMatch, getLearningWidgetVariant } from "@/lib/recommendations";
 import { getSearchResults } from "@/lib/search";
 import { getQuickSearchQueries } from "@/lib/searchCopy";
+import { useT } from "@/lib/useT";
 import { ui } from "@/lib/ui-tokens";
 import { cn } from "@/lib/utils";
-import { useT } from "@/lib/useT";
 import { useDemoStore } from "@/store/demoStore";
-import { Package } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Package, X } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 
-export function SearchPageContent() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const view = getSearchViewParam(searchParams);
-  const mParam = searchParams.get("m");
+function PdpSearchOverlayBody({
+  titleId,
+  onClose,
+}: {
+  titleId: string;
+  onClose: () => void;
+}) {
   const t = useT();
-
+  const pathname = usePathname();
+  const open = useDemoStore((s) => s.pdpSearchOverlayOpen);
   const currentQuery = useDemoStore((s) => s.currentQuery);
   const parsedIntent = useDemoStore((s) => s.parsedIntent);
-  const setParsedIntent = useDemoStore((s) => s.setParsedIntent);
   const setQuery = useDemoStore((s) => s.setQuery);
   const runSearch = useDemoStore((s) => s.runSearch);
   const profile = useDemoStore((s) => s.activeProfile);
   const aiMode = useDemoStore((s) => s.aiMode);
-  const setPromptSubmitContext = useDemoStore((s) => s.setPromptSubmitContext);
   const plpLlmRankIds = useDemoStore((s) => s.plpLlmRankIds);
   const plpLlmIntentPatch = useDemoStore((s) => s.plpLlmIntentPatch);
   const plpLlmCollectionTitle = useDemoStore((s) => s.plpLlmCollectionTitle);
   const setPlpLlmAdaptation = useDemoStore((s) => s.setPlpLlmAdaptation);
 
-  /** After clearing the floating composer on the Results tab, PLP still keys off `parsedIntent.rawQuery`. */
   const plpAnchorQuery = useMemo(
     () => currentQuery.trim() || parsedIntent?.rawQuery?.trim() || "",
     [currentQuery, parsedIntent],
   );
 
-  /** True until `/api/plp-adapt` finishes for the current query+profile — avoids query headline then LLM swap + rank jump. */
   const [plpAdaptPending, setPlpAdaptPending] = useState(false);
   const plpAdaptUnmountRef = useRef(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+
+  const onPdp = pathname.startsWith("/product/");
+
   useEffect(() => {
     plpAdaptUnmountRef.current = false;
     return () => {
@@ -65,44 +65,8 @@ export function SearchPageContent() {
     };
   }, []);
 
-  /**
-   * PLP chat seeds `/api/chat` with `pageContext`. That is set on floating-composer submit, but not when
-   * the shopper switches to the AI tab or lands on `?view=ai` / `?m=` — then context stayed null and some
-   * setups still worked, but we always attach PLP context here so Gemini gets listing + query string.
-   */
-  useEffect(() => {
-    if (pathname !== "/search" || view !== "ai") return;
-    if (useDemoStore.getState().lastPromptSubmitContext !== null) return;
-    setPromptSubmitContext({
-      kind: "plp",
-      pathname,
-      searchParamsSnapshot: searchParams.toString(),
-    });
-  }, [pathname, view, searchParams, setPromptSubmitContext]);
-
-  /** Bootstrap `parsedIntent` without writing the demo default into `currentQuery` (floating composer). */
-  useEffect(() => {
-    if (!parsedIntent) {
-      const q = currentQuery.trim() || DEFAULT_SEARCH_QUERY;
-      setParsedIntent(parseIntent(q));
-    }
-  }, [parsedIntent, currentQuery, setParsedIntent]);
-
-  /** Empty the shared floating prompt on the Results SERP; Chat (`?view=ai`) keeps `currentQuery` for seeding. */
-  useEffect(() => {
-    if (pathname !== "/search" || view !== "results") return;
-    setQuery("");
-  }, [pathname, view, setQuery]);
-
-  useEffect(() => {
-    const m = mParam?.trim();
-    if (!m) return;
-    runSearch(m);
-    router.replace("/search?view=ai", { scroll: false });
-  }, [mParam, runSearch, router]);
-
   useLayoutEffect(() => {
-    if (pathname !== "/search") {
+    if (!open || !onPdp) {
       setPlpAdaptPending(false);
       return;
     }
@@ -112,10 +76,10 @@ export function SearchPageContent() {
       return;
     }
     setPlpAdaptPending(true);
-  }, [pathname, plpAnchorQuery, profile]);
+  }, [open, onPdp, plpAnchorQuery, profile]);
 
   useEffect(() => {
-    if (pathname !== "/search") return;
+    if (!open || !onPdp) return;
     const q = plpAnchorQuery;
     if (!q) return;
     const ac = new AbortController();
@@ -142,29 +106,40 @@ export function SearchPageContent() {
       }
     })();
     return () => ac.abort();
-  }, [plpAnchorQuery, profile, pathname, setPlpLlmAdaptation]);
+  }, [plpAnchorQuery, profile, open, onPdp, setPlpLlmAdaptation]);
 
-  /** SERP: `main` scrolls; reset on every entry to Results (same URL as before still re-lays out). */
   useLayoutEffect(() => {
-    if (pathname !== "/search" || view !== "results") return;
-    scrollStorefrontMainToTop();
-  }, [pathname, view]);
+    if (!open) return;
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+  }, [open]);
 
-  /** PLP skeleton → real grid changes height after our first scroll; pin top again when loading finishes. */
   useEffect(() => {
-    if (pathname !== "/search" || view !== "results") return;
-    if (plpAdaptPending) return;
-    scrollStorefrontMainToTop();
-    const ids = [0, 50, 100, 200, 400].map((ms) => window.setTimeout(() => scrollStorefrontMainToTop(), ms));
+    if (!open || plpAdaptPending) return;
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+    const ids = [0, 50, 100, 200, 400].map((ms) =>
+      window.setTimeout(() => {
+        if (scrollRef.current) scrollRef.current.scrollTop = 0;
+      }, ms),
+    );
     return () => ids.forEach(clearTimeout);
-  }, [pathname, view, plpAdaptPending]);
+  }, [open, plpAdaptPending]);
 
-  useLayoutEffect(() => {
-    if (pathname !== "/search" || view !== "ai") return;
-    scrollSearchSubmitSurfacesToTop();
-  }, [pathname, view, mParam]);
+  useEffect(() => {
+    if (!open) return;
+    const timer = window.setTimeout(() => closeBtnRef.current?.focus(), 0);
+    return () => clearTimeout(timer);
+  }, [open]);
 
-  const intentBase = parsedIntent ?? parseIntent(currentQuery || DEFAULT_SEARCH_QUERY);
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
+
+  const intentBase = parsedIntent ?? parseIntent(currentQuery || "");
   const intent = useMemo(
     () => mergeSearchIntentWithLlmPatch(intentBase, plpLlmIntentPatch),
     [intentBase, plpLlmIntentPatch],
@@ -185,27 +160,40 @@ export function SearchPageContent() {
     (q: string) => {
       const trimmed = q.trim();
       if (!trimmed) return;
-      runSearch(trimmed);
-      router.push(getSearchResultsPath(pathname, searchParams));
+      runSearch(trimmed, { stayOnPdp: true });
       setQuery("");
       scrollSearchSubmitSurfacesToTop();
     },
-    [pathname, router, runSearch, searchParams, setQuery],
+    [runSearch, setQuery],
   );
 
-  const serpAwaitingPlpAdapt =
-    view === "results" && plpAdaptPending && plpAnchorQuery.length > 0;
+  const serpAwaitingPlpAdapt = plpAdaptPending && plpAnchorQuery.length > 0;
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-3">
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="flex shrink-0 items-center justify-between gap-3 p-5 pb-3">
+        <h2 id={titleId} className="min-w-0 flex-1 text-2xl font-semibold tracking-tight text-stone-900">
+          {t("pdp.searchResultsOverlayTitle")}
+        </h2>
+        <button
+          ref={closeBtnRef}
+          type="button"
+          onClick={onClose}
+          className={cn(
+            "inline-flex h-11 w-11 min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full text-stone-500 hover:bg-stone-100 hover:text-stone-900",
+            ui.home.focusRing,
+            "focus-visible:rounded-full",
+          )}
+          aria-label={t("pdp.chatCloseAria")}
+        >
+          <X className="size-5" aria-hidden />
+        </button>
+      </div>
       <div
-        id="search-panel-regular"
-        role="tabpanel"
-        aria-labelledby="tab-regular-search"
-        hidden={view !== "results"}
-        className="flex min-h-0 flex-1 flex-col px-4 pb-0 sm:px-6"
+        ref={scrollRef}
+        className="mx-auto flex w-full max-w-[1024px] min-h-0 flex-1 flex-col overflow-y-auto scrollbar-none px-4 pb-6 sm:px-6"
       >
-        <div className="mx-auto flex w-full max-w-[1024px] flex-1 flex-col space-y-8">
+        <div className="mx-auto flex w-full max-w-[1024px] flex-1 flex-col space-y-8 pb-4">
           {serpAwaitingPlpAdapt ? (
             <div role="status" aria-busy="true" aria-label={t("searchSerp.plpLoadingAria")}>
               <SearchPlpCoreSkeleton />
@@ -222,8 +210,8 @@ export function SearchPageContent() {
 
               <BestMatchCard product={best} profile={profile} aiMode={aiMode} />
 
-              <section aria-labelledby="search-refine-heading" className="min-w-0">
-                <h2 id="search-refine-heading" className={cn(ui.searchSerpSectionKicker, "mb-2")}>
+              <section aria-labelledby="pdp-search-refine-heading" className="min-w-0">
+                <h2 id="pdp-search-refine-heading" className={cn(ui.searchSerpSectionKicker, "mb-2")}>
                   {t("searchOverlay.refineSearch")}
                 </h2>
                 <div className="-mx-4 min-w-0 sm:-mx-6">
@@ -259,8 +247,8 @@ export function SearchPageContent() {
             </>
           )}
 
-          <section aria-labelledby="search-trending-heading" className="border-t border-stone-200/80 pt-8">
-            <h2 id="search-trending-heading" className={cn(ui.searchSerpSectionKicker, "mb-2")}>
+          <section aria-labelledby="pdp-search-trending-heading" className="border-t border-stone-200/80 pt-8">
+            <h2 id="pdp-search-trending-heading" className={cn(ui.searchSerpSectionKicker, "mb-2")}>
               {t("searchOverlay.trendingNow")}
             </h2>
             <ul className="space-y-0.5">
@@ -279,21 +267,33 @@ export function SearchPageContent() {
             </ul>
           </section>
         </div>
-
-        <div className="shrink-0">
-          <HomeFooterBleed className="mt-16 sm:mt-20" />
-        </div>
-      </div>
-
-      <div
-        id="search-panel-ai"
-        role="tabpanel"
-        aria-labelledby="tab-ai-mode"
-        hidden={view !== "ai"}
-        className="flex min-h-0 flex-1 flex-col"
-      >
-        {view === "ai" ? <SearchAiPanel /> : null}
       </div>
     </div>
+  );
+}
+
+export function PdpSearchResultsOverlay() {
+  const pathname = usePathname();
+  const open = useDemoStore((s) => s.pdpSearchOverlayOpen);
+  const close = useDemoStore((s) => s.closePdpSearchOverlay);
+  const t = useT();
+  const titleId = useId();
+
+  if (!pathname.startsWith("/product/")) return null;
+
+  return (
+    <StorefrontOverlayPortal>
+      <StorefrontCartOverlay
+        open={open}
+        modalKey="pdp-search"
+        onDismiss={close}
+        backdropLabel={t("pdp.chatCloseAria")}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+      >
+        <PdpSearchOverlayBody titleId={titleId} onClose={close} />
+      </StorefrontCartOverlay>
+    </StorefrontOverlayPortal>
   );
 }

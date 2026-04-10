@@ -1,5 +1,6 @@
 "use client";
 
+import { AgentHeroHeadline } from "@/components/agent/AgentHeroHeadline";
 import { AgentHotspotField } from "@/components/agent/AgentHotspotField";
 import { AgentWebGLHero } from "@/components/agent/AgentWebGLHero";
 import { useT } from "@/lib/useT";
@@ -42,9 +43,7 @@ export function AgentArchitectureBento({ className }: { className?: string }) {
             <div className="md:hidden">
               <AgentWebGLHero className="mb-0 max-w-[min(100%,360px)]" />
               <header className="mt-8 mb-10 sm:mt-10 sm:mb-12">
-                <h1 className="mx-auto max-w-[min(100%,52rem)] whitespace-pre-line text-center text-[clamp(1.1rem,3.2vw,2rem)] font-semibold leading-[1.2] tracking-tight text-white/95">
-                  {t("agentBento.hero")}
-                </h1>
+                <AgentHeroHeadline className="mx-auto max-w-[min(100%,52rem)]" />
               </header>
               <div className="mx-auto grid w-full max-w-[min(100%,52rem)] grid-cols-1 gap-4">
                 {PILLAR_KEYS.map((key) => (

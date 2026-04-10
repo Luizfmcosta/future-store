@@ -5,7 +5,7 @@ import { useT } from "@/lib/useT";
 import { cn } from "@/lib/utils";
 import { useDemoStore } from "@/store/demoStore";
 import { MousePointer2 } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
 type ProductAskFloatingButtonProps = {
@@ -29,7 +29,6 @@ export function ProductAskFloatingButton({
 }: ProductAskFloatingButtonProps) {
   const t = useT();
   const pathname = usePathname();
-  const router = useRouter();
   const addRef = useDemoStore((s) => s.addPromptProductRef);
 
   const onAsk = (e: React.MouseEvent) => {
@@ -38,8 +37,7 @@ export function ProductAskFloatingButton({
     if (!productLabel.trim()) return;
     addRef({ productId, label: productLabel.trim() });
     if (pathname?.startsWith("/product/")) {
-      router.push("/search");
-      window.setTimeout(() => focusStorefrontPromptInput(), 120);
+      window.setTimeout(() => focusStorefrontPromptInput(), 0);
     } else {
       focusStorefrontPromptInput();
     }

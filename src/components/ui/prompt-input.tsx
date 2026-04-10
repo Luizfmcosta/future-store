@@ -66,6 +66,13 @@ function PromptInput({
   const [internalValue, setInternalValue] = useState(value || "")
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
+  const isControlled = value !== undefined
+  useLayoutEffect(() => {
+    if (isControlled) {
+      setInternalValue(value)
+    }
+  }, [isControlled, value])
+
   const handleChange = (newValue: string) => {
     setInternalValue(newValue)
     onValueChange?.(newValue)
