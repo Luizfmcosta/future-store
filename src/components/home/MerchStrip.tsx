@@ -13,9 +13,9 @@ import { ui } from "@/lib/ui-tokens";
 import { cn, formatBRL, hasMediaUrl } from "@/lib/utils";
 import { useDemoStore } from "@/store/demoStore";
 import type { Product } from "@/types";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import Image from "next/image";
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 
 const ease = [0.76, 0, 0.24, 1] as const;
 
@@ -72,12 +72,8 @@ export function MerchStrip() {
   const merchHeadline2 = experienceCtx ? t(experienceCtx.experience.copy.merchLine2) : t("merch.headlineLine2");
   const showMerchHeadlineSecondLine = !experienceCtx || merchHeadline2.trim().length > 0;
 
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.08 });
-
   return (
     <section
-      ref={ref}
       className={cn(
         "@container/merch flex w-full min-w-0 flex-col bg-white pb-44 sm:pb-48",
         ui.home.whiteSectionOnDarkCanvas,
@@ -85,8 +81,8 @@ export function MerchStrip() {
     >
       <div className="mx-auto w-full min-w-0 max-w-[1200px] px-5 sm:px-6">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          initial={false}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease }}
           className="flex flex-col items-center pt-10 text-center"
         >
@@ -125,8 +121,8 @@ export function MerchStrip() {
             return (
               <motion.div
                 key={p.id}
-                initial={{ opacity: 0, y: 24 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
+                initial={false}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.12 + i * 0.06, ease }}
                 className="relative flex w-[72%] max-w-[260px] min-h-0 shrink-0 snap-start flex-col sm:w-[54%] sm:max-w-[300px]"
               >
