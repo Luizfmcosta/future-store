@@ -4,6 +4,7 @@ import { AskImageButton } from "@/components/shared/AskImageButton";
 import { Card } from "@/components/shared/Card";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { EyebrowPill } from "@/components/shared/EyebrowPill";
+import { ProductBuyNowButton, ProductExploreLink } from "@/components/shared/ProductCtas";
 import { localizeProduct } from "@/lib/product-i18n";
 import { useT } from "@/lib/useT";
 import { ui } from "@/lib/ui-tokens";
@@ -63,7 +64,12 @@ export function ChatProductResults({
           </EyebrowPill>
           <div className="flex w-full justify-start">
             <div className="w-[200px] shrink-0 sm:w-[228px]">
-              <ProductRowCard product={anchorP} profile={profile} presentation="pdpChat" />
+              <ProductRowCard
+                product={anchorP}
+                profile={profile}
+                presentation="pdpChat"
+                showPdpAnchorBuyNow
+              />
             </div>
           </div>
         </div>
@@ -110,7 +116,12 @@ export function ChatProductResults({
                         : "w-[156px] sm:w-[176px]",
                     )}
                   >
-                    <ProductRowCard product={p} profile={profile} presentation={presentation} />
+                    <ProductRowCard
+                      product={p}
+                      profile={profile}
+                      presentation={presentation}
+                      showPdpAlternativesCtas={Boolean(anchorP && isPdpChat)}
+                    />
                   </li>
                 );
               })}
@@ -161,14 +172,88 @@ function ProductRowCard({
   product: p,
   profile,
   presentation = "default",
+  showPdpAlternativesCtas = false,
+  showPdpAnchorBuyNow = false,
 }: {
   product: Product;
   profile: ShopperProfileId;
   presentation?: "default" | "pdpChat";
+  /** PDP comparison “Other options” row — Buy now + Explore under the price. */
+  showPdpAlternativesCtas?: boolean;
+  /** PDP comparison “You’re viewing” anchor — Buy now under the price. */
+  showPdpAnchorBuyNow?: boolean;
 }) {
+  const t = useT();
   const isPdpChat = presentation === "pdpChat";
   const meta = profile === "marina" ? p.bestFor[0] : p.deliveryETA;
   const label = [p.title, "—", p.brand, "—", formatBRL(p.price), "—", "view product details"].join(" ");
+
+  const titleClass = cn(
+    "shrink-0 text-pretty font-semibold text-stone-900",
+    isPdpChat ? "line-clamp-2 text-[13px] leading-snug sm:text-[14px]" : "text-[14px] leading-snug",
+  );
+
+  const priceBlock = (
+    <div className={cn("mt-auto", !isPdpChat && "space-y-1 pt-0.5")}>
+      {!isPdpChat ? (
+        <p className="text-pretty text-[14px] leading-snug text-stone-600">{meta}</p>
+      ) : null}
+      <div className="flex flex-wrap items-baseline gap-1.5">
+        <span
+          className={cn(
+            "font-semibold tabular-nums leading-none text-stone-900",
+            isPdpChat ? "text-[15px] sm:text-base" : "text-[14px]",
+          )}
+        >
+          {formatBRL(p.price)}
+        </span>
+        {p.oldPrice ? (
+          <span
+            className={cn(
+              "tabular-nums leading-none text-stone-400 line-through",
+              isPdpChat ? "text-[13px]" : "text-[14px]",
+            )}
+          >
+            {formatBRL(p.oldPrice)}
+          </span>
+        ) : null}
+      </div>
+    </div>
+  );
+
+  const pdpChatBuyNowClass = cn(
+    ui.home.focusRing,
+    ui.home.ctaPrimaryFill,
+    "flex min-h-9 items-center justify-center rounded-full px-2 py-1.5 text-center text-[12px] font-medium leading-tight sm:text-[13px]",
+  );
+
+  const pdpAlternativesCtas =
+    showPdpAlternativesCtas && isPdpChat ? (
+      <div className="mt-2 flex min-w-0 gap-1.5">
+        <ProductBuyNowButton productId={p.id} className={cn(pdpChatBuyNowClass, "min-w-0 flex-1")}>
+          {t("common.buyNow")}
+        </ProductBuyNowButton>
+        <ProductExploreLink
+          productId={p.id}
+          className={cn(
+            ui.home.focusRing,
+            ui.home.ctaSecondaryOutline,
+            "flex min-h-9 min-w-0 flex-1 items-center justify-center rounded-full px-2 py-1.5 text-center text-[12px] font-medium leading-tight sm:text-[13px]",
+          )}
+        >
+          {t("common.explore")}
+        </ProductExploreLink>
+      </div>
+    ) : null;
+
+  const pdpAnchorBuyNowCta =
+    showPdpAnchorBuyNow && isPdpChat && !showPdpAlternativesCtas ? (
+      <div className="mt-2 w-full min-w-0">
+        <ProductBuyNowButton productId={p.id} className={cn(pdpChatBuyNowClass, "w-full")}>
+          {t("common.buyNow")}
+        </ProductBuyNowButton>
+      </div>
+    ) : null;
 
   return (
     <Card className="flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden rounded-xl p-0 transition hover:border-stone-300/90">
@@ -195,54 +280,56 @@ function ProductRowCard({
           )}
         </div>
       </AskImageButton>
-      <Link
-        href={`/product/${p.id}`}
-        aria-label={label}
-        className={cn(
-          "flex min-h-0 flex-1 flex-col outline-none",
-          isPdpChat ? "p-2.5" : "p-2",
-          ui.home.focusRing,
-          "focus-visible:rounded-b-xl",
-        )}
-      >
-        <div className={cn("flex min-h-0 flex-1 flex-col", isPdpChat ? "gap-1.5" : "gap-1")}>
-          <p
-            className={cn(
-              "shrink-0 text-pretty font-semibold text-stone-900",
-              isPdpChat
-                ? "line-clamp-2 text-[13px] leading-snug sm:text-[14px]"
-                : "text-[14px] leading-snug",
-            )}
-          >
-            {p.title}
-          </p>
-          <div className={cn("mt-auto", !isPdpChat && "space-y-1 pt-0.5")}>
-            {!isPdpChat ? (
-              <p className="text-pretty text-[14px] leading-snug text-stone-600">{meta}</p>
-            ) : null}
-            <div className="flex flex-wrap items-baseline gap-1.5">
-              <span
-                className={cn(
-                  "font-semibold tabular-nums leading-none text-stone-900",
-                  isPdpChat ? "text-[15px] sm:text-base" : "text-[14px]",
-                )}
-              >
-                {formatBRL(p.price)}
-              </span>
-              {p.oldPrice ? (
-                <span
-                  className={cn(
-                    "tabular-nums leading-none text-stone-400 line-through",
-                    isPdpChat ? "text-[13px]" : "text-[14px]",
-                  )}
-                >
-                  {formatBRL(p.oldPrice)}
-                </span>
-              ) : null}
-            </div>
+      {showPdpAlternativesCtas && isPdpChat ? (
+        <div
+          className={cn(
+            "flex min-h-0 flex-1 flex-col outline-none",
+            isPdpChat ? "p-2.5" : "p-2",
+          )}
+        >
+          <div className={cn("flex min-h-0 flex-1 flex-col", isPdpChat ? "gap-1.5" : "gap-1")}>
+            <Link
+              href={`/product/${p.id}`}
+              aria-label={label}
+              className={cn(titleClass, ui.home.focusRing, "rounded-sm outline-none focus-visible:ring-2")}
+            >
+              {p.title}
+            </Link>
+            {priceBlock}
           </div>
+          {pdpAlternativesCtas}
         </div>
-      </Link>
+      ) : showPdpAnchorBuyNow && isPdpChat ? (
+        <div className="flex min-h-0 flex-1 flex-col p-2.5 outline-none">
+          <div className={cn("flex min-h-0 flex-1 flex-col gap-1.5")}>
+            <Link
+              href={`/product/${p.id}`}
+              aria-label={label}
+              className={cn(titleClass, ui.home.focusRing, "rounded-sm outline-none focus-visible:ring-2")}
+            >
+              {p.title}
+            </Link>
+            {priceBlock}
+          </div>
+          {pdpAnchorBuyNowCta}
+        </div>
+      ) : (
+        <Link
+          href={`/product/${p.id}`}
+          aria-label={label}
+          className={cn(
+            "flex min-h-0 flex-1 flex-col outline-none",
+            isPdpChat ? "p-2.5" : "p-2",
+            ui.home.focusRing,
+            "focus-visible:rounded-b-xl",
+          )}
+        >
+          <div className={cn("flex min-h-0 flex-1 flex-col", isPdpChat ? "gap-1.5" : "gap-1")}>
+            <p className={titleClass}>{p.title}</p>
+            {priceBlock}
+          </div>
+        </Link>
+      )}
     </Card>
   );
 }
