@@ -20,12 +20,12 @@ export function ReviewSummaryWidget({ product, profile }: { product: Product; pr
       <EyebrowPill>{t("pdp.reviewSummaryEyebrow")}</EyebrowPill>
       <div className="mt-6 flex flex-wrap items-end gap-x-3 gap-y-2">
         <ReviewStars rating={average} className="gap-1" />
-        <span className="text-3xl font-light tabular-nums text-neutral-900">{average.toFixed(1)}</span>
+        <span className="text-3xl font-normal tabular-nums text-neutral-900">{average.toFixed(1)}</span>
         <span className="pb-0.5 text-[15px] text-neutral-600">
           {t("pdp.reviewsCount", { count: formatReviewCount(count) })}
         </span>
       </div>
-      <h3 className="mt-8 text-xl font-light text-neutral-900 sm:text-2xl">
+      <h3 className="mt-8 text-xl font-normal text-neutral-900 sm:text-2xl">
         {profile === "marina" ? t("pdp.reviewAngleMarina") : t("pdp.reviewAngleRicardo")}
       </h3>
       <div className="mt-8 grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-12">

@@ -13,8 +13,8 @@ void main() {
 `;
 
 /**
- * Glassy purple sphere on navy + faint blue grid (reference-style, single pass).
- * Hemisphere fake-3D: Fresnel rim, interior depth, top-left specular, outer bloom.
+ * Glassy purple sphere — full square canvas; R≈0.34 so the disk sits smaller with transparent margin.
+ * Stronger motion: breathing radius, orbiting key light, shimmering spec.
  */
 const FS = `#version 300 es
 precision highp float;
@@ -26,29 +26,15 @@ out vec4 fragColor;
 void main() {
   vec2 uv = v_uv;
   float aspect = u_resolution.x / max(u_resolution.y, 1.0);
-  vec2 c = vec2((uv.x - 0.5) * aspect, uv.y - 0.5);
-  float r = length(c);
   float t = u_time;
 
-  float R = 0.33 + sin(t * 0.5) * 0.01;
+  vec2 c = vec2((uv.x - 0.5) * aspect, uv.y - 0.5);
+  float r = length(c);
 
-  vec3 navyA = vec3(0.012, 0.022, 0.055);
-  vec3 navyB = vec3(0.04, 0.065, 0.12);
-  float vignette = smoothstep(0.72, 0.2, r);
-  vec3 bg = mix(navyA, navyB, vignette * 0.55 + 0.22);
+  float R = 0.34 + sin(t * 0.72) * 0.012 + sin(t * 1.15) * 0.006;
+  R = clamp(R, 0.28, 0.38);
 
-  vec2 guv = c * 16.0;
-  vec2 f = abs(fract(guv - 0.5) - 0.5) / fwidth(guv);
-  float gridLine = 1.0 - min(min(f.x, f.y), 1.0);
-  float grid = pow(gridLine, 0.35) * 0.14;
-  vec3 gridRgb = vec3(0.32, 0.52, 0.95);
-  bg += gridRgb * grid;
-
-  vec3 bloomCol = vec3(0.48, 0.2, 0.88);
-  float outsideGlow = exp(-max(r - R, 0.0) * 5.8) * 0.52;
-  vec3 outside = bg + bloomCol * outsideGlow;
-
-  vec3 inside = outside;
+  vec3 rgb = vec3(0.0);
   if (r < R - 1e-4) {
     float h = sqrt(R * R - dot(c, c));
     vec3 N = normalize(vec3(c, h));
@@ -56,27 +42,33 @@ void main() {
     float NdotV = clamp(dot(N, V), 0.0, 1.0);
     float fresnel = pow(1.0 - NdotV, 2.35);
 
-    vec3 L = normalize(vec3(-0.46, 0.42, 0.78));
+    float ang = t * 0.58;
+    vec3 L = normalize(vec3(
+      -0.40 + 0.16 * sin(ang),
+      0.38 + 0.14 * cos(ang * 0.88),
+      0.78 + 0.06 * sin(ang * 1.3)
+    ));
     vec3 Hv = normalize(L + V);
-    float spec = pow(max(dot(N, Hv), 0.0), 140.0);
-    vec3 specCol = vec3(1.0, 0.96, 0.88) * spec * 2.4;
+    float specPow = 110.0 + 55.0 * sin(t * 1.35);
+    float spec = pow(max(dot(N, Hv), 0.0), specPow);
+    float specGain = 2.35 + 0.85 * sin(t * 2.1);
+    vec3 specCol = vec3(1.0, 0.96, 0.88) * spec * specGain;
 
     float depth = h / R;
     vec3 coreDark = vec3(0.07, 0.02, 0.13);
     vec3 coreMid = vec3(0.2, 0.06, 0.36);
     vec3 body = mix(coreDark, coreMid, depth * 0.9 + fresnel * 0.12);
     float diff = max(dot(N, L), 0.0);
-    body += vec3(0.12, 0.04, 0.2) * diff * 0.35;
+    body += vec3(0.12, 0.04, 0.2) * diff * (0.35 + 0.12 * sin(t * 0.9));
 
-    vec3 rim = vec3(0.58, 0.32, 1.0) * fresnel * 1.25;
-    inside = body + rim + specCol;
+    vec3 rim = vec3(0.58, 0.32, 1.0) * fresnel * (1.25 + 0.22 * sin(t * 1.6));
+    rgb = body + rim + specCol;
   }
 
-  float edge = smoothstep(R + 0.006, R - 0.006, r);
-  vec3 col = mix(outside, inside, edge);
-
-  col = pow(col, vec3(0.96));
-  fragColor = vec4(col, 1.0);
+  float w = max(fwidth(r) * 2.5, 0.003);
+  float alpha = smoothstep(R + w, R - w, r);
+  rgb = pow(rgb, vec3(0.96));
+  fragColor = vec4(rgb, alpha);
 }
 `;
 
@@ -117,11 +109,12 @@ function createProgram(gl: WebGL2RenderingContext): WebGLProgram | null {
 }
 
 /**
- * WebGL2 hero: glassy purple sphere, navy grid background (inspired by reference art).
+ * WebGL2 hero: glassy purple sphere on a transparent canvas (page background shows through).
  */
 export function AgentWebGLHero({
   className,
-  heightClass = "h-[400px]",
+  /** Override layout (default: square tile sized to the sphere’s bounding box). */
+  heightClass,
 }: {
   className?: string;
   heightClass?: string;
@@ -148,7 +141,7 @@ export function AgentWebGLHero({
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const gl = canvas.getContext("webgl2", {
-      alpha: false,
+      alpha: true,
       antialias: true,
       depth: false,
       stencil: false,
@@ -191,7 +184,8 @@ export function AgentWebGLHero({
 
     gl.disable(gl.DEPTH_TEST);
     gl.disable(gl.STENCIL_TEST);
-    gl.disable(gl.BLEND);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
     const setSize = () => {
       const w = wrap.clientWidth;
@@ -227,7 +221,7 @@ export function AgentWebGLHero({
       g.useProgram(p);
       g.uniform1f(locRef.current.time, t);
       g.uniform2f(locRef.current.res, canvas.width, canvas.height);
-      g.clearColor(0.012, 0.022, 0.055, 1);
+      g.clearColor(0.0, 0.0, 0.0, 0.0);
       g.clear(g.COLOR_BUFFER_BIT);
       g.drawArrays(g.TRIANGLES, 0, 6);
       g.bindVertexArray(null);
@@ -250,8 +244,8 @@ export function AgentWebGLHero({
     <div
       ref={wrapRef}
       className={cn(
-        "relative mb-8 w-full min-h-[200px] overflow-hidden rounded-2xl border border-indigo-400/15 bg-[#050a18] sm:mb-10",
-        heightClass,
+        "relative mb-8 w-full overflow-hidden sm:mb-10",
+        heightClass ?? "mx-auto aspect-square max-w-[min(100%,280px)]",
         className,
       )}
     >

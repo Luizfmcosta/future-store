@@ -2,6 +2,7 @@
 
 import { AskImageButton } from "@/components/shared/AskImageButton";
 import { Card } from "@/components/shared/Card";
+import { ProductBuyNowButton, ProductExploreLink } from "@/components/shared/ProductCtas";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { localizeProduct } from "@/lib/product-i18n";
 import { ui } from "@/lib/ui-tokens";
@@ -12,7 +13,6 @@ import type { Product } from "@/types";
 import type { ShopperProfileId } from "@/types";
 import { SlidersHorizontal } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 
 export function ResultsGrid({ products, profile }: { products: Product[]; profile: ShopperProfileId }) {
   const t = useT();
@@ -26,8 +26,8 @@ export function ResultsGrid({ products, profile }: { products: Product[]; profil
           type="button"
           onClick={() => setRefineOpen(true)}
           className={cn(
-            "inline-flex shrink-0 items-center gap-1.5 rounded-full border border-stone-200/90 bg-white px-3 py-1.5",
-            "text-[15px] font-semibold text-stone-700 shadow-sm transition hover:border-stone-300/90 hover:bg-stone-50",
+            ui.searchSerpFilterPill,
+            "gap-1.5 font-semibold text-stone-700 hover:border-stone-300/90",
             ui.home.focusRing,
             "focus-visible:rounded-full",
           )}
@@ -37,10 +37,9 @@ export function ResultsGrid({ products, profile }: { products: Product[]; profil
           {t("searchSerp.refineGridButton")}
         </button>
       </div>
-      <div className="grid grid-cols-1 gap-2.5 sm:gap-4 @md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 @md:grid-cols-2">
         {products.map((product) => {
           const p = localizeProduct(product);
-          const href = `/product/${p.id}`;
           return (
             <Card
               key={p.id}
@@ -66,7 +65,7 @@ export function ResultsGrid({ products, profile }: { products: Product[]; profil
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-[15px] font-medium text-stone-500">{p.brand}</p>
                   {p.sponsored ? (
-                    <span className="rounded-full bg-stone-100 px-2 py-0.5 text-[15px] font-medium text-stone-600">
+                    <span className="rounded-full bg-stone-100 px-2.5 py-1 sm:px-3 sm:py-1.5 text-[15px] font-medium leading-none text-stone-600">
                       {t("searchSerp.sponsored")}
                     </span>
                   ) : null}
@@ -86,26 +85,28 @@ export function ResultsGrid({ products, profile }: { products: Product[]; profil
                   ) : null}
                 </div>
                 <div className="mt-auto flex flex-col gap-2.5 pt-2 sm:flex-row sm:pt-3">
-                  <Link
-                    href={href}
+                  <ProductExploreLink
+                    productId={p.id}
                     className={cn(
-                      "flex h-11 min-h-0 flex-1 items-center justify-center rounded-full border border-stone-200/90 text-[15px] font-medium text-stone-800 transition-colors hover:border-stone-400 hover:bg-stone-50 sm:text-[16px]",
+                      ui.home.ctaSecondaryOutline,
+                      "flex h-11 min-h-0 flex-1 items-center justify-center text-[15px] sm:text-[16px]",
                       ui.home.focusRing,
                       "focus-visible:rounded-full",
                     )}
                   >
                     {t("common.explore")}
-                  </Link>
-                  <Link
-                    href={href}
+                  </ProductExploreLink>
+                  <ProductBuyNowButton
+                    productId={p.id}
                     className={cn(
-                      "flex h-11 min-h-0 flex-1 items-center justify-center rounded-full bg-[#1a1a1a] text-[15px] font-medium text-white transition-transform hover:scale-[1.02] active:scale-[0.98] sm:text-[16px]",
+                      ui.home.ctaPrimaryFill,
+                      "flex h-11 min-h-0 flex-1 items-center justify-center text-[15px] sm:text-[16px]",
                       ui.home.focusRing,
                       "focus-visible:rounded-full",
                     )}
                   >
                     {t("common.buyNow")}
-                  </Link>
+                  </ProductBuyNowButton>
                 </div>
               </div>
             </Card>

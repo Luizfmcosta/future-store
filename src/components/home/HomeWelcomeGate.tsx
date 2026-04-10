@@ -137,11 +137,11 @@ export function HomeWelcomeGate() {
             transition={{ duration: enterMs, delay: reduceMotion ? 0 : 0.06, ease }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/branding/fs-reduced.svg" alt="" className="h-12 w-auto opacity-90 sm:h-[3.25rem]" />
+            <img src="/branding/fs-reduced.svg" alt="" className="h-16 w-auto opacity-90 sm:h-20" />
             <div className="flex flex-col items-center gap-5">
               <p
                 id="home-welcome-tagline"
-                className="max-w-[min(24rem,calc(100vw-3rem))] text-center text-[17px] font-light leading-[1.55] tracking-tight text-white/[0.72] sm:text-[18px] sm:leading-[1.6]"
+                className="max-w-[min(24rem,calc(100vw-3rem))] text-center text-[17px] font-normal leading-[1.55] tracking-tight text-white/[0.72] sm:text-[18px] sm:leading-[1.6]"
               >
                 {t("homeWelcome.tagline")}
               </p>

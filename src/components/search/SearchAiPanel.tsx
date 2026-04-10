@@ -1,5 +1,6 @@
 "use client";
 
+import { HomeFooterBleed } from "@/components/home/HomeFooter";
 import { ChatAssistantSources } from "@/components/chat/ChatAssistantSources";
 import { ChatProductResults } from "@/components/chat/ChatProductResults";
 import {
@@ -23,8 +24,22 @@ import { useDemoStore } from "@/store/demoStore";
 import type { Product, PromptSubmitPageContext } from "@/types";
 import { Sparkles } from "lucide-react";
 import { createPortal } from "react-dom";
-import { useStickToBottomContext } from "use-stick-to-bottom";
+import { useStickToBottomContext, type GetTargetScrollTop } from "use-stick-to-bottom";
 import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
+
+/** Marks end of chat for PLP AI: stick-to-bottom caps here so the footer can live below the fold. */
+const PLP_CHAT_SCROLL_CAP_SEL = "[data-storefront-chat-scroll-cap]";
+
+const plpChatTargetScrollTop: GetTargetScrollTop = (fullTarget, { scrollElement, contentElement }) => {
+  const end = contentElement.querySelector<HTMLElement>(PLP_CHAT_SCROLL_CAP_SEL);
+  if (!end) return fullTarget;
+  const scrollEl = scrollElement;
+  const endTopInContent =
+    scrollEl.scrollTop + (end.getBoundingClientRect().top - scrollEl.getBoundingClientRect().top);
+  const endBottomInContent = endTopInContent + end.offsetHeight;
+  const maxScroll = endBottomInContent - scrollEl.clientHeight;
+  return Math.min(fullTarget, Math.max(0, maxScroll));
+};
 
 type Msg =
   | { role: "user"; content: string }
@@ -64,7 +79,7 @@ function ReasoningLoading() {
   return (
     <Message className="items-start" role="status" aria-live="polite" aria-busy="true">
       <MessageAvatar aria-hidden>
-        <Sparkles className="size-[1.125rem] text-violet-500/90" strokeWidth={2} />
+        <Sparkles className="size-5 text-violet-500/90" strokeWidth={2} aria-hidden />
       </MessageAvatar>
       <MessageContent className="space-y-3">
         <MessageMeta>{t("searchAiPanel.reasoning")}</MessageMeta>
@@ -187,7 +202,7 @@ export function SearchAiPanel({
         },
       ]);
       setReplying(false);
-      setScrollBump((n) => n + 1);
+      /* No scroll bump: instant scrollToBottom felt like a jump when loading margins collapsed / user had scrolled up. ResizeObserver still follows growth if already pinned to bottom. */
     };
 
     void run();
@@ -248,7 +263,6 @@ export function SearchAiPanel({
         },
       ]);
       setReplying(false);
-      bumpScroll();
     };
 
     void run();
@@ -301,65 +315,75 @@ export function SearchAiPanel({
     </>
   );
 
-  const chatContent = (
+  const chatThread = (
     <>
       <ScrollToBottomOnBump bump={scrollBump} threadKey={threadKey} />
       {messages.length === 0 ? (
         isPdp ? (
           <div className="flex min-h-[min(32dvh,220px)] w-full flex-1 flex-col items-center justify-center px-5 sm:px-8">
-            <p className="max-w-[22rem] text-center text-[15px] leading-[1.65] tracking-tight text-stone-600 sm:text-[16px] sm:leading-[1.7]">
+            <p className="max-w-[22rem] text-balance text-pretty text-center text-[15px] leading-[1.65] tracking-tight text-stone-600 sm:text-[16px] sm:leading-[1.7]">
               {t("searchAiPanel.emptyState")}
             </p>
           </div>
         ) : (
-          <p className="text-center text-[15px] leading-relaxed tracking-tight text-stone-600 sm:text-[16px]">
-            {t("searchAiPanel.emptyState")}
-          </p>
+          <div className="flex w-full flex-1 flex-col items-center justify-start pt-2 pb-96 sm:pb-[33rem] lg:pb-[42rem] sm:pt-4">
+            <p className="text-balance text-pretty text-center text-[15px] leading-relaxed tracking-tight text-stone-600 sm:text-[16px]">
+              {t("searchAiPanel.emptyState")}
+            </p>
+          </div>
         )
       ) : null}
-      {messages.map((m, i) => (
-        <div
-          key={`${m.role}-${i}`}
-          className={cn("flex w-full flex-col", m.role === "user" ? "items-end" : "items-stretch")}
-        >
-          {m.role === "user" ? (
-            <div className="max-w-[min(100%,85%)] rounded-2xl rounded-br-md border border-[rgba(245,245,245,0.9)] bg-gray-100 px-4 py-3 text-[15px] leading-[1.55] text-[rgba(41,41,41,1)] shadow-[0_1px_2px_rgba(0,0,0,0.04)] sm:text-[16px] sm:leading-[1.6]">
-              <p className="whitespace-pre-wrap text-pretty">{m.content}</p>
-            </div>
-          ) : (
-            <Message className="items-start">
-              <MessageAvatar aria-hidden>
-                <Sparkles className="size-[1.125rem] text-violet-500/90" strokeWidth={2} />
-              </MessageAvatar>
-              <MessageContent>
-                <div className="space-y-7 text-[16px] leading-[1.65] text-stone-800 sm:leading-[1.7]">
-                  <p className="whitespace-pre-wrap text-pretty">{m.content}</p>
-                  <ChatAssistantSources sources={m.sources} />
-                  <ChatProductResults
-                    products={m.products}
-                    profile={profile}
-                    followUpSuggestions={chatFollowUps}
-                    onFollowUp={setDraft}
-                    followUpDisabled={replying}
-                  />
-                </div>
-              </MessageContent>
-            </Message>
-          )}
-        </div>
-      ))}
+      {messages.map((m, i) => {
+        const followUpChipsActive = m.role === "assistant" && i === messages.length - 1;
+        return (
+          <div
+            key={`${m.role}-${i}`}
+            className={cn("flex w-full flex-col", m.role === "user" ? "items-end" : "items-stretch")}
+          >
+            {m.role === "user" ? (
+              <div className="max-w-[min(100%,85%)] rounded-2xl rounded-br-md bg-stone-100 px-4 py-3 text-[15px] leading-[1.55] text-stone-900 shadow-[0_1px_2px_rgba(0,0,0,0.04)] sm:text-[16px] sm:leading-[1.6]">
+                <p className="whitespace-pre-wrap text-pretty">{m.content}</p>
+              </div>
+            ) : (
+              <Message className="items-start">
+                <MessageAvatar aria-hidden>
+                  <Sparkles className="size-5 text-violet-500/90" strokeWidth={2} aria-hidden />
+                </MessageAvatar>
+                <MessageContent>
+                  <div className="space-y-5 pt-[max(0px,calc((3rem-1lh)/2))] text-[16px] leading-[1.45] text-stone-800 sm:leading-[1.5]">
+                    <p className="whitespace-pre-wrap text-pretty">{m.content}</p>
+                    <ChatAssistantSources sources={m.sources} />
+                    <ChatProductResults
+                      products={m.products}
+                      profile={profile}
+                      followUpSuggestions={chatFollowUps}
+                      onFollowUp={setDraft}
+                      followUpDisabled={replying}
+                      showFollowUpSection={followUpChipsActive}
+                    />
+                  </div>
+                </MessageContent>
+              </Message>
+            )}
+          </div>
+        );
+      })}
       {replying ? (
-        <div className="flex w-full flex-col gap-1">
+        <div
+          className={cn(
+            "flex w-full flex-col gap-1",
+            !isPdp && "mb-96 sm:mb-[33rem] lg:mb-[42rem]",
+          )}
+        >
           <ReasoningLoading />
         </div>
       ) : null}
-      <ChatContainerScrollAnchor />
     </>
   );
 
   const contentBottomPad = isPdp
     ? "pb-5 sm:pb-6"
-    : "pb-[calc(5.5rem+0.5rem+env(safe-area-inset-bottom,0px))]";
+    : "pb-[calc(6.25rem+0.5rem+env(safe-area-inset-bottom,0px))]";
 
   if (isPdp) {
     return (
@@ -371,8 +395,9 @@ export function SearchAiPanel({
             className="h-full min-h-[min(28dvh,200px)]"
             stickInitial={false}
           >
-            <ChatContainerContent className={cn("gap-8 pt-5 sm:pt-6", contentBottomPad)}>
-              {chatContent}
+            <ChatContainerContent className={cn("mx-auto w-full max-w-[1024px] gap-8 pt-10 sm:pt-12", contentBottomPad)}>
+              {chatThread}
+              <ChatContainerScrollAnchor />
             </ChatContainerContent>
           </ChatContainerRoot>
         </div>
@@ -390,14 +415,41 @@ export function SearchAiPanel({
 
   return (
     <div className="relative flex min-h-0 flex-1 flex-col">
-      <div className="absolute inset-0 z-0 flex min-h-0 min-w-0 flex-col overflow-x-hidden bg-white">
+      <div className="absolute inset-0 z-0 flex min-h-0 min-w-0 flex-col overflow-x-hidden bg-[#121212]">
         <ChatContainerRoot
           key={threadKey}
           data-storefront-ai-scroll=""
-          className="h-full min-h-[min(36dvh,280px)]"
+          className="h-full min-h-0 w-full flex-1"
           stickInitial={false}
+          targetScrollTop={plpChatTargetScrollTop}
         >
-          <ChatContainerContent className={cn("gap-8 pt-6", contentBottomPad)}>{chatContent}</ChatContainerContent>
+          <ChatContainerContent className="flex min-h-full w-full min-w-0 flex-col pb-0">
+            {/*
+              Shell-colored panel + white thread column: footer's rounded-b used to AA against white,
+              leaving thin white fringes at the device corners. Footer sits in a clipped #121212 block
+              matching the storefront inner radius (AppShell).
+            */}
+            <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col bg-white pt-10 sm:pt-12">
+              <div
+                className={cn(
+                  "mx-auto flex min-h-0 w-full max-w-[1024px] flex-1 flex-col px-4 sm:px-6",
+                  "mb-60 sm:mb-[21rem] lg:mb-[27rem]",
+                  contentBottomPad,
+                )}
+              >
+                <div className="flex min-h-0 w-full flex-1 flex-col gap-8">{chatThread}</div>
+              </div>
+              <div
+                className="h-px w-full shrink-0 scroll-mt-4"
+                aria-hidden
+                data-storefront-chat-scroll-cap=""
+              />
+              <ChatContainerScrollAnchor />
+            </div>
+            <div className="shrink-0 overflow-hidden rounded-b-[calc(1.75rem-2px)] bg-[#121212]">
+              <HomeFooterBleed className="mt-16 sm:mt-20" bleed={false} dockClearance={false} />
+            </div>
+          </ChatContainerContent>
         </ChatContainerRoot>
       </div>
 

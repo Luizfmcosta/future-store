@@ -12,7 +12,7 @@ export function ProductStorySection({ product }: { product: Product }) {
 
   return (
     <div id="pdp-story" className="scroll-mt-8">
-      <h2 className="max-w-[20ch] text-3xl font-light leading-[1.15] tracking-tight text-neutral-900 sm:text-4xl sm:leading-[1.1]">
+      <h2 className="max-w-[20ch] text-3xl font-normal leading-[1.15] tracking-tight text-neutral-900 sm:text-4xl sm:leading-[1.1]">
         {t("pdp.storyHeadline")}
       </h2>
       <p className="mt-8 max-w-[40rem] text-[15px] leading-relaxed text-neutral-600 sm:text-[16px] sm:leading-[1.7]">
@@ -24,7 +24,7 @@ export function ProductStorySection({ product }: { product: Product }) {
             src={secondary}
             alt=""
             fill
-            className="object-cover object-center"
+            className="object-contain object-center"
             sizes="(max-width: 768px) 100vw, 720px"
             unoptimized
           />

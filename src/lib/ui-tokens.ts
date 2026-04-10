@@ -4,11 +4,15 @@
 
 /** Profile cluster + todos os controles flutuantes externos (largura, reset, etc.). */
 const CLUSTER_GLASS_OUTER =
-  "overflow-hidden rounded-3xl border border-white/[0.11] bg-[#08080a]/30 backdrop-blur-2xl shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)]";
+  "overflow-hidden rounded-3xl border border-white/[0.17] bg-[#0d0d12]/58 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_16px_44px_-14px_rgba(0,0,0,0.58)]";
 
 /** Faixa horizontal de pills (se usada) — tint sutil; o topBar do perfil não usa esta faixa. */
 const PILL_TRACK_INSET =
   "rounded-full bg-white/[0.05] p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]";
+
+/** Cart, floating prompt, Marina avatar frame — one frosted recipe (keep in sync). */
+export const storefrontFloatingControlGlass =
+  "border border-stone-200/60 bg-white/86 shadow-[0_8px_28px_rgba(15,23,42,0.08)] backdrop-blur-md backdrop-saturate-150";
 
 export const ui = {
   /** Muted line on dark chrome — sentence case, no wide tracking. */
@@ -53,7 +57,7 @@ export const ui = {
      * sem segunda camada clara — alinhado ao interior do profile cluster (coluna com `p-1`).
      */
     widthPresetTrack:
-      "relative inline-flex h-9 min-w-[5.25rem] w-full items-stretch overflow-hidden rounded-full p-1",
+      "relative inline-flex h-11 min-h-11 min-w-[6.5625rem] w-full items-stretch overflow-hidden rounded-full p-1.5",
   },
 
   /** Botões flutuantes fora da vitrine (perfil, largura) — cinza neutro, sem tom azulado do zinc. */
@@ -78,10 +82,25 @@ export const ui = {
   searchBarOnLight:
     "rounded-full border border-stone-200/90 bg-white/95 backdrop-blur-xl transition-[border-color,background-color] duration-200 ease-out hover:border-stone-300/90 hover:bg-white focus-within:border-stone-300 focus-within:bg-white shadow-[0_8px_32px_rgba(0,0,0,0.06)]",
 
+  /** PLP white column — small section label (Refine search, Compare, Trending, …). */
+  searchSerpSectionKicker: "text-[15px] font-medium leading-snug tracking-tight text-stone-500",
+
+  /**
+   * SERP filter row + matching pills (quick refiners, Refine button) — 40px tall, same as category / on sale / sort.
+   */
+  searchSerpFilterPill:
+    "inline-flex h-10 shrink-0 items-center gap-0.5 rounded-full border border-stone-200/90 bg-white px-3.5 text-[15px] font-medium text-stone-900 shadow-[0_1px_2px_rgba(15,23,42,0.06)] transition hover:bg-stone-50",
+
   /**
    * Bottom spacing for floating search row (`FloatingSearchDock` + IA follow-up). Same Y as tabs/dock.
    */
   floatingSearchBarRowPad: "pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2",
+
+  /**
+   * Inset so content above the fixed {@link FloatingPromptDock} stays visible (taller than `pb-32` for stacked composer + toolbar).
+   */
+  floatingPromptDockClearance:
+    "pb-[max(9rem,calc(7.75rem+env(safe-area-inset-bottom,0px)))] sm:pb-[max(9.5rem,calc(8rem+env(safe-area-inset-bottom,0px)))]",
 
   /** Floating search pill + IA (secondary / meta tier). */
   floatingSearchPillText: "text-[15px] leading-normal text-stone-600 md:text-[15px]",
@@ -92,11 +111,8 @@ export const ui = {
   floatingSearchPill:
     "flex w-full max-w-xl min-h-11 items-center gap-2.5 rounded-full border border-stone-200/60 bg-white/86 backdrop-blur-md px-3.5 text-left shadow-[0_8px_28px_rgba(15,23,42,0.08)] transition-colors hover:bg-white/92 focus-within:bg-white/94",
 
-  /**
-   * Prompt estilo ChatGPT: coluna (textarea em cima, barra de ações embaixo), vidro leve (blur + alpha).
-   */
-  promptInputKit:
-    "flex w-full cursor-text flex-col gap-0 rounded-[1.75rem] border border-stone-200/60 bg-white/86 p-3 shadow-[0_8px_28px_rgba(15,23,42,0.08)] backdrop-blur-md backdrop-saturate-150",
+  /** Prompt estilo ChatGPT — `storefrontFloatingControlGlass` (cart + Marina avatar in `TopBar`). */
+  promptInputKit: `flex w-full cursor-text flex-col gap-0 rounded-[1.75rem] p-3 ${storefrontFloatingControlGlass}`,
 
   narrativeSectionLabel: (light: boolean) =>
     light
@@ -115,9 +131,13 @@ export const ui = {
      * Text-only kicker on white — same as `<EyebrowPill />` (e.g. ContinueJourney “A strong foundation for you”).
      * Prefer the component; this string is the single source of truth for class names.
      * Do not replace with `uppercase` + wide `tracking-*` — that is not our storefront eyebrow.
+     * Place the following section title with `mt-2` (8px) after the eyebrow.
      */
     eyebrowPill:
       "inline-flex w-fit max-w-full items-center text-[15px] font-normal tracking-normal text-[#666]",
+    /** Centered home sections (merch, TikTok) — slightly larger kicker to match bigger display titles. */
+    eyebrowPillSection:
+      "inline-flex w-fit max-w-full items-center text-[16px] font-normal tracking-normal text-[#666] sm:text-[17px]",
     sectionTitle: "text-xl font-semibold leading-tight tracking-tight text-stone-900 sm:text-2xl",
     label: "text-[15px] font-medium text-stone-600",
     cardTitle: "text-[15px] font-semibold leading-snug text-stone-900",
@@ -125,6 +145,33 @@ export const ui = {
     price: "text-[16px] font-semibold tabular-nums text-stone-900",
     priceMuted: "text-[15px] font-medium text-stone-400 line-through",
     hairline: "border border-stone-200/90",
+    /**
+     * Home `main` is `#121212`; editorial bands use `bg-white`. Subpixel layout + compositing
+     * (e.g. Framer `transform`) can show a dark “hairline” at the top/bottom — not a real border.
+     * `-mt/-mb` pulls bands together so `#121212` never shows between siblings; `::before`/`::after`
+     * add a few extra pixels of white past the edge for high-DPI / zoom. `isolate` + `translateZ(0)`
+     * stabilizes stacking.
+     */
+    whiteSectionOnDarkCanvas:
+      "relative isolate z-0 -mt-0.5 -mb-0.5 [transform:translateZ(0)] before:pointer-events-none before:absolute before:-top-[3px] before:left-0 before:right-0 before:z-[2] before:h-[3px] before:bg-white after:pointer-events-none after:absolute after:-bottom-[3px] after:left-0 after:right-0 after:z-[2] after:h-[3px] after:bg-white",
     focusRing: "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-stone-400/40",
+
+    /**
+     * Primary filled control on white (`#1a1a1a`). Hover/active = background only — never `transform: scale`.
+     */
+    ctaPrimaryFill:
+      "rounded-full bg-[#1a1a1a] font-medium text-white transition-colors duration-200 hover:bg-[#2c2c2c] active:bg-[#121212]",
+
+    /** Outline / secondary on white (e.g. Explore). */
+    ctaSecondaryOutline:
+      "rounded-full border border-stone-200/90 font-medium text-stone-800 transition-colors duration-200 hover:border-stone-400 hover:bg-stone-50 active:bg-stone-100",
+
+    /** White pill on dark hero / video (e.g. Ricardo promo CTA). */
+    ctaOnDarkHero:
+      "rounded-full bg-white font-semibold text-[#0c0c0c] shadow-[0_12px_40px_-16px_rgba(0,0,0,0.45)] transition-colors duration-200 hover:bg-neutral-100 active:bg-neutral-200/90",
+
+    /** Circular send on light prompt chrome (`PromptInputChatToolbar`). */
+    ctaPromptIconSend:
+      "inline-flex size-10 min-h-10 min-w-10 shrink-0 items-center justify-center rounded-full bg-[#0f0f0f]/88 text-white shadow-none backdrop-blur-sm transition-colors duration-200 hover:bg-[#262626]/95 active:bg-[#050505] disabled:pointer-events-none disabled:opacity-40",
   },
 };

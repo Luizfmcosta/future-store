@@ -40,15 +40,17 @@ export function ProductPdpFeatures({ product }: { product: Product }) {
       <EyebrowPill as="h2" className="mb-0">
         {t("pdp.featuresHeading")}
       </EyebrowPill>
-      <ul className="mt-8 flex min-w-0 flex-nowrap gap-6 overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch] scrollbar-none touch-pan-x pb-1">
+      <ul className="mt-4 flex min-w-0 flex-nowrap gap-6 overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch] scrollbar-none touch-pan-x pb-1">
         {tags.map((tag) => {
           const Icon = iconForTag(tag);
           return (
-            <li key={tag} className="flex w-[6.75rem] shrink-0 flex-col gap-3 sm:w-[7.25rem]">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full border border-black/[0.06] bg-neutral-50 text-neutral-800">
+            <li key={tag} className="flex shrink-0 items-center gap-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-neutral-50 text-neutral-800">
                 <Icon className="size-5" strokeWidth={1.5} aria-hidden />
               </span>
-              <span className="text-[15px] font-medium leading-snug text-neutral-800">{tag}</span>
+              <span className="max-w-[min(12rem,55vw)] text-[15px] font-medium leading-snug text-neutral-800">
+                {tag}
+              </span>
             </li>
           );
         })}

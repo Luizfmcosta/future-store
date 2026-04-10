@@ -3,6 +3,9 @@
 import { RicardoPromoHero } from "@/components/home/RicardoPromoHero";
 import { heroCopy } from "@/lib/copy";
 import { STOREFRONT_HERO_VIDEO_SRC } from "@/lib/storefrontHeroVideo";
+import { useStorefrontFrameHeightClass } from "@/lib/hooks/useStorefrontFrameHeightClass";
+import { STOREFRONT_HERO_BOTTOM_BLEED, STOREFRONT_HERO_COPY_BOTTOM_PAD } from "@/lib/storefrontViewport";
+import { cn } from "@/lib/utils";
 import { useDemoStore } from "@/store/demoStore";
 import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
@@ -18,6 +21,7 @@ export function AdaptiveHero() {
   const profile = useDemoStore((s) => s.activeProfile);
   const copy = heroCopy(profile);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const storefrontFrameHeightClass = useStorefrontFrameHeightClass();
 
   useEffect(() => {
     if (profile === "ricardo") return;
@@ -34,7 +38,12 @@ export function AdaptiveHero() {
 
   return (
     <section id="home-hero" className="relative flex flex-col">
-      <div className="relative flex h-[95svh] min-h-[500px] w-full shrink-0 flex-col overflow-hidden bg-[#0c0c0c]">
+      <div
+        className={cn(
+          "relative flex w-full shrink-0 flex-col overflow-hidden bg-[#0c0c0c]",
+          storefrontFrameHeightClass,
+        )}
+      >
         <video
           ref={videoRef}
           key={STOREFRONT_HERO_VIDEO_SRC}
@@ -54,16 +63,21 @@ export function AdaptiveHero() {
         />
 
         {/* Same horizontal + vertical framing as `RicardoPromoHero` so copy stays centered in the preview. */}
-        <div className="relative z-10 flex h-full min-h-0 flex-col items-center justify-end px-4 pb-28 pt-24 sm:justify-center sm:px-6 sm:pb-16 sm:pt-20">
+        <div
+          className={cn(
+            "relative z-10 flex h-full min-h-0 flex-col items-center justify-end px-4 pt-24 sm:px-6 sm:pt-20",
+            STOREFRONT_HERO_COPY_BOTTOM_PAD,
+          )}
+        >
           <motion.div
             variants={{ hidden: {}, show: stagger }}
             initial="hidden"
             animate="show"
-            className="@container flex w-full max-w-[min(28rem,calc(100cqw-2rem))] translate-y-6 flex-col items-center text-center"
+            className="@container flex w-full max-w-[min(64rem,calc(100cqw-2rem))] flex-col items-center text-center"
           >
             <motion.p
               variants={child}
-              className="max-w-full text-[15px] font-normal tracking-normal text-white/70 @min-[480px]:text-[17px]"
+              className="max-w-full text-[20px] font-medium tracking-normal text-white/70 @min-[480px]:text-[23px]"
             >
               {copy.kicker}
             </motion.p>
@@ -73,11 +87,14 @@ export function AdaptiveHero() {
               variants={child}
               className="mt-2 w-full min-w-0 text-center font-medium tracking-[-0.02em] text-white @min-[480px]:leading-[0.94]"
             >
-              <span className="block text-balance text-center text-[clamp(1.78rem,8cqi,2.72rem)] leading-[1.12] @min-[480px]:text-[clamp(2.02rem,7.2cqi,3.35rem)] @min-[480px]:leading-[0.94]">
+              {/*
+                Narrow: lower floor + 10cqi cap (~2.4rem) so phone frames read smaller; @480+ scales toward 52pt.
+              */}
+              <span className="block text-balance text-center text-[clamp(1.62rem,min(10cqi,2.4rem),2.4rem)] leading-[1.12] @min-[480px]:text-[clamp(2.1rem,min(14cqi,52pt),52pt)] @min-[480px]:leading-[0.94]">
                 {copy.titleLine1}
               </span>
               {copy.titleLine2 ? (
-                <span className="block text-balance py-1 text-center text-[clamp(1.62rem,7.4cqi,2.5rem)] leading-[1.12] text-white/70 @min-[480px]:py-[6px] @min-[480px]:text-[clamp(1.88rem,6.7cqi,3rem)] @min-[480px]:leading-[0.94]">
+                <span className="block text-balance py-1 text-center text-[clamp(1.52rem,6.5cqi,2.28rem)] leading-[1.12] text-white/70 @min-[480px]:py-[6px] @min-[480px]:text-[clamp(2rem,7.2cqi,3.25rem)] @min-[480px]:leading-[0.94]">
                   {copy.titleLine2}
                 </span>
               ) : null}
@@ -85,6 +102,7 @@ export function AdaptiveHero() {
           </motion.div>
         </div>
       </div>
+      <div className={cn(STOREFRONT_HERO_BOTTOM_BLEED, "bg-[#0c0c0c]")} aria-hidden />
     </section>
   );
 }

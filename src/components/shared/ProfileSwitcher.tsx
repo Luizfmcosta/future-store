@@ -14,19 +14,20 @@ import { cn } from "@/lib/utils";
 import type { ShopperProfileId } from "@/types";
 import { useDemoStore } from "@/store/demoStore";
 import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const profileTagKeys = ["tag1", "tag2", "tag3"] as const;
 
 /** Avatares empilhados — coluna estreita para não invadir o logo da loja no TopBar. */
-const profileTopClusterWidthCollapsed = "w-[min(2.75rem,calc(100vw-2rem))]";
+const profileTopClusterWidthCollapsed = "w-[min(3.4375rem,calc(100vw-2rem))]";
 /** Foto + bio — largura “cheia” como antes. */
-const profileTopClusterWidthExpanded = "w-[min(248px,calc(100vw-2rem))]";
+const profileTopClusterWidthExpanded = "w-[min(280px,calc(100vw-2rem))]";
+
+const AUTO_COLLAPSE_AFTER_LEAVE_MS = 8000;
 
 const toggleBtnClass = cn(
-  "flex size-7 shrink-0 items-center justify-center rounded-full p-0 text-[#b0b0b4] outline-none transition hover:bg-white/[0.08] hover:text-white",
+  "flex size-[2.1875rem] shrink-0 items-center justify-center rounded-full p-0 text-[#b0b0b4] outline-none transition hover:bg-white/[0.08] hover:text-white",
   ui.floatingChrome.segmentFocus,
 );
 
@@ -37,6 +38,27 @@ const panelEase = [0.22, 1, 0.36, 1] as const;
 const caretMotion = {
   rotate: { duration: PANEL_MS / 1000, ease: panelEase },
 };
+
+/**
+ * Filled sparkles mark (Lucide `Sparkles` is stroke-only). Same silhouette: star, plus, dot.
+ * Inline SVG avoids Turbopack per-icon chunk issues.
+ */
+function AiProfileSparklesIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden
+    >
+      <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" />
+      <rect x="19" y="2" width="2" height="4" rx="1" />
+      <rect x="18" y="3" width="4" height="2" rx="1" />
+      <circle cx="4" cy="20" r="2" />
+    </svg>
+  );
+}
 
 /** Inline chevron — avoids Turbopack dev chunk issues with `lucide-react` per-icon modules. */
 function ProfileClusterChevronDown({ className }: { className?: string }) {
@@ -71,19 +93,25 @@ function TopBarProfileInitialsMark({
   compact: boolean;
 }) {
   const shell = cn(
-    "relative flex shrink-0 items-center justify-center rounded-full font-semibold tabular-nums leading-none text-[15px]",
-    compact ? "size-full min-h-0" : "size-8",
+    "relative flex shrink-0 items-center justify-center rounded-full font-semibold tabular-nums leading-none",
+    compact ? "size-full min-h-0 text-[19px]" : "size-8 text-[15px]",
     active
       ? "bg-[#323234] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.07)]"
-      : "bg-[#141418] text-[#5c5c62] ring-1 ring-inset ring-white/[0.07]",
+      : cn(
+          "bg-[#141418] text-[#5c5c62] ring-1 ring-inset ring-white/[0.07] transition-colors duration-200",
+          "group-hover:bg-[#242428] group-hover:text-[#f0f0f1] group-hover:ring-white/[0.12]",
+        ),
   );
 
   if (shopperUsesIconAvatar(id)) {
     return (
       <span className={shell} aria-hidden>
-        <Sparkles
-          className={cn(compact ? "size-[17px]" : "size-4", active ? "text-zinc-200" : "text-zinc-500/55")}
-          strokeWidth={2}
+        <AiProfileSparklesIcon
+          className={cn(
+            "transition-colors duration-200",
+            compact ? "size-[1.3125rem]" : "size-4",
+            active ? "text-zinc-200" : "text-zinc-500/55 group-hover:text-zinc-200",
+          )}
         />
       </span>
     );
@@ -102,6 +130,14 @@ export function TopBarProfileCluster({ className }: { className?: string }) {
   const [expanded, setExpanded] = useState(false);
   const activeProfile = useDemoStore((s) => s.activeProfile);
   const profileClusterExpandNonce = useDemoStore((s) => s.profileClusterExpandNonce);
+  const leaveCollapseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearLeaveCollapseTimer = () => {
+    if (leaveCollapseTimerRef.current) {
+      clearTimeout(leaveCollapseTimerRef.current);
+      leaveCollapseTimerRef.current = null;
+    }
+  };
 
   useEffect(() => {
     if (profileClusterExpandNonce === 0) return;
@@ -109,21 +145,48 @@ export function TopBarProfileCluster({ className }: { className?: string }) {
   }, [profileClusterExpandNonce]);
 
   useEffect(() => {
-    if (!expanded) return;
+    if (!expanded) {
+      clearLeaveCollapseTimer();
+      return;
+    }
     if (typeof window === "undefined") return;
     const main = document.querySelector("[data-storefront-window] main");
     if (!main) return;
-    let timer: ReturnType<typeof setTimeout> | null = null;
+    let scrollTimer: ReturnType<typeof setTimeout> | null = null;
     const onScroll = () => {
-      if (timer) clearTimeout(timer);
-      timer = setTimeout(() => setExpanded(false), 100);
+      if (scrollTimer) clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => setExpanded(false), 100);
     };
     main.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       main.removeEventListener("scroll", onScroll);
-      if (timer) clearTimeout(timer);
+      if (scrollTimer) clearTimeout(scrollTimer);
     };
   }, [expanded]);
+
+  const onClusterPointerEnter = () => {
+    clearLeaveCollapseTimer();
+  };
+
+  const onClusterPointerLeave = () => {
+    if (!expanded) return;
+    clearLeaveCollapseTimer();
+    leaveCollapseTimerRef.current = setTimeout(() => {
+      setExpanded(false);
+      leaveCollapseTimerRef.current = null;
+    }, AUTO_COLLAPSE_AFTER_LEAVE_MS);
+  };
+
+  useEffect(
+    () => () => {
+      if (leaveCollapseTimerRef.current) {
+        clearTimeout(leaveCollapseTimerRef.current);
+        leaveCollapseTimerRef.current = null;
+      }
+    },
+    [],
+  );
+
   const bio = t(`profileCard.${activeProfile}.bio` as `profileCard.${ShopperProfileId}.bio`);
   const bio2 = t(`profileCard.${activeProfile}.bio2` as `profileCard.${ShopperProfileId}.bio`);
 
@@ -135,6 +198,8 @@ export function TopBarProfileCluster({ className }: { className?: string }) {
         className,
       )}
       style={{ ["--panel-ms" as string]: `${PANEL_MS}ms` }}
+      onPointerEnter={onClusterPointerEnter}
+      onPointerLeave={onClusterPointerLeave}
     >
       <section
         className={ui.glassChrome.clusterShell}
@@ -161,7 +226,7 @@ export function TopBarProfileCluster({ className }: { className?: string }) {
                 transition={caretMotion.rotate}
                 aria-hidden
               >
-                <ProfileClusterChevronDown className="size-3.5" />
+                <ProfileClusterChevronDown className="size-[1.125rem]" />
               </motion.span>
             </button>
           </div>
@@ -183,7 +248,7 @@ export function TopBarProfileCluster({ className }: { className?: string }) {
               <div className="flex flex-col gap-3 px-3.5 pb-4 pt-2.5 sm:pb-5">
                 <span className="relative flex aspect-square w-[7.25rem] max-w-full shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#1a1a1a] ring-1 ring-white/[0.08]">
                   {shopperUsesIconAvatar(activeProfile) ? (
-                    <Sparkles className="size-[3.25rem] text-zinc-400/90" strokeWidth={1.35} aria-hidden />
+                    <AiProfileSparklesIcon className="size-[3.25rem] text-zinc-400/90" />
                   ) : (
                     <Image
                       src={SHOPPER_PORTRAIT[activeProfile]}
@@ -206,11 +271,11 @@ export function TopBarProfileCluster({ className }: { className?: string }) {
                   ))}
                 </div>
                 <div className="space-y-2">
-                  <p className="text-[15px] font-light leading-relaxed text-[#c8c8cb] [&_strong]:font-medium [&_strong]:text-[#e4e4e6]">
+                  <p className="text-[15px] font-normal leading-relaxed text-[#c8c8cb] [&_strong]:font-medium [&_strong]:text-[#e4e4e6]">
                     {bio}
                   </p>
                   {bio2 ? (
-                    <p className="text-[15px] font-light leading-relaxed text-[#9e9ea3]">{bio2}</p>
+                    <p className="text-[15px] font-normal leading-relaxed text-[#9e9ea3]">{bio2}</p>
                   ) : null}
                 </div>
               </div>
@@ -251,7 +316,7 @@ function SidebarProfileCards({ light }: { light: boolean }) {
               )}
             >
               {shopperUsesIconAvatar(id) ? (
-                <Sparkles className="size-[1.125rem] text-zinc-500/85" strokeWidth={2} aria-hidden />
+                <AiProfileSparklesIcon className="size-[1.125rem] text-zinc-500/85" />
               ) : (
                 <Image
                   src={SHOPPER_PORTRAIT[id]}
@@ -328,7 +393,7 @@ export function ProfileSwitcher({
     "flex rounded-full border border-white/[0.06] bg-[#0c0e12]/70 p-0.5 backdrop-blur-md";
 
   const topBarBtnCollapsed = cn(
-    "relative z-10 flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full p-0 outline-none transition-colors duration-200",
+    "relative z-10 flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full p-0 outline-none transition-colors duration-200",
     ui.floatingChrome.segmentFocus,
   );
   /** Pills em coluna: cada linha ocupa a largura inteira (iniciais + nome). */
@@ -351,8 +416,10 @@ export function ProfileSwitcher({
         <div
           className={cn(
             /* Sem segundo fundo — o vidro único vem do `clusterShell` no `TopBarProfileCluster`. */
-            "relative flex w-full min-w-0 flex-col flex-nowrap items-stretch gap-1.5 overflow-hidden p-1 scrollbar-none",
-            topBarStripCollapsed && "items-center",
+            "relative flex w-full min-w-0 flex-col flex-nowrap overflow-hidden scrollbar-none",
+            topBarStripCollapsed
+              ? "items-center gap-2 p-1.5"
+              : "items-stretch gap-1.5 p-1",
           )}
           role="group"
           aria-label="Profile"
@@ -374,6 +441,7 @@ export function ProfileSwitcher({
                 }}
                 className={cn(
                   btnClass,
+                  "group",
                   active && !topBarStripCollapsed && ui.floatingChrome.segmentActive,
                   !active && ui.floatingChrome.segmentInactive,
                   !active &&

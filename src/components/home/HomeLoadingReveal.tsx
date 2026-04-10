@@ -68,18 +68,18 @@ export function HomeLoadingReveal() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 1.06 }}
             transition={{ duration: 0.8, ease }}
-            className="flex flex-col items-center gap-5"
+            className="flex flex-col items-center gap-12"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/branding/fs-reduced.svg"
               alt=""
-              className="h-10 w-auto opacity-90"
+              className="h-16 w-auto opacity-90 sm:h-20"
             />
             <motion.div
               className="h-[2px] rounded-full bg-white/30"
               initial={{ width: 0 }}
-              animate={{ width: 80 }}
+              animate={{ width: 168 }}
               transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
             />
           </motion.div>

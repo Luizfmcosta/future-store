@@ -145,7 +145,7 @@ export function AIVisionOverlay() {
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="text-[12px] font-medium leading-tight text-white/95">{card.title}</p>
-                          <p className="mt-1.5 text-[11px] font-light leading-relaxed text-white/55">{card.description}</p>
+                          <p className="mt-1.5 text-[11px] font-normal leading-relaxed text-white/55">{card.description}</p>
                         </div>
                       </div>
                     </div>

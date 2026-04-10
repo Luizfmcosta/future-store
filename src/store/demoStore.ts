@@ -46,6 +46,11 @@ type DemoState = {
    * Not persisted.
    */
   lastPromptSubmitContext: PromptSubmitPageContext | null;
+  /** Gemini PLP adaptation for current query (ranking + intent patch). Not persisted. */
+  plpLlmRankIds: string[] | null;
+  plpLlmIntentPatch: Partial<SearchIntent> | null;
+  /** Gemini PLP tab label when adaptation succeeded (English). */
+  plpLlmCollectionTitle: string | null;
 
   setParsedIntent: (intent: SearchIntent | null) => void;
   setProfile: (id: ShopperProfileId) => void;
@@ -77,6 +82,11 @@ type DemoState = {
   triggerHomeWelcomeReset: () => void;
   requestProfileClusterExpand: () => void;
   setPromptSubmitContext: (ctx: PromptSubmitPageContext | null) => void;
+  setPlpLlmAdaptation: (
+    rankIds: string[] | null,
+    intentPatch: Partial<SearchIntent> | null,
+    collectionTitle?: string | null,
+  ) => void;
 };
 
 export type { PromptProductRef } from "@/lib/promptProductRefs";
@@ -104,6 +114,9 @@ export const useDemoStore = create<DemoState>()(
   homeWelcomeResetNonce: 0,
   profileClusterExpandNonce: 0,
   lastPromptSubmitContext: null,
+  plpLlmRankIds: null,
+  plpLlmIntentPatch: null,
+  plpLlmCollectionTitle: null,
 
   setParsedIntent: (intent) => set({ parsedIntent: intent }),
   setProfile: (id) => set({ activeProfile: id }),
@@ -141,6 +154,9 @@ export const useDemoStore = create<DemoState>()(
       currentQuery: merged,
       promptProductRefs: [],
       parsedIntent: parseIntent(merged),
+      plpLlmRankIds: null,
+      plpLlmIntentPatch: null,
+      plpLlmCollectionTitle: null,
       currentScreen: stayOnPdp ? "pdp" : "search",
     });
   },
@@ -203,12 +219,18 @@ export const useDemoStore = create<DemoState>()(
       cartQuantity: 1,
       pdpChatOverlayOpen: false,
       lastPromptSubmitContext: null,
+      plpLlmRankIds: null,
+      plpLlmIntentPatch: null,
+      plpLlmCollectionTitle: null,
     }),
   presetSearch: () => {
     const query = DEFAULT_QUERY;
     set({
       currentQuery: query,
       parsedIntent: parseIntent(query),
+      plpLlmRankIds: null,
+      plpLlmIntentPatch: null,
+      plpLlmCollectionTitle: null,
       currentScreen: "search",
     });
   },
@@ -223,6 +245,12 @@ export const useDemoStore = create<DemoState>()(
   requestProfileClusterExpand: () =>
     set((s) => ({ profileClusterExpandNonce: s.profileClusterExpandNonce + 1 })),
   setPromptSubmitContext: (ctx) => set({ lastPromptSubmitContext: ctx }),
+  setPlpLlmAdaptation: (rankIds, intentPatch, collectionTitle = null) =>
+    set({
+      plpLlmRankIds: rankIds,
+      plpLlmIntentPatch: intentPatch,
+      plpLlmCollectionTitle: collectionTitle?.trim() || null,
+    }),
 }),
     {
       name: "future-store-demo",

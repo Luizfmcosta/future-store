@@ -19,6 +19,7 @@ export function ChatProductResults({
   followUpSuggestions,
   onFollowUp,
   followUpDisabled,
+  showFollowUpSection = true,
 }: {
   products: Product[];
   profile: ShopperProfileId;
@@ -26,6 +27,8 @@ export function ChatProductResults({
   followUpSuggestions?: readonly string[];
   onFollowUp?: (text: string) => void;
   followUpDisabled?: boolean;
+  /** When false, hides follow-up chips (e.g. after the shopper sent another message). */
+  showFollowUpSection?: boolean;
 }) {
   const t = useT();
   if (products.length === 0) return null;
@@ -49,7 +52,7 @@ export function ChatProductResults({
             return (
               <li
                 key={p.id}
-                className="flex w-[118px] shrink-0 snap-start snap-always self-stretch sm:w-[132px]"
+                className="flex w-[156px] shrink-0 snap-start snap-always self-stretch sm:w-[176px]"
               >
                 <ProductRowCard product={p} profile={profile} />
               </li>
@@ -58,7 +61,7 @@ export function ChatProductResults({
         </ul>
       </div>
 
-      {onFollowUp && followUps.length > 0 ? (
+      {onFollowUp && followUps.length > 0 && showFollowUpSection ? (
         <div className="space-y-2 pt-3">
           <EyebrowPill id="chat-followup-heading">
             {t("searchAiPanel.followUpHeading")}
@@ -110,7 +113,7 @@ function ProductRowCard({ product: p, profile }: { product: Product; profile: Sh
               alt=""
               fill
               className="object-contain p-1"
-              sizes="(max-width:640px) 120px, 140px"
+              sizes="(max-width:640px) 156px, 176px"
               unoptimized
             />
           ) : (
@@ -127,8 +130,7 @@ function ProductRowCard({ product: p, profile }: { product: Product; profile: Sh
           "focus-visible:rounded-b-xl",
         )}
       >
-        <p className="shrink-0 truncate text-[14px] font-medium leading-snug text-stone-500">{p.brand}</p>
-        <div className="mt-1 flex min-h-0 flex-1 flex-col gap-1">
+        <div className="flex min-h-0 flex-1 flex-col gap-1">
           <p className="shrink-0 text-pretty text-[14px] font-semibold leading-snug text-stone-900">
             {p.title}
           </p>

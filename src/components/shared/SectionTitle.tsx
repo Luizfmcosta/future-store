@@ -30,7 +30,7 @@ export function SectionTitle({
             <p className={cn(ui.eyebrow)}>{eyebrow}</p>
           )
         ) : null}
-        <h2 className={cn(eyebrow ? "mt-1" : "mt-1.5", e.sectionTitle)}>{title}</h2>
+        <h2 className={cn(eyebrow ? "mt-2" : "mt-1.5", e.sectionTitle)}>{title}</h2>
       </div>
       {action ? <div className="flex shrink-0 items-center self-center">{action}</div> : null}
     </div>

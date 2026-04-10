@@ -164,8 +164,9 @@ export function getSpotlightProductId(profile: ShopperProfileId, segment: HomeSe
   if (profile === "marina") {
     return segment === "marina_explore" ? "sp-five" : "sp-move-2";
   }
-  if (profile === "ricardo" && segment === "ricardo_speed") {
-    return "sp-era-100";
+  if (profile === "ricardo") {
+    /* Era 100 hero repeats in MerchStrip; Studio Reference uses a distinct asset. */
+    return "sp-five";
   }
   return segment === "ricardo_speed" ? "sb-ray" : "sp-era-100";
 }

@@ -45,7 +45,7 @@ export function SearchModeTabs({ active, className }: SearchModeTabsProps) {
 
   const segmentClass = (isOn: boolean) =>
     cn(
-      "relative z-10 flex h-full min-h-0 min-w-0 flex-1 items-center justify-center gap-1 rounded-full px-2.5 py-1 text-[15px] font-medium leading-none transition-colors duration-200 @md:gap-2 @md:px-3.5 @md:py-1.5 @md:text-[16px]",
+      "relative z-10 flex h-full min-h-0 min-w-0 flex-1 items-center justify-center gap-0.5 rounded-full px-2.5 py-1 text-[15px] font-medium leading-none transition-colors duration-200 @md:gap-1.5 @md:px-3.5 @md:py-1.5 @md:text-[16px]",
       /* Colors align with `ui.home` label / card title (search lives on the same light storefront). */
       isOn ? "font-semibold text-stone-900" : "text-stone-600",
     );
@@ -69,7 +69,7 @@ export function SearchModeTabs({ active, className }: SearchModeTabsProps) {
         >
           <motion.div
             aria-hidden
-            className="pointer-events-none absolute left-1 top-1 z-0 h-[calc(100%-8px)] rounded-full border border-stone-200/80 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.06)]"
+            className="pointer-events-none absolute left-1 top-1 z-0 h-[calc(100%-8px)] rounded-full bg-white shadow-[0_1px_2px_rgba(15,23,42,0.06)]"
             style={{ width: "calc((100% - 8px) / 2)" }}
             initial={false}
             animate={{ x: active === "results" ? 0 : "100%" }}
@@ -90,7 +90,9 @@ export function SearchModeTabs({ active, className }: SearchModeTabsProps) {
             )}
           >
             <Search className={iconClass(active === "results")} strokeWidth={2} aria-hidden />
-            <span className="hidden truncate leading-none @md:inline">{t("searchSerp.modeRegular")}</span>
+            <span className="hidden min-w-0 flex-1 truncate text-center leading-none @md:inline">
+              {t("searchSerp.modeRegular")}
+            </span>
           </Link>
           <Link
             href={hrefFor("ai")}

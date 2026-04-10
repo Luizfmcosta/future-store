@@ -27,6 +27,7 @@ export const messages: Record<string, string | Record<string, string | Record<st
     },
     topBar: {
       ariaHome: "Home",
+      signIn: "Sign in",
     },
     footer: {
       rights: "2026 Future Store. All rights reserved.",
@@ -53,8 +54,8 @@ export const messages: Record<string, string | Record<string, string | Record<st
       },
       ricardoPromo: {
         kicker: "Weekend offers",
-        /** Line break avoids awkward wraps on narrow storefront; \\u00a0 keeps “30% off” together. */
-        headline: "Up to 30%\u00a0off\nspeakers",
+        /** \\u00a0 keeps “30% off” together; one line in the Ricardo hero (see `whitespace-nowrap` in `RicardoPromoHero`). */
+        headline: "Up to 30%\u00a0off speakers",
         fromLabel: "Starting from",
         cta: "View offers",
       },
@@ -128,16 +129,16 @@ export const messages: Record<string, string | Record<string, string | Record<st
     },
     spotlight: {
       marinaEyebrow: "How to choose",
-      marinaHeadline: "What makes a home theater system sound better",
+      marinaHeadline: "What makes a home theater sound better",
       marinaBody:
         "Understand how soundbars, subwoofers and rear speakers work together — and what to prioritize based on your space.",
       marinaCta: "View guide",
       marinaImageAlt:
         "Wide-angle line drawing of a living room with a TV, soundbar, subwoofer, and speakers around the seating area.",
       ricardoEyebrow: "More power, still simple",
-      ricardoHeadline: "Horizon One wireless speaker",
+      ricardoHeadline: "Studio Reference wireless speaker",
       ricardoBody:
-        "Richer sound in a compact format. Wi‑Fi, Bluetooth and app control.",
+        "Stereo‑ready hi‑fi wireless speaker with line‑in for turntables and DJ gear—deep, clean output in most rooms without a separate sub.",
       ricardoCta: "View product",
     },
     floatingSearch: {
@@ -167,13 +168,20 @@ export const messages: Record<string, string | Record<string, string | Record<st
     cart: {
       close: "Close cart",
       label: "Cart",
-      title: "Complete your listening experience",
-      inBag: "In bag",
+      itemInCartAria: "1 item in your cart",
+      itemsInCartAria: "{count} items in your cart",
       empty: "Your cart is empty",
       recommendedBundle: "Recommended bundle",
       premiumAlternative: "Premium alternative",
       cheaperAlternative: "Cheaper alternative",
-      extendedPeace: "Extended peace of mind",
+      accessoryTipPortableTitle: "Taking it with you?",
+      accessoryTipPortableBody: "A small case helps protect it in your bag.",
+      accessoryTipPortableAskSeed:
+        "What small case should I use to protect my portable speaker in my bag?",
+      accessoryTipTvTitle: "Using this with your TV?",
+      accessoryTipTvBody: "A high-speed HDMI cable ensures the best audio connection.",
+      accessoryTipTvAskSeed:
+        "What high-speed HDMI cable should I use for the best audio connection from my TV?",
       emptyDescription:
         "Your bag is empty. Open a product and tap add to cart to save it here before checkout.",
       continueShopping: "Continue shopping",
@@ -183,17 +191,12 @@ export const messages: Record<string, string | Record<string, string | Record<st
       viewBundlePart: "View bundle add-on",
       subtotal: "Subtotal",
       quantityLine: "Qty: {qty}",
-      checkoutDemo: "Checkout (demo)",
+      checkout: "Checkout",
       premiumPairing: "Premium pairing",
       leanerAddOn: "Leaner add-on",
       bundleEyebrow: "Bundle",
       saveAmount: "Save {amount}",
       details: "Details",
-      loyaltyEyebrow: "Membership",
-      loyaltyTitle: "Extended protection + priority service",
-      loyaltyBody:
-        "Structured coverage for hardware and install — surfaced here as a calm upsell, not a hard sell.",
-      loyaltyCta: "View plan (demo)",
       virtualPremiumMarinaTitle: "Spatial upgrade — Horizon Three",
       virtualPremiumMarinaBlurb: "Add flagship spatial audio to your setup",
       virtualPremiumRicardoTitle: "Upgrade path — Horizon Three",
@@ -254,13 +257,13 @@ export const messages: Record<string, string | Record<string, string | Record<st
         tag1: "Architecture demo",
         tag2: "API-first",
         tag3: "Agent-ready",
-        bio: "Machine-readable catalog, context APIs, and open protocols built for agent commerce.",
+        bio: "Machine-readable catalog, context APIs, and open protocols built for agentic commerce.",
         bio2: "Unified data investment: catalog, pricing rules, and interoperability standards.",
       },
     },
     agentBento: {
-      pageAria: "Agent commerce architecture overview",
-      hero: "One architecture. One data investment. Agent commerce on unified catalog, context, and open protocols.",
+      pageAria: "Agentic commerce architecture overview",
+      hero: "One architecture. One data investment. Agentic commerce on unified catalog, context, and open protocols.",
       p1: {
         title: "Unified product data",
         agent: "Machine-readable catalog — SKU, price, stock, SLA, specs, bundle rules",
@@ -326,6 +329,8 @@ export const messages: Record<string, string | Record<string, string | Record<st
     },
     searchSerp: {
       modeRegular: "Results",
+      /** Results tab: PLP adaptation (rank/title) is loading — avoid showing query then swapping to LLM title. */
+      plpLoadingAria: "Loading search results",
       modeAi: "Chat",
       modeAria: "Results and chat",
       intentSummaryTitle: "Intent summary",

@@ -24,8 +24,21 @@ export const metadata: Metadata = {
   title: metaTitle,
   description: metaDescription,
   icons: {
-    icon: "/branding/Favicon-Future.png",
-    apple: "/branding/Favicon-Future.png",
+    icon: [
+      {
+        url: "/branding/favicon-os-light.svg",
+        type: "image/svg+xml",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        url: "/branding/favicon-os-dark.svg",
+        type: "image/svg+xml",
+        media: "(prefers-color-scheme: dark)",
+      },
+      /* Fallback when `prefers-color-scheme` is not set — dark gray on light chrome. */
+      { url: "/branding/favicon.svg", type: "image/svg+xml" },
+    ],
+    apple: [{ url: "/branding/apple-touch-icon.svg", type: "image/svg+xml" }],
   },
   openGraph: {
     title: metaTitle,

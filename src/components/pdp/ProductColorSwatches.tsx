@@ -40,11 +40,11 @@ export function ProductColorSwatches({
               title={label}
               onClick={() => onChange(opt.labelKey)}
               className={cn(
-                "rounded-full p-0.5 transition-[box-shadow,transform] duration-150",
+                "rounded-full p-0.5 transition-[box-shadow,opacity] duration-150",
                 selected
                   ? "shadow-[0_0_0_1px_rgba(23,23,23,0.95)]"
                   : "hover:shadow-[0_0_0_1px_rgba(0,0,0,0.12)]",
-                "active:scale-[0.96]",
+                "active:opacity-80",
                 ui.home.focusRing,
                 "focus-visible:ring-offset-2 focus-visible:ring-offset-white",
               )}

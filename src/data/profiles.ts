@@ -31,7 +31,7 @@ export const profiles: Record<ShopperProfileId, ShopperProfile> = {
     device: "desktop",
     segment: "premium-researcher",
     returning: false,
-    source: "Architecture demo · agent commerce",
+    source: "Architecture demo · agentic commerce",
     tone: "editorial",
     proofPreference: "technical",
     merchandisingBias: "premium",

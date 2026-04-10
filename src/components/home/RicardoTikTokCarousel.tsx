@@ -3,9 +3,10 @@
 import { EyebrowPill } from "@/components/shared/EyebrowPill";
 import { RICARDO_TIKTOK_CLIPS } from "@/data/ricardoTiktokClips";
 import { useT } from "@/lib/useT";
+import { ui } from "@/lib/ui-tokens";
 import { cn } from "@/lib/utils";
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 const ease = [0.76, 0, 0.24, 1] as const;
 
@@ -17,30 +18,50 @@ const EMBED_W = 325;
 const EMBED_H = 708;
 
 /**
- * Fills the column width: fixed 325×708 embed scaled by `100cqw / 325px` from the `@container` shell.
+ * Fills the reserved aspect box: native embed is 325×708; scale tracks shell width (cqw inside
+ * `transform` is unreliable across browsers / pipelines, so we measure with ResizeObserver).
  */
 function TikTokFrame({ videoId, title }: { videoId: string; title: string }) {
   const src = `https://www.tiktok.com/embed/v2/${videoId}`;
+  const shellRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useLayoutEffect(() => {
+    const el = shellRef.current;
+    if (!el) return;
+    const update = () => {
+      const w = el.getBoundingClientRect().width;
+      setScale(w > 0 ? Math.max(w / EMBED_W, 0.001) : 1);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   return (
     <div
+      ref={shellRef}
       className={cn(
-        "@container relative w-full overflow-hidden rounded-xl bg-[#0f0f0f]",
+        "relative w-full min-w-0 overflow-hidden rounded-xl bg-[#0f0f0f] scrollbar-none",
         "ring-0 outline-none [aspect-ratio:325/708]",
       )}
     >
       <div
-        className={cn(
-          "absolute left-1/2 top-0 origin-top",
-          "h-[708px] w-[325px] -translate-x-1/2",
-          "[transform:translateX(-50%)_scale(calc(100cqw/325px))]",
-        )}
+        className="absolute left-1/2 top-0 origin-top overflow-hidden will-change-transform"
+        style={{
+          width: EMBED_W,
+          height: EMBED_H,
+          transform: `translateX(-50%) scale(${scale})`,
+        }}
       >
         <iframe
           title={title}
           src={src}
           width={EMBED_W}
           height={EMBED_H}
-          className="block border-0 bg-transparent outline-none ring-0"
+          scrolling="no"
+          className="block overflow-hidden border-0 bg-transparent outline-none ring-0 scrollbar-none"
           loading="lazy"
           referrerPolicy="strict-origin-when-cross-origin"
           allow="fullscreen"
@@ -56,25 +77,25 @@ export function RicardoTikTokCarousel() {
   const inView = useInView(ref, { once: true, amount: 0.08 });
 
   return (
-    <section ref={ref} className="bg-white">
+    <section ref={ref} className={cn("bg-white", ui.home.whiteSectionOnDarkCanvas)}>
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.55, ease }}
         className="mx-auto max-w-[1200px] min-w-0 px-5 pb-10 pt-9 sm:px-6 sm:pb-12 sm:pt-10"
       >
-        <EyebrowPill>{t("ricardoTiktok.eyebrow")}</EyebrowPill>
-        <h2 className="mt-1.5 text-[clamp(1.1rem,3.2vw,1.35rem)] font-medium leading-snug tracking-[-0.02em] text-stone-900">
+        <EyebrowPill variant="section">{t("ricardoTiktok.eyebrow")}</EyebrowPill>
+        <h2 className="mt-2 max-w-[min(100%,40ch)] text-balance text-pretty text-[clamp(1.42rem,4.25vw,1.95rem)] font-medium leading-[1.12] tracking-[-0.02em] text-stone-900">
           {t("ricardoTiktok.title")}
         </h2>
-        <p className="mt-1 max-w-[46ch] text-[15px] font-light leading-relaxed text-stone-400 sm:text-[16px]">
+        <p className="mt-1 max-w-[46ch] text-balance text-pretty text-[15px] font-normal leading-relaxed text-stone-400 sm:text-[16px]">
           {t("ricardoTiktok.subline")}
         </p>
 
-        <div className="mt-6 w-full min-w-0">
-          <div className="flex w-full flex-col gap-3.5 sm:flex-row sm:gap-5">
+        <div className="mt-6 w-full min-w-0 overflow-x-hidden">
+          <div className="flex w-full flex-col gap-3.5 overflow-x-hidden sm:flex-row sm:gap-5">
             {RICARDO_TIKTOK_CLIPS.map((clip) => (
-              <article key={clip.videoId} className="min-w-0 flex-1 basis-0">
+              <article key={clip.videoId} className="min-w-0 flex-1 basis-0 overflow-hidden">
                 <TikTokFrame videoId={clip.videoId} title={t("ricardoTiktok.embedTitle")} />
               </article>
             ))}

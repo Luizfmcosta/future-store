@@ -2,6 +2,7 @@
 
 import { AskImageButton } from "@/components/shared/AskImageButton";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
+import { ProductBuyNowButton, ProductExploreLink } from "@/components/shared/ProductCtas";
 import {
   getCuratedMarinaCardHeroOverride,
   getProductById,
@@ -9,13 +10,13 @@ import {
 } from "@/data/products";
 import { localizeProducts } from "@/lib/product-i18n";
 import { useT } from "@/lib/useT";
+import { ui } from "@/lib/ui-tokens";
 import { cn, formatBRL, hasMediaUrl } from "@/lib/utils";
 import { useShopperExperienceOptional } from "@/context/ShopperExperienceContext";
 import { useDemoStore } from "@/store/demoStore";
 import type { Product } from "@/types";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
 import { useMemo } from "react";
 
 const ease = [0.76, 0, 0.24, 1] as const;
@@ -24,6 +25,13 @@ const fadeUp = {
   hidden: { opacity: 0, y: 16 },
   show: { opacity: 1, y: 0, transition: { duration: 0.55, ease } },
 };
+
+/**
+ * 16:10 media slot — `max-h` uses `svh` so on short viewports the image yields space
+ * before title/blurb/CTAs; avoid `max-h` on the whole card (that clipped the buttons).
+ */
+const curatedMediaShell =
+  "aspect-[16/10] w-full min-h-0 max-h-[min(36svh,220px)] sm:max-h-[min(42svh,280px)] @md:max-h-[min(44svh,320px)]";
 
 function shortTitle(p: Product) {
   return p.title.split("—")[0].trim();
@@ -54,34 +62,40 @@ function MarinaCompareCard({
   return (
     <motion.article
       variants={fadeUp}
-      className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-2xl border border-stone-200/90 bg-white shadow-[0_8px_28px_-18px_rgba(0,0,0,0.12)]"
+      className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-2xl border border-stone-100 bg-white"
     >
-      <div className="border-b border-stone-100 bg-stone-50/90 px-3 py-2.5 sm:px-4 sm:py-3">
-        <p className="text-[15px] font-semibold leading-snug text-stone-700 sm:text-[16px]">{tierLabel}</p>
+      <div className="relative w-full shrink-0">
+        <AskImageButton
+          productLabel={product.title}
+          productId={product.id}
+          className={cn(
+            curatedMediaShell,
+            "w-full overflow-hidden bg-[#f5f5f5]",
+          )}
+        >
+          {heroSrc ? (
+            <div className="relative h-full min-h-0 w-full">
+              <Image
+                src={heroSrc}
+                alt=""
+                fill
+                className="object-contain object-center p-3 sm:p-4"
+                sizes="(max-width: 480px) 45vw, 400px"
+                unoptimized
+              />
+            </div>
+          ) : (
+            <EmptyMediaSlot className="relative min-h-[8rem]" variant="light" />
+          )}
+        </AskImageButton>
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-20 px-3 py-2.5 sm:px-4 sm:py-3">
+          <p className="text-[15px] font-normal leading-relaxed text-stone-600 sm:text-[17px] sm:leading-[1.65]">
+            {tierLabel}
+          </p>
+        </div>
       </div>
 
-      <AskImageButton
-        productLabel={product.title}
-        productId={product.id}
-        className="aspect-[5/4] w-full shrink-0 overflow-hidden bg-[#f5f5f5]"
-      >
-        {heroSrc ? (
-          <div className="relative h-full w-full">
-            <Image
-              src={heroSrc}
-              alt=""
-              fill
-              className="object-contain p-4 sm:p-5"
-              sizes="(max-width: 480px) 45vw, 400px"
-              unoptimized
-            />
-          </div>
-        ) : (
-          <EmptyMediaSlot className="relative min-h-[8rem]" variant="light" />
-        )}
-      </AskImageButton>
-
-      <div className="flex min-h-0 flex-1 flex-col gap-4 p-3.5 sm:p-4">
+      <div className="flex shrink-0 flex-col gap-3 p-5 sm:p-6">
         <div className="min-w-0 space-y-2">
           <h3 className="text-[15px] font-semibold leading-snug text-[#1a1a1a] sm:text-[16px]">
             {title}
@@ -92,23 +106,31 @@ function MarinaCompareCard({
           <p className="text-[15px] font-semibold tabular-nums tracking-tight text-stone-900 sm:text-[16px]">
             {formatBRL(product.price)}
           </p>
-          <p className="text-[15px] font-normal leading-relaxed text-stone-600 line-clamp-3 sm:text-[17px] sm:leading-[1.65]">
+          <p className="text-pretty text-[15px] font-normal leading-relaxed text-stone-600 line-clamp-3 sm:text-[17px] sm:leading-[1.65]">
             {blurb}
           </p>
         </div>
         <div className="mt-auto flex flex-col gap-2.5 @sm:flex-row">
-          <Link
-            href={`/product/${product.id}`}
-            className="flex h-11 min-h-0 flex-1 items-center justify-center rounded-full border border-stone-200/90 text-[15px] font-medium text-stone-800 transition-colors hover:border-stone-400 hover:bg-stone-50 sm:text-[16px]"
+          <ProductExploreLink
+            productId={product.id}
+            className={cn(
+              ui.home.focusRing,
+              ui.home.ctaSecondaryOutline,
+              "flex h-11 min-h-0 flex-1 items-center justify-center text-[15px] sm:text-[16px]",
+            )}
           >
             {t("common.explore")}
-          </Link>
-          <Link
-            href={`/product/${product.id}`}
-            className="flex h-11 min-h-0 flex-1 items-center justify-center rounded-full bg-[#1a1a1a] text-[15px] font-medium text-white transition-transform hover:scale-[1.02] active:scale-[0.98] sm:text-[16px]"
+          </ProductExploreLink>
+          <ProductBuyNowButton
+            productId={product.id}
+            className={cn(
+              ui.home.focusRing,
+              ui.home.ctaPrimaryFill,
+              "flex h-11 min-h-0 flex-1 items-center justify-center text-[15px] sm:text-[16px]",
+            )}
           >
             {t("common.buyNow")}
-          </Link>
+          </ProductBuyNowButton>
         </div>
       </div>
     </motion.article>
@@ -123,20 +145,20 @@ function RicardoPickCard({ product }: { product: Product }) {
   return (
     <motion.article
       variants={fadeUp}
-      className="overflow-hidden rounded-2xl border border-stone-200/90 bg-white shadow-[0_8px_28px_-18px_rgba(0,0,0,0.12)]"
+      className="flex min-h-0 flex-col overflow-hidden rounded-2xl border border-stone-100 bg-white"
     >
       <AskImageButton
         productLabel={product.title}
         productId={product.id}
-        className="aspect-[5/4] w-full overflow-hidden bg-[#f5f5f5]"
+        className={cn(curatedMediaShell, "w-full shrink-0 overflow-hidden bg-[#f5f5f5]")}
       >
         {heroSrc ? (
-          <div className="relative h-full w-full">
+          <div className="relative h-full min-h-0 w-full">
             <Image
               src={heroSrc}
               alt=""
               fill
-              className="object-contain p-4"
+              className="object-contain object-center p-3 sm:p-4"
               sizes="(max-width: 480px) 100vw, 400px"
               unoptimized
             />
@@ -145,25 +167,33 @@ function RicardoPickCard({ product }: { product: Product }) {
           <EmptyMediaSlot className="relative min-h-[8rem]" variant="light" />
         )}
       </AskImageButton>
-      <div className="flex flex-col gap-3 p-3 sm:p-4">
+      <div className="flex shrink-0 flex-col gap-3 overflow-hidden p-5 sm:p-6">
         <div>
           <h3 className="text-[15px] font-medium leading-snug text-[#1a1a1a]">{shortTitle(product)}</h3>
-          <p className="mt-1 text-[15px] font-light leading-relaxed text-stone-500 line-clamp-2">{blurb}</p>
+          <p className="mt-1 text-pretty text-[15px] font-normal leading-relaxed text-stone-500 line-clamp-2">{blurb}</p>
           <p className="mt-2 text-[16px] font-semibold tabular-nums text-stone-900">{formatBRL(product.price)}</p>
         </div>
         <div className="flex gap-2">
-          <Link
-            href={`/product/${product.id}`}
-            className="flex h-11 flex-1 items-center justify-center rounded-full border border-stone-200/90 text-[15px] font-medium text-stone-800 transition-colors hover:border-stone-400 hover:bg-stone-50"
+          <ProductExploreLink
+            productId={product.id}
+            className={cn(
+              ui.home.focusRing,
+              ui.home.ctaSecondaryOutline,
+              "flex h-11 flex-1 items-center justify-center text-[15px]",
+            )}
           >
             {t("common.explore")}
-          </Link>
-          <Link
-            href={`/product/${product.id}`}
-            className="flex h-11 flex-1 items-center justify-center rounded-full bg-[#1a1a1a] text-[15px] font-medium text-white transition-transform hover:scale-[1.02]"
+          </ProductExploreLink>
+          <ProductBuyNowButton
+            productId={product.id}
+            className={cn(
+              ui.home.focusRing,
+              ui.home.ctaPrimaryFill,
+              "flex h-11 flex-1 items-center justify-center text-[15px]",
+            )}
           >
             {t("common.buyNow")}
-          </Link>
+          </ProductBuyNowButton>
         </div>
       </div>
     </motion.article>
@@ -191,10 +221,10 @@ export function CuratedForYou() {
       if (!a || !b) return [];
       return localizeProducts([a, b]);
     }
-    /* Ricardo: pair matches “around R$ 2.000” headline (portable + compact smart speaker). */
+    /* Ricardo: ~R$ 2k picks — portable + compact soundbar (Era 100 hero repeats in merch below). */
     if (profile === "ricardo") {
       const a = getProductById("sp-roam-2");
-      const b = getProductById("sp-era-100");
+      const b = getProductById("sb-ray");
       if (!a || !b) return [];
       return localizeProducts([a, b]);
     }
@@ -202,78 +232,81 @@ export function CuratedForYou() {
   }, [profile, isRicardoPromoFirstVisit]);
 
   return (
-    <section className="flex flex-col bg-white">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.65, ease }}
-        className="flex flex-col items-center px-4 pb-6 pt-8 text-center sm:px-6 sm:pb-7 sm:pt-9"
-      >
-        <h2 className="max-w-[min(100%,22rem)] whitespace-pre-line text-[clamp(1.42rem,3.6vw,1.92rem)] font-medium leading-[1.2] tracking-[-0.015em] text-[#1a1a1a]">
-          {isRicardoPromoFirstVisit
-            ? t("curated.ricardoPromoHeadline")
-            : profile === "marina"
-              ? t("curated.marinaHeadline")
-              : t("curated.ricardoHeadline")}
-        </h2>
-        <p className="mt-2.5 max-w-[min(100%,26rem)] text-[15px] font-light leading-relaxed text-[#888] sm:text-[16px] sm:leading-[1.65]">
-          {isRicardoPromoFirstVisit
-            ? t("curated.ricardoPromoBody")
-            : profile === "marina"
-              ? t("curated.marinaBody")
-              : t("curated.ricardoBody")}
-        </p>
-      </motion.div>
+    <section className={cn("flex flex-col bg-white", ui.home.whiteSectionOnDarkCanvas)}>
+      {/* Same max width as CompareModule / ContinueJourney (`max-w-[1200px]`). */}
+      <div className="mx-auto w-full max-w-[1200px] px-5 sm:px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.65, ease }}
+          className="flex flex-col items-center pb-14 pt-16 text-center sm:pb-16 sm:pt-20"
+        >
+          <h2 className="max-w-[min(100%,34rem)] whitespace-pre-line text-balance text-pretty text-[clamp(1.92rem,5.45vw,2.88rem)] font-medium leading-[1.12] tracking-[-0.02em] text-[#1a1a1a]">
+            {isRicardoPromoFirstVisit
+              ? t("curated.ricardoPromoHeadline")
+              : profile === "marina"
+                ? t("curated.marinaHeadline")
+                : t("curated.ricardoHeadline")}
+          </h2>
+          <p className="mt-4 max-w-[min(100%,38rem)] text-balance text-pretty text-[16px] font-normal leading-[1.75] text-[#888] sm:mt-5 sm:text-[18px] sm:leading-[1.75]">
+            {isRicardoPromoFirstVisit
+              ? t("curated.ricardoPromoBody")
+              : profile === "marina"
+                ? t("curated.marinaBody")
+                : t("curated.ricardoBody")}
+          </p>
+        </motion.div>
 
-      <motion.div
-        variants={{ hidden: {}, show: stagger }}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.08 }}
-        className={cn(
-          "px-4 pb-9 sm:px-6 sm:pb-10",
-          profile === "marina"
-            ? "grid grid-cols-1 gap-3 @md:grid-cols-2 sm:gap-4"
-            : "flex flex-col gap-4",
-        )}
-      >
-        {profile === "marina" ? (
-          <>
-            {pair.map((p, i) => (
-              <MarinaCompareCard
-                key={p.id}
-                product={p}
-                tierLabel={i === 0 ? t("curated.marinaTierA") : t("curated.marinaTierB")}
-                heroImageOverride={getCuratedMarinaCardHeroOverride(p.id)}
-                displayTitle={
-                  profile === "marina"
-                    ? i === 0
-                      ? t("curated.marinaCardATitle")
-                      : t("curated.marinaCardBTitle")
-                    : undefined
-                }
-                displaySubline={
-                  profile === "marina"
-                    ? i === 0
-                      ? t("curated.marinaCardASub")
-                      : t("curated.marinaCardBSub")
-                    : undefined
-                }
-                displayBlurb={
-                  profile === "marina"
-                    ? i === 0
-                      ? t("curated.marinaCardABlurb")
-                      : t("curated.marinaCardBBlurb")
-                    : undefined
-                }
-              />
-            ))}
-          </>
-        ) : (
-          pair.map((p) => <RicardoPickCard key={p.id} product={p} />)
-        )}
-      </motion.div>
+        <motion.div
+          variants={{ hidden: {}, show: stagger }}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.08 }}
+          className={cn(
+            "pb-9 sm:pb-10",
+            profile === "marina"
+              ? "grid min-h-0 grid-cols-1 items-stretch gap-6 @md:grid-cols-2 sm:gap-8"
+              : "flex flex-col gap-6 sm:gap-8",
+          )}
+        >
+          {profile === "marina" ? (
+            <>
+              {pair.map((p, i) => (
+                <MarinaCompareCard
+                  key={p.id}
+                  product={p}
+                  tierLabel={i === 0 ? t("curated.marinaTierA") : t("curated.marinaTierB")}
+                  heroImageOverride={getCuratedMarinaCardHeroOverride(p.id)}
+                  displayTitle={
+                    profile === "marina"
+                      ? i === 0
+                        ? t("curated.marinaCardATitle")
+                        : t("curated.marinaCardBTitle")
+                      : undefined
+                  }
+                  displaySubline={
+                    profile === "marina"
+                      ? i === 0
+                        ? t("curated.marinaCardASub")
+                        : t("curated.marinaCardBSub")
+                      : undefined
+                  }
+                  displayBlurb={
+                    profile === "marina"
+                      ? i === 0
+                        ? t("curated.marinaCardABlurb")
+                        : t("curated.marinaCardBBlurb")
+                      : undefined
+                  }
+                />
+              ))}
+            </>
+          ) : (
+            pair.map((p) => <RicardoPickCard key={p.id} product={p} />)
+          )}
+        </motion.div>
+      </div>
     </section>
   );
 }

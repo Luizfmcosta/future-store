@@ -40,6 +40,9 @@ function StorefrontPromptComposerInner({
 
   const showPromptSuggestions = pathname !== "/search";
 
+  /** Same frosted shell as the cart control (`TopBar`) on every route, including home over `#121212`. */
+  const promptKit = ui.promptInputKit;
+
   const suggestionPool = useMemo(() => getPromptSuggestionPool(), []);
 
   const submitSearch = useCallback(() => {
@@ -104,13 +107,13 @@ function StorefrontPromptComposerInner({
         onValueChange={setQuery}
         onSubmit={submitSearch}
         maxHeight={maxHeight}
-        className={cn(ui.promptInputKit, "w-full")}
+        className={cn(promptKit, "w-full")}
       >
         <PromptContextBadges />
         <PromptInputTextarea
           data-storefront-search-field=""
           placeholder={t("floatingSearch.placeholder")}
-          className="text-stone-800 placeholder:text-stone-400"
+          className="text-stone-800 placeholder:text-stone-600"
           aria-label={t("searchOverlay.ariaSearchQuery")}
         />
         <PromptInputChatToolbar

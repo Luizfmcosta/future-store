@@ -14,7 +14,13 @@ import { ui } from "@/lib/ui-tokens";
 import { TopBar } from "@/components/shared/TopBar";
 import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
 import { useT } from "@/lib/useT";
-import { clampStorefrontWidth, STOREFRONT_WIDTH } from "@/lib/storefrontViewport";
+import {
+  clampStorefrontWidth,
+  STOREFRONT_FRAME_HEIGHT_DESKTOP,
+  STOREFRONT_FRAME_HEIGHT_PHONE,
+  STOREFRONT_PHONE_FRAME_MAX_WIDTH,
+  STOREFRONT_WIDTH,
+} from "@/lib/storefrontViewport";
 import { cn } from "@/lib/utils";
 import { useDemoStore } from "@/store/demoStore";
 import { AnimatePresence, motion } from "framer-motion";
@@ -93,6 +99,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     isMd && Math.abs(storefrontWidth - STOREFRONT_WIDTH.presetDesktop) < 18;
   const presetHighlightVisible = mobilePresetActive || desktopPresetActive;
   const isAiAgent = activeProfile === "aiAgent";
+  /** Phone frame height unless wide viewport + wide dragged width (not `xl`/`2xl` on a narrow preset). */
+  const storefrontFrameHeightClass =
+    !isMd || storefrontWidth <= STOREFRONT_PHONE_FRAME_MAX_WIDTH
+      ? STOREFRONT_FRAME_HEIGHT_PHONE
+      : STOREFRONT_FRAME_HEIGHT_DESKTOP;
 
   return (
     <div className="flex h-dvh min-h-0 max-h-dvh flex-col overflow-hidden bg-[var(--app-canvas)]">
@@ -101,7 +112,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           "flex min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-hidden",
           isAiAgent
             ? "items-stretch justify-stretch p-0"
-            : "items-center justify-center p-3 sm:p-6 md:p-8 2xl:p-12",
+            : "items-center justify-center px-20 py-3 sm:py-6 md:py-8 2xl:py-12",
         )}
       >
         <div
@@ -118,10 +129,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 data-storefront-container
                 className={cn(
                   "@container relative mx-auto w-full max-w-[440px] overflow-visible",
-                  "h-[min(100dvh-2rem,880px)] max-h-[880px]",
-                  "md:h-[min(100dvh-4rem,960px)] md:max-h-[960px]",
-                  "xl:h-[min(100dvh-5rem,1080px)] xl:max-h-[1080px]",
-                  "2xl:h-[min(100dvh-6rem,1200px)] 2xl:max-h-[1200px]",
+                  storefrontFrameHeightClass,
                   "md:min-w-[340px] md:max-w-[1920px]",
                 )}
                 style={
@@ -230,14 +238,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         role="group"
         aria-label={t("appShell.widthPresetsGroup")}
       >
-        <div className={cn(ui.glassChrome.clusterShell, "inline-flex min-w-[5.25rem]")}>
+        <div className={cn(ui.glassChrome.clusterShell, "inline-flex min-w-[6.5625rem]")}>
           <div className={ui.glassChrome.widthPresetTrack}>
             <motion.div
               className={cn(
-                "pointer-events-none absolute left-1 top-1 bottom-1 rounded-full",
+                "pointer-events-none absolute left-1.5 top-1.5 bottom-1.5 rounded-full",
                 ui.floatingChrome.presetKnob,
               )}
-              style={{ width: "calc((100% - 8px) / 2)" }}
+              style={{ width: "calc((100% - 12px) / 2)" }}
               initial={false}
               animate={{
                 x: mobilePresetActive ? 0 : "100%",
@@ -265,7 +273,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               aria-label={t("appShell.widthPresetMobile")}
               aria-pressed={mobilePresetActive}
             >
-              <Smartphone className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
+              <Smartphone className="h-5 w-5 shrink-0" strokeWidth={2} aria-hidden />
             </button>
             <button
               type="button"
@@ -280,7 +288,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               aria-label={t("appShell.widthPresetDesktop")}
               aria-pressed={desktopPresetActive}
             >
-              <Monitor className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
+              <Monitor className="h-5 w-5 shrink-0" strokeWidth={2} aria-hidden />
             </button>
           </div>
         </div>
@@ -296,7 +304,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       <div className="pointer-events-auto fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-[280] flex items-center">
         <div className={cn(ui.glassChrome.clusterShell, "inline-flex min-w-0")}>
-          <div className={cn(ui.glassChrome.widthPresetTrack, "inline-flex w-auto min-w-[2.25rem]")}>
+          <div className={cn(ui.glassChrome.widthPresetTrack, "inline-flex w-auto min-w-[2.8125rem]")}>
             <button
               type="button"
               onClick={() => {
@@ -310,7 +318,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               )}
               aria-label={t("homeWelcome.ariaResetDemo")}
             >
-              <RotateCcw className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
+              <RotateCcw className="h-5 w-5 shrink-0" strokeWidth={2} aria-hidden />
             </button>
           </div>
         </div>

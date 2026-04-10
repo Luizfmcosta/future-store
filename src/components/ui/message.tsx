@@ -12,7 +12,7 @@ export function MessageAvatar({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "flex size-9 shrink-0 items-center justify-center rounded-full border border-stone-200/90 bg-gradient-to-b from-stone-50 to-stone-100/80 shadow-[0_1px_2px_rgba(0,0,0,0.04)]",
+        "flex size-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-b from-stone-50 to-stone-100/80 shadow-[0_1px_2px_rgba(0,0,0,0.04)]",
         className,
       )}
       {...props}

@@ -10,7 +10,7 @@ export function CompatibilityWidget({ product }: { product: Product }) {
   return (
     <div>
       <EyebrowPill>{t("pdp.compatibilityEyebrow")}</EyebrowPill>
-      <h3 className="mt-4 text-2xl font-light leading-tight text-neutral-900 sm:text-3xl">{t("pdp.compatibilityTitle")}</h3>
+      <h3 className="mt-4 text-2xl font-normal leading-tight text-neutral-900 sm:text-3xl">{t("pdp.compatibilityTitle")}</h3>
       <p className="mt-4 max-w-[40rem] text-[15px] leading-relaxed text-neutral-600 sm:text-[16px]">{t("pdp.compatibilityBody")}</p>
       <ul className="mt-8 flex flex-wrap gap-2">
         {product.compatibilityTags.map((tag) => (

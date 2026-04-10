@@ -1,10 +1,6 @@
 "use client";
 
 import { FloatingPromptDock } from "@/components/search/FloatingPromptDock";
-import {
-  storefrontSheetBackdropExitTransition,
-  storefrontSheetBackdropTransition,
-} from "@/lib/storefrontSheetMotion";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import type { ReactNode } from "react";
@@ -74,12 +70,11 @@ export function StorefrontCartOverlay({
                 key={`${modalKey}-backdrop`}
                 type="button"
                 aria-label={backdropLabel}
-                initial={{ opacity: 0 }}
+                initial={false}
                 animate={{ opacity: 1 }}
-                exit={{ opacity: 0, transition: storefrontSheetBackdropExitTransition }}
-                transition={storefrontSheetBackdropTransition}
+                exit={{ opacity: 0, transition: sheetExitTransition }}
                 className={cn(
-                  "pointer-events-auto absolute inset-0 z-0 bg-black/55 backdrop-blur-md",
+                  "pointer-events-auto absolute inset-0 z-0 bg-black/55",
                   backdropClassName,
                 )}
                 onClick={onDismiss}
@@ -94,7 +89,7 @@ export function StorefrontCartOverlay({
                 exit={{ y: SHEET_EXIT_Y, transition: sheetExitTransition }}
                 transition={sheetEnterTransition}
                 className={cn(
-                  "pointer-events-auto absolute inset-x-[20px] bottom-0 top-3 z-[1] flex min-h-0 flex-col overflow-hidden rounded-t-[1.5rem] border-x border-t border-stone-200/60 bg-white/88 text-stone-900 shadow-[0_-12px_48px_-18px_rgba(15,23,42,0.2)] backdrop-blur-xl backdrop-saturate-150 sm:rounded-t-[1.75rem] will-change-transform",
+                  "pointer-events-auto absolute inset-x-[20px] bottom-0 top-[20px] z-[1] flex min-h-0 flex-col overflow-hidden rounded-t-[1.5rem] border-x border-t border-stone-200/60 bg-white/88 text-stone-900 shadow-[0_-12px_48px_-18px_rgba(15,23,42,0.2)] backdrop-blur-xl backdrop-saturate-150 sm:rounded-t-[1.75rem] will-change-transform",
                   panelClassName,
                 )}
                 onClick={(e) => e.stopPropagation()}

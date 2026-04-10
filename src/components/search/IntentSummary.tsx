@@ -30,9 +30,6 @@ function IntentFilterButton({ className, ariaLabel }: { className?: string; aria
   );
 }
 
-const filterChipClass =
-  "inline-flex h-10 shrink-0 items-center gap-0.5 rounded-full border border-stone-200/90 bg-white px-3.5 text-[15px] font-medium text-stone-900 shadow-[0_1px_2px_rgba(15,23,42,0.06)] transition hover:bg-stone-50";
-
 /** Shop-style row: black circular control + scrollable white pills (below search headline). */
 function SerpFilterChipStrip({ resultsCount }: { resultsCount: number }) {
   const t = useT();
@@ -66,7 +63,11 @@ function SerpFilterChipStrip({ resultsCount }: { resultsCount: number }) {
         </button>
 
         {resultsCount > 0 ? (
-          <button type="button" onClick={open} className={cn(filterChipClass, ui.home.focusRing, "focus-visible:rounded-full")}>
+          <button
+            type="button"
+            onClick={open}
+            className={cn(ui.searchSerpFilterPill, ui.home.focusRing, "focus-visible:rounded-full")}
+          >
             {t("searchSerp.resultsCountPill", { count: resultsCount })}
           </button>
         ) : null}
@@ -76,7 +77,7 @@ function SerpFilterChipStrip({ resultsCount }: { resultsCount: number }) {
             key={msgKey}
             type="button"
             onClick={open}
-            className={cn(filterChipClass, ui.home.focusRing, "focus-visible:rounded-full")}
+            className={cn(ui.searchSerpFilterPill, ui.home.focusRing, "focus-visible:rounded-full")}
             aria-label={t("searchSerp.filterIntentAria")}
           >
             {t(`searchSerp.${msgKey}`)}
@@ -125,24 +126,30 @@ export function IntentSummary({
   profile: _profile,
   aiMode,
   resultsCount = 0,
+  /** Gemini PLP adaptation: curated listing title — shown as the Results tab H1 (not the tab segment label). */
+  curatedListingTitle,
 }: {
   intent: SearchIntent;
   profile: ShopperProfileId;
   aiMode: boolean;
   /** Non-AI SERP: shown in the first filter chip (“N results”). */
   resultsCount?: number;
+  curatedListingTitle?: string | null;
 }) {
   const t = useT();
 
   if (!aiMode) {
     const raw = intent.rawQuery.trim();
+    const curated = typeof curatedListingTitle === "string" ? curatedListingTitle.trim() : "";
     const headline =
-      normalizeQueryForSerpTitle(raw) === "cheap headphones"
-        ? t("searchSerp.plpTitleCheapHeadphones")
-        : raw || t("searchSerp.browseFallback");
+      curated.length >= 4
+        ? curated
+        : normalizeQueryForSerpTitle(raw) === "cheap headphones"
+          ? t("searchSerp.plpTitleCheapHeadphones")
+          : raw || t("searchSerp.browseFallback");
     return (
       <div className="flex w-full min-w-0 flex-col gap-3">
-        <h1 className="pt-8 text-pretty text-xl font-semibold leading-snug tracking-tight text-stone-900 sm:text-2xl">
+        <h1 className="pt-12 text-pretty text-xl font-semibold leading-snug tracking-tight text-stone-900 sm:pt-14 sm:text-2xl">
           {headline}
         </h1>
         <SerpFilterChipStrip resultsCount={resultsCount} />

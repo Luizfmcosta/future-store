@@ -1,5 +1,6 @@
 "use client";
 
+import { HomeFooterBleed } from "@/components/home/HomeFooter";
 import { CompareAlternativesWidget } from "@/components/pdp/CompareAlternativesWidget";
 import { CompatibilityWidget } from "@/components/pdp/CompatibilityWidget";
 import { PdpChatOverlay } from "@/components/pdp/PdpChatOverlay";
@@ -49,8 +50,15 @@ export default function ProductPage() {
 
   if (!product) {
     return (
-      <div className="rounded-2xl border border-stone-200/90 bg-stone-50 p-10 text-center text-stone-600">
-        {t("pdp.notFound")}
+      <div className="w-full min-w-0 bg-[#121212]">
+        <div className="min-w-0 bg-white px-4 sm:px-6">
+          <div className="space-y-16 sm:space-y-20">
+            <div className="rounded-2xl border border-stone-200/90 bg-stone-50 p-10 text-center text-stone-600">
+              {t("pdp.notFound")}
+            </div>
+          </div>
+        </div>
+        <HomeFooterBleed className="mt-16 sm:mt-20" bleed={false} dockClearance={false} />
       </div>
     );
   }
@@ -71,67 +79,64 @@ export default function ProductPage() {
   );
 
   return (
-    <div className="relative flex min-h-0 w-full flex-1 flex-col bg-white">
-      <div
-        data-pdp-scroll
-        className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden scroll-smooth scrollbar-none"
-      >
-        <div className="pb-32 sm:pb-32">
-          <PdpFirstSection
-            product={product}
-            profile={profile}
-            selectedColorKey={selectedColorKey}
-            onSelectedColorKeyChange={setSelectedColorKey}
-            imageTintHex={imageTintHex}
-          />
+    <div className="relative w-full min-w-0 bg-[#121212]">
+      <div className="min-w-0 overflow-x-hidden bg-white px-4 sm:px-6">
+        <PdpFirstSection
+          product={product}
+          profile={profile}
+          selectedColorKey={selectedColorKey}
+          onSelectedColorKeyChange={setSelectedColorKey}
+          imageTintHex={imageTintHex}
+        />
 
-          <PdpSection className="mt-6 border-t border-black/[0.06] sm:mt-10">
-            <div className="mx-auto max-w-2xl">
-              <ProductPdpFeatures product={product} />
-            </div>
-          </PdpSection>
+        <PdpSection className="mt-6 border-t border-black/[0.06] sm:mt-10">
+          <div className="mx-auto max-w-2xl">
+            <ProductPdpFeatures product={product} />
+          </div>
+        </PdpSection>
 
+        <PdpSection>
+          <div className="mx-auto max-w-2xl">
+            <ProductStorySection product={product} />
+          </div>
+        </PdpSection>
+
+        {aiMode ? (
           <PdpSection>
             <div className="mx-auto max-w-2xl">
-              <ProductStorySection product={product} />
+              <FitInsightWidget title={insights.idealTitle} body={insights.idealBody} />
             </div>
           </PdpSection>
+        ) : null}
 
-          {aiMode ? (
-            <PdpSection>
-              <div className="mx-auto max-w-2xl">
-                <FitInsightWidget title={insights.idealTitle} body={insights.idealBody} />
-              </div>
-            </PdpSection>
-          ) : null}
-
-          {aiMode ? (
-            <PdpSection>
-              <div className="mx-auto max-w-2xl">
-                <CompareAlternativesWidget product={product} alt={insights.valueAlt} profile={profile} />
-              </div>
-            </PdpSection>
-          ) : null}
-
+        {aiMode ? (
           <PdpSection>
             <div className="mx-auto max-w-2xl">
-              <ReviewSummaryWidget product={product} profile={profile} />
+              <CompareAlternativesWidget product={product} alt={insights.valueAlt} profile={profile} />
             </div>
           </PdpSection>
+        ) : null}
 
-          <PdpSection>
-            <div className="mx-auto max-w-2xl">
-              <PolicySummaryWidget product={product} />
-            </div>
-          </PdpSection>
+        <PdpSection>
+          <div className="mx-auto max-w-2xl">
+            <ReviewSummaryWidget product={product} profile={profile} />
+          </div>
+        </PdpSection>
 
-          <PdpSection className="border-b-0">
-            <div className="mx-auto max-w-2xl">
-              <CompatibilityWidget product={product} />
-            </div>
-          </PdpSection>
-        </div>
+        <PdpSection>
+          <div className="mx-auto max-w-2xl">
+            <PolicySummaryWidget product={product} />
+          </div>
+        </PdpSection>
+
+        <PdpSection className="border-b-0">
+          <div className="mx-auto max-w-2xl">
+            <CompatibilityWidget product={product} />
+          </div>
+        </PdpSection>
       </div>
+
+      <HomeFooterBleed className="mt-16 sm:mt-20" bleed={false} dockClearance={false} />
 
       <PdpChatOverlay product={product} />
     </div>

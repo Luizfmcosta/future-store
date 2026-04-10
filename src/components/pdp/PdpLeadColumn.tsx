@@ -42,7 +42,7 @@ export function PdpLeadColumn({
       <div>
         <div className="flex flex-col gap-[8px]">
           <EyebrowPill>{product.brand}</EyebrowPill>
-          <h1 className="text-[1.875rem] font-light leading-[1.12] tracking-tight text-neutral-900 sm:text-[2.75rem] sm:leading-[1.08]">
+          <h1 className="text-[1.875rem] font-normal leading-[1.12] tracking-tight text-neutral-900 sm:text-[2.75rem] sm:leading-[1.08]">
             {product.title}
           </h1>
         </div>

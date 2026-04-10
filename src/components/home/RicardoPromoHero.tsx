@@ -1,7 +1,10 @@
 "use client";
 
 import { getCheapestPromoSpeaker } from "@/data/products";
+import { useStorefrontFrameHeightClass } from "@/lib/hooks/useStorefrontFrameHeightClass";
+import { STOREFRONT_HERO_BOTTOM_BLEED, STOREFRONT_HERO_COPY_BOTTOM_PAD } from "@/lib/storefrontViewport";
 import { useT } from "@/lib/useT";
+import { ui } from "@/lib/ui-tokens";
 import { cn, formatBRL } from "@/lib/utils";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -23,21 +26,21 @@ function ricardoHeadlineLines(headline: string): string[] {
     .filter(Boolean);
 }
 
-/** Texto contínuo para o modo uma linha (largura de container confortável). */
-function ricardoHeadlineOneLine(lines: string[]): string {
-  return lines.join(" ");
-}
-
 export function RicardoPromoHero() {
+  const storefrontFrameHeightClass = useStorefrontFrameHeightClass();
   const t = useT();
   const cheapest = getCheapestPromoSpeaker();
   const fromPrice = cheapest ? formatBRL(cheapest.price) : "—";
   const headlineLines = ricardoHeadlineLines(t("hero.ricardoPromo.headline"));
-  const headlineOneLine = ricardoHeadlineOneLine(headlineLines);
 
   return (
     <section id="home-hero" className="relative flex flex-col">
-      <div className="relative flex h-[93vh] min-h-[93vh] w-full shrink-0 flex-col overflow-hidden bg-[#0a0a0a]">
+      <div
+        className={cn(
+          "relative flex w-full shrink-0 flex-col overflow-hidden bg-[#0a0a0a]",
+          storefrontFrameHeightClass,
+        )}
+      >
         <div className="pointer-events-none absolute inset-0">
           <video
             autoPlay
@@ -56,43 +59,41 @@ export function RicardoPromoHero() {
           />
         </div>
 
-        <div className="relative z-10 flex h-full min-h-0 flex-col items-center justify-end px-4 pb-28 pt-24 sm:justify-center sm:px-6 sm:pb-16 sm:pt-20">
+        <div
+          className={cn(
+            "relative z-10 flex h-full min-h-0 flex-col items-center justify-end px-4 pt-24 sm:px-6 sm:pt-20",
+            STOREFRONT_HERO_COPY_BOTTOM_PAD,
+          )}
+        >
           <motion.div
             variants={{ hidden: {}, show: stagger }}
             initial="hidden"
             animate="show"
-            className="@container flex w-full max-w-[min(28rem,calc(100cqw-2rem))] translate-y-6 flex-col items-center text-center"
+            className="@container flex w-full max-w-[min(64rem,calc(100cqw-2rem))] flex-col items-center text-center"
           >
             <motion.p
               variants={child}
-              className="max-w-full text-[16px] font-normal tracking-normal text-white/70 @min-[480px]:text-[17px]"
+              className="max-w-full text-[20px] font-medium tracking-normal text-white/70 @min-[480px]:text-[23px]"
             >
               {t("hero.ricardoPromo.kicker")}
             </motion.p>
+            {/* Same scale as `AdaptiveHero` (Marina) — clamp up to 52pt via container query, not a fixed 42px one-line span. */}
             <motion.h1
               variants={child}
-              className="mt-2 w-full min-w-0 font-medium tracking-[-0.02em] text-white"
+              className="mt-2 w-full min-w-0 text-center font-medium tracking-[-0.02em] text-white @min-[480px]:leading-[0.94]"
             >
-              {/*
-               * Query no próprio bloco (@container no pai): &lt; ~24rem = duas linhas;
-               * ≥ ~24rem = uma linha com nowrap e clamp em cqw deste bloco (não no viewport).
-               */}
-              <span className="block @min-[24rem]:hidden">
-                {headlineLines.map((line, i) => (
-                  <span
-                    key={i}
-                    className={cn(
-                      "block hyphens-none text-[clamp(1.78rem,6.6cqw,2.62rem)] leading-[1.12]",
-                      i > 0 && "mt-[0.28em]",
-                    )}
-                  >
-                    {line}
-                  </span>
-                ))}
-              </span>
-              <span className="hidden min-w-0 max-w-full text-center hyphens-none @min-[24rem]:block @min-[24rem]:whitespace-nowrap @min-[24rem]:text-[38px] @min-[24rem]:leading-[1.04]">
-                {headlineOneLine}
-              </span>
+              {headlineLines.map((line, i) => (
+                <span
+                  key={i}
+                  className={cn(
+                    "block max-w-full hyphens-none text-center whitespace-nowrap text-[clamp(1.62rem,min(10cqi,2.4rem),2.4rem)] leading-[1.12] @min-[480px]:text-[clamp(2.1rem,min(14cqi,52pt),52pt)] @min-[480px]:leading-[0.94]",
+                    headlineLines.length > 1 && i > 0 && "mt-[0.28em]",
+                    headlineLines.length > 1 && "whitespace-normal text-balance",
+                  )}
+                >
+                  {line}
+                </span>
+              ))}
             </motion.h1>
             <motion.p
               variants={child}
@@ -105,7 +106,11 @@ export function RicardoPromoHero() {
             <motion.div variants={child} className="mt-5 flex w-full justify-center">
               <Link
                 href="/search"
-                className="inline-flex h-12 min-h-12 w-full shrink-0 items-center justify-center rounded-full bg-white px-6 text-[15px] font-semibold text-[#0c0c0c] shadow-[0_12px_40px_-16px_rgba(0,0,0,0.45)] transition-transform hover:scale-[1.02] active:scale-[0.98] @min-[480px]:text-[16px] sm:w-auto sm:min-w-[9.5rem]"
+                className={cn(
+                  ui.home.focusRing,
+                  ui.home.ctaOnDarkHero,
+                  "inline-flex h-12 min-h-12 w-full shrink-0 items-center justify-center px-6 text-[15px] @min-[480px]:text-[16px] sm:w-auto sm:min-w-[9.5rem]",
+                )}
               >
                 {t("hero.ricardoPromo.cta")}
               </Link>
@@ -113,6 +118,7 @@ export function RicardoPromoHero() {
           </motion.div>
         </div>
       </div>
+      <div className={cn(STOREFRONT_HERO_BOTTOM_BLEED, "bg-[#0a0a0a]")} aria-hidden />
     </section>
   );
 }

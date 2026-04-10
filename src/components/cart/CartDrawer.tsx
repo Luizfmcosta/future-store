@@ -1,9 +1,7 @@
 "use client";
 
 import { BundleCard } from "@/components/cart/BundleCard";
-import { CheaperOptionCard } from "@/components/cart/CheaperOptionCard";
-import { LoyaltyCard } from "@/components/cart/LoyaltyCard";
-import { PremiumOptionCard } from "@/components/cart/PremiumOptionCard";
+import { CartAccessoryTips } from "@/components/cart/CartAccessoryTips";
 import { StorefrontCartOverlay } from "@/components/cart/StorefrontCartOverlay";
 import { StorefrontOverlayPortal } from "@/components/shared/StorefrontOverlayPortal";
 import { getProductById } from "@/data/products";
@@ -85,36 +83,40 @@ function CartDrawerBody({ titleId, onClose }: { titleId: string; onClose: () => 
 
   return (
       <div className="flex min-h-0 flex-1 flex-col">
-        <div className="flex items-start justify-between p-5">
-          <div>
+        <div className="flex items-center justify-between gap-3 p-5">
+          <div className="flex min-w-0 flex-1 items-center gap-2.5">
+            <h2 id={titleId} className="text-2xl font-semibold tracking-tight text-stone-900">
+              {t("cart.label")}
+            </h2>
             {product ? (
-              <>
-                <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-stone-500">{t("cart.label")}</p>
-                <h2 id={titleId} className="mt-1 text-xl font-semibold text-stone-900">
-                  {t("cart.title")}
-                </h2>
-              </>
-            ) : (
-              <h2 id={titleId} className="text-2xl font-semibold tracking-tight text-stone-900">
-                {t("cart.label")}
-              </h2>
-            )}
+              <span
+                className="inline-flex min-h-7 min-w-7 shrink-0 items-center justify-center rounded-full bg-stone-200/90 px-2 text-[13px] font-semibold tabular-nums text-stone-800"
+                aria-label={
+                  cartQuantity === 1
+                    ? t("cart.itemInCartAria")
+                    : t("cart.itemsInCartAria", { count: cartQuantity })
+                }
+              >
+                {cartQuantity}
+              </span>
+            ) : null}
           </div>
           <button
             ref={closeBtnRef}
             type="button"
             onClick={onClose}
             className={cn(
-              "rounded-full p-2 text-stone-500 hover:bg-stone-100 hover:text-stone-900",
+              "inline-flex h-11 w-11 min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full text-stone-500 hover:bg-stone-100 hover:text-stone-900",
               ui.home.focusRing,
               "focus-visible:rounded-full",
             )}
             aria-label={t("cart.close")}
           >
-            <X className="h-5 w-5" aria-hidden />
+            <X className="size-5" aria-hidden />
           </button>
         </div>
-        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto scrollbar-none p-5">
+        <div className="mx-auto flex w-full max-w-[1024px] min-h-0 flex-1 flex-col">
+          <div className="flex min-h-0 flex-1 flex-col overflow-y-auto scrollbar-none p-5">
           {product ? (
             <div className="space-y-6">
               <CartLineCard
@@ -133,34 +135,17 @@ function CartDrawerBody({ titleId, onClose }: { titleId: string; onClose: () => 
                 </div>
               ) : null}
 
-              {bundles?.premium ? (
-                <div>
-                  <p className="mb-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-stone-500">{t("cart.premiumAlternative")}</p>
-                  <PremiumOptionCard option={bundles.premium} />
-                </div>
-              ) : null}
-
-              {bundles?.cheaper ? (
-                <div>
-                  <p className="mb-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-stone-500">{t("cart.cheaperAlternative")}</p>
-                  <CheaperOptionCard option={bundles.cheaper} />
-                </div>
-              ) : null}
-
-              <div>
-                <p className="mb-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-stone-500">{t("cart.extendedPeace")}</p>
-                <LoyaltyCard />
-              </div>
+              <CartAccessoryTips onNavigate={onClose} />
             </div>
           ) : (
-            <div className="flex min-h-[min(60vh,28rem)] flex-1 flex-col items-center justify-center py-8 text-center">
+            <div className="flex min-h-[min(60vh,28rem)] flex-1 flex-col items-center justify-center py-8 text-center -translate-y-10 sm:-translate-y-12">
               <div
                 className="mb-4 flex size-[4.5rem] items-center justify-center rounded-full bg-stone-100 text-stone-400"
                 aria-hidden
               >
                 <ShoppingBag className="size-9 stroke-[1.25]" />
               </div>
-              <p className="max-w-[22rem] px-1 text-[17px] leading-[1.65] text-stone-600 sm:text-[18px]">
+              <p className="max-w-[min(100%,28rem)] px-1 text-balance text-pretty text-[17px] leading-[1.65] text-stone-600 sm:text-[18px]">
                 {t("cart.emptyDescription")}
               </p>
               <button
@@ -176,26 +161,33 @@ function CartDrawerBody({ titleId, onClose }: { titleId: string; onClose: () => 
               </button>
             </div>
           )}
+          </div>
         </div>
         {product ? (
-          <div className="border-t border-stone-200/90 p-5">
-            <p className="mb-3 flex items-baseline justify-between gap-2 text-[14px] text-stone-600">
-              <span>{t("cart.subtotal")}</span>
-              <span className="tabular-nums text-[15px] font-semibold text-stone-900">
-                {formatBRL(product.price * cartQuantity)}
-              </span>
-            </p>
-            <button
-              type="button"
+          <div className="w-full shrink-0 border-t border-stone-200/90">
+            <div
               className={cn(
-                "w-full rounded-full bg-stone-200 py-3 text-[14px] font-semibold text-stone-700 opacity-60",
-                ui.home.focusRing,
-                "focus-visible:opacity-100",
+                "mx-auto w-full max-w-[1024px] px-5 pt-5",
+                ui.floatingPromptDockClearance,
               )}
-              disabled
             >
-              {t("cart.checkoutDemo")}
-            </button>
+              <p className="mb-3 flex items-baseline justify-between gap-2 text-[14px] text-stone-600">
+                <span>{t("cart.subtotal")}</span>
+                <span className="tabular-nums text-lg font-semibold text-stone-900 sm:text-xl">
+                  {formatBRL(product.price * cartQuantity)}
+                </span>
+              </p>
+              <button
+                type="button"
+                onClick={onClose}
+                className={cn(
+                  "w-full rounded-full bg-stone-900 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-stone-800 sm:text-[15px]",
+                  ui.home.focusRing,
+                )}
+              >
+                {t("cart.checkout")}
+              </button>
+            </div>
           </div>
         ) : null}
       </div>
@@ -239,22 +231,21 @@ function CartLineCard({
               </div>
             )}
           </div>
-          <div className="flex min-w-0 flex-1 flex-col gap-2">
-            <div>
-              <p className="text-[14px] font-medium text-stone-500">{t("cart.inBag")}</p>
-              <p className="mt-0.5 line-clamp-2 text-[15px] font-semibold leading-snug text-stone-900">{product.title}</p>
+          <div className="flex min-h-28 min-w-0 flex-1 flex-col justify-between">
+            <p className="line-clamp-2 text-[15px] font-semibold leading-snug text-stone-900">{product.title}</p>
+            <div className="flex flex-col gap-0.5">
+              <div className="flex flex-wrap items-baseline gap-2">
+                <p className="text-lg font-semibold tabular-nums text-stone-900">{formatBRL(product.price)}</p>
+                {product.oldPrice ? (
+                  <p className={ui.home.priceMuted}>{formatBRL(product.oldPrice)}</p>
+                ) : null}
+              </div>
+              <p className="text-[14px] leading-snug text-stone-600">{product.installmentText}</p>
             </div>
-            <div className="flex flex-wrap items-baseline gap-2">
-              <p className="text-lg font-semibold tabular-nums text-stone-900">{formatBRL(product.price)}</p>
-              {product.oldPrice ? (
-                <p className={ui.home.priceMuted}>{formatBRL(product.oldPrice)}</p>
-              ) : null}
-            </div>
-            <p className="text-[14px] text-stone-600">{product.installmentText}</p>
           </div>
         </div>
         <div className="flex w-full flex-row items-center justify-between gap-3 border-t border-stone-200/60 pt-3 sm:w-auto sm:flex-col sm:items-end sm:justify-between sm:self-stretch sm:border-0 sm:pt-0">
-          <div className="flex items-center gap-1 rounded-full border border-stone-200/90 bg-white/90 p-0.5 shadow-sm">
+          <div className="flex items-center gap-1 rounded-full border border-stone-200/90 bg-white/90 p-0.5">
             <button
               type="button"
               onClick={onDecrement}

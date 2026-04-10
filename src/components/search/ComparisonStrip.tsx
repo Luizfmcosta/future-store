@@ -2,10 +2,10 @@
 
 import { AskImageButton } from "@/components/shared/AskImageButton";
 import { Card } from "@/components/shared/Card";
+import { ProductBuyNowButton, ProductExploreLink } from "@/components/shared/ProductCtas";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { EyebrowPill } from "@/components/shared/EyebrowPill";
 import { HorizontalScroll } from "@/components/shared/HorizontalScroll";
-import { SectionTitle } from "@/components/shared/SectionTitle";
 import type { ComparisonCardModel, ComparisonFitKey } from "@/lib/recommendations";
 import { localizeProduct } from "@/lib/product-i18n";
 import { useT } from "@/lib/useT";
@@ -13,7 +13,6 @@ import { ui } from "@/lib/ui-tokens";
 import { cn, hasMediaUrl } from "@/lib/utils";
 import type { ShopperProfileId } from "@/types";
 import Image from "next/image";
-import Link from "next/link";
 
 const FIT_KEY_TO_MSG: Record<ComparisonFitKey, string> = {
   marina_flagship: "searchSerp.compareFitMarinaFlagship",
@@ -26,10 +25,8 @@ const FIT_KEY_TO_MSG: Record<ComparisonFitKey, string> = {
 function ComparisonCard({ row }: { row: ComparisonCardModel }) {
   const t = useT();
   const p = localizeProduct(row.product);
-  const href = `/product/${row.product.id}`;
-
   return (
-    <Card className="flex h-full min-w-0 flex-col overflow-hidden p-0 transition hover:border-stone-300/90 hover:shadow-[0_16px_40px_-24px_rgba(0,0,0,0.14)]">
+    <Card className="flex h-full min-w-0 flex-col overflow-hidden p-0 shadow-none transition hover:border-stone-300/90">
       <AskImageButton productLabel={p.title} productId={row.product.id} className="aspect-[16/10] w-full shrink-0 bg-[#f5f5f5]">
         <div className="relative h-full w-full">
           {hasMediaUrl(row.product.heroImage) ? (
@@ -38,7 +35,7 @@ function ComparisonCard({ row }: { row: ComparisonCardModel }) {
               alt=""
               fill
               className="object-contain"
-              sizes="(max-width: 640px) 90vw, 320px"
+              sizes="(max-width: 640px) 90vw, (max-width: 28rem) 85vw, 33vw"
               unoptimized
             />
           ) : (
@@ -60,26 +57,28 @@ function ComparisonCard({ row }: { row: ComparisonCardModel }) {
           ))}
         </ul>
         <div className="mt-auto flex flex-col gap-2.5 pt-4 sm:flex-row">
-          <Link
-            href={href}
+          <ProductExploreLink
+            productId={row.product.id}
             className={cn(
-              "flex h-11 min-h-0 flex-1 items-center justify-center rounded-full border border-stone-200/90 text-[15px] font-medium text-stone-800 transition-colors hover:border-stone-400 hover:bg-stone-50 sm:text-[16px]",
+              ui.home.ctaSecondaryOutline,
+              "flex h-11 min-h-0 flex-1 items-center justify-center text-[15px] sm:text-[16px]",
               ui.home.focusRing,
               "focus-visible:rounded-full",
             )}
           >
             {t("common.explore")}
-          </Link>
-          <Link
-            href={href}
+          </ProductExploreLink>
+          <ProductBuyNowButton
+            productId={row.product.id}
             className={cn(
-              "flex h-11 min-h-0 flex-1 items-center justify-center rounded-full bg-[#1a1a1a] text-[15px] font-medium text-white transition-transform hover:scale-[1.02] active:scale-[0.98] sm:text-[16px]",
+              ui.home.ctaPrimaryFill,
+              "flex h-11 min-h-0 flex-1 items-center justify-center text-[15px] sm:text-[16px]",
               ui.home.focusRing,
               "focus-visible:rounded-full",
             )}
           >
             {t("common.buyNow")}
-          </Link>
+          </ProductBuyNowButton>
         </div>
       </div>
     </Card>
@@ -93,12 +92,15 @@ export function ComparisonStrip({ items, profile }: { items: ComparisonCardModel
 
   return (
     <section aria-label={`${t("searchSerp.compareEyebrow")} — ${title}`} className="min-w-0">
-      <SectionTitle variant="editorial" eyebrow={t("searchSerp.compareEyebrow")} title={title} />
-      <HorizontalScroll className="pb-0.5">
+      <div className="mb-4 min-w-0 sm:mb-5">
+        <p className={ui.searchSerpSectionKicker}>{t("searchSerp.compareEyebrow")}</p>
+        <h2 className={cn("mt-2", ui.home.sectionTitle)}>{title}</h2>
+      </div>
+      <HorizontalScroll fillRowFromMd className="pb-0.5">
         {items.map((row) => (
           <div
             key={row.product.id}
-            className="w-[min(100%,19rem)] shrink-0 snap-start sm:w-[min(100%,20rem)]"
+            className="w-[min(100%,19rem)] shrink-0 snap-start sm:w-[min(100%,20rem)] @md:w-auto @md:min-w-0 @md:flex-1 @md:basis-0 @md:shrink @md:snap-none"
           >
             <ComparisonCard row={row} />
           </div>

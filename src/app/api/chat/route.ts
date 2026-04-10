@@ -1,3 +1,4 @@
+import { geminiModelCandidates, GEMINI_DEFAULT_MODEL } from "@/lib/server/geminiModels";
 import { formatPromptPageContextForLlm } from "@/lib/promptPageContext";
 import type { PromptSubmitPageContext, ShopperProfileId } from "@/types";
 import { NextResponse } from "next/server";
@@ -13,7 +14,9 @@ function isPageContext(v: unknown): v is PromptSubmitPageContext {
   const k = (v as { kind?: unknown }).kind;
   if (k === "plp") {
     const p = v as { pathname?: unknown; searchParamsSnapshot?: unknown };
-    return typeof p.pathname === "string" && typeof p.searchParamsSnapshot === "string";
+    if (typeof p.pathname !== "string") return false;
+    /* Allow missing snapshot (older clients / JSON); normalize to "" when parsing. */
+    return p.searchParamsSnapshot === undefined || typeof p.searchParamsSnapshot === "string";
   }
   if (k === "pdp") {
     const p = v as { pathname?: unknown; productId?: unknown };
@@ -42,6 +45,168 @@ function isHistoryFixed(v: unknown): v is { role: "user" | "assistant"; content:
   return true;
 }
 
+type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
+
+function buildMessages(
+  profile: ShopperProfileId,
+  pageContext: PromptSubmitPageContext | null,
+  history: { role: "user" | "assistant"; content: string }[],
+  message: string,
+): ChatMessage[] {
+  const pageBlock = formatPromptPageContextForLlm(pageContext);
+  const system = [
+    "You are a concise, friendly shopping assistant for a premium audio and home-theater demo storefront (speakers, soundbars, TVs, accessories).",
+    `Shopper profile id (tone hint only): ${profile}.`,
+    "",
+    "Current page context when the customer sent this message:",
+    pageBlock,
+    "",
+    "Reply in the same language as the customer's message. Be helpful and specific to their question and the page context when relevant.",
+    "If you lack product specs or prices, say the catalog page lists details and avoid inventing numbers.",
+  ].join("\n");
+
+  return [
+    { role: "system", content: system },
+    ...history.map((h) => ({ role: h.role, content: h.content.slice(0, 8000) })),
+    { role: "user", content: message },
+  ];
+}
+
+async function callOpenAi(
+  apiKey: string,
+  model: string,
+  messages: ChatMessage[],
+): Promise<{ ok: true; text: string } | { ok: false; status: number; detail: string }> {
+  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model,
+      messages,
+      temperature: 0.65,
+      max_tokens: 900,
+    }),
+  });
+  if (!res.ok) {
+    const errText = await res.text();
+    console.error("[api/chat] OpenAI error", res.status, errText.slice(0, 500));
+    return { ok: false, status: 502, detail: "upstream" };
+  }
+  const data = (await res.json()) as {
+    choices?: { message?: { content?: string } }[];
+  };
+  const text = data.choices?.[0]?.message?.content?.trim() ?? "";
+  if (!text) return { ok: false, status: 502, detail: "empty" };
+  return { ok: true, text };
+}
+
+type GeminiJson = {
+  candidates?: { content?: { parts?: { text?: string }[] }; finishReason?: string }[];
+  promptFeedback?: { blockReason?: string };
+  error?: { code?: number; message?: string; status?: string };
+};
+
+function extractGeminiReplyText(data: GeminiJson): string {
+  const parts = data.candidates?.[0]?.content?.parts;
+  return parts?.map((p) => p.text ?? "").join("").trim() ?? "";
+}
+
+async function callGeminiOnce(
+  apiKey: string,
+  model: string,
+  body: Record<string, unknown>,
+): Promise<{ ok: true; text: string } | { ok: false; status: number; httpStatus: number; detail: string }> {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const raw = await res.text();
+  let data: GeminiJson = {};
+  try {
+    data = JSON.parse(raw) as GeminiJson;
+  } catch {
+    console.error("[api/chat] Gemini non-JSON", res.status, raw.slice(0, 200));
+    return { ok: false, status: 502, httpStatus: res.status, detail: "upstream" };
+  }
+  if (data.error?.message) {
+    console.error("[api/chat] Gemini error field", res.status, data.error.message.slice(0, 400));
+    return { ok: false, status: 502, httpStatus: res.status, detail: "upstream" };
+  }
+  if (!res.ok) {
+    console.error("[api/chat] Gemini HTTP error", res.status, raw.slice(0, 500));
+    return { ok: false, status: 502, httpStatus: res.status, detail: "upstream" };
+  }
+  const text = extractGeminiReplyText(data);
+  if (text) return { ok: true, text };
+  const fr = data.candidates?.[0]?.finishReason;
+  const br = data.promptFeedback?.blockReason;
+  console.error("[api/chat] Gemini empty reply", { finishReason: fr, blockReason: br });
+  return { ok: false, status: 502, httpStatus: res.status, detail: "empty" };
+}
+
+async function callGemini(
+  apiKey: string,
+  preferredModel: string,
+  messages: ChatMessage[],
+): Promise<{ ok: true; text: string } | { ok: false; status: number; detail: string }> {
+  const systemMsg = messages.find((m) => m.role === "system");
+  const rest = messages.filter((m) => m.role !== "system");
+
+  const generationConfig = {
+    temperature: 0.65,
+    maxOutputTokens: 900,
+  };
+
+  const buildContents = (mergeSystemIntoFirstUser: boolean) => {
+    let conv = rest;
+    if (mergeSystemIntoFirstUser && systemMsg && conv.length > 0 && conv[0].role === "user") {
+      conv = [
+        {
+          role: "user" as const,
+          content: `${systemMsg.content}\n\n---\n\n${conv[0].content}`,
+        },
+        ...conv.slice(1),
+      ];
+    }
+    return conv.map((m) => ({
+      role: m.role === "assistant" ? ("model" as const) : ("user" as const),
+      parts: [{ text: m.content }],
+    }));
+  };
+
+  const modelCandidates = geminiModelCandidates(preferredModel);
+
+  let lastFail: { ok: false; status: number; detail: string } | null = null;
+
+  for (const model of modelCandidates) {
+    for (const mergeSystem of [false, true]) {
+      if (mergeSystem && !systemMsg) continue;
+      const contents = buildContents(mergeSystem);
+      const body: Record<string, unknown> = {
+        contents,
+        generationConfig,
+      };
+      if (systemMsg && !mergeSystem) {
+        body.systemInstruction = { parts: [{ text: systemMsg.content }] };
+      }
+
+      const out = await callGeminiOnce(apiKey, model, body);
+      if (out.ok) return out;
+
+      lastFail = { ok: false, status: out.status, detail: out.detail };
+      /* 404 = wrong model id; 429 = quota — try next model instead of alternate request shape. */
+      if (out.httpStatus === 404 || out.httpStatus === 429) break;
+    }
+  }
+
+  return lastFail ?? { ok: false, status: 502, detail: "upstream" };
+}
+
 export async function POST(req: Request) {
   let body: unknown;
   try {
@@ -66,62 +231,45 @@ export async function POST(req: Request) {
     if (!isPageContext(rawCtx)) {
       return NextResponse.json({ error: "invalid_page_context", reply: null }, { status: 400 });
     }
-    pageContext = rawCtx;
+    const raw = rawCtx as Record<string, unknown>;
+    pageContext =
+      raw.kind === "plp"
+        ? {
+            kind: "plp",
+            pathname: raw.pathname as string,
+            searchParamsSnapshot:
+              typeof raw.searchParamsSnapshot === "string" ? raw.searchParamsSnapshot : "",
+          }
+        : (rawCtx as PromptSubmitPageContext);
   }
   const history = isHistoryFixed(b.history) ? b.history : [];
 
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
+  const geminiKey = process.env.GEMINI_API_KEY?.trim();
+  const openAiKey = process.env.OPENAI_API_KEY?.trim();
+
+  if (!geminiKey && !openAiKey) {
     return NextResponse.json({ reply: null, skipped: true }, { status: 200 });
   }
 
-  const model = process.env.OPENAI_CHAT_MODEL?.trim() || "gpt-4o-mini";
-  const pageBlock = formatPromptPageContextForLlm(pageContext);
-
-  const system = [
-    "You are a concise, friendly shopping assistant for a premium audio and home-theater demo storefront (speakers, soundbars, TVs, accessories).",
-    `Shopper profile id (tone hint only): ${b.profile}.`,
-    "",
-    "Current page context when the customer sent this message:",
-    pageBlock,
-    "",
-    "Reply in the same language as the customer's message. Be helpful and specific to their question and the page context when relevant.",
-    "If you lack product specs or prices, say the catalog page lists details and avoid inventing numbers.",
-  ].join("\n");
-
-  const openAiMessages: { role: "system" | "user" | "assistant"; content: string }[] = [
-    { role: "system", content: system },
-    ...history.map((h) => ({ role: h.role, content: h.content.slice(0, 8000) })),
-    { role: "user", content: message },
-  ];
+  const chatMessages = buildMessages(b.profile, pageContext, history, message);
 
   try {
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model,
-        messages: openAiMessages,
-        temperature: 0.65,
-        max_tokens: 900,
-      }),
-    });
-    if (!res.ok) {
-      const errText = await res.text();
-      console.error("[api/chat] OpenAI error", res.status, errText.slice(0, 500));
-      return NextResponse.json({ reply: null, error: "upstream" }, { status: 502 });
+    if (geminiKey) {
+      /* 1.5-flash is widely enabled on AI Studio keys; 2.0 is tried as fallback inside `callGemini`. */
+      const model = process.env.GEMINI_CHAT_MODEL?.trim() || GEMINI_DEFAULT_MODEL;
+      const out = await callGemini(geminiKey, model, chatMessages);
+      if (!out.ok) {
+        return NextResponse.json({ reply: null, error: out.detail }, { status: out.status });
+      }
+      return NextResponse.json({ reply: out.text });
     }
-    const data = (await res.json()) as {
-      choices?: { message?: { content?: string } }[];
-    };
-    const reply = data.choices?.[0]?.message?.content?.trim() ?? "";
-    if (!reply) {
-      return NextResponse.json({ reply: null, error: "empty" }, { status: 502 });
+
+    const model = process.env.OPENAI_CHAT_MODEL?.trim() || "gpt-4o-mini";
+    const out = await callOpenAi(openAiKey!, model, chatMessages);
+    if (!out.ok) {
+      return NextResponse.json({ reply: null, error: out.detail }, { status: out.status });
     }
-    return NextResponse.json({ reply });
+    return NextResponse.json({ reply: out.text });
   } catch (e) {
     console.error("[api/chat]", e);
     return NextResponse.json({ reply: null, error: "fetch_failed" }, { status: 502 });

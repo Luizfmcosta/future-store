@@ -1,7 +1,7 @@
 "use client"
 
 import { cn } from "@/lib/utils"
-import { StickToBottom } from "use-stick-to-bottom"
+import { StickToBottom, type GetTargetScrollTop } from "use-stick-to-bottom"
 
 export type ChatContainerRootProps = {
   children: React.ReactNode
@@ -11,6 +11,8 @@ export type ChatContainerRootProps = {
    * `"instant"` / `"smooth"` keep the classic chat behavior (pinned to the latest message).
    */
   stickInitial?: false | "instant" | "smooth"
+  /** Caps max scroll (e.g. keep content below a sentinel out of the initial “bottom” region). */
+  targetScrollTop?: GetTargetScrollTop
 } & Omit<React.HTMLAttributes<HTMLDivElement>, "initial">
 
 export type ChatContainerContentProps = {
@@ -33,7 +35,10 @@ function ChatContainerRoot({
 }: ChatContainerRootProps) {
   return (
     <StickToBottom
-      className={cn("flex overflow-y-auto scrollbar-none", className)}
+      className={cn(
+        "flex overflow-y-auto overscroll-y-none scrollbar-none",
+        className,
+      )}
       resize="smooth"
       initial={stickInitial}
       role="log"

@@ -8,7 +8,7 @@ import type { ShopperProfileId } from "@/types";
 
 /**
  * PDP “above the fold”: back control, hero media (rounded card), lead column.
- * Capped at 1280px and centered; lives inside `main` padding — no negative horizontal margins.
+ * Capped at 1280px and centered; horizontal inset comes from the PDP scroll column (`px-4 sm:px-6`).
  */
 export function PdpFirstSection({
   product,

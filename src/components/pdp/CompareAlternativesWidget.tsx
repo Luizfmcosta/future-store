@@ -25,7 +25,7 @@ export function CompareAlternativesWidget({
   return (
     <div>
       <EyebrowPill>{t("pdp.compareEyebrow")}</EyebrowPill>
-      <h3 className="mt-4 text-xl font-light text-neutral-900 sm:text-2xl">
+      <h3 className="mt-4 text-xl font-normal text-neutral-900 sm:text-2xl">
         {profile === "marina" ? "Compared to a path you might like" : "Lower monthly alternative"}
       </h3>
       <div className="mt-8 flex gap-4 border border-black/[0.06] bg-[#fafafa] p-4 sm:p-5">

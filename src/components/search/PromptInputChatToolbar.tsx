@@ -11,10 +11,9 @@ import { ArrowUp, Ellipsis, Mic, Plus } from "lucide-react";
 
 /** Botões circulares secundários — leve vidro para combinar com o prompt. */
 const circleSecondary =
-  "inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-stone-200/70 bg-white/60 text-stone-600 shadow-none backdrop-blur-sm transition-colors hover:bg-white/80";
+  "inline-flex size-10 min-h-10 min-w-10 shrink-0 items-center justify-center rounded-full border border-stone-200/70 bg-white/60 text-stone-600 shadow-none ring-0 backdrop-blur-sm transition-colors hover:bg-white/80";
 
-const sendChatClass =
-  "inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-[#0f0f0f]/88 text-white shadow-sm backdrop-blur-sm transition-[transform,background-color] hover:bg-[#262626]/95 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40";
+const sendChatClass = ui.home.ctaPromptIconSend;
 
 export type PromptInputChatToolbarProps = {
   fileInputId: string;
@@ -50,7 +49,7 @@ export function PromptInputChatToolbar({
   const sendText = sendLabel ?? t("common.sendMessage");
 
   return (
-    <div className={cn("mt-2 flex w-full min-w-0 items-center justify-between gap-2", className)}>
+    <div className={cn("mt-3 flex w-full min-w-0 items-center justify-between gap-2", className)}>
       <PromptInputActions className="min-w-0 flex-1 flex-wrap justify-start gap-1.5 p-0">
         <PromptInputAction tooltip={t("common.addAttachment")} side="top">
           <label
@@ -75,7 +74,7 @@ export function PromptInputChatToolbar({
                 e.target.value = "";
               }}
             />
-            <Plus className="size-4" strokeWidth={2} aria-hidden />
+            <Plus className="size-5" strokeWidth={2} aria-hidden />
           </label>
         </PromptInputAction>
 
@@ -95,7 +94,7 @@ export function PromptInputChatToolbar({
             )}
             aria-label={t("common.voiceInput")}
           >
-            <Mic className="size-4" strokeWidth={2} aria-hidden />
+            <Mic className="size-5" strokeWidth={2} aria-hidden />
           </button>
         </PromptInputAction>
 
@@ -110,7 +109,7 @@ export function PromptInputChatToolbar({
             className={cn(circleSecondary, disabled && "opacity-50", ui.home.focusRing, "focus-visible:rounded-full")}
             aria-label={t("common.moreOptions")}
           >
-            <Ellipsis className="size-4" strokeWidth={2} aria-hidden />
+            <Ellipsis className="size-5" strokeWidth={2} aria-hidden />
           </button>
         </PromptInputAction>
       </PromptInputActions>
@@ -126,7 +125,7 @@ export function PromptInputChatToolbar({
           className={cn(sendChatClass, ui.home.focusRing, "focus-visible:rounded-full")}
           aria-label={sendText}
         >
-          <ArrowUp className="size-4" strokeWidth={2.25} aria-hidden />
+          <ArrowUp className="size-5" strokeWidth={2.25} aria-hidden />
         </button>
       </PromptInputAction>
     </div>

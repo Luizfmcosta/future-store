@@ -29,14 +29,18 @@ export function HomeView() {
   const order = experience.moduleOrder;
 
   return (
-    <div className="relative flex flex-col">
-      <HomeWelcomeGate />
-      <HomeLoadingReveal />
-      {order.map((key) => {
-        const node = map[key];
-        return node ? <div key={key}>{node}</div> : null;
-      })}
-      <HomeFooter />
+    <div className="relative flex min-h-full flex-col">
+      <div className="flex flex-col">
+        <HomeWelcomeGate />
+        <HomeLoadingReveal />
+        {order.map((key) => {
+          const node = map[key];
+          return node ? <div key={key}>{node}</div> : null;
+        })}
+      </div>
+      <div className="shrink-0">
+        <HomeFooter />
+      </div>
     </div>
   );
 }

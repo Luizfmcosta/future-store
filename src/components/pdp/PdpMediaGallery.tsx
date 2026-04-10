@@ -91,25 +91,31 @@ export function PdpMediaGallery({
                   aria-label={colorAria(opt.labelKey)}
                   aria-pressed={active}
                   className={cn(
-                    "relative h-16 w-20 shrink-0 overflow-hidden rounded-lg bg-[#f5f5f5] transition-opacity sm:h-[4.5rem] sm:w-[5.5rem]",
+                    "relative size-16 shrink-0 overflow-hidden rounded-lg bg-[#f5f5f5] transition-opacity sm:size-[4.5rem]",
                     active ? "opacity-100 ring-1 ring-inset ring-black/25" : "opacity-70 hover:opacity-100",
                   )}
                 >
-                  <span className="relative isolate block h-full w-full p-1.5">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={product.heroImage}
-                      alt=""
-                      className="relative z-0 block h-full w-full object-contain"
-                      loading="lazy"
-                      decoding="async"
-                      draggable={false}
-                    />
-                    <ProductColorTintOverlay
-                      hex={opt.swatchHex}
-                      maskImageSrc={product.heroImage}
-                      maskFit="contain"
-                    />
+                  {/*
+                    Tint mask must be sized to the letterboxed image box only — not the padded thumb frame
+                    (otherwise mask-size: contain scales to a larger rect and the hue read “oversized”).
+                  */}
+                  <span className="flex h-full w-full items-center justify-center p-1.5">
+                    <span className="relative isolate inline-block max-h-full max-w-full">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={product.heroImage}
+                        alt=""
+                        className="relative z-0 block max-h-full max-w-full object-contain"
+                        loading="lazy"
+                        decoding="async"
+                        draggable={false}
+                      />
+                      <ProductColorTintOverlay
+                        hex={opt.swatchHex}
+                        maskImageSrc={product.heroImage}
+                        maskFit="contain"
+                      />
+                    </span>
                   </span>
                 </button>
               );
@@ -124,7 +130,7 @@ export function PdpMediaGallery({
                 key={thumbSrc + String(i)}
                 type="button"
                 onClick={() => setGalleryIdx(i)}
-                className={`relative h-16 w-20 shrink-0 overflow-hidden rounded-lg bg-[#f5f5f5] transition-opacity sm:h-[4.5rem] sm:w-[5.5rem] ${
+                className={`relative size-16 shrink-0 overflow-hidden rounded-lg bg-[#f5f5f5] transition-opacity sm:size-[4.5rem] ${
                   galleryIdx === i
                     ? "opacity-100 ring-1 ring-inset ring-black/25"
                     : "opacity-70 hover:opacity-100"
@@ -135,7 +141,7 @@ export function PdpMediaGallery({
                   alt=""
                   fill
                   className="object-contain p-1.5"
-                  sizes="88px"
+                  sizes="72px"
                   unoptimized
                 />
               </button>
