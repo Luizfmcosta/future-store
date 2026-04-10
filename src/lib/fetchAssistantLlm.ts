@@ -2,6 +2,14 @@ import type { PromptSubmitPageContext, ShopperProfileId } from "@/types";
 
 export type ChatTurn = { role: "user" | "assistant"; content: string };
 
+export type AssistantLlmResult = {
+  reply: string | null;
+  /** API had no GEMINI_API_KEY / OPENAI_API_KEY (see `/api/chat`). */
+  skipped?: boolean;
+  /** Set when the request failed or the model returned no text (`upstream`, `empty`, etc.). */
+  error?: string;
+};
+
 export async function fetchAssistantLlmReply(args: {
   message: string;
   profile: ShopperProfileId;
@@ -10,10 +18,12 @@ export async function fetchAssistantLlmReply(args: {
   signal?: AbortSignal;
   /** When `pdpComparison`, the API uses a comparison-style system prompt for PDP assistant. */
   responseStyle?: "pdpComparison";
-}): Promise<{ reply: string | null }> {
+}): Promise<AssistantLlmResult> {
   const res = await fetch("/api/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    /** Required when the site uses Vercel Deployment Protection (password) so `/api/chat` gets the session cookie. */
+    credentials: "include",
     body: JSON.stringify({
       message: args.message,
       profile: args.profile,
@@ -23,13 +33,22 @@ export async function fetchAssistantLlmReply(args: {
     }),
     signal: args.signal,
   });
-  let data: { reply?: string | null };
+  let data: { reply?: string | null; skipped?: boolean; error?: string };
   try {
-    data = (await res.json()) as { reply?: string | null };
+    data = (await res.json()) as { reply?: string | null; skipped?: boolean; error?: string };
   } catch {
-    return { reply: null };
+    return { reply: null, error: "bad_json" };
   }
   const reply = typeof data.reply === "string" ? data.reply.trim() : "";
-  if (!res.ok || !reply) return { reply: null };
-  return { reply };
+  if (reply) {
+    return { reply };
+  }
+  if (res.ok && data.skipped === true) {
+    return { reply: null, skipped: true };
+  }
+  if (!res.ok) {
+    const err = typeof data.error === "string" ? data.error : "request_failed";
+    return { reply: null, error: err };
+  }
+  return { reply: null, error: typeof data.error === "string" ? data.error : undefined };
 }

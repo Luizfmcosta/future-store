@@ -37,12 +37,22 @@ export function mergeSearchIntentWithLlmPatch(
     const u = patch.useCase.filter((x): x is string => typeof x === "string").slice(0, 12);
     if (u.length) next.useCase = u;
   }
+  if (patch.sortBy === "price_asc" || patch.sortBy === "price_desc") {
+    next.sortBy = patch.sortBy;
+  }
 
   return next;
 }
 
+const SORT_BY_SKIP_LLM_REORDER = new Set<string>(["price_asc", "price_desc"]);
+
 /** Reorder `results` using LLM id list; unknown ids ignored; missing ids appended in original order. */
-export function applyLlmProductRankOrder(results: Product[], llmIds: string[] | null | undefined): Product[] {
+export function applyLlmProductRankOrder(
+  results: Product[],
+  llmIds: string[] | null | undefined,
+  intent?: { sortBy?: SearchIntent["sortBy"] } | null,
+): Product[] {
+  if (intent?.sortBy && SORT_BY_SKIP_LLM_REORDER.has(intent.sortBy)) return results;
   if (!llmIds?.length) return results;
   const byId = new Map(results.map((p) => [p.id, p] as const));
   const seen = new Set<string>();

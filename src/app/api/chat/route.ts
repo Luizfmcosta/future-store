@@ -1,3 +1,4 @@
+import { formatCatalogForChatLlm } from "@/lib/server/catalogOverviewForLlm";
 import { geminiModelCandidates, GEMINI_DEFAULT_MODEL } from "@/lib/server/geminiModels";
 import { formatPromptPageContextForLlm } from "@/lib/promptPageContext";
 import type { PromptSubmitPageContext, ShopperProfileId } from "@/types";
@@ -50,7 +51,9 @@ type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 const PDP_COMPARISON_MODE = [
   "",
   "PDP comparison mode:",
-  "The customer is on a product detail page. Their message may include an \"About: …\" line naming the product they were viewing.",
+  "The customer is on a Future Store product detail page. Their message may include an \"About: …\" line naming the product they were viewing.",
+  "Keep the entire reply about Future Store only — no other retailers or off-topic content.",
+  "Alternatives in bullets MUST be products from the AUTHORITATIVE CATALOG in this system prompt (use their titles as shown there). Never name external or competitor products.",
   "Open with exactly this structure (adapt the viewed product name and priority to context):",
   "- Line 1: \"Here are 3 top matches ranked for Future Store vs [viewed product title].\"",
   "- Line 2: \"You asked for other options and based on your profile we are prioritizing [priority signal, e.g. best value / premium / cinema / sports].\"",
@@ -69,15 +72,19 @@ function buildMessages(
   responseStyle?: string,
 ): ChatMessage[] {
   const pageBlock = formatPromptPageContextForLlm(pageContext);
+  const catalogBlock = formatCatalogForChatLlm();
   const system = [
-    "You are a concise, friendly shopping assistant for a premium audio and home-theater demo storefront (speakers, soundbars, TVs, accessories).",
+    "You are the in-store assistant for Future Store only — a demo premium audio and home-theater storefront (speakers, soundbars, TVs, accessories on this website).",
     `Shopper profile id (tone hint only): ${profile}.`,
+    "",
+    catalogBlock,
     "",
     "Current page context when the customer sent this message:",
     pageBlock,
     "",
-    "Reply in the same language as the customer's message. Be helpful and specific to their question and the page context when relevant.",
-    "If you lack product specs or prices, say the catalog page lists details and avoid inventing numbers.",
+    "Reply in the same language as the customer's message. Be helpful, but only within Future Store: product guidance, comparisons, and how to use this site — not generic advice unrelated to shopping here.",
+    "Only discuss, recommend, or compare products that appear in the AUTHORITATIVE CATALOG above. Never suggest or name products from outside that list.",
+    "If you lack product specs or prices, say the catalog or PDP lists details and avoid inventing numbers.",
     responseStyle === "pdpComparison" ? PDP_COMPARISON_MODE : "",
   ]
     .filter(Boolean)

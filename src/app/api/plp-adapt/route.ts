@@ -26,6 +26,7 @@ const ROOM_DISTANCE = new Set<string>(["3m_listening"]);
 const ROOM_TYPE = new Set<string>(["living_room"]);
 const SIZE_PREF = new Set<string>(["flexible", "compact_under_budget", "room_3m_speakers"]);
 const DELIVERY = new Set<string>(["sooner"]);
+const SORT_BY = new Set<string>(["price_asc", "price_desc"]);
 
 function sanitizeCollectionTitle(raw: unknown): string | null {
   if (typeof raw !== "string") return null;
@@ -60,6 +61,9 @@ function sanitizeIntentPatch(raw: unknown): Partial<SearchIntent> {
   if (Array.isArray(o.useCase)) {
     const u = o.useCase.filter((x): x is string => typeof x === "string").slice(0, 12);
     if (u.length) patch.useCase = u;
+  }
+  if (typeof o.sortBy === "string" && SORT_BY.has(o.sortBy)) {
+    patch.sortBy = o.sortBy as SearchIntent["sortBy"];
   }
   return patch;
 }

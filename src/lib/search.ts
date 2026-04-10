@@ -68,6 +68,12 @@ export function getSearchResults(profile: ShopperProfileId, intent: SearchIntent
   const pool = products.filter(
     (p) => p.category === "speaker" || p.category === "soundbar" || p.category === "tv",
   );
+  if (intent.sortBy === "price_asc") {
+    return [...pool].sort((a, b) => a.price - b.price || a.id.localeCompare(b.id));
+  }
+  if (intent.sortBy === "price_desc") {
+    return [...pool].sort((a, b) => b.price - a.price || a.id.localeCompare(b.id));
+  }
   const ranked = [...pool].sort(
     (a, b) => scoreAudioProduct(b, intent, profile) - scoreAudioProduct(a, intent, profile),
   );

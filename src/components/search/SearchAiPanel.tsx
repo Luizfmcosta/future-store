@@ -190,7 +190,7 @@ export function SearchAiPanel({
       const fallback = assistantReplyForQuery(q, profile, true, comparisonReplyOpts);
       let assistantText = fallback.text;
       try {
-        const { reply } = await fetchAssistantLlmReply({
+        const { reply, skipped, error } = await fetchAssistantLlmReply({
           message: q,
           profile,
           pageContext: ctxSnapshot,
@@ -198,7 +198,15 @@ export function SearchAiPanel({
           signal: ac.signal,
           responseStyle: variant === "pdp" ? "pdpComparison" : undefined,
         });
-        if (!ac.signal.aborted && reply) assistantText = reply;
+        if (ac.signal.aborted) {
+          /* keep fallback */
+        } else if (reply) {
+          assistantText = reply;
+        } else if (skipped) {
+          assistantText = `${t("searchAiPanel.llmNeedsKey")}\n\n${fallback.text}`;
+        } else if (error) {
+          assistantText = `${t("searchAiPanel.llmError")}\n\n${fallback.text}`;
+        }
       } catch {
         /* demo: offline / API error → catalog narrative */
       }
@@ -261,7 +269,7 @@ export function SearchAiPanel({
       const fallback = assistantReplyForQuery(merged, profile, true, comparisonReplyOpts);
       let assistantText = fallback.text;
       try {
-        const { reply } = await fetchAssistantLlmReply({
+        const { reply, skipped, error } = await fetchAssistantLlmReply({
           message: merged,
           profile,
           pageContext: threadOriginContextRef.current,
@@ -269,7 +277,15 @@ export function SearchAiPanel({
           signal: ac.signal,
           responseStyle: variant === "pdp" ? "pdpComparison" : undefined,
         });
-        if (!ac.signal.aborted && reply) assistantText = reply;
+        if (ac.signal.aborted) {
+          /* keep fallback */
+        } else if (reply) {
+          assistantText = reply;
+        } else if (skipped) {
+          assistantText = `${t("searchAiPanel.llmNeedsKey")}\n\n${fallback.text}`;
+        } else if (error) {
+          assistantText = `${t("searchAiPanel.llmError")}\n\n${fallback.text}`;
+        }
       } catch {
         /* fallback narrative */
       }

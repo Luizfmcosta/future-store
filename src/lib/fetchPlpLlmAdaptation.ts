@@ -15,6 +15,8 @@ export async function fetchPlpLlmAdaptation(args: {
   const res = await fetch("/api/plp-adapt", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    /** Same-origin cookie for Vercel Deployment Protection (password gate). */
+    credentials: "include",
     body: JSON.stringify({ query: args.query, profile: args.profile }),
     signal: args.signal,
   });

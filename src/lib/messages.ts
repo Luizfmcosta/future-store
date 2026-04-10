@@ -409,6 +409,8 @@ export const messages: Record<string, string | Record<string, string | Record<st
       narrativeBudgetLine: "Budget signal: around {amount}.",
       narrativeRoomLine: "Room: {room}.",
       narrativePriorityLine: "Priority: {priority}.",
+      narrativeSortPriceAsc: "Sorted by lowest price first.",
+      narrativeSortPriceDesc: "Sorted by highest price first.",
       narrativeFooter:
         "The source chips cite those editorial standards; the product cards are Future Store picks aligned with them.\n\nOpen a card for the full PDP, or refine your ask below.",
       ctxBudget: "budget ~{amount}",
@@ -452,6 +454,12 @@ export const messages: Record<string, string | Record<string, string | Record<st
       topMatches: "Top matches",
       followUpHeading: "Follow up",
       sourcesLabel: "Sources",
+      /** Shown above catalog fallback when the server has no LLM API key. */
+      llmNeedsKey:
+        "AI assistant isn’t configured for this deployment (missing GEMINI_API_KEY or OPENAI_API_KEY on the server). In Vercel: Project → Settings → Environment Variables → add the key for Production (and Preview if needed) → Redeploy. Showing catalog copy below.",
+      /** Shown when Gemini/OpenAI fails or returns empty text. */
+      llmError:
+        "We couldn’t reach the AI model (check Vercel deployment logs, API quota, or redeploy after env changes). Showing catalog copy below.",
     },
     pdp: {
       ask: "Ask",
