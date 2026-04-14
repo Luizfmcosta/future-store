@@ -507,6 +507,8 @@ export const enMessages = {
       increaseQty: "Increase quantity",
       skuLabel: "SKU",
       reviewsCount: "{count} reviews",
+      /** PDP lead: delivery copy from product + units available (not “regional pool”). */
+      deliveryAndStock: "{delivery} · {count} in stock",
       reviewSummaryEyebrow: "Reviews",
       reviewAngleMarina: "Quality and tradeoffs",
       reviewAngleRicardo: "Trust and popularity",

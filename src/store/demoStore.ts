@@ -202,11 +202,20 @@ export const useDemoStore = create<DemoState>()(
   closePdpSearchOverlay: () => set({ pdpSearchOverlayOpen: false }),
   setSelectedProduct: (id) => set({ selectedProductId: id, currentScreen: id ? "pdp" : get().currentScreen }),
   openCart: () =>
-    set({ cartDrawerOpen: true, pdpSearchOverlayOpen: false, pdpChatOverlayOpen: false }),
+    set((state) => ({
+      cartDrawerOpen: true,
+      pdpSearchOverlayOpen: false,
+      pdpChatOverlayOpen: false,
+      ...(state.currentScreen === "pdp"
+        ? { promptProductRefs: [], parsedIntent: null }
+        : {}),
+    })),
   closeCart: () => set({ cartDrawerOpen: false }),
   addToCart: (productId, quantity = 1) =>
     set((state) => {
       const add = Math.min(99, Math.max(1, Math.floor(quantity)));
+      const stripPdpPrompt =
+        state.currentScreen === "pdp" ? { promptProductRefs: [], parsedIntent: null } : {};
       if (state.cartLineId === productId) {
         return {
           cartLineId: productId,
@@ -215,6 +224,7 @@ export const useDemoStore = create<DemoState>()(
           pdpSearchOverlayOpen: false,
           pdpChatOverlayOpen: false,
           selectedProductId: productId,
+          ...stripPdpPrompt,
         };
       }
       return {
@@ -224,6 +234,7 @@ export const useDemoStore = create<DemoState>()(
         pdpSearchOverlayOpen: false,
         pdpChatOverlayOpen: false,
         selectedProductId: productId,
+        ...stripPdpPrompt,
       };
     }),
   incrementCartQuantity: () =>

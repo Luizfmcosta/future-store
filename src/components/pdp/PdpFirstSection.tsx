@@ -4,7 +4,6 @@ import { PdpBackButton } from "@/components/pdp/PdpBackButton";
 import { PdpLeadColumn } from "@/components/pdp/PdpLeadColumn";
 import { PdpMediaGallery } from "@/components/pdp/PdpMediaGallery";
 import type { Product } from "@/types";
-import type { ShopperProfileId } from "@/types";
 
 /**
  * PDP “above the fold”: back control, hero media (rounded card), lead column.
@@ -12,13 +11,11 @@ import type { ShopperProfileId } from "@/types";
  */
 export function PdpFirstSection({
   product,
-  profile,
   selectedColorKey,
   onSelectedColorKeyChange,
   imageTintHex,
 }: {
   product: Product;
-  profile: ShopperProfileId;
   selectedColorKey: string;
   onSelectedColorKeyChange: (labelKey: string) => void;
   imageTintHex?: string;
@@ -46,7 +43,6 @@ export function PdpFirstSection({
           <div className="mx-auto w-full min-w-0 max-w-2xl shrink-0 lg:mx-0 lg:max-w-lg xl:max-w-xl">
             <PdpLeadColumn
               product={product}
-              profile={profile}
               className="lg:pt-0"
               selectedColorKey={selectedColorKey}
               onSelectedColorKeyChange={onSelectedColorKeyChange}

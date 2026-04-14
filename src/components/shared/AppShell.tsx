@@ -27,7 +27,7 @@ import { useDemoStore } from "@/store/demoStore";
 import { AnimatePresence, motion } from "framer-motion";
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
-import { Minimize2, Monitor, RotateCcw, Smartphone } from "lucide-react";
+import { Minimize2, Monitor, Smartphone } from "lucide-react";
 import { Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 const AIVisionOverlay = dynamic(
@@ -82,6 +82,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }, [setShellViewportLayoutScale]);
 
   useLayoutEffect(() => {
+    /* Viewport scale must run before paint to avoid a 4K layout flash; internal setState is intentional. */
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- sync with window dimensions before paint
     updateViewportLayoutScale();
     window.addEventListener("resize", updateViewportLayoutScale);
     document.addEventListener("fullscreenchange", updateViewportLayoutScale);

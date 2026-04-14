@@ -145,7 +145,7 @@ function CartDrawerBody({ titleId, onClose }: { titleId: string; onClose: () => 
               >
                 <ShoppingBag className="size-9 stroke-[1.25]" />
               </div>
-              <p className="max-w-[min(100%,28rem)] px-1 text-balance text-pretty text-[17px] leading-[1.65] text-stone-600 sm:text-[18px]">
+              <p className="max-w-[min(100%,36rem)] px-1 text-balance text-pretty text-[17px] leading-[1.65] text-stone-600 sm:text-[18px]">
                 {t("cart.emptyDescription")}
               </p>
               <button

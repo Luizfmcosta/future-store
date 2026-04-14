@@ -31,6 +31,7 @@ export default function ProductPage() {
   const aiMode = useDemoStore((s) => s.aiMode);
   const setSelected = useDemoStore((s) => s.setSelectedProduct);
   const addPromptProductRef = useDemoStore((s) => s.addPromptProductRef);
+  const cartDrawerOpen = useDemoStore((s) => s.cartDrawerOpen);
   const closePdpChatOverlay = useDemoStore((s) => s.closePdpChatOverlay);
   const closePdpSearchOverlay = useDemoStore((s) => s.closePdpSearchOverlay);
   useEffect(() => {
@@ -51,11 +52,15 @@ export default function ProductPage() {
     if (p) setSelected(p.id);
   }, [id, setSelected]);
 
-  /** Keep the current PDP product chip in the prompt for the whole session on this page. */
+  /**
+   * Keep the current PDP product chip in the prompt while on this page — except when the cart
+   * drawer is open (cart context should not inherit the PDP product pin).
+   */
   useEffect(() => {
     if (!product) return;
+    if (cartDrawerOpen) return;
     addPromptProductRef({ productId: product.id, label: product.title });
-  }, [product, addPromptProductRef]);
+  }, [product, addPromptProductRef, cartDrawerOpen]);
 
   useEffect(() => {
     if (product?.id) recordProductView(product.id);
@@ -98,7 +103,6 @@ export default function ProductPage() {
       <div className="min-w-0 overflow-x-hidden bg-white px-4 sm:px-6">
         <PdpFirstSection
           product={product}
-          profile={profile}
           selectedColorKey={selectedColorKey}
           onSelectedColorKeyChange={setColorChoice}
           imageTintHex={imageTintHex}

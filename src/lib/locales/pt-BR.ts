@@ -507,6 +507,8 @@ export const ptMessages = {
       increaseQty: "Aumentar quantidade",
       skuLabel: "SKU",
       reviewsCount: "{count} avaliações",
+      /** PDP lead: prazo do produto + unidades em estoque. */
+      deliveryAndStock: "{delivery} · {count} em estoque",
       reviewSummaryEyebrow: "Avaliações",
       reviewAngleMarina: "Qualidade e trade-offs",
       reviewAngleRicardo: "Confiança e popularidade",

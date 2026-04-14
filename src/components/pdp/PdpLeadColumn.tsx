@@ -5,7 +5,7 @@ import { ReviewStars } from "@/components/pdp/ReviewStars";
 import { EyebrowPill } from "@/components/shared/EyebrowPill";
 import { useT } from "@/lib/useT";
 import { cn, formatBRL } from "@/lib/utils";
-import type { Product, ShopperProfileId } from "@/types";
+import type { Product } from "@/types";
 import { useDemoStore } from "@/store/demoStore";
 import Link from "next/link";
 
@@ -20,13 +20,11 @@ function firstSentence(text: string): string {
 
 export function PdpLeadColumn({
   product,
-  profile,
   className,
   selectedColorKey,
   onSelectedColorKeyChange,
 }: {
   product: Product;
-  profile: ShopperProfileId;
   className?: string;
   selectedColorKey: string;
   onSelectedColorKeyChange: (labelKey: string) => void;
@@ -85,9 +83,7 @@ export function PdpLeadColumn({
       ) : null}
 
       <p className="text-[15px] text-neutral-500">
-        {profile === "ricardo"
-          ? `${product.deliveryETA} · Stock: ${product.stock}`
-          : `${product.deliveryETA} · ${product.stock} in regional pool`}
+        {t("pdp.deliveryAndStock", { delivery: product.deliveryETA, count: product.stock })}
       </p>
 
       <div className="pt-2 sm:pt-1">
