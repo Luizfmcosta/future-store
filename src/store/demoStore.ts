@@ -60,6 +60,11 @@ type DemoState = {
   plpLlmIntentPatch: Partial<SearchIntent> | null;
   /** Gemini PLP tab label when adaptation succeeded (English). */
   plpLlmCollectionTitle: string | null;
+  /**
+   * Mirrors `AppShell` wide-viewport scale (`1` = unscaled). Used by hero height utilities so `100dvh`
+   * math matches the logical storefront. Not persisted.
+   */
+  shellViewportLayoutScale: number;
 
   setParsedIntent: (intent: SearchIntent | null) => void;
   setProfile: (id: ShopperProfileId) => void;
@@ -100,6 +105,7 @@ type DemoState = {
     intentPatch: Partial<SearchIntent> | null,
     collectionTitle?: string | null,
   ) => void;
+  setShellViewportLayoutScale: (scale: number) => void;
 };
 
 export type { PromptProductRef } from "@/lib/promptProductRefs";
@@ -133,6 +139,7 @@ export const useDemoStore = create<DemoState>()(
   plpLlmRankIds: null,
   plpLlmIntentPatch: null,
   plpLlmCollectionTitle: null,
+  shellViewportLayoutScale: 1,
 
   setParsedIntent: (intent) => set({ parsedIntent: intent }),
   setProfile: (id) => set({ activeProfile: id }),
@@ -291,6 +298,10 @@ export const useDemoStore = create<DemoState>()(
       plpLlmRankIds: rankIds,
       plpLlmIntentPatch: intentPatch,
       plpLlmCollectionTitle: collectionTitle?.trim() || null,
+    }),
+  setShellViewportLayoutScale: (scale) =>
+    set({
+      shellViewportLayoutScale: Number.isFinite(scale) && scale > 0 ? scale : 1,
     }),
 }),
     {

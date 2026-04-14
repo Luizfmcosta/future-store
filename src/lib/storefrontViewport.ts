@@ -17,6 +17,17 @@ export const STOREFRONT_FRAME_HEIGHT_PHONE =
 export const STOREFRONT_FRAME_HEIGHT_DESKTOP =
   "h-[min(100dvh-2rem,880px)] min-h-[500px] max-h-[880px] md:h-[min(100dvh-4rem,960px)] md:max-h-[960px] xl:h-[min(100dvh-5rem,1080px)] xl:max-h-[1080px] 2xl:h-[min(100dvh-6rem,1200px)] 2xl:max-h-[1200px]";
 
+/**
+ * Same caps as {@link STOREFRONT_FRAME_HEIGHT_PHONE} / {@link STOREFRONT_FRAME_HEIGHT_DESKTOP}, but `100dvh`
+ * is divided by `--shell-vp-scale` (set on the scaled `AppShell` wrapper) so heroes match the **logical**
+ * viewport when the shell is scaled past 1920px width.
+ */
+export const STOREFRONT_FRAME_HEIGHT_PHONE_SHELL_SCALED =
+  "h-[min(calc((100dvh_-_2rem)/var(--shell-vp-scale,1)),956px)] min-h-[500px] max-h-[956px]";
+
+export const STOREFRONT_FRAME_HEIGHT_DESKTOP_SHELL_SCALED =
+  "h-[min(calc((100dvh_-_2rem)/var(--shell-vp-scale,1)),880px)] min-h-[500px] max-h-[880px] md:h-[min(calc((100dvh_-_4rem)/var(--shell-vp-scale,1)),960px)] md:max-h-[960px] xl:h-[min(calc((100dvh_-_5rem)/var(--shell-vp-scale,1)),1080px)] xl:max-h-[1080px] 2xl:h-[min(calc((100dvh_-_6rem)/var(--shell-vp-scale,1)),1200px)] 2xl:max-h-[1200px]";
+
 /** Solid band under video heroes (`h-3` = 12px) — hides hairline before the first white module. */
 export const STOREFRONT_HERO_BOTTOM_BLEED = "h-3 w-full shrink-0";
 

@@ -27,7 +27,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
 import { Minimize2, Monitor, RotateCcw, Smartphone } from "lucide-react";
-import { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 const AIVisionOverlay = dynamic(
   () => import("@/components/vision/AIVisionOverlay").then((m) => m.AIVisionOverlay),
@@ -48,6 +48,9 @@ async function exitFullscreenDoc() {
   if (d.webkitExitFullscreen) await d.webkitExitFullscreen();
 }
 
+/** Above this browser width, the shell is laid out at 1920 CSS px and scaled up (e.g. 4K ≈ 200% zoom). */
+const VIEWPORT_LAYOUT_BASE_PX = 1920;
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -62,6 +65,34 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const isMd = useMediaQuery("(min-width: 768px)");
   const t = useT();
+
+  const [viewportLayoutScale, setViewportLayoutScale] = useState(1);
+  const setShellViewportLayoutScale = useDemoStore((s) => s.setShellViewportLayoutScale);
+
+  const updateViewportLayoutScale = useCallback(() => {
+    if (typeof window === "undefined") return;
+    if (getFullscreenElement()) {
+      setViewportLayoutScale(1);
+      setShellViewportLayoutScale(1);
+      return;
+    }
+    const w = window.innerWidth;
+    const next = w > VIEWPORT_LAYOUT_BASE_PX ? w / VIEWPORT_LAYOUT_BASE_PX : 1;
+    setViewportLayoutScale(next);
+    setShellViewportLayoutScale(next);
+  }, [setShellViewportLayoutScale]);
+
+  useLayoutEffect(() => {
+    updateViewportLayoutScale();
+    window.addEventListener("resize", updateViewportLayoutScale);
+    document.addEventListener("fullscreenchange", updateViewportLayoutScale);
+    document.addEventListener("webkitfullscreenchange", updateViewportLayoutScale as EventListener);
+    return () => {
+      window.removeEventListener("resize", updateViewportLayoutScale);
+      document.removeEventListener("fullscreenchange", updateViewportLayoutScale);
+      document.removeEventListener("webkitfullscreenchange", updateViewportLayoutScale as EventListener);
+    };
+  }, [updateViewportLayoutScale]);
 
   useEffect(() => {
     if (pathname === "/") setScreen("home");
@@ -105,22 +136,57 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       ? STOREFRONT_FRAME_HEIGHT_PHONE
       : STOREFRONT_FRAME_HEIGHT_DESKTOP;
 
+  const scaledChrome = viewportLayoutScale > 1;
+  /** Fills the fixed logical height of the scaled shell; avoids `100dvh` (real monitor) blowing past `100dvh/scale` after transform. */
+  const storefrontFrameHeightWhenScaledClass =
+    "min-h-0 flex-1 basis-0 self-stretch h-full max-h-full";
+
   return (
-    <div className="flex h-dvh min-h-0 max-h-dvh flex-col overflow-hidden bg-[var(--app-canvas)]">
+    <div
+      className={cn(
+        "flex h-dvh min-h-0 max-h-dvh w-full flex-col overflow-hidden bg-[var(--app-canvas)]",
+        scaledChrome ? "items-center" : "items-stretch",
+      )}
+    >
       <div
         className={cn(
-          "flex min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-hidden",
-          isAiAgent
-            ? "items-stretch justify-stretch p-0"
-            : "items-center justify-center px-20 py-3 sm:py-6 md:py-8 2xl:py-12",
+          "flex min-h-0 flex-col overflow-x-hidden overflow-y-hidden",
+          scaledChrome ? "origin-top shrink-0" : "min-w-0 flex-1",
         )}
+        style={
+          scaledChrome
+            ? {
+                width: VIEWPORT_LAYOUT_BASE_PX,
+                height: `calc(100dvh / ${viewportLayoutScale})`,
+                maxHeight: `calc(100dvh / ${viewportLayoutScale})`,
+                minHeight: `calc(100dvh / ${viewportLayoutScale})`,
+                transform: `scale(${viewportLayoutScale})`,
+                transformOrigin: "top center",
+                ["--shell-vp-scale" as string]: String(viewportLayoutScale),
+              }
+            : { width: "100%", height: "100%", minHeight: 0 }
+        }
       >
         <div
           className={cn(
-            "relative flex min-w-0 flex-col items-stretch overflow-x-hidden",
-            isAiAgent ? "h-full min-h-0 w-full max-w-none flex-1" : "w-full max-w-[440px] md:max-w-none",
+            "flex min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-hidden",
+            isAiAgent
+              ? "items-stretch justify-stretch p-0"
+              : scaledChrome
+                ? "items-stretch justify-stretch px-20 py-3 sm:py-6 md:py-8 2xl:py-12"
+                : "items-center justify-center px-20 py-3 sm:py-6 md:py-8 2xl:py-12",
           )}
         >
+          <div
+            className={cn(
+              "relative flex min-w-0 flex-col items-stretch overflow-x-hidden",
+              isAiAgent
+                ? "h-full min-h-0 w-full max-w-none flex-1"
+                : scaledChrome
+                  ? "h-full min-h-0 w-full max-w-none flex-1"
+                  : "w-full max-w-[440px] md:max-w-none",
+            )}
+          >
           {isAiAgent ? (
             <AgentArchitectureBento className="h-full min-h-0 w-full flex-1" />
           ) : (
@@ -129,7 +195,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 data-storefront-container
                 className={cn(
                   "@container relative mx-auto w-full max-w-[440px] overflow-visible",
-                  storefrontFrameHeightClass,
+                  scaledChrome && !isFullscreen
+                    ? storefrontFrameHeightWhenScaledClass
+                    : storefrontFrameHeightClass,
                   "md:min-w-[340px] md:max-w-[1920px]",
                 )}
                 style={
@@ -228,105 +296,105 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </div>
             </>
           )}
+          </div>
         </div>
-      </div>
 
-      <div
-        className={cn(
-          /* Above storefront portal (z-[100]), splash (z-[200]), welcome gate (z-[250]). */
-          "pointer-events-auto fixed right-4 z-[280] hidden md:flex items-center",
-          "top-[max(1rem,env(safe-area-inset-top))]",
-          isAiAgent && "!hidden",
-        )}
-        role="group"
-        aria-label={t("appShell.widthPresetsGroup")}
-      >
-        <div className={cn(ui.glassChrome.clusterShell, "inline-flex min-w-[6.5625rem]")}>
-          <div className={ui.glassChrome.widthPresetTrack}>
-            <motion.div
-              className={cn(
-                "pointer-events-none absolute left-1.5 top-1.5 bottom-1.5 rounded-full",
-                ui.floatingChrome.presetKnob,
-              )}
-              style={{ width: "calc((100% - 12px) / 2)" }}
-              initial={false}
-              animate={{
-                x: mobilePresetActive ? 0 : "100%",
-                opacity: presetHighlightVisible ? 1 : 0,
-                scale: presetHighlightVisible ? 1 : 0.92,
-              }}
-              transition={{
-                type: "spring",
-                stiffness: 520,
-                damping: 34,
-                mass: 0.7,
-                opacity: { duration: 0.2 },
-              }}
-            />
-            <button
-              type="button"
-              onClick={() => setStorefrontWidth(clampStorefrontWidth(STOREFRONT_WIDTH.presetMobile))}
-              className={cn(
-                "relative z-10 flex flex-1 items-center justify-center rounded-full outline-none transition-colors duration-200",
-                ui.floatingChrome.segmentFocus,
-                mobilePresetActive
-                  ? "text-white"
-                  : ui.floatingChrome.segmentInactive,
-              )}
-              aria-label={t("appShell.widthPresetMobile")}
-              aria-pressed={mobilePresetActive}
-            >
-              <Smartphone className="h-5 w-5 shrink-0" strokeWidth={2} aria-hidden />
-            </button>
-            <button
-              type="button"
-              onClick={() => setStorefrontWidth(clampStorefrontWidth(STOREFRONT_WIDTH.presetDesktop))}
-              className={cn(
-                "relative z-10 flex flex-1 items-center justify-center rounded-full outline-none transition-colors duration-200",
-                ui.floatingChrome.segmentFocus,
-                desktopPresetActive
-                  ? "text-white"
-                  : ui.floatingChrome.segmentInactive,
-              )}
-              aria-label={t("appShell.widthPresetDesktop")}
-              aria-pressed={desktopPresetActive}
-            >
-              <Monitor className="h-5 w-5 shrink-0" strokeWidth={2} aria-hidden />
-            </button>
+        <div
+          className={cn(
+            /* Above storefront portal (z-[100]), splash (z-[200]), welcome gate (z-[250]). */
+            "pointer-events-auto fixed right-4 z-[280] hidden md:flex items-center",
+            "top-[max(1rem,env(safe-area-inset-top))]",
+            isAiAgent && "!hidden",
+          )}
+          role="group"
+          aria-label={t("appShell.widthPresetsGroup")}
+        >
+          <div className={cn(ui.glassChrome.clusterShell, "inline-flex min-w-[6.5625rem]")}>
+            <div className={ui.glassChrome.widthPresetTrack}>
+              <motion.div
+                className={cn(
+                  "pointer-events-none absolute left-1.5 top-1.5 bottom-1.5 rounded-full",
+                  ui.floatingChrome.presetKnob,
+                )}
+                style={{ width: "calc((100% - 12px) / 2)" }}
+                initial={false}
+                animate={{
+                  x: mobilePresetActive ? 0 : "100%",
+                  opacity: presetHighlightVisible ? 1 : 0,
+                  scale: presetHighlightVisible ? 1 : 0.92,
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: 520,
+                  damping: 34,
+                  mass: 0.7,
+                  opacity: { duration: 0.2 },
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => setStorefrontWidth(clampStorefrontWidth(STOREFRONT_WIDTH.presetMobile))}
+                className={cn(
+                  "relative z-10 flex flex-1 items-center justify-center rounded-full outline-none transition-colors duration-200",
+                  ui.floatingChrome.segmentFocus,
+                  mobilePresetActive
+                    ? "text-white"
+                    : ui.floatingChrome.segmentInactive,
+                )}
+                aria-label={t("appShell.widthPresetMobile")}
+                aria-pressed={mobilePresetActive}
+              >
+                <Smartphone className="h-5 w-5 shrink-0" strokeWidth={2} aria-hidden />
+              </button>
+              <button
+                type="button"
+                onClick={() => setStorefrontWidth(clampStorefrontWidth(STOREFRONT_WIDTH.presetDesktop))}
+                className={cn(
+                  "relative z-10 flex flex-1 items-center justify-center rounded-full outline-none transition-colors duration-200",
+                  ui.floatingChrome.segmentFocus,
+                  desktopPresetActive
+                    ? "text-white"
+                    : ui.floatingChrome.segmentInactive,
+                )}
+                aria-label={t("appShell.widthPresetDesktop")}
+                aria-pressed={desktopPresetActive}
+              >
+                <Monitor className="h-5 w-5 shrink-0" strokeWidth={2} aria-hidden />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div
+          className="pointer-events-auto fixed left-4 z-[280] top-[max(1rem,env(safe-area-inset-top))]"
+          role="group"
+          aria-label={t("appShell.profileSwitcherGroup")}
+        >
+          <TopBarProfileCluster />
+        </div>
+
+        <div className="pointer-events-auto fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-[280] flex items-center">
+          <div className={cn(ui.glassChrome.clusterShell, "inline-flex min-w-0")}>
+            <div className={cn(ui.glassChrome.widthPresetTrack, "inline-flex w-auto min-w-[2.8125rem]")}>
+              <button
+                type="button"
+                onClick={() => {
+                  triggerHomeWelcomeReset();
+                  router.push("/");
+                }}
+                className={cn(
+                  "relative z-10 flex flex-1 items-center justify-center rounded-full outline-none transition-colors duration-200",
+                  ui.floatingChrome.segmentFocus,
+                  ui.floatingChrome.segmentInactive,
+                )}
+                aria-label={t("homeWelcome.ariaResetDemo")}
+              >
+                <RotateCcw className="h-5 w-5 shrink-0" strokeWidth={2} aria-hidden />
+              </button>
+            </div>
           </div>
         </div>
       </div>
-
-      <div
-        className="pointer-events-auto fixed left-4 z-[280] top-[max(1rem,env(safe-area-inset-top))]"
-        role="group"
-        aria-label={t("appShell.profileSwitcherGroup")}
-      >
-        <TopBarProfileCluster />
-      </div>
-
-      <div className="pointer-events-auto fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-[280] flex items-center">
-        <div className={cn(ui.glassChrome.clusterShell, "inline-flex min-w-0")}>
-          <div className={cn(ui.glassChrome.widthPresetTrack, "inline-flex w-auto min-w-[2.8125rem]")}>
-            <button
-              type="button"
-              onClick={() => {
-                triggerHomeWelcomeReset();
-                router.push("/");
-              }}
-              className={cn(
-                "relative z-10 flex flex-1 items-center justify-center rounded-full outline-none transition-colors duration-200",
-                ui.floatingChrome.segmentFocus,
-                ui.floatingChrome.segmentInactive,
-              )}
-              aria-label={t("homeWelcome.ariaResetDemo")}
-            >
-              <RotateCcw className="h-5 w-5 shrink-0" strokeWidth={2} aria-hidden />
-            </button>
-          </div>
-        </div>
-      </div>
-
     </div>
   );
 }
