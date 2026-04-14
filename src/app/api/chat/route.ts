@@ -5,6 +5,12 @@ import { formatPromptPageContextForLlm } from "@/lib/promptPageContext";
 import type { PromptSubmitPageContext, ShopperProfileId } from "@/types";
 import { NextResponse } from "next/server";
 
+/** Room for long answers — low values truncate mid-reply (Gemini/OpenAI hard caps). */
+const CHAT_GEMINI_MAX_OUTPUT_DEFAULT = 2048;
+const CHAT_GEMINI_MAX_OUTPUT_PDP_COMPARISON = 1536;
+const CHAT_OPENAI_MAX_TOKENS_DEFAULT = 1800;
+const CHAT_OPENAI_MAX_TOKENS_PDP_COMPARISON = 1536;
+
 const PROFILES: ShopperProfileId[] = ["marina", "ricardo", "aiAgent"];
 
 function isProfile(v: unknown): v is ShopperProfileId {
@@ -114,7 +120,7 @@ async function callOpenAi(
       model,
       messages,
       temperature: 0.65,
-      max_tokens: maxTokens ?? 900,
+      max_tokens: maxTokens ?? CHAT_OPENAI_MAX_TOKENS_DEFAULT,
     }),
   });
   if (!res.ok) {
@@ -187,7 +193,7 @@ async function callGemini(
 
   const generationConfig = {
     temperature: 0.65,
-    maxOutputTokens: opts?.maxOutputTokens ?? 900,
+    maxOutputTokens: opts?.maxOutputTokens ?? CHAT_GEMINI_MAX_OUTPUT_DEFAULT,
   };
 
   const buildContents = (mergeSystemIntoFirstUser: boolean) => {
@@ -298,7 +304,9 @@ export async function POST(req: Request) {
         geminiKey,
         model,
         chatMessages,
-        responseStyle === "pdpComparison" ? { maxOutputTokens: 480 } : undefined,
+        responseStyle === "pdpComparison"
+          ? { maxOutputTokens: CHAT_GEMINI_MAX_OUTPUT_PDP_COMPARISON }
+          : undefined,
       );
       if (!out.ok) {
         return NextResponse.json({ reply: null, error: out.detail }, { status: out.status });
@@ -311,7 +319,7 @@ export async function POST(req: Request) {
       openAiKey!,
       model,
       chatMessages,
-      responseStyle === "pdpComparison" ? 450 : undefined,
+      responseStyle === "pdpComparison" ? CHAT_OPENAI_MAX_TOKENS_PDP_COMPARISON : undefined,
     );
     if (!out.ok) {
       return NextResponse.json({ reply: null, error: out.detail }, { status: out.status });

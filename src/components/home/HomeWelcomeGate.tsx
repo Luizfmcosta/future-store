@@ -181,16 +181,6 @@ export function HomeWelcomeGate() {
             >
               <button
                 type="button"
-                onClick={() => setUiLocale("en")}
-                className={cn(
-                  "rounded-full px-3 py-1.5 font-medium transition sm:px-3.5",
-                  uiLocale === "en" ? "bg-white/[0.14] text-white" : "text-white/55 hover:text-white/85",
-                )}
-              >
-                {t("homeWelcome.languageEnglish")}
-              </button>
-              <button
-                type="button"
                 onClick={() => setUiLocale("pt")}
                 className={cn(
                   "rounded-full px-3 py-1.5 font-medium transition sm:px-3.5",
@@ -198,6 +188,16 @@ export function HomeWelcomeGate() {
                 )}
               >
                 {t("homeWelcome.languagePortuguese")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setUiLocale("en")}
+                className={cn(
+                  "rounded-full px-3 py-1.5 font-medium transition sm:px-3.5",
+                  uiLocale === "en" ? "bg-white/[0.14] text-white" : "text-white/55 hover:text-white/85",
+                )}
+              >
+                {t("homeWelcome.languageEnglish")}
               </button>
             </div>
           </div>

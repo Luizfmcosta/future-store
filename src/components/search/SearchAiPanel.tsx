@@ -25,22 +25,8 @@ import { useDemoStore } from "@/store/demoStore";
 import type { Product, PromptSubmitPageContext } from "@/types";
 import { Sparkles } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useStickToBottomContext, type GetTargetScrollTop } from "use-stick-to-bottom";
+import { useStickToBottomContext } from "use-stick-to-bottom";
 import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
-
-/** Marks end of chat for search AI: stick-to-bottom caps scroll here. */
-const PLP_CHAT_SCROLL_CAP_SEL = "[data-storefront-chat-scroll-cap]";
-
-const plpChatTargetScrollTop: GetTargetScrollTop = (fullTarget, { scrollElement, contentElement }) => {
-  const end = contentElement.querySelector<HTMLElement>(PLP_CHAT_SCROLL_CAP_SEL);
-  if (!end) return fullTarget;
-  const scrollEl = scrollElement;
-  const endTopInContent =
-    scrollEl.scrollTop + (end.getBoundingClientRect().top - scrollEl.getBoundingClientRect().top);
-  const endBottomInContent = endTopInContent + end.offsetHeight;
-  const maxScroll = endBottomInContent - scrollEl.clientHeight;
-  return Math.min(fullTarget, Math.max(0, maxScroll));
-};
 
 type Msg =
   | { role: "user"; content: string }
@@ -362,7 +348,7 @@ export function SearchAiPanel({
     <>
       <ScrollToBottomOnBump bump={scrollBump} threadKey={threadKey} />
       {messages.length === 0 ? (
-        <div className="flex min-h-[min(28dvh,200px)] w-full flex-1 flex-col items-center justify-center px-5 pb-96 sm:px-8 sm:pb-[33rem] lg:pb-[42rem]">
+        <div className="flex min-h-[min(28dvh,200px)] w-full flex-1 flex-col items-center justify-center px-5 pb-28 sm:px-8 sm:pb-36">
           <ReasoningLoading />
         </div>
       ) : null}
@@ -411,7 +397,7 @@ export function SearchAiPanel({
         );
       })}
       {replying ? (
-        <div className="mb-96 flex w-full flex-col gap-1 sm:mb-[33rem] lg:mb-[42rem]">
+        <div className="mb-28 flex w-full flex-col gap-1 sm:mb-36">
           <ReasoningLoading />
         </div>
       ) : null}
@@ -429,7 +415,6 @@ export function SearchAiPanel({
           data-storefront-ai-scroll=""
           className="h-full min-h-0 w-full flex-1"
           stickInitial={false}
-          targetScrollTop={plpChatTargetScrollTop}
         >
           <ChatContainerContent className="flex min-h-full w-full min-w-0 flex-col pb-0">
             <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col bg-white pt-10 sm:pt-12">
@@ -448,11 +433,6 @@ export function SearchAiPanel({
                   {chatThread}
                 </div>
               </div>
-              <div
-                className="h-px w-full shrink-0 scroll-mt-4"
-                aria-hidden
-                data-storefront-chat-scroll-cap=""
-              />
               <ChatContainerScrollAnchor />
             </div>
           </ChatContainerContent>
