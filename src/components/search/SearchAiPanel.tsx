@@ -12,14 +12,14 @@ import { PromptContextBadges } from "@/components/search/PromptContextBadges";
 import { PromptSuggestionRow } from "@/components/search/PromptSuggestionRow";
 import { PromptInputChatToolbar } from "@/components/search/PromptInputChatToolbar";
 import { PromptInput, PromptInputTextarea } from "@/components/ui/prompt-input";
-import { DEFAULT_SEARCH_QUERY } from "@/lib/defaultSearchQuery";
+import { defaultSearchQuery } from "@/lib/defaultSearchQuery";
 import { assistantReplyForQuery, type AssistantSource } from "@/lib/chatAssistant";
 import { fetchAssistantLlmReply, type ChatTurn } from "@/lib/fetchAssistantLlm";
 import { getChatFollowUpSuggestions, getPromptSuggestionPool } from "@/lib/promptSuggestions";
 import { ui } from "@/lib/ui-tokens";
 import { useT } from "@/lib/useT";
 import { cn } from "@/lib/utils";
-import { getProductById } from "@/data/products";
+import { getProductByIdLocalized } from "@/lib/product-i18n";
 import { mergePromptRefsIntoQuery } from "@/lib/promptProductRefs";
 import { useDemoStore } from "@/store/demoStore";
 import type { Product, PromptSubmitPageContext } from "@/types";
@@ -112,6 +112,7 @@ export function SearchAiPanel({
   const t = useT();
   const promptFileInputId = useId();
   const profile = useDemoStore((s) => s.activeProfile);
+  const uiLocale = useDemoStore((s) => s.uiLocale);
   const currentQuery = useDemoStore((s) => s.currentQuery);
   const parsedIntent = useDemoStore((s) => s.parsedIntent);
   const promptProductRefs = useDemoStore((s) => s.promptProductRefs);
@@ -133,7 +134,7 @@ export function SearchAiPanel({
     messagesRef.current = messages;
   }, [messages]);
 
-  const suggestionPool = useMemo(() => getPromptSuggestionPool(), []);
+  const suggestionPool = useMemo(() => getPromptSuggestionPool(), [uiLocale]);
   const chatFollowUps = useMemo(() => getChatFollowUpSuggestions(), []);
 
   /**
@@ -143,8 +144,8 @@ export function SearchAiPanel({
   const plpSeedQuery = useMemo(() => {
     const fromComposer = currentQuery.trim();
     const fromResults = parsedIntent?.rawQuery?.trim() ?? "";
-    return fromComposer || fromResults || DEFAULT_SEARCH_QUERY;
-  }, [currentQuery, parsedIntent]);
+    return fromComposer || fromResults || defaultSearchQuery(uiLocale);
+  }, [currentQuery, parsedIntent, uiLocale]);
 
   const pdpAnchorProductId = useMemo(() => {
     if (variant !== "pdp" || !pathname?.startsWith("/product/")) return undefined;
@@ -153,8 +154,8 @@ export function SearchAiPanel({
 
   const pdpAnchorProduct = useMemo(() => {
     if (!pdpAnchorProductId) return undefined;
-    return getProductById(pdpAnchorProductId) ?? undefined;
-  }, [pdpAnchorProductId]);
+    return getProductByIdLocalized(pdpAnchorProductId) ?? undefined;
+  }, [pdpAnchorProductId, uiLocale]);
 
   const comparisonReplyOpts = useMemo(
     () => (pdpAnchorProductId ? { comparisonAnchorProductId: pdpAnchorProductId } : undefined),
@@ -249,7 +250,7 @@ export function SearchAiPanel({
     clearPromptProductRefs();
     if (variant === "pdp" && pathname?.startsWith("/product/")) {
       const pid = pathname.slice("/product/".length).split("/")[0] ?? "";
-      const p = pid ? getProductById(pid) : undefined;
+      const p = pid ? getProductByIdLocalized(pid) : undefined;
       if (p) addPromptProductRef({ productId: p.id, label: p.title });
     }
 

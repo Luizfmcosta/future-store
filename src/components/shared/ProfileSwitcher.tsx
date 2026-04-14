@@ -4,12 +4,11 @@ import { shopperNameText, sidebarRailSurfaceClass } from "@/lib/narrativeSidebar
 import {
   SHOPPER_PORTRAIT,
   SHOPPER_PROFILE_ORDER,
-  shopperDisplayName,
   shopperTabInitials,
   shopperUsesIconAvatar,
 } from "@/lib/shopperPortraits";
 import { ui } from "@/lib/ui-tokens";
-import { useT } from "@/lib/useT";
+import { useT, type TranslateFn } from "@/lib/useT";
 import { cn } from "@/lib/utils";
 import type { ShopperProfileId } from "@/types";
 import { useDemoStore } from "@/store/demoStore";
@@ -18,6 +17,10 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 const profileTagKeys = ["tag1", "tag2", "tag3"] as const;
+
+function profileCardDisplayName(id: ShopperProfileId, t: TranslateFn): string {
+  return t(`profileCard.${id}.displayName`);
+}
 
 /** Avatares empilhados — coluna estreita para não invadir o logo da loja no TopBar. */
 const profileTopClusterWidthCollapsed = "w-[min(3.4375rem,calc(100vw-2rem))]";
@@ -211,7 +214,7 @@ export function TopBarProfileCluster({ className }: { className?: string }) {
         aria-labelledby={TOPBAR_PROFILE_ACTIVE_LABEL_ID}
       >
         <span id={TOPBAR_PROFILE_ACTIVE_LABEL_ID} className="sr-only">
-          {shopperDisplayName(activeProfile)}
+          {profileCardDisplayName(activeProfile, t)}
         </span>
         <div className="flex flex-col overflow-hidden pt-1">
           <ProfileSwitcher variant="topBar" topBarStripCollapsed={!expanded} />
@@ -296,6 +299,7 @@ const narrativeCell =
   "flex h-10 items-center justify-center rounded-lg border border-white/[0.06] bg-[#0c0e12]/80 text-[13px] font-medium tracking-tight transition hover:bg-white/[0.06]";
 
 function SidebarProfileCards({ light }: { light: boolean }) {
+  const t = useT();
   const activeProfile = useDemoStore((s) => s.activeProfile);
   const setProfile = useDemoStore((s) => s.setProfile);
 
@@ -303,7 +307,7 @@ function SidebarProfileCards({ light }: { light: boolean }) {
     <div className="flex w-full flex-col gap-1.5" role="group" aria-label="Shopper profile">
       {SHOPPER_PROFILE_ORDER.map((id) => {
         const active = activeProfile === id;
-        const name = shopperDisplayName(id);
+        const name = profileCardDisplayName(id, t);
         return (
           <button
             key={id}
@@ -353,6 +357,7 @@ export function ProfileSwitcher({
   variant?: "default" | "narrative" | "sidebar" | "topBar";
   topBarStripCollapsed?: boolean;
 }) {
+  const t = useT();
   const activeProfile = useDemoStore((s) => s.activeProfile);
   const setProfile = useDemoStore((s) => s.setProfile);
   const light = useDemoStore((s) => s.colorMode === "light");
@@ -387,7 +392,7 @@ export function ProfileSwitcher({
                   : "text-[#b8c0ce]",
             )}
           >
-            {shopperDisplayName(id)}
+            {profileCardDisplayName(id, t)}
           </button>
         ))}
       </div>
@@ -431,7 +436,7 @@ export function ProfileSwitcher({
         >
           {SHOPPER_PROFILE_ORDER.map((id) => {
             const active = activeProfile === id;
-            const name = shopperDisplayName(id);
+            const name = profileCardDisplayName(id, t);
             return (
               <button
                 key={id}
@@ -484,7 +489,7 @@ export function ProfileSwitcher({
               : "text-[#9aa3b8] hover:text-[#dce1ed]",
           )}
         >
-          {shopperDisplayName(id)}
+          {profileCardDisplayName(id, t)}
         </button>
       ))}
     </div>

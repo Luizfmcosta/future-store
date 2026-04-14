@@ -30,6 +30,7 @@ function StorefrontPromptComposerInner({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const uiLocale = useDemoStore((s) => s.uiLocale);
   const currentQuery = useDemoStore((s) => s.currentQuery);
   const promptProductRefs = useDemoStore((s) => s.promptProductRefs);
   const cartDrawerOpen = useDemoStore((s) => s.cartDrawerOpen);
@@ -45,7 +46,7 @@ function StorefrontPromptComposerInner({
   /** Same frosted shell as the cart control (`TopBar`) on every route, including home over `#121212`. */
   const promptKit = ui.promptInputKit;
 
-  const suggestionPool = useMemo(() => getPromptSuggestionPool(), []);
+  const suggestionPool = useMemo(() => getPromptSuggestionPool(), [uiLocale]);
 
   const submitSearch = useCallback(() => {
     const q = currentQuery.trim();

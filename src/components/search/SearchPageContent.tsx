@@ -16,7 +16,7 @@ import { localizeProducts } from "@/lib/product-i18n";
 import { getComparisonCards, getBestMatch, getLearningWidgetVariant } from "@/lib/recommendations";
 import { fetchPlpLlmAdaptation } from "@/lib/fetchPlpLlmAdaptation";
 import { applyLlmProductRankOrder, mergeSearchIntentWithLlmPatch } from "@/lib/plpLlmAdaptation";
-import { DEFAULT_SEARCH_QUERY } from "@/lib/defaultSearchQuery";
+import { defaultSearchQuery } from "@/lib/defaultSearchQuery";
 import { scrollSearchSubmitSurfacesToTop, scrollStorefrontMainToTop } from "@/lib/scrollStorefrontMain";
 import { getSearchResults } from "@/lib/search";
 import { getQuickSearchQueries } from "@/lib/searchCopy";
@@ -42,6 +42,7 @@ export function SearchPageContent() {
   const setQuery = useDemoStore((s) => s.setQuery);
   const runSearch = useDemoStore((s) => s.runSearch);
   const profile = useDemoStore((s) => s.activeProfile);
+  const uiLocale = useDemoStore((s) => s.uiLocale);
   const aiMode = useDemoStore((s) => s.aiMode);
   const setPromptSubmitContext = useDemoStore((s) => s.setPromptSubmitContext);
   const plpLlmRankIds = useDemoStore((s) => s.plpLlmRankIds);
@@ -83,10 +84,10 @@ export function SearchPageContent() {
   /** Bootstrap `parsedIntent` without writing the demo default into `currentQuery` (floating composer). */
   useEffect(() => {
     if (!parsedIntent) {
-      const q = currentQuery.trim() || DEFAULT_SEARCH_QUERY;
+      const q = currentQuery.trim() || defaultSearchQuery(uiLocale);
       setParsedIntent(parseIntent(q));
     }
-  }, [parsedIntent, currentQuery, setParsedIntent]);
+  }, [parsedIntent, currentQuery, setParsedIntent, uiLocale]);
 
   /** Empty the shared floating prompt on the Results SERP; Chat (`?view=ai`) keeps `currentQuery` for seeding. */
   useEffect(() => {
@@ -164,7 +165,7 @@ export function SearchPageContent() {
     scrollSearchSubmitSurfacesToTop();
   }, [pathname, view, mParam]);
 
-  const intentBase = parsedIntent ?? parseIntent(currentQuery || DEFAULT_SEARCH_QUERY);
+  const intentBase = parsedIntent ?? parseIntent(currentQuery || defaultSearchQuery(uiLocale));
   const intent = useMemo(
     () => mergeSearchIntentWithLlmPatch(intentBase, plpLlmIntentPatch),
     [intentBase, plpLlmIntentPatch],
@@ -178,8 +179,11 @@ export function SearchPageContent() {
   const compare = getComparisonCards(profile, displayResults);
   const learningVariant = getLearningWidgetVariant(intent);
 
-  const quickSearches = useMemo(() => getQuickSearchQueries(), []);
-  const trendingProducts = useMemo(() => localizeProducts(products.slice(0, 4)), []);
+  const quickSearches = useMemo(() => getQuickSearchQueries(), [uiLocale]);
+  const trendingProducts = useMemo(
+    () => localizeProducts(products.slice(0, 4)),
+    [uiLocale],
+  );
 
   const applyDiscoveryQuery = useCallback(
     (q: string) => {

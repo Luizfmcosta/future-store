@@ -1,15 +1,14 @@
 "use client";
 
 import { getProductById } from "@/data/products";
+import { defaultSearchQuery } from "@/lib/defaultSearchQuery";
+import type { UiLocale } from "@/lib/locales/types";
 import { mergePromptRefsIntoQuery, type PromptProductRef } from "@/lib/promptProductRefs";
 import { parseIntent } from "@/lib/parseIntent";
 import { clampStorefrontWidth, STOREFRONT_WIDTH } from "@/lib/storefrontViewport";
 import type { PromptSubmitPageContext, SearchIntent, ScreenId, ShopperProfileId } from "@/types";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-
-const DEFAULT_QUERY =
-  "Wireless speaker for ~3 m living room, best value, up to R$ 5000";
 
 /** Older releases used 1440 as default / desktop preset; persisted values stay until rehydration merge. */
 const LEGACY_DESKTOP_STOREFRONT_WIDTH = 1440;
@@ -18,6 +17,8 @@ export type ColorMode = "dark" | "light";
 
 type DemoState = {
   activeProfile: ShopperProfileId;
+  /** UI language — default pt-BR copy; English keeps legacy English strings. */
+  uiLocale: UiLocale;
   /** Demo frame width on md+ (resize + presets); persisted across reloads. */
   storefrontWidth: number;
   aiMode: boolean;
@@ -45,6 +46,11 @@ type DemoState = {
   /** Bump so `TopBarProfileCluster` expands when Start / profile change requests it. */
   profileClusterExpandNonce: number;
   /**
+   * Bump so `StorefrontMain` runs `scrollStorefrontHomeToTop` in `useLayoutEffect` on `/`
+   * (welcome Start / exit — avoids racing the portal exit before `main` scroll applies).
+   */
+  homeScrollToTopNonce: number;
+  /**
    * Set on floating prompt submit from PLP / PDP / cart; read by Search AI tab for LLM context.
    * Not persisted.
    */
@@ -57,6 +63,7 @@ type DemoState = {
 
   setParsedIntent: (intent: SearchIntent | null) => void;
   setProfile: (id: ShopperProfileId) => void;
+  setUiLocale: (locale: UiLocale) => void;
   setStorefrontWidth: (value: number | ((prev: number) => number)) => void;
   setAiMode: (v: boolean) => void;
   setColorMode: (m: ColorMode) => void;
@@ -86,6 +93,7 @@ type DemoState = {
   presetSearch: () => void;
   triggerHomeWelcomeReset: () => void;
   requestProfileClusterExpand: () => void;
+  requestHomeScrollToTop: () => void;
   setPromptSubmitContext: (ctx: PromptSubmitPageContext | null) => void;
   setPlpLlmAdaptation: (
     rankIds: string[] | null,
@@ -100,6 +108,7 @@ export const useDemoStore = create<DemoState>()(
   persist(
     (set, get) => ({
   activeProfile: "marina",
+  uiLocale: "pt",
   storefrontWidth: STOREFRONT_WIDTH.default,
   aiMode: false,
   rayXMode: false,
@@ -119,6 +128,7 @@ export const useDemoStore = create<DemoState>()(
   pdpSearchOverlayOpen: false,
   homeWelcomeResetNonce: 0,
   profileClusterExpandNonce: 0,
+  homeScrollToTopNonce: 0,
   lastPromptSubmitContext: null,
   plpLlmRankIds: null,
   plpLlmIntentPatch: null,
@@ -126,6 +136,7 @@ export const useDemoStore = create<DemoState>()(
 
   setParsedIntent: (intent) => set({ parsedIntent: intent }),
   setProfile: (id) => set({ activeProfile: id }),
+  setUiLocale: (locale) => set({ uiLocale: locale }),
   setStorefrontWidth: (value) =>
     set((state) => {
       const next =
@@ -227,6 +238,7 @@ export const useDemoStore = create<DemoState>()(
   reset: () =>
     set({
       activeProfile: "marina",
+      uiLocale: "pt",
       storefrontWidth: STOREFRONT_WIDTH.default,
       aiMode: false,
       rayXMode: false,
@@ -248,9 +260,10 @@ export const useDemoStore = create<DemoState>()(
       plpLlmRankIds: null,
       plpLlmIntentPatch: null,
       plpLlmCollectionTitle: null,
+      homeScrollToTopNonce: 0,
     }),
   presetSearch: () => {
-    const query = DEFAULT_QUERY;
+    const query = defaultSearchQuery(get().uiLocale);
     set({
       currentQuery: query,
       parsedIntent: parseIntent(query),
@@ -270,6 +283,8 @@ export const useDemoStore = create<DemoState>()(
   },
   requestProfileClusterExpand: () =>
     set((s) => ({ profileClusterExpandNonce: s.profileClusterExpandNonce + 1 })),
+  requestHomeScrollToTop: () =>
+    set((s) => ({ homeScrollToTopNonce: s.homeScrollToTopNonce + 1 })),
   setPromptSubmitContext: (ctx) => set({ lastPromptSubmitContext: ctx }),
   setPlpLlmAdaptation: (rankIds, intentPatch, collectionTitle = null) =>
     set({
@@ -284,6 +299,7 @@ export const useDemoStore = create<DemoState>()(
       partialize: (state) => ({
         aiMode: state.aiMode,
         activeProfile: state.activeProfile,
+        uiLocale: state.uiLocale,
         storefrontWidth: state.storefrontWidth,
       }),
       merge: (persistedState, currentState) => {
@@ -294,14 +310,16 @@ export const useDemoStore = create<DemoState>()(
             ? (persistedState as Partial<DemoState>)
             : {};
         const merged = { ...currentState, ...p };
+        const uiLocale: UiLocale =
+          merged.uiLocale === "en" || merged.uiLocale === "pt" ? merged.uiLocale : "pt";
         const w = merged.storefrontWidth;
-        if (typeof w !== "number") return merged;
+        if (typeof w !== "number") return { ...merged, uiLocale };
         const clamped = clampStorefrontWidth(w);
         const storefrontWidth =
           clamped === LEGACY_DESKTOP_STOREFRONT_WIDTH
             ? STOREFRONT_WIDTH.default
             : clamped;
-        return { ...merged, storefrontWidth };
+        return { ...merged, uiLocale, storefrontWidth };
       },
     },
   ),

@@ -51,6 +51,7 @@ const merchScrollerStartSpacer = "w-5 shrink-0 snap-none sm:w-6";
 export function MerchStrip() {
   const t = useT();
   const profile = useDemoStore((s) => s.activeProfile);
+  const uiLocale = useDemoStore((s) => s.uiLocale);
   const experienceCtx = useShopperExperienceOptional();
   const isRicardoPromoFirstVisit =
     profile === "ricardo" &&
@@ -66,7 +67,7 @@ export function MerchStrip() {
       ? sortProducts(base, experienceCtx.experience.merchSort)
       : base;
     return localizeProducts(takeUniqueHeroProducts(sorted, 10));
-  }, [experienceCtx?.experience.merchSort, isRicardoPromoFirstVisit, experienceCtx]);
+  }, [experienceCtx?.experience.merchSort, isRicardoPromoFirstVisit, experienceCtx, uiLocale]);
 
   const merchHeadline1 = experienceCtx ? t(experienceCtx.experience.copy.merchLine1) : t("merch.headlineLine1");
   const merchHeadline2 = experienceCtx ? t(experienceCtx.experience.copy.merchLine2) : t("merch.headlineLine2");

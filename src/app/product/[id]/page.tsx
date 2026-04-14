@@ -13,6 +13,7 @@ import { ProductPdpFeatures } from "@/components/pdp/ProductPdpFeatures";
 import { ProductStorySection } from "@/components/pdp/ProductStorySection";
 import { ReviewSummaryWidget } from "@/components/pdp/ReviewSummaryWidget";
 import { getProductById } from "@/data/products";
+import { getProductByIdLocalized } from "@/lib/product-i18n";
 import { recordProductView } from "@/lib/shopperSignalsStorage";
 import { getPdpInsights } from "@/lib/recommendations";
 import { useT } from "@/lib/useT";
@@ -24,7 +25,8 @@ export default function ProductPage() {
   const params = useParams<{ id: string }>();
   const t = useT();
   const id = typeof params?.id === "string" ? params.id : "";
-  const product = id ? getProductById(id) : undefined;
+  const uiLocale = useDemoStore((s) => s.uiLocale);
+  const product = useMemo(() => (id ? getProductByIdLocalized(id) : undefined), [id, uiLocale]);
   const profile = useDemoStore((s) => s.activeProfile);
   const aiMode = useDemoStore((s) => s.aiMode);
   const setSelected = useDemoStore((s) => s.setSelectedProduct);

@@ -40,6 +40,7 @@ function PdpSearchOverlayBody({
   const setQuery = useDemoStore((s) => s.setQuery);
   const runSearch = useDemoStore((s) => s.runSearch);
   const profile = useDemoStore((s) => s.activeProfile);
+  const uiLocale = useDemoStore((s) => s.uiLocale);
   const aiMode = useDemoStore((s) => s.aiMode);
   const plpLlmRankIds = useDemoStore((s) => s.plpLlmRankIds);
   const plpLlmIntentPatch = useDemoStore((s) => s.plpLlmIntentPatch);
@@ -153,8 +154,11 @@ function PdpSearchOverlayBody({
   const compare = getComparisonCards(profile, displayResults);
   const learningVariant = getLearningWidgetVariant(intent);
 
-  const quickSearches = useMemo(() => getQuickSearchQueries(), []);
-  const trendingProducts = useMemo(() => localizeProducts(products.slice(0, 4)), []);
+  const quickSearches = useMemo(() => getQuickSearchQueries(), [uiLocale]);
+  const trendingProducts = useMemo(
+    () => localizeProducts(products.slice(0, 4)),
+    [uiLocale],
+  );
 
   const applyDiscoveryQuery = useCallback(
     (q: string) => {

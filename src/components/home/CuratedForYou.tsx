@@ -202,6 +202,7 @@ function RicardoPickCard({ product }: { product: Product }) {
 
 export function CuratedForYou() {
   const profile = useDemoStore((s) => s.activeProfile);
+  const uiLocale = useDemoStore((s) => s.uiLocale);
   const experienceCtx = useShopperExperienceOptional();
   const t = useT();
 
@@ -229,7 +230,7 @@ export function CuratedForYou() {
       return localizeProducts([a, b]);
     }
     return [];
-  }, [profile, isRicardoPromoFirstVisit]);
+  }, [profile, isRicardoPromoFirstVisit, uiLocale]);
 
   return (
     <section className={cn("flex flex-col bg-white", ui.home.whiteSectionOnDarkCanvas)}>

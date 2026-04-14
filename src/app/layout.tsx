@@ -3,14 +3,11 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import { messages } from "@/lib/messages";
+import { DEFAULT_UI_LOCALE } from "@/lib/locales/types";
+import { getMessage } from "@/lib/messages";
 
-const metaTitle =
-  typeof messages.metaTitle === "string" ? messages.metaTitle : "";
-const metaDescription =
-  typeof messages.metaDescription === "string"
-    ? messages.metaDescription
-    : "";
+const metaTitle = getMessage("metaTitle", DEFAULT_UI_LOCALE) ?? "";
+const metaDescription = getMessage("metaDescription", DEFAULT_UI_LOCALE) ?? "";
 
 const socialPreviewImage = "/branding/Social%20Preview.png";
 
@@ -60,7 +57,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="pt-BR"
       data-theme="dark"
       className={cn(
         "h-full overflow-hidden scrollbar-none",

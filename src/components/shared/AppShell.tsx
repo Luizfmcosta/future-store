@@ -181,7 +181,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                         <div className="relative min-h-0 flex flex-1 flex-col">
                           <Suspense
                             fallback={
-                              <main className="min-h-0 flex-1 overflow-y-auto scrollbar-none bg-white px-4 pb-32 pt-5 sm:px-6 sm:pb-32 sm:pt-6">
+                              <main
+                                data-storefront-scroll=""
+                                className="min-h-0 flex-1 overflow-y-auto scrollbar-none bg-white px-4 pb-32 pt-5 sm:px-6 sm:pb-32 sm:pt-6"
+                              >
                                 {children}
                               </main>
                             }

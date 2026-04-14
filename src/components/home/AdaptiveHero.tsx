@@ -8,7 +8,7 @@ import { STOREFRONT_HERO_BOTTOM_BLEED, STOREFRONT_HERO_COPY_BOTTOM_PAD } from "@
 import { cn } from "@/lib/utils";
 import { useDemoStore } from "@/store/demoStore";
 import { motion } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 const ease = [0.76, 0, 0.24, 1] as const;
 const stagger = { staggerChildren: 0.14, delayChildren: 1.5 };
@@ -19,7 +19,9 @@ const child = {
 
 export function AdaptiveHero() {
   const profile = useDemoStore((s) => s.activeProfile);
-  const copy = heroCopy(profile);
+  /** Subscribe so `heroCopy` → `getMessage` re-runs when the shopper switches UI language. */
+  const uiLocale = useDemoStore((s) => s.uiLocale);
+  const copy = useMemo(() => heroCopy(profile), [profile, uiLocale]);
   const videoRef = useRef<HTMLVideoElement>(null);
   const storefrontFrameHeightClass = useStorefrontFrameHeightClass();
 

@@ -1,6 +1,8 @@
 "use client";
 
 import { formatMessage, getMessage } from "@/lib/messages";
+import type { UiLocale } from "@/lib/locales/types";
+import { useDemoStore } from "@/store/demoStore";
 import { useCallback } from "react";
 
 export type TranslateFn = (
@@ -9,14 +11,22 @@ export type TranslateFn = (
 ) => string;
 
 export function useT(): TranslateFn {
-  return useCallback((path: string, params?: Record<string, string | number>) => {
-    const raw = getMessage(path) ?? path;
-    return params ? formatMessage(raw, params) : raw;
-  }, []);
+  const locale = useDemoStore((s) => s.uiLocale);
+  return useCallback(
+    (path: string, params?: Record<string, string | number>) => {
+      const raw = getMessage(path, locale) ?? path;
+      return params ? formatMessage(raw, params) : raw;
+    },
+    [locale],
+  );
 }
 
 /** For non-React modules / server if needed */
-export function translate(path: string, params?: Record<string, string | number>): string {
-  const raw = getMessage(path) ?? path;
+export function translate(
+  path: string,
+  params?: Record<string, string | number>,
+  locale?: UiLocale,
+): string {
+  const raw = getMessage(path, locale) ?? path;
   return params ? formatMessage(raw, params) : raw;
 }

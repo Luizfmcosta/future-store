@@ -16,7 +16,7 @@ const ease = [0.22, 1, 0.36, 1] as const;
 
 /**
  * Logo + Start na primeira visita a `/` (navegação normal). Refresh não reabre o gate; só o botão Reset reabre.
- * SPA de volta à home não mostra o gate. Start seleciona Marina e pede expand do profile cluster.
+ * SPA de volta à home não mostra o gate. Start seleciona Marina, expande o cluster de perfil e rola o `main` ao topo (hero).
  */
 export function HomeWelcomeGate() {
   const t = useT();
@@ -29,7 +29,10 @@ export function HomeWelcomeGate() {
   const reduceMotion = useReducedMotion();
 
   const setProfile = useDemoStore((s) => s.setProfile);
+  const setUiLocale = useDemoStore((s) => s.setUiLocale);
+  const uiLocale = useDemoStore((s) => s.uiLocale);
   const requestProfileClusterExpand = useDemoStore((s) => s.requestProfileClusterExpand);
+  const requestHomeScrollToTop = useDemoStore((s) => s.requestHomeScrollToTop);
   const resetNonce = useDemoStore((s) => s.homeWelcomeResetNonce);
 
   const exitMs = reduceMotion ? 0.18 : 0.52;
@@ -104,16 +107,23 @@ export function HomeWelcomeGate() {
       /* private mode */
     }
     setShowGate(false);
+    /** `StorefrontMain` applies scroll in `useLayoutEffect` after commit (reliable vs timers). */
+    requestHomeScrollToTop();
   };
 
   if (!host) return null;
 
   return createPortal(
-    <AnimatePresence mode="sync">
+    <AnimatePresence
+      mode="sync"
+      onExitComplete={() => {
+        requestHomeScrollToTop();
+      }}
+    >
       {showGate ? (
         <motion.div
           key="fs-home-welcome"
-          className="pointer-events-auto absolute inset-0 z-[250] flex flex-col items-center justify-center rounded-[inherit] bg-[#0c0c0c]"
+          className="pointer-events-auto absolute inset-0 z-[250] flex flex-col items-stretch justify-center rounded-[inherit] bg-[#0c0c0c]"
           role="dialog"
           aria-modal="true"
           aria-labelledby="home-welcome-title"
@@ -131,7 +141,7 @@ export function HomeWelcomeGate() {
             {t("homeWelcome.title")}
           </h2>
           <motion.div
-            className="flex flex-col items-center gap-10 px-6"
+            className="flex min-h-0 flex-1 flex-col items-center justify-center gap-10 px-6 pb-24 sm:pb-28"
             initial={{ opacity: 0, y: reduceMotion ? 0 : 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: enterMs, delay: reduceMotion ? 0 : 0.06, ease }}
@@ -160,6 +170,37 @@ export function HomeWelcomeGate() {
               </button>
             </div>
           </motion.div>
+          <div className="pointer-events-auto absolute inset-x-0 bottom-6 flex justify-center px-6 sm:bottom-8">
+            <div
+              role="group"
+              aria-label={t("homeWelcome.languageGroupAria")}
+              className={cn(
+                ui.floatingChrome.segmentFocus,
+                "inline-flex items-center gap-0.5 rounded-full border border-white/[0.12] bg-black/30 p-0.5 text-[13px] text-white/80 backdrop-blur-sm sm:text-[14px]",
+              )}
+            >
+              <button
+                type="button"
+                onClick={() => setUiLocale("en")}
+                className={cn(
+                  "rounded-full px-3 py-1.5 font-medium transition sm:px-3.5",
+                  uiLocale === "en" ? "bg-white/[0.14] text-white" : "text-white/55 hover:text-white/85",
+                )}
+              >
+                {t("homeWelcome.languageEnglish")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setUiLocale("pt")}
+                className={cn(
+                  "rounded-full px-3 py-1.5 font-medium transition sm:px-3.5",
+                  uiLocale === "pt" ? "bg-white/[0.14] text-white" : "text-white/55 hover:text-white/85",
+                )}
+              >
+                {t("homeWelcome.languagePortuguese")}
+              </button>
+            </div>
+          </div>
         </motion.div>
       ) : null}
     </AnimatePresence>,
