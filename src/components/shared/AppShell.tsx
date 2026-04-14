@@ -11,6 +11,7 @@ import { StorefrontMain } from "@/components/shared/StorefrontMain";
 import { StorefrontPortalProvider } from "@/components/shared/StorefrontPortalContext";
 import { TopBarProfileCluster } from "@/components/shared/ProfileSwitcher";
 import { ui } from "@/lib/ui-tokens";
+import { ResetDemoFloatingControl } from "@/components/shared/ResetDemoFloatingControl";
 import { TopBar } from "@/components/shared/TopBar";
 import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
 import { useT } from "@/lib/useT";
@@ -25,7 +26,7 @@ import { cn } from "@/lib/utils";
 import { useDemoStore } from "@/store/demoStore";
 import { AnimatePresence, motion } from "framer-motion";
 import dynamic from "next/dynamic";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Minimize2, Monitor, RotateCcw, Smartphone } from "lucide-react";
 import { Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
@@ -53,10 +54,8 @@ const VIEWPORT_LAYOUT_BASE_PX = 1920;
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
   const aiMode = useDemoStore((s) => s.aiMode);
   const activeProfile = useDemoStore((s) => s.activeProfile);
-  const triggerHomeWelcomeReset = useDemoStore((s) => s.triggerHomeWelcomeReset);
   const setScreen = useDemoStore((s) => s.setCurrentScreen);
   const storefrontWidth = useDemoStore((s) => s.storefrontWidth);
   const setStorefrontWidth = useDemoStore((s) => s.setStorefrontWidth);
@@ -376,21 +375,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="pointer-events-auto fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-[280] flex items-center">
           <div className={cn(ui.glassChrome.clusterShell, "inline-flex min-w-0")}>
             <div className={cn(ui.glassChrome.widthPresetTrack, "inline-flex w-auto min-w-[2.8125rem]")}>
-              <button
-                type="button"
-                onClick={() => {
-                  triggerHomeWelcomeReset();
-                  router.push("/");
-                }}
-                className={cn(
-                  "relative z-10 flex flex-1 items-center justify-center rounded-full outline-none transition-colors duration-200",
-                  ui.floatingChrome.segmentFocus,
-                  ui.floatingChrome.segmentInactive,
-                )}
-                aria-label={t("homeWelcome.ariaResetDemo")}
-              >
-                <RotateCcw className="h-5 w-5 shrink-0" strokeWidth={2} aria-hidden />
-              </button>
+              <ResetDemoFloatingControl />
             </div>
           </div>
         </div>

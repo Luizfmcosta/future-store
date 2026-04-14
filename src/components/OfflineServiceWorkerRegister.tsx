@@ -1,5 +1,10 @@
 "use client";
 
+import {
+  applySwPrecacheMessage,
+  requestPrecacheAuditFromSw,
+  setPrecacheStatus,
+} from "@/lib/precacheStatus";
 import { useEffect } from "react";
 
 /**
@@ -8,7 +13,10 @@ import { useEffect } from "react";
  */
 export function OfflineServiceWorkerRegister() {
   useEffect(() => {
-    if (typeof window === "undefined" || !("serviceWorker" in navigator)) return;
+    if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
+      setPrecacheStatus({ kind: "unsupported" });
+      return;
+    }
     if (window.location.protocol !== "http:" && window.location.protocol !== "https:") return;
 
     /**
@@ -18,9 +26,28 @@ export function OfflineServiceWorkerRegister() {
     const enable =
       process.env.NODE_ENV === "production" || process.env.NEXT_PUBLIC_OFFLINE_SW_DEV === "1";
 
-    if (!enable) return;
+    if (!enable) {
+      setPrecacheStatus({ kind: "disabled" });
+      return;
+    }
+
+    function onMessage(ev: MessageEvent) {
+      applySwPrecacheMessage(ev.data);
+    }
+    navigator.serviceWorker.addEventListener("message", onMessage);
+
+    function onControllerChange() {
+      if (navigator.serviceWorker.controller) {
+        requestPrecacheAuditFromSw();
+      } else {
+        setPrecacheStatus({ kind: "starting" });
+      }
+    }
+    navigator.serviceWorker.addEventListener("controllerchange", onControllerChange);
 
     let cancelled = false;
+    let pollId: ReturnType<typeof setTimeout> | undefined;
+
     void navigator.serviceWorker
       .register("/sw.js", { scope: "/" })
       .then((reg) => {
@@ -34,13 +61,24 @@ export function OfflineServiceWorkerRegister() {
             }
           });
         });
+        if (navigator.serviceWorker.controller) {
+          requestPrecacheAuditFromSw();
+        } else {
+          setPrecacheStatus({ kind: "starting" });
+          pollId = setTimeout(() => {
+            if (!cancelled) requestPrecacheAuditFromSw();
+          }, 2500);
+        }
       })
       .catch(() => {
-        /* noop — e.g. blocked or unsupported */
+        setPrecacheStatus({ kind: "error" });
       });
 
     return () => {
       cancelled = true;
+      if (pollId) clearTimeout(pollId);
+      navigator.serviceWorker.removeEventListener("message", onMessage);
+      navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange);
     };
   }, []);
 

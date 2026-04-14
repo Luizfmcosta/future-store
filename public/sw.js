@@ -6,36 +6,102 @@
 const CACHE = "future-store-offline-v1";
 const PRECACHE_CONCURRENCY = 8;
 
+async function broadcastToClients(payload) {
+  try {
+    const clients = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+    clients.forEach((client) => {
+      try {
+        client.postMessage(payload);
+      } catch {
+        /* ignore */
+      }
+    });
+  } catch {
+    /* ignore */
+  }
+}
+
+self.addEventListener("message", (event) => {
+  const d = event.data;
+  if (!d || d.type !== "get-precache-status") return;
+  const source = event.source;
+  if (!source || typeof source.postMessage !== "function") return;
+  event.waitUntil(
+    (async () => {
+      try {
+        const manRes = await fetch(new Request("/precache-manifest.json", { cache: "reload" }));
+        if (!manRes.ok) {
+          source.postMessage({ type: "precache-status", state: "no-manifest" });
+          return;
+        }
+        const man = await manRes.json();
+        const urls = (Array.isArray(man.urls) ? man.urls : []).filter(
+          (u) => typeof u === "string" && u.startsWith("/"),
+        );
+        const cache = await caches.open(CACHE);
+        let cached = 0;
+        for (const url of urls) {
+          const hit = await cache.match(url);
+          if (hit && hit.ok) cached++;
+        }
+        source.postMessage({ type: "precache-status", state: "ready", total: urls.length, cached });
+      } catch {
+        source.postMessage({ type: "precache-status", state: "error" });
+      }
+    })(),
+  );
+});
+
 self.addEventListener("install", (event) => {
   event.waitUntil(
     (async () => {
       try {
         const manRes = await fetch(new Request("/precache-manifest.json", { cache: "reload" }));
         if (!manRes.ok) {
+          await broadcastToClients({ type: "precache-status", state: "no-manifest" });
           self.skipWaiting();
           return;
         }
         const man = await manRes.json();
-        const list = Array.isArray(man.urls) ? man.urls : [];
+        const raw = Array.isArray(man.urls) ? man.urls : [];
+        const list = raw.filter((u) => typeof u === "string" && u.startsWith("/"));
+        const total = list.length;
         const cache = await caches.open(CACHE);
+        let ok = 0;
+        let failed = 0;
         for (let c = 0; c < list.length; c += PRECACHE_CONCURRENCY) {
           const batch = list.slice(c, c + PRECACHE_CONCURRENCY);
-          await Promise.all(
+          const outcomes = await Promise.all(
             batch.map(async (url) => {
-              if (typeof url !== "string" || !url.startsWith("/")) return;
               try {
                 const res = await fetch(
                   new Request(url, { cache: "reload", credentials: "same-origin" }),
                 );
-                if (res.ok) await cache.put(url, res);
+                if (res.ok) {
+                  await cache.put(url, res);
+                  return "ok";
+                }
+                return "fail";
               } catch {
-                /* one URL failing must not abort the whole precache */
+                return "fail";
               }
             }),
           );
+          for (const o of outcomes) {
+            if (o === "ok") ok++;
+            else failed++;
+          }
+          await broadcastToClients({
+            type: "precache-progress",
+            done: ok + failed,
+            total,
+            ok,
+            failed,
+          });
         }
+        await broadcastToClients({ type: "precache-complete", total, ok, failed });
       } catch {
-        /* manifest missing in dev / first clone */
+        await broadcastToClients({ type: "precache-status", state: "error" });
       }
       self.skipWaiting();
     })(),
