@@ -3,6 +3,8 @@
 import { AskImageButton } from "@/components/shared/AskImageButton";
 import { EmptyMediaSlot } from "@/components/shared/EmptyMediaSlot";
 import { EyebrowPill } from "@/components/shared/EyebrowPill";
+import { homeSpotlightSectionMotion } from "@/lib/homeScrollReveal";
+import { useOnline } from "@/lib/hooks/useOnline";
 import { getProductByIdLocalized } from "@/lib/product-i18n";
 import { useT } from "@/lib/useT";
 import { ui } from "@/lib/ui-tokens";
@@ -33,6 +35,8 @@ export function ProductSpotlight() {
   const profile = useDemoStore((s) => s.activeProfile);
   const experienceCtx = useShopperExperienceOptional();
   const t = useT();
+  const online = useOnline();
+  const sectionReveal = homeSpotlightSectionMotion(online);
   const id =
     experienceCtx?.spotlightProductId ??
     (profile === "marina" ? "sp-move-2" : profile === "ricardo" ? "sp-five" : "sp-era-100");
@@ -98,9 +102,7 @@ export function ProductSpotlight() {
   return (
     <motion.section
       variants={{ hidden: {}, show: stagger }}
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, amount: 0.1 }}
+      {...sectionReveal}
       className={cn("flex flex-col bg-white", ui.home.whiteSectionOnDarkCanvas)}
     >
       <div className="mx-auto w-full max-w-[1200px] px-5 sm:px-6">

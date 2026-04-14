@@ -128,6 +128,7 @@ export const ptMessages = {
       title: "Veja como essas caixas se comportam na prática",
       subline: "Setups reais, uso real — para você saber o que esperar.",
       embedTitle: "Vídeo no TikTok",
+      offlinePlaceholder: "A prévia do vídeo precisa de conexão com a internet.",
     },
     spotlight: {
       marinaEyebrow: "Como escolher",

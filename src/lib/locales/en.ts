@@ -128,6 +128,8 @@ export const enMessages = {
       title: "See how these speakers actually perform",
       subline: "Real setups, real use — so you know what to expect.",
       embedTitle: "TikTok video",
+      /** Shown when the device is offline (embed host cannot be cached by this app’s SW). */
+      offlinePlaceholder: "Video preview needs an internet connection.",
     },
     spotlight: {
       marinaEyebrow: "How to choose",

@@ -5,6 +5,23 @@
  */
 const CACHE = "future-store-offline-v1";
 const PRECACHE_CONCURRENCY = 8;
+/** Precache entries may not match runtime requests when query or Vary differs. */
+const CACHE_MATCH_OPTS = { ignoreSearch: true, ignoreVary: true };
+
+async function cacheMatchLoose(cache, request) {
+  let hit = await cache.match(request, CACHE_MATCH_OPTS);
+  if (hit) return hit;
+  try {
+    const u = new URL(request.url);
+    if (u.origin === self.location.origin) {
+      hit = await cache.match(u.origin + u.pathname, CACHE_MATCH_OPTS);
+      if (hit) return hit;
+    }
+  } catch {
+    /* ignore */
+  }
+  return undefined;
+}
 
 async function broadcastToClients(payload) {
   try {
@@ -41,7 +58,7 @@ self.addEventListener("message", (event) => {
         const cache = await caches.open(CACHE);
         let cached = 0;
         for (const url of urls) {
-          const hit = await cache.match(url);
+          const hit = await cacheMatchLoose(cache, new Request(url, { credentials: "same-origin" }));
           if (hit && hit.ok) cached++;
         }
         source.postMessage({ type: "precache-status", state: "ready", total: urls.length, cached });
@@ -129,7 +146,9 @@ function isStaticAssetPath(pathname) {
   if (pathname.startsWith("/branding/")) return true;
   if (pathname.startsWith("/media/")) return true;
   if (pathname === "/favicon.ico") return true;
-  return /\.(avif|webp|png|jpe?g|gif|svg|ico|woff2?|ttf|eot|js|css|map)$/i.test(pathname);
+  return /\.(avif|webp|png|jpe?g|gif|svg|ico|woff2?|ttf|eot|js|css|map|mp4|webm|mov|m4v|ogv)$/i.test(
+    pathname,
+  );
 }
 
 async function putCache(request, response) {
@@ -140,7 +159,7 @@ async function putCache(request, response) {
 
 async function cacheFirst(request) {
   const cache = await caches.open(CACHE);
-  const hit = await cache.match(request);
+  const hit = await cacheMatchLoose(cache, request);
   if (hit) return hit;
   try {
     const res = await fetch(request);
@@ -148,7 +167,7 @@ async function cacheFirst(request) {
     return res;
   } catch {
     return (
-      (await cache.match(request)) ||
+      (await cacheMatchLoose(cache, request)) ||
       new Response("Offline", { status: 503, statusText: "Offline" })
     );
   }
@@ -161,9 +180,9 @@ async function networkFirst(request) {
     await putCache(request, res);
     return res;
   } catch {
-    const hit = await cache.match(request);
+    const hit = await cacheMatchLoose(cache, request);
     if (hit) return hit;
-    const root = await cache.match(self.location.origin + "/");
+    const root = await cacheMatchLoose(cache, new Request(self.location.origin + "/"));
     if (root) return root;
     return new Response("Offline", { status: 503, statusText: "Offline" });
   }

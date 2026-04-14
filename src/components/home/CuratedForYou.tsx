@@ -8,6 +8,8 @@ import {
   getProductById,
   getPromoTvsUnder,
 } from "@/data/products";
+import { homeFadeUpBlockMotion, homeStaggerParentMotion } from "@/lib/homeScrollReveal";
+import { useOnline } from "@/lib/hooks/useOnline";
 import { localizeProducts } from "@/lib/product-i18n";
 import { useT } from "@/lib/useT";
 import { ui } from "@/lib/ui-tokens";
@@ -62,7 +64,7 @@ function MarinaCompareCard({
   return (
     <motion.article
       variants={fadeUp}
-      className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded-2xl border border-stone-100 bg-white"
+      className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden rounded-2xl border border-stone-100 bg-white"
     >
       <div className="relative w-full shrink-0">
         <AskImageButton
@@ -95,8 +97,8 @@ function MarinaCompareCard({
         </div>
       </div>
 
-      <div className="flex shrink-0 flex-col gap-3 p-5 sm:p-6">
-        <div className="min-w-0 space-y-2">
+      <div className="flex min-h-0 flex-1 flex-col gap-3 p-5 sm:p-6">
+        <div className="min-h-0 min-w-0 flex-1 space-y-2">
           <h3 className="text-[15px] font-semibold leading-snug text-[#1a1a1a] sm:text-[16px]">
             {title}
           </h3>
@@ -110,7 +112,7 @@ function MarinaCompareCard({
             {blurb}
           </p>
         </div>
-        <div className="mt-auto flex flex-col gap-2.5 @sm:flex-row">
+        <div className="flex shrink-0 flex-col gap-2.5 @sm:flex-row">
           <ProductExploreLink
             productId={product.id}
             className={cn(
@@ -167,13 +169,13 @@ function RicardoPickCard({ product }: { product: Product }) {
           <EmptyMediaSlot className="relative min-h-[8rem]" variant="light" />
         )}
       </AskImageButton>
-      <div className="flex shrink-0 flex-col gap-3 overflow-hidden p-5 sm:p-6">
-        <div>
+      <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden p-5 sm:p-6">
+        <div className="min-h-0 min-w-0 flex-1">
           <h3 className="text-[15px] font-medium leading-snug text-[#1a1a1a]">{shortTitle(product)}</h3>
           <p className="mt-1 text-pretty text-[15px] font-normal leading-relaxed text-stone-500 line-clamp-2">{blurb}</p>
           <p className="mt-2 text-[16px] font-semibold tabular-nums text-stone-900">{formatBRL(product.price)}</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex shrink-0 gap-2">
           <ProductExploreLink
             productId={product.id}
             className={cn(
@@ -205,6 +207,9 @@ export function CuratedForYou() {
   const uiLocale = useDemoStore((s) => s.uiLocale);
   const experienceCtx = useShopperExperienceOptional();
   const t = useT();
+  const online = useOnline();
+  const headlineMotion = homeFadeUpBlockMotion(online);
+  const gridMotion = homeStaggerParentMotion(online);
 
   const isRicardoPromoFirstVisit =
     profile === "ricardo" &&
@@ -237,9 +242,7 @@ export function CuratedForYou() {
       {/* Same max width as CompareModule / ContinueJourney (`max-w-[1200px]`). */}
       <div className="mx-auto w-full max-w-[1200px] px-5 sm:px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
+          {...headlineMotion}
           transition={{ duration: 0.65, ease }}
           className="flex flex-col items-center pb-14 pt-16 text-center sm:pb-16 sm:pt-20"
         >
@@ -261,9 +264,7 @@ export function CuratedForYou() {
 
         <motion.div
           variants={{ hidden: {}, show: stagger }}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.08 }}
+          {...gridMotion}
           className={cn(
             "pb-9 sm:pb-10",
             profile === "marina"

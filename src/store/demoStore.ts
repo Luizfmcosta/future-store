@@ -68,6 +68,10 @@ type DemoState = {
 
   setParsedIntent: (intent: SearchIntent | null) => void;
   setProfile: (id: ShopperProfileId) => void;
+  /**
+   * Profile pills / sidebar: switch shopper and land at that profile’s home start (scroll + route `/` from UI).
+   */
+  switchProfileFromSelector: (id: ShopperProfileId) => void;
   setUiLocale: (locale: UiLocale) => void;
   setStorefrontWidth: (value: number | ((prev: number) => number)) => void;
   setAiMode: (v: boolean) => void;
@@ -143,6 +147,18 @@ export const useDemoStore = create<DemoState>()(
 
   setParsedIntent: (intent) => set({ parsedIntent: intent }),
   setProfile: (id) => set({ activeProfile: id }),
+  switchProfileFromSelector: (id) => {
+    const s = get();
+    if (s.activeProfile === id) return;
+    set({
+      activeProfile: id,
+      currentScreen: "home",
+      homeScrollToTopNonce: s.homeScrollToTopNonce + 1,
+      cartDrawerOpen: false,
+      pdpChatOverlayOpen: false,
+      pdpSearchOverlayOpen: false,
+    });
+  },
   setUiLocale: (locale) => set({ uiLocale: locale }),
   setStorefrontWidth: (value) =>
     set((state) => {

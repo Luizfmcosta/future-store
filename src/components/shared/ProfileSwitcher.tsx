@@ -14,7 +14,8 @@ import type { ShopperProfileId } from "@/types";
 import { useDemoStore } from "@/store/demoStore";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const profileTagKeys = ["tag1", "tag2", "tag3"] as const;
 
@@ -298,10 +299,15 @@ export function TopBarProfileCluster({ className }: { className?: string }) {
 const narrativeCell =
   "flex h-10 items-center justify-center rounded-lg border border-white/[0.06] bg-[#0c0e12]/80 text-[13px] font-medium tracking-tight transition hover:bg-white/[0.06]";
 
-function SidebarProfileCards({ light }: { light: boolean }) {
+function SidebarProfileCards({
+  light,
+  onSelectProfile,
+}: {
+  light: boolean;
+  onSelectProfile: (id: ShopperProfileId) => void;
+}) {
   const t = useT();
   const activeProfile = useDemoStore((s) => s.activeProfile);
-  const setProfile = useDemoStore((s) => s.setProfile);
 
   return (
     <div className="flex w-full flex-col gap-1.5" role="group" aria-label="Shopper profile">
@@ -312,7 +318,7 @@ function SidebarProfileCards({ light }: { light: boolean }) {
           <button
             key={id}
             type="button"
-            onClick={() => setProfile(id)}
+            onClick={() => onSelectProfile(id)}
             className={cn(
               "flex w-full flex-row items-center gap-2.5 px-2.5 py-2 text-left transition",
               sidebarRailSurfaceClass(active, light),
@@ -358,15 +364,27 @@ export function ProfileSwitcher({
   topBarStripCollapsed?: boolean;
 }) {
   const t = useT();
+  const router = useRouter();
+  const pathname = usePathname();
   const activeProfile = useDemoStore((s) => s.activeProfile);
-  const setProfile = useDemoStore((s) => s.setProfile);
+  const switchProfileFromSelector = useDemoStore((s) => s.switchProfileFromSelector);
   const light = useDemoStore((s) => s.colorMode === "light");
   const requestProfileClusterExpand = useDemoStore((s) => s.requestProfileClusterExpand);
+
+  const goToProfileHome = useCallback(
+    (id: ShopperProfileId) => {
+      switchProfileFromSelector(id);
+      if (pathname !== "/") {
+        router.push("/");
+      }
+    },
+    [pathname, router, switchProfileFromSelector],
+  );
 
   if (variant === "sidebar") {
     return (
       <div className={className}>
-        <SidebarProfileCards light={light} />
+        <SidebarProfileCards light={light} onSelectProfile={goToProfileHome} />
       </div>
     );
   }
@@ -378,7 +396,7 @@ export function ProfileSwitcher({
           <button
             key={id}
             type="button"
-            onClick={() => setProfile(id)}
+            onClick={() => goToProfileHome(id)}
             className={cn(
               light
                 ? "flex h-10 items-center justify-center rounded-lg border border-slate-200/90 bg-white text-[14px] font-medium tracking-tight shadow-sm transition hover:bg-slate-50 sm:text-[15px]"
@@ -445,7 +463,7 @@ export function ProfileSwitcher({
                 aria-pressed={active}
                 onClick={() => {
                   if (id !== activeProfile) {
-                    setProfile(id);
+                    goToProfileHome(id);
                     requestProfileClusterExpand();
                   }
                 }}
@@ -481,7 +499,7 @@ export function ProfileSwitcher({
         <button
           key={id}
           type="button"
-          onClick={() => setProfile(id)}
+          onClick={() => goToProfileHome(id)}
           className={cn(
             btnClass,
             activeProfile === id
