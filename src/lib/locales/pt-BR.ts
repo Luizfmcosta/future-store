@@ -1,6 +1,6 @@
 /** Portuguese (pt-BR) UI bundle — keys mirror `enMessages`. */
 export const ptMessages = {
-    metaTitle: "Future Store — vitrine com IA em primeiro lugar",
+    metaTitle: "Future Store — frente de loja AI-first",
     metaDescription:
       "Veja como a IA transforma experiência do cliente, monetização e operações em uma nova era do comércio.",
     common: {

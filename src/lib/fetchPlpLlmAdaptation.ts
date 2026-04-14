@@ -12,14 +12,19 @@ export async function fetchPlpLlmAdaptation(args: {
   profile: ShopperProfileId;
   signal?: AbortSignal;
 }): Promise<{ skipped: true } | ({ skipped: false } & PlpLlmAdaptationPayload)> {
-  const res = await fetch("/api/plp-adapt", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    /** Same-origin cookie for Vercel Deployment Protection (password gate). */
-    credentials: "include",
-    body: JSON.stringify({ query: args.query, profile: args.profile }),
-    signal: args.signal,
-  });
+  let res: Response;
+  try {
+    res = await fetch("/api/plp-adapt", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      /** Same-origin cookie for Vercel Deployment Protection (password gate). */
+      credentials: "include",
+      body: JSON.stringify({ query: args.query, profile: args.profile }),
+      signal: args.signal,
+    });
+  } catch {
+    return { skipped: true };
+  }
   if (!res.ok) return { skipped: true };
   let data: unknown;
   try {

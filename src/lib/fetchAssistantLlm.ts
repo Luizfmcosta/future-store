@@ -19,20 +19,26 @@ export async function fetchAssistantLlmReply(args: {
   /** When `pdpComparison`, the API uses a comparison-style system prompt for PDP assistant. */
   responseStyle?: "pdpComparison";
 }): Promise<AssistantLlmResult> {
-  const res = await fetch("/api/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    /** Required when the site uses Vercel Deployment Protection (password) so `/api/chat` gets the session cookie. */
-    credentials: "include",
-    body: JSON.stringify({
-      message: args.message,
-      profile: args.profile,
-      pageContext: args.pageContext,
-      history: args.history.slice(-12),
-      ...(args.responseStyle ? { responseStyle: args.responseStyle } : {}),
-    }),
-    signal: args.signal,
-  });
+  let res: Response;
+  try {
+    res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      /** Required when the site uses Vercel Deployment Protection (password) so `/api/chat` gets the session cookie. */
+      credentials: "include",
+      body: JSON.stringify({
+        message: args.message,
+        profile: args.profile,
+        pageContext: args.pageContext,
+        history: args.history.slice(-12),
+        ...(args.responseStyle ? { responseStyle: args.responseStyle } : {}),
+      }),
+      signal: args.signal,
+    });
+  } catch {
+    /** Offline / DNS / CORS — callers use `assistantReplyForQuery` as narrative fallback. */
+    return { reply: null, error: "network" };
+  }
   let data: { reply?: string | null; skipped?: boolean; error?: string };
   try {
     data = (await res.json()) as { reply?: string | null; skipped?: boolean; error?: string };

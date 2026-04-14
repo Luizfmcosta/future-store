@@ -6,6 +6,7 @@
     "dev": "next dev --hostname localhost",
     "dev:turbo": "next dev --hostname localhost --turbo",
     "build": "next build",
+    "postbuild": "node scripts/generate-precache-manifest.mjs",
     "start": "next start",
     "lint": "eslint",
     "generate:studio": "node scripts/generate-studio-svgs.mjs"
