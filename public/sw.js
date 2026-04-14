@@ -5,16 +5,37 @@
  */
 const CACHE = "future-store-offline-v1";
 const PRECACHE_CONCURRENCY = 8;
-/** Precache entries may not match runtime requests when query or Vary differs. */
-const CACHE_MATCH_OPTS = { ignoreSearch: true, ignoreVary: true };
+/**
+ * Precache / static assets: ignore query + Vary (chunk URLs, etc.).
+ * Never use `ignoreSearch` for HTML navigations — same pathname can cache both full HTML (precache)
+ * and `?_rsc=` Flight payloads; matching with ignoreSearch can return Flight as the document.
+ */
+const CACHE_MATCH_LOOSE = { ignoreSearch: true, ignoreVary: true };
+const CACHE_MATCH_NAV = { ignoreVary: true };
 
 async function cacheMatchLoose(cache, request) {
-  let hit = await cache.match(request, CACHE_MATCH_OPTS);
+  let hit = await cache.match(request, CACHE_MATCH_LOOSE);
   if (hit) return hit;
   try {
     const u = new URL(request.url);
     if (u.origin === self.location.origin) {
-      hit = await cache.match(u.origin + u.pathname, CACHE_MATCH_OPTS);
+      hit = await cache.match(u.origin + u.pathname, CACHE_MATCH_LOOSE);
+      if (hit) return hit;
+    }
+  } catch {
+    /* ignore */
+  }
+  return undefined;
+}
+
+/** Same-pathname only; query string must match so `/page` does not pick `/page?_rsc=…` Flight. */
+async function cacheMatchNavigateOrDocument(cache, request) {
+  let hit = await cache.match(request, CACHE_MATCH_NAV);
+  if (hit) return hit;
+  try {
+    const u = new URL(request.url);
+    if (u.origin === self.location.origin) {
+      hit = await cache.match(u.origin + u.pathname, CACHE_MATCH_NAV);
       if (hit) return hit;
     }
   } catch {
@@ -180,9 +201,9 @@ async function networkFirst(request) {
     await putCache(request, res);
     return res;
   } catch {
-    const hit = await cacheMatchLoose(cache, request);
+    const hit = await cacheMatchNavigateOrDocument(cache, request);
     if (hit) return hit;
-    const root = await cacheMatchLoose(cache, new Request(self.location.origin + "/"));
+    const root = await cacheMatchNavigateOrDocument(cache, new Request(self.location.origin + "/"));
     if (root) return root;
     return new Response("Offline", { status: 503, statusText: "Offline" });
   }
