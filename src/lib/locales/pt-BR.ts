@@ -249,6 +249,10 @@ export const ptMessages = {
       precacheTooltipAuditPartial: "Cache offline: {cached}/{total} na loja",
       precacheTooltipNoManifest: "Cache offline: sem manifest (faça build)",
       precacheTooltipError: "Cache offline: estado indisponível",
+      assistantStatusOn: "Chat IA: ativo (chaves no servidor).",
+      assistantStatusOff: "Chat IA: desligado — só respostas estilo catálogo.",
+      assistantStatusOffline: "Chat IA: indisponível offline.",
+      assistantStatusUnknown: "Chat IA: estado desconhecido.",
       hardResetReloadHint:
         "Também remove service worker, Cache Storage, storages, IndexedDB e cookies (HttpOnly não dá para apagar por JS).",
       hardResetReloadCta: "Limpar tudo deste site e recarregar",
@@ -474,12 +478,6 @@ export const ptMessages = {
       topMatches: "Principais correspondências",
       followUpHeading: "Continuar",
       sourcesLabel: "Fontes",
-      /** Shown above catalog fallback when the server has no LLM API key. */
-      llmNeedsKey:
-        "O assistente de IA não está configurado neste deploy (falta GEMINI_API_KEY ou OPENAI_API_KEY no servidor). Na Vercel: Projeto → Settings → Environment Variables → adicione a chave em Production (e Preview se precisar) → Redeploy. Mostrando texto do catálogo abaixo.",
-      /** Shown when Gemini/OpenAI fails or returns empty text. */
-      llmError:
-        "Não foi possível contatar o modelo de IA (veja logs da Vercel, cota da API ou redeploy após mudar env). Mostrando texto do catálogo abaixo.",
     },
     pdp: {
       ask: "Perguntar",

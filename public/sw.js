@@ -222,6 +222,12 @@ function offlineApiResponse(pathname) {
       headers: { "Content-Type": "application/json" },
     });
   }
+  if (pathname === "/api/assistant-status" || pathname.startsWith("/api/assistant-status")) {
+    return new Response(JSON.stringify({ offline: true }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
   return new Response(JSON.stringify({ error: "offline" }), {
     status: 503,
     headers: { "Content-Type": "application/json" },

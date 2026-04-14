@@ -203,10 +203,8 @@ export function SearchAiPanel({
           /* keep fallback */
         } else if (reply) {
           assistantText = reply;
-        } else if (skipped) {
-          assistantText = `${t("searchAiPanel.llmNeedsKey")}\n\n${fallback.text}`;
-        } else if (error) {
-          assistantText = `${t("searchAiPanel.llmError")}\n\n${fallback.text}`;
+        } else if (skipped || error) {
+          assistantText = fallback.text;
         }
       } catch {
         /* demo: offline / API error → catalog narrative */
@@ -282,10 +280,8 @@ export function SearchAiPanel({
           /* keep fallback */
         } else if (reply) {
           assistantText = reply;
-        } else if (skipped) {
-          assistantText = `${t("searchAiPanel.llmNeedsKey")}\n\n${fallback.text}`;
-        } else if (error) {
-          assistantText = `${t("searchAiPanel.llmError")}\n\n${fallback.text}`;
+        } else if (skipped || error) {
+          assistantText = fallback.text;
         }
       } catch {
         /* fallback narrative */

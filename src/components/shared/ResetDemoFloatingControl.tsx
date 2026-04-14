@@ -19,6 +19,37 @@ export function ResetDemoFloatingControl() {
   const precacheState = usePrecacheStatus();
   const precacheTip = useMemo(() => formatPrecacheTooltip(precacheState, t), [precacheState, t]);
   const [hardResetBusy, setHardResetBusy] = useState(false);
+  const [assistantStatusLine, setAssistantStatusLine] = useState<string | null>(null);
+
+  const refreshAssistantStatus = useCallback(async () => {
+    if (typeof navigator !== "undefined" && !navigator.onLine) {
+      setAssistantStatusLine(t("homeWelcome.assistantStatusOffline"));
+      return;
+    }
+    try {
+      const r = await fetch("/api/assistant-status", { credentials: "include" });
+      let data: { configured?: boolean; offline?: boolean };
+      try {
+        data = (await r.json()) as { configured?: boolean; offline?: boolean };
+      } catch {
+        setAssistantStatusLine(t("homeWelcome.assistantStatusUnknown"));
+        return;
+      }
+      if (data.offline === true) {
+        setAssistantStatusLine(t("homeWelcome.assistantStatusOffline"));
+        return;
+      }
+      if (r.ok && typeof data.configured === "boolean") {
+        setAssistantStatusLine(
+          data.configured ? t("homeWelcome.assistantStatusOn") : t("homeWelcome.assistantStatusOff"),
+        );
+        return;
+      }
+      setAssistantStatusLine(t("homeWelcome.assistantStatusUnknown"));
+    } catch {
+      setAssistantStatusLine(t("homeWelcome.assistantStatusUnknown"));
+    }
+  }, [t]);
 
   const handleHardReset = useCallback(async () => {
     if (hardResetBusy) return;
@@ -48,6 +79,7 @@ export function ResetDemoFloatingControl() {
               onPointerEnter={(e) => {
                 triggerProps.onPointerEnter?.(e);
                 requestPrecacheAuditFromSw();
+                void refreshAssistantStatus();
               }}
               onClick={(e) => {
                 triggerProps.onClick?.(e);
@@ -72,6 +104,11 @@ export function ResetDemoFloatingControl() {
         >
           <div className="pointer-events-auto flex flex-col gap-2">
             <p className="text-[10px] font-normal leading-snug tracking-tight text-zinc-400">{precacheTip}</p>
+            {assistantStatusLine ? (
+              <p className="text-[10px] font-normal leading-snug tracking-tight text-zinc-400">
+                {assistantStatusLine}
+              </p>
+            ) : null}
             <p className="text-[9px] leading-snug text-zinc-500">{t("homeWelcome.hardResetReloadHint")}</p>
             <button
               type="button"

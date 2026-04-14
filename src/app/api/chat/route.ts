@@ -1,4 +1,5 @@
 import { formatCatalogForChatLlm } from "@/lib/server/catalogOverviewForLlm";
+import { isChatLlmConfigured } from "@/lib/server/chatLlmConfigured";
 import { geminiModelCandidates, GEMINI_DEFAULT_MODEL } from "@/lib/server/geminiModels";
 import { formatPromptPageContextForLlm } from "@/lib/promptPageContext";
 import type { PromptSubmitPageContext, ShopperProfileId } from "@/types";
@@ -280,12 +281,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "invalid_response_style", reply: null }, { status: 400 });
   }
 
-  const geminiKey = process.env.GEMINI_API_KEY?.trim();
-  const openAiKey = process.env.OPENAI_API_KEY?.trim();
-
-  if (!geminiKey && !openAiKey) {
+  if (!isChatLlmConfigured()) {
     return NextResponse.json({ reply: null, skipped: true }, { status: 200 });
   }
+
+  const geminiKey = process.env.GEMINI_API_KEY?.trim();
+  const openAiKey = process.env.OPENAI_API_KEY?.trim();
 
   const chatMessages = buildMessages(b.profile, pageContext, history, message, responseStyle);
 

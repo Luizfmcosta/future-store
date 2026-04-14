@@ -250,6 +250,10 @@ export const enMessages = {
       precacheTooltipAuditPartial: "Offline cache: {cached}/{total} in store",
       precacheTooltipNoManifest: "Offline cache: no manifest (run build)",
       precacheTooltipError: "Offline cache: status unavailable",
+      assistantStatusOn: "Chat AI: enabled (server keys).",
+      assistantStatusOff: "Chat AI: off — catalog-style replies only.",
+      assistantStatusOffline: "Chat AI: unavailable offline.",
+      assistantStatusUnknown: "Chat AI: status unknown.",
       hardResetReloadHint:
         "Also clears service worker, Cache Storage, local/session storage, IndexedDB, and cookies (HttpOnly excluded).",
       hardResetReloadCta: "Clear all site data & reload",
@@ -475,12 +479,6 @@ export const enMessages = {
       topMatches: "Top matches",
       followUpHeading: "Follow up",
       sourcesLabel: "Sources",
-      /** Shown above catalog fallback when the server has no LLM API key. */
-      llmNeedsKey:
-        "AI assistant isn’t configured for this deployment (missing GEMINI_API_KEY or OPENAI_API_KEY on the server). In Vercel: Project → Settings → Environment Variables → add the key for Production (and Preview if needed) → Redeploy. Showing catalog copy below.",
-      /** Shown when Gemini/OpenAI fails or returns empty text. */
-      llmError:
-        "We couldn’t reach the AI model (check Vercel deployment logs, API quota, or redeploy after env changes). Showing catalog copy below.",
     },
     pdp: {
       ask: "Ask",

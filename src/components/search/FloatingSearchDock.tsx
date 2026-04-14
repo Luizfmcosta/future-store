@@ -17,14 +17,28 @@ export function FloatingSearchDock() {
   const setQuery = useDemoStore((s) => s.setQuery);
   const clearPromptProductRefs = useDemoStore((s) => s.clearPromptProductRefs);
   const prevPathnameRef = useRef<string | null>(null);
+  /** PDP sets chips in `ProductPage` after navigation; clearing on every pathname (ancestor effect order) wiped them. */
+  const prevPathnameForBadgesRef = useRef<string | null>(null);
 
   const hideFloatingPill = useMemo(
     () => pathname === "/search" && searchParams.get("view") === "ai",
     [pathname, searchParams],
   );
 
-  /** Context badges are page-scoped — clear when the route changes (any page). */
+  /**
+   * Context badges are page-scoped — clear when leaving PDP/PLP-style routes, but not when entering `/product/*`
+   * (child layout adds the current SKU chip after this component’s effects run).
+   */
   useEffect(() => {
+    const prev = prevPathnameForBadgesRef.current;
+    prevPathnameForBadgesRef.current = pathname;
+    if (prev === null) {
+      if (!pathname.startsWith("/product/")) {
+        clearPromptProductRefs();
+      }
+      return;
+    }
+    if (pathname.startsWith("/product/")) return;
     clearPromptProductRefs();
   }, [pathname, clearPromptProductRefs]);
 
