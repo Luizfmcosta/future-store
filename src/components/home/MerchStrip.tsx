@@ -76,7 +76,7 @@ export function MerchStrip() {
   return (
     <section
       className={cn(
-        "@container/merch flex w-full min-w-0 flex-col bg-white pb-44 sm:pb-48",
+        "@container/merch flex w-full min-w-0 flex-col bg-white pb-10 sm:pb-12",
         ui.home.whiteSectionOnDarkCanvas,
       )}
     >

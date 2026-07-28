@@ -19,12 +19,15 @@ import { useMemo, useState } from "react";
 export function PdpMediaGallery({
   product,
   tintHex,
+  tintBlend = "hue",
   selectedColorKey,
   onSelectedColorKeyChange,
 }: {
   product: Product;
   /** Selected color swatch — blended over the hero for a finish preview */
   tintHex?: string;
+  /** Blend mode for the selected finish (per-option; default hue) */
+  tintBlend?: "hue" | "multiply" | "color";
   /** Required when `colorOptions.length >= 2` — keeps thumbs in sync with swatches */
   selectedColorKey?: string;
   onSelectedColorKeyChange?: (labelKey: string) => void;
@@ -54,7 +57,7 @@ export function PdpMediaGallery({
         <figure className="relative w-full overflow-hidden rounded-2xl bg-[#f5f5f5] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)]">
           <div className="relative aspect-square w-full">
             <div className="absolute inset-0 flex items-center justify-center p-6 sm:p-10">
-              {/* `isolate` keeps `mix-blend-mode: hue` scoped to photo + tint (see ProductColorTintOverlay). */}
+              {/* `isolate` keeps mix-blend-mode scoped to photo + tint (see ProductColorTintOverlay). */}
               <span className="relative isolate inline-block max-h-full max-w-full">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -65,7 +68,14 @@ export function PdpMediaGallery({
                   decoding="async"
                   draggable={false}
                 />
-                {tintHex ? <ProductColorTintOverlay hex={tintHex} maskImageSrc={heroSrc} maskFit="contain" /> : null}
+                {tintHex ? (
+                  <ProductColorTintOverlay
+                    hex={tintHex}
+                    maskImageSrc={heroSrc}
+                    maskFit="contain"
+                    blendMode={tintBlend}
+                  />
+                ) : null}
               </span>
             </div>
           </div>
@@ -83,6 +93,7 @@ export function PdpMediaGallery({
           <div className="flex shrink-0 flex-nowrap gap-2">
             {colorOptions.map((opt) => {
               const active = opt.labelKey === selectedColorKey;
+              const thumbTint = opt.matchesPhoto ? undefined : opt.swatchHex;
               return (
                 <button
                   key={opt.labelKey}
@@ -110,11 +121,14 @@ export function PdpMediaGallery({
                         decoding="async"
                         draggable={false}
                       />
-                      <ProductColorTintOverlay
-                        hex={opt.swatchHex}
-                        maskImageSrc={product.heroImage}
-                        maskFit="contain"
-                      />
+                      {thumbTint ? (
+                        <ProductColorTintOverlay
+                          hex={thumbTint}
+                          maskImageSrc={product.heroImage}
+                          maskFit="contain"
+                          blendMode={opt.tintBlend ?? "hue"}
+                        />
+                      ) : null}
                     </span>
                   </span>
                 </button>

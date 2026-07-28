@@ -128,6 +128,8 @@ export const ptMessages = {
       title: "Veja como essas caixas se comportam na prática",
       subline: "Setups reais, uso real — para você saber o que esperar.",
       embedTitle: "Vídeo no TikTok",
+      /** Facade CTA — embed loads only after tap (avoids TikTok cookie walls blanking the block). */
+      loadEmbed: "Toque para assistir",
       offlinePlaceholder: "A prévia do vídeo precisa de conexão com a internet.",
     },
     spotlight: {
@@ -522,6 +524,8 @@ export const ptMessages = {
         lunarWhite: "Branco lunar",
         graphite: "Grafite",
         olive: "Oliva",
+        naturalOak: "Carvalho natural",
+        walnut: "Nogueira",
         titanGray: "Cinza titã",
         silverMist: "Prata neblina",
         gunmetal: "Gunmetal",

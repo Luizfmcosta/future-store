@@ -29,6 +29,7 @@ export function AdaptiveHero() {
     if (profile === "ricardo") return;
     const el = videoRef.current;
     if (!el) return;
+    el.muted = true;
     el.play().catch(() => {
       /* muted + playsInline usually allows autoplay; ignore if blocked */
     });
@@ -46,18 +47,23 @@ export function AdaptiveHero() {
           storefrontFrameHeightClass,
         )}
       >
-        <video
-          ref={videoRef}
-          key={STOREFRONT_HERO_VIDEO_SRC}
-          className="absolute inset-0 h-full w-full object-cover opacity-90"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-        >
-          <source src={STOREFRONT_HERO_VIDEO_SRC} type="video/mp4" />
-        </video>
+        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+          {/* Shift crop up via wrapper sizing — avoid CSS transform on <video> (can freeze playback). */}
+          <div className="absolute inset-x-0 -top-[14%] h-[120%] w-full">
+            <video
+              ref={videoRef}
+              key={STOREFRONT_HERO_VIDEO_SRC}
+              className="h-full w-full object-cover opacity-90"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+            >
+              <source src={STOREFRONT_HERO_VIDEO_SRC} type="video/mp4" />
+            </video>
+          </div>
+        </div>
 
         <div
           className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-[#000]"
@@ -90,13 +96,13 @@ export function AdaptiveHero() {
               className="mt-2 w-full min-w-0 text-center font-medium tracking-[-0.02em] text-white @min-[480px]:leading-[0.94]"
             >
               {/*
-                Narrow: lower floor + 10cqi cap (~2.4rem) so phone frames read smaller; @480+ scales toward 52pt.
+                Narrow: lower floor + 10cqi cap (~2.4rem) so phone frames read smaller; @480+ scales toward 44pt.
               */}
-              <span className="block text-balance text-center text-[clamp(1.62rem,min(10cqi,2.4rem),2.4rem)] leading-[1.12] @min-[480px]:text-[clamp(2.1rem,min(14cqi,52pt),52pt)] @min-[480px]:leading-[0.94]">
+              <span className="block text-balance text-center text-[clamp(1.62rem,min(10cqi,2.4rem),2.4rem)] leading-[1.12] @min-[480px]:text-[clamp(1.95rem,min(12cqi,44pt),44pt)] @min-[480px]:leading-[0.94]">
                 {copy.titleLine1}
               </span>
               {copy.titleLine2 ? (
-                <span className="block text-balance py-1 text-center text-[clamp(1.52rem,6.5cqi,2.28rem)] leading-[1.12] text-white/70 @min-[480px]:py-[6px] @min-[480px]:text-[clamp(2rem,7.2cqi,3.25rem)] @min-[480px]:leading-[0.94]">
+                <span className="block text-balance py-1 text-center text-[clamp(1.52rem,6.5cqi,2.28rem)] leading-[1.12] text-white/70 @min-[480px]:py-[6px] @min-[480px]:text-[clamp(1.85rem,6.5cqi,2.75rem)] @min-[480px]:leading-[0.94]">
                   {copy.titleLine2}
                 </span>
               ) : null}

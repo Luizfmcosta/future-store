@@ -1,12 +1,14 @@
 "use client";
 
 import { EyebrowPill } from "@/components/shared/EyebrowPill";
-import { RICARDO_TIKTOK_CLIPS } from "@/data/ricardoTiktokClips";
+import { RICARDO_TIKTOK_CLIPS, type RicardoTikTokClip } from "@/data/ricardoTiktokClips";
 import { useOnline } from "@/lib/hooks/useOnline";
 import { useT } from "@/lib/useT";
 import { ui } from "@/lib/ui-tokens";
 import { cn } from "@/lib/utils";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
+import { Play } from "lucide-react";
+import Image from "next/image";
 import { useLayoutEffect, useRef, useState } from "react";
 
 const ease = [0.76, 0, 0.24, 1] as const;
@@ -19,25 +21,29 @@ const EMBED_W = 325;
 const EMBED_H = 708;
 
 /**
- * Fills the reserved aspect box: native embed is 325×708; scale tracks shell width (cqw inside
- * `transform` is unreliable across browsers / pipelines, so we measure with ResizeObserver).
+ * Click-to-load facade: TikTok’s embed iframe often paints a full-bleed cookie consent
+ * wall (especially with en-US Accept-Language), which reads as broken/blank blocks on
+ * Ricardo’s home. No third-party request until the shopper opts in.
  */
 function TikTokFrame({
-  videoId,
+  clip,
   title,
+  loadLabel,
   offlineNotice,
 }: {
-  videoId: string;
+  clip: RicardoTikTokClip;
   title: string;
+  loadLabel: string;
   /** When set, skip cross-origin embed (not available offline with this SW). */
   offlineNotice?: string;
 }) {
-  const src = `https://www.tiktok.com/embed/v2/${videoId}`;
+  const src = `https://www.tiktok.com/embed/v2/${clip.videoId}`;
   const shellRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
+  const [active, setActive] = useState(false);
 
   useLayoutEffect(() => {
-    if (offlineNotice) return;
+    if (offlineNotice || !active) return;
     const el = shellRef.current;
     if (!el) return;
     const update = () => {
@@ -48,7 +54,7 @@ function TikTokFrame({
     const ro = new ResizeObserver(update);
     ro.observe(el);
     return () => ro.disconnect();
-  }, [offlineNotice]);
+  }, [offlineNotice, active]);
 
   if (offlineNotice) {
     return (
@@ -62,6 +68,46 @@ function TikTokFrame({
           {offlineNotice}
         </p>
       </div>
+    );
+  }
+
+  if (!active) {
+    return (
+      <button
+        type="button"
+        onClick={() => setActive(true)}
+        className={cn(
+          "group relative flex w-full min-w-0 flex-col items-center justify-center overflow-hidden rounded-xl bg-[#0f0f0f] text-left",
+          "[aspect-ratio:325/708]",
+          ui.home.focusRing,
+        )}
+        aria-label={`${loadLabel} — ${clip.creatorName}`}
+      >
+        <span
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.1),transparent_58%)]"
+          aria-hidden
+        />
+        <span className="relative z-[1] flex flex-col items-center gap-4 px-4">
+          <span className="flex flex-col items-center gap-2">
+            <span className="relative size-12 overflow-hidden rounded-full ring-1 ring-white/25 sm:size-14">
+              <Image
+                src={clip.creatorLogoSrc}
+                alt=""
+                fill
+                className="object-cover object-center"
+                sizes="56px"
+                unoptimized
+              />
+            </span>
+            <span className="max-w-[14ch] truncate text-center text-[13px] font-medium leading-tight text-white/90 sm:text-[14px]">
+              {clip.creatorName}
+            </span>
+          </span>
+          <span className="flex size-9 items-center justify-center rounded-full bg-white/30 text-white transition-transform duration-200 group-hover:scale-105 sm:size-10">
+            <Play className="size-3.5 fill-current sm:size-4" aria-hidden />
+          </span>
+        </span>
+      </button>
     );
   }
 
@@ -100,16 +146,13 @@ function TikTokFrame({
 export function RicardoTikTokCarousel() {
   const t = useT();
   const online = useOnline();
-  const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.08 });
-  const sectionVisible = !online || inView;
   const offlineEmbedNotice = online ? undefined : t("ricardoTiktok.offlinePlaceholder");
 
   return (
-    <section ref={ref} className={cn("bg-white", ui.home.whiteSectionOnDarkCanvas)}>
+    <section className={cn("bg-white", ui.home.whiteSectionOnDarkCanvas)}>
       <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={sectionVisible ? { opacity: 1, y: 0 } : {}}
+        initial={false}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.55, ease }}
         className="mx-auto max-w-[1200px] min-w-0 px-5 pb-10 pt-9 sm:px-6 sm:pb-12 sm:pt-10"
       >
@@ -126,8 +169,9 @@ export function RicardoTikTokCarousel() {
             {RICARDO_TIKTOK_CLIPS.map((clip) => (
               <article key={clip.videoId} className="min-w-0 flex-1 basis-0 overflow-hidden">
                 <TikTokFrame
-                  videoId={clip.videoId}
+                  clip={clip}
                   title={t("ricardoTiktok.embedTitle")}
+                  loadLabel={t("ricardoTiktok.loadEmbed")}
                   offlineNotice={offlineEmbedNotice}
                 />
               </article>

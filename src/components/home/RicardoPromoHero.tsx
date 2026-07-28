@@ -77,7 +77,7 @@ export function RicardoPromoHero() {
             >
               {t("hero.ricardoPromo.kicker")}
             </motion.p>
-            {/* Same scale as `AdaptiveHero` (Marina) — clamp up to 52pt via container query, not a fixed 42px one-line span. */}
+            {/* Same scale as `AdaptiveHero` (Marina) — clamp up to 44pt via container query. */}
             <motion.h1
               variants={child}
               className="mt-2 w-full min-w-0 text-center font-medium tracking-[-0.02em] text-white @min-[480px]:leading-[0.94]"
@@ -86,7 +86,7 @@ export function RicardoPromoHero() {
                 <span
                   key={i}
                   className={cn(
-                    "block max-w-full hyphens-none text-center whitespace-nowrap text-[clamp(1.62rem,min(10cqi,2.4rem),2.4rem)] leading-[1.12] @min-[480px]:text-[clamp(2.1rem,min(14cqi,52pt),52pt)] @min-[480px]:leading-[0.94]",
+                    "block max-w-full hyphens-none text-center whitespace-nowrap text-[clamp(1.62rem,min(10cqi,2.4rem),2.4rem)] leading-[1.12] @min-[480px]:text-[clamp(1.95rem,min(12cqi,44pt),44pt)] @min-[480px]:leading-[0.94]",
                     headlineLines.length > 1 && i > 0 && "mt-[0.28em]",
                     headlineLines.length > 1 && "whitespace-normal text-balance",
                   )}

@@ -17,10 +17,19 @@ export type ProductCategory = "tv" | "soundbar" | "speaker" | "accessory";
 
 export type DisplayTechnology = "OLED" | "QLED" | "LED";
 
+export type ProductColorTintBlend = "hue" | "multiply" | "color";
+
 export type ProductColorOption = {
   /** Key under `pdp.colors.{labelKey}` in messages */
   labelKey: string;
   swatchHex: string;
+  /** Finish matches the hero photo — no tint overlay */
+  matchesPhoto?: boolean;
+  /**
+   * How the swatch is blended onto product imagery.
+   * `multiply` better matches dark finishes on light wood / pale cabinets; default `hue`.
+   */
+  tintBlend?: ProductColorTintBlend;
 };
 
 export type ProductReviewRating = {

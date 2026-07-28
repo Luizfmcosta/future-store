@@ -14,11 +14,13 @@ export function PdpFirstSection({
   selectedColorKey,
   onSelectedColorKeyChange,
   imageTintHex,
+  imageTintBlend,
 }: {
   product: Product;
   selectedColorKey: string;
   onSelectedColorKeyChange: (labelKey: string) => void;
   imageTintHex?: string;
+  imageTintBlend?: "hue" | "multiply" | "color";
 }) {
   return (
     <section className="w-full min-w-0" aria-label="Product details">
@@ -36,6 +38,7 @@ export function PdpFirstSection({
             <PdpMediaGallery
               product={product}
               tintHex={imageTintHex}
+              tintBlend={imageTintBlend}
               selectedColorKey={selectedColorKey}
               onSelectedColorKeyChange={onSelectedColorKeyChange}
             />

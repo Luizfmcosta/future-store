@@ -76,10 +76,13 @@ export default function ProductPage() {
     return product.colorOptions[0]?.labelKey ?? "";
   }, [product, colorChoice]);
 
-  const imageTintHex = useMemo(
-    () => product?.colorOptions?.find((o) => o.labelKey === selectedColorKey)?.swatchHex,
+  const selectedColorOpt = useMemo(
+    () => product?.colorOptions?.find((o) => o.labelKey === selectedColorKey),
     [product?.colorOptions, selectedColorKey],
   );
+
+  const imageTintHex = selectedColorOpt?.matchesPhoto ? undefined : selectedColorOpt?.swatchHex;
+  const imageTintBlend = selectedColorOpt?.tintBlend ?? "hue";
 
   if (!product) {
     return (
@@ -106,6 +109,7 @@ export default function ProductPage() {
           selectedColorKey={selectedColorKey}
           onSelectedColorKeyChange={setColorChoice}
           imageTintHex={imageTintHex}
+          imageTintBlend={imageTintBlend}
         />
 
         <PdpSection className="mt-6 border-t border-black/[0.06] sm:mt-10">

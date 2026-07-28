@@ -128,6 +128,8 @@ export const enMessages = {
       title: "See how these speakers actually perform",
       subline: "Real setups, real use — so you know what to expect.",
       embedTitle: "TikTok video",
+      /** Facade CTA — embed loads only after tap (avoids TikTok cookie walls blanking the block). */
+      loadEmbed: "Tap to watch",
       /** Shown when the device is offline (embed host cannot be cached by this app’s SW). */
       offlinePlaceholder: "Video preview needs an internet connection.",
     },
@@ -523,6 +525,8 @@ export const enMessages = {
         lunarWhite: "Lunar white",
         graphite: "Graphite",
         olive: "Olive",
+        naturalOak: "Natural oak",
+        walnut: "Walnut",
         titanGray: "Titan gray",
         silverMist: "Silver mist",
         gunmetal: "Gunmetal",
