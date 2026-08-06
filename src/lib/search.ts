@@ -77,5 +77,9 @@ export function getSearchResults(profile: ShopperProfileId, intent: SearchIntent
   const ranked = [...pool].sort(
     (a, b) => scoreAudioProduct(b, intent, profile) - scoreAudioProduct(a, intent, profile),
   );
-  return ranked;
+  /* Demo lead SKU — keep Horizon Three first in relevance ranking (AI cards + SERP). */
+  const pinId = "sp-era-300";
+  const pinned = ranked.find((p) => p.id === pinId);
+  if (!pinned) return ranked;
+  return [pinned, ...ranked.filter((p) => p.id !== pinId)];
 }
