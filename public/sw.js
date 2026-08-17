@@ -3,7 +3,8 @@
  * Offline-first: precaches build manifest (`precache-manifest.json`) on install, then
  * runtime caching. LLM: synthetic `/api/*` when network fails; app uses catalog fallbacks.
  */
-const CACHE = "future-store-offline-v1";
+/** Bump when cache semantics change (e.g. Range / media handling). */
+const CACHE = "future-store-offline-v2";
 const PRECACHE_CONCURRENCY = 8;
 /**
  * Precache / static assets: ignore query + Vary (chunk URLs, etc.).
@@ -173,15 +174,80 @@ function isStaticAssetPath(pathname) {
 }
 
 async function putCache(request, response) {
-  if (!response || !response.ok) return;
+  /** Never cache Range/partial responses — they poison `<video>` / media on reload. */
+  if (!response || !response.ok || response.status === 206) return;
+  if (request.headers.has("range")) return;
   const cache = await caches.open(CACHE);
   await cache.put(request, response.clone());
 }
 
-async function cacheFirst(request) {
+/**
+ * Parse `Range: bytes=start-end` (end optional). Returns null if unsatisfiable.
+ * @param {string} rangeHeader
+ * @param {number} size
+ * @returns {{ start: number, end: number } | null}
+ */
+function parseBytesRange(rangeHeader, size) {
+  const m = /^bytes=(\d+)-(\d*)$/i.exec(String(rangeHeader).trim());
+  if (!m || size <= 0) return null;
+  const start = Number(m[1]);
+  const end = m[2] === "" ? size - 1 : Number(m[2]);
+  if (!Number.isFinite(start) || !Number.isFinite(end)) return null;
+  if (start < 0 || end < start || start >= size) return null;
+  return { start, end: Math.min(end, size - 1) };
+}
+
+/**
+ * Serve a proper 206 from a full cached body. Returning a cached 200 for a Range
+ * request breaks HTMLMediaElement on Safari / iOS (Marina hero, etc.).
+ * @param {Request} request
+ * @returns {Promise<Response | undefined>}
+ */
+async function rangeResponseFromCache(request) {
   const cache = await caches.open(CACHE);
   const hit = await cacheMatchLoose(cache, request);
-  if (hit) return hit;
+  if (!hit || !hit.ok || hit.status === 206) return undefined;
+  const rangeHeader = request.headers.get("range");
+  if (!rangeHeader) return hit;
+  const buf = await hit.arrayBuffer();
+  const size = buf.byteLength;
+  const parsed = parseBytesRange(rangeHeader, size);
+  if (!parsed) {
+    return new Response(null, {
+      status: 416,
+      statusText: "Range Not Satisfiable",
+      headers: { "Content-Range": `bytes */${size}` },
+    });
+  }
+  const { start, end } = parsed;
+  const slice = buf.slice(start, end + 1);
+  const headers = new Headers();
+  const ct = hit.headers.get("Content-Type");
+  if (ct) headers.set("Content-Type", ct);
+  headers.set("Accept-Ranges", "bytes");
+  headers.set("Content-Length", String(slice.byteLength));
+  headers.set("Content-Range", `bytes ${start}-${end}/${size}`);
+  return new Response(slice, { status: 206, statusText: "Partial Content", headers });
+}
+
+async function cacheFirst(request) {
+  /** Byte-range: never return a full cached 200 as-is (breaks hero / media video). */
+  if (request.headers.has("range")) {
+    try {
+      const fromCache = await rangeResponseFromCache(request);
+      if (fromCache) return fromCache;
+      return await fetch(request);
+    } catch {
+      return (
+        (await rangeResponseFromCache(request)) ||
+        new Response("Offline", { status: 503, statusText: "Offline" })
+      );
+    }
+  }
+
+  const cache = await caches.open(CACHE);
+  const hit = await cacheMatchLoose(cache, request);
+  if (hit && hit.status !== 206) return hit;
   try {
     const res = await fetch(request);
     await putCache(request, res);
