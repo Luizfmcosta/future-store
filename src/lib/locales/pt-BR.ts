@@ -86,6 +86,8 @@ export const ptMessages = {
       marinaBody:
         "Um único alto-falante pode preencher a sala com som amplo — enquanto a soundbar foca mais no áudio da TV. Veja o que combina com seu espaço.",
       marinaCta: "Ver comparação",
+      marinaResultsSeed:
+        "Compare Horizon Three com a soundbar Stage Compact e a Trail Max",
       ricardoEyebrow: "Mais opções",
       ricardoHeadline: "Explore toda a linha\nde caixas de som",
       ricardoBody:
@@ -367,6 +369,8 @@ export const ptMessages = {
       intentSummaryTitle: "Resumo da intenção",
       resultsFor: "Resultados para:",
       browseFallback: "Explorar catálogo",
+      /** Results H1 context when Ask chip + question are present. */
+      aboutProductLine: "Sobre {product}",
       /** PLP H1 when query normalizes to “cheap headphones” (see `IntentSummary`). */
       plpTitleCheapHeadphones: "Fones econômicos para você",
       filterIntentAria: "Abrir filtros",
@@ -397,9 +401,14 @@ export const ptMessages = {
       intentGeneralRoom: "Geral",
       bestMatchAiEyebrow: "Melhor opção para sua sala e orçamento",
       bestMatchSerpEyebrow: "Principal resultado",
+      bestMatchFocusedEyebrow: "Produto da sua pergunta",
       compareEyebrow: "Comparar",
       compareTitleMarina: "Três setups — escolha o trade-off",
       compareTitleRicardo: "Três opções — caminho mais rápido",
+      compareListingTitle: "Alternativas ao Horizon Three",
+      compareListingDek:
+        "Horizon Three preenche o cômodo. Stage Compact fica com a TV. Trail Max vai com você.",
+      compareMoreMatches: "Mais no catálogo",
       resultsAllMatches: "Todas as correspondências",
       refineGridButton: "Refinar",
       refineGridAria: "Refinar resultados da busca",
@@ -415,6 +424,18 @@ export const ptMessages = {
       compareFitMarinaBalanced: "Som equilibrado na sala",
       compareFitRicardoBudget: "Inteligente no orçamento",
       compareFitRicardoMid: "Meio popular",
+      compareFitNamedRoom: "Caixa de sala",
+      compareFitNamedTv: "Soundbar para TV",
+      compareFitNamedPortable: "Portátil",
+      compareNamedRoomPro1: "Música espacial que preenche a sala, sem barra",
+      compareNamedRoomPro2: "Uma caixa para salas abertas",
+      compareNamedRoomTradeoff: "Não é feita para diálogo na TV",
+      compareNamedTvPro1: "Diálogo mais claro sob a TV",
+      compareNamedTvPro2: "Cabe em consoles médios e quartos",
+      compareNamedTvTradeoff: "Música fica em segundo plano em relação à tela",
+      compareNamedPortablePro1: "Bateria para pátio e ir de cômodo a cômodo",
+      compareNamedPortablePro2: "Pronta para uso externo",
+      compareNamedPortableTradeoff: "Não é setup espacial nem home theater",
       learningSurroundTitle: "Surround vs estéreo",
       learningSurroundBody:
         "Um kit home theater adiciona canais traseiros; pares estéreo brilham com música num só ambiente.",
@@ -423,6 +444,10 @@ export const ptMessages = {
       learningPortableBody:
         "Trail Mini e Trail Max são feitos para levar; Horizon ancora a sala com mais presença.",
       learningPortableTag: "Guia rápido",
+      learningSetupsTitle: "Sala, TV ou levar com você",
+      learningSetupsBody:
+        "Uma caixa autônoma preenche um espaço. A soundbar é feita para diálogo na TV. A portátil troca um pouco de presença por bateria e resistência à intempérie.",
+      learningSetupsTag: "Guia rápido",
     },
     chatAssistant: {
       narrativeEmptyIntro: "Ainda não conseguimos ranquear caixas do catálogo para isso.",
@@ -439,6 +464,12 @@ export const ptMessages = {
       narrativeSortPriceDesc: "Ordenado pelo maior preço primeiro.",
       narrativeFooter:
         "Os chips de fonte citam esses padrões editoriais; os cards são escolhas Future Store alinhadas a eles.\n\nAbra um card para o PDP completo ou refine sua pergunta abaixo.",
+      narrativeInfoAskLine: "Você perguntou: “{preview}”",
+      narrativeInfoAboutLine: "Sobre {title}.",
+      narrativeInfoBody:
+        "{blurb}\n\nDo catálogo: {strengths}\n\nAbra a página do produto para specs completas, ou faça uma pergunta de acompanhamento abaixo.",
+      narrativeInfoBodyNoProduct:
+        "Aqui vai uma resposta objetiva com base no catálogo Future Store. Pergunte de novo se quiser opções, comparativos ou mais detalhes.",
       ctxBudget: "orçamento ~{amount}",
       ctxRoom: "{room}",
       ctxPriority: "{priority}",
@@ -469,6 +500,12 @@ export const ptMessages = {
       pdpComparisonPricier: "{amount} a mais que o que você está vendo",
       pdpComparisonSamePrice: "Mesma faixa de preço do que você está vendo",
       pdpComparisonNoAlts: "Sem outras correspondências no catálogo — refine (sala, orçamento ou formato).",
+      namedCompareIntro:
+        "Aqui estão {count} modelos da Future Store para comparar — jeitos diferentes de ouvir, não versões do mesmo setup.",
+      namedCompareAskLine: "Você perguntou: “{preview}”",
+      namedCompareBullet: "• {title} — {role}",
+      namedCompareFooter:
+        "Escolha pelo lugar em que você mais escuta: um cômodo, a TV, ou levar o som com você. Abra um card para o PDP completo, ou faça um follow-up abaixo.",
     },
     searchAiPanel: {
       reasoning: "Raciocínio",
@@ -478,8 +515,50 @@ export const ptMessages = {
       ariaMessage: "Mensagem do modo IA",
       sendAria: "Enviar mensagem",
       topMatches: "Principais correspondências",
+      comparedForYou: "Lado a lado",
+      /** Below Sources when the shopper attached a product via Ask / prompt chip. */
+      askProductHighlight: "Produto da sua pergunta",
       followUpHeading: "Continuar",
       sourcesLabel: "Fontes",
+      /** Contextual follow-up chips under the latest assistant reply (`getChatFollowUpSuggestions`). */
+      followUps: {
+        productFallback: "esta caixa",
+        trueplayHow: "Como rodar o Trueplay no {product}?",
+        trueplayRerun: "Quando vale refazer o Trueplay?",
+        trueplayMusicMovies: "O Trueplay ajuda mais em música ou filmes?",
+        trueplayWhich: "Quais caixas têm Trueplay?",
+        trueplayPlacement: "Melhores dicas de posicionamento para {product}",
+        spatialWorthIt: "Áudio espacial vale a pena só para música?",
+        spatialVsSoundbar: "Soundbar ou {product} para noites de TV?",
+        spatialVsStereo: "Como áudio espacial difere de um par estéreo?",
+        spatialRoom: "Qual tamanho de sala combina com {product}?",
+        portableBattery: "Quanto dura a bateria ao ar livre?",
+        portablePair: "Dá para fazer par estéreo com portáteis?",
+        portableVsRoom: "Caixa portátil ou de sala para o dia a dia?",
+        waterproofPatio: "Melhor opção à prova d’água para varanda?",
+        compareDiff: "Quais são as principais diferenças entre os dois?",
+        compareRoom: "Qual é melhor para uma sala de ~3 m?",
+        compareValue: "Qual tem o melhor custo-benefício agora?",
+        budgetUnder: "Quais são as opções mais fortes até R$ 3.000?",
+        budgetTradeoff: "O que eu abro mão em um preço menor?",
+        budgetInstallments: "Tem boas opções com parcelamento fácil?",
+        warrantyReturns: "Qual a garantia e o prazo de devolução?",
+        warrantyService: "Como funciona o suporte se algo falhar?",
+        cinemaSetup: "Soundbar + surrounds ou uma caixa flagship?",
+        cinemaDialogue: "Qual opção fica mais clara no diálogo?",
+        cinemaExpand: "Dá para expandir isso para home theater depois?",
+        bassStrongest: "Qual tem o grave mais forte nessa faixa?",
+        bassSub: "Preciso de um subwoofer com {product}?",
+        productVsHorizonOne: "Como {product} se compara ao Horizon One?",
+        productPairsWith: "O que combina bem com {product}?",
+        productWhoFor: "Para quem {product} é a melhor escolha?",
+        productAlternatives: "Mostrar alternativas próximas a {product}",
+        defaultCompareTop: "Comparar os dois primeiros para minha sala",
+        defaultMoviesMusic: "Melhor para filmes ou para música aqui?",
+        defaultBundles: "Tem bundles que combinam com esses?",
+        defaultBass: "Qual tem o grave mais forte?",
+        defaultWarranty: "Qual a garantia desses modelos?",
+      },
     },
     pdp: {
       ask: "Perguntar",

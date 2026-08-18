@@ -4,6 +4,14 @@ export type PromptProductRef = {
   label: string;
 };
 
+/** Split merged Ask prompts (`About: …\\n\\nquestion`) into product context + shopper ask. */
+export function splitAboutQuery(rawQuery: string): { aboutLabels: string; ask: string } {
+  const q = rawQuery.trim();
+  const m = q.match(/^About:\s*(.+?)(?:\n\n([\s\S]*))?$/i);
+  if (!m) return { aboutLabels: "", ask: q };
+  return { aboutLabels: (m[1] ?? "").trim(), ask: (m[2] ?? "").trim() };
+}
+
 /** Build the string used for intent parsing / assistant context while keeping the textarea as plain user text. */
 export function mergePromptRefsIntoQuery(text: string, refs: PromptProductRef[]): string {
   const t = text.trim();

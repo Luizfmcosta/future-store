@@ -86,6 +86,8 @@ export const enMessages = {
       marinaBody:
         "A single-speaker setup can deliver wide, room-filling sound — while a soundbar is more focused on TV audio. See which approach fits your space better.",
       marinaCta: "View comparison",
+      marinaResultsSeed:
+        "Compare Horizon Three with Stage Compact soundbar and Trail Max",
       ricardoEyebrow: "More options",
       ricardoHeadline: "Explore the full range\nof speakers",
       ricardoBody:
@@ -368,6 +370,8 @@ export const enMessages = {
       intentSummaryTitle: "Intent summary",
       resultsFor: "Results for:",
       browseFallback: "Browse catalog",
+      /** Results H1 context when Ask chip + question are present. */
+      aboutProductLine: "About {product}",
       /** PLP H1 when query normalizes to “cheap headphones” (see `IntentSummary`). */
       plpTitleCheapHeadphones: "Budget-friendly headphones for you",
       filterIntentAria: "Open filters",
@@ -398,9 +402,14 @@ export const enMessages = {
       intentGeneralRoom: "General",
       bestMatchAiEyebrow: "Best pick for your room and budget",
       bestMatchSerpEyebrow: "Top result",
+      bestMatchFocusedEyebrow: "Product you asked about",
       compareEyebrow: "Compare",
       compareTitleMarina: "Three setups — pick your tradeoff",
       compareTitleRicardo: "Three picks — fastest path",
+      compareListingTitle: "Horizon Three alternatives",
+      compareListingDek:
+        "Horizon Three fills a room. Stage Compact sits with the TV. Trail Max moves with you.",
+      compareMoreMatches: "More in the catalog",
       resultsAllMatches: "All matches",
       refineGridButton: "Refine",
       refineGridAria: "Refine search results",
@@ -416,6 +425,18 @@ export const enMessages = {
       compareFitMarinaBalanced: "Balanced room sound",
       compareFitRicardoBudget: "Budget-smart",
       compareFitRicardoMid: "Popular mid tier",
+      compareFitNamedRoom: "Room speaker",
+      compareFitNamedTv: "TV soundbar",
+      compareFitNamedPortable: "Portable",
+      compareNamedRoomPro1: "Spatial, room-filling music without a bar",
+      compareNamedRoomPro2: "One speaker for open living spaces",
+      compareNamedRoomTradeoff: "Not built for TV dialogue",
+      compareNamedTvPro1: "Clearer dialogue under the TV",
+      compareNamedTvPro2: "Fits mid-size consoles and bedrooms",
+      compareNamedTvTradeoff: "Music is secondary to the screen",
+      compareNamedPortablePro1: "Battery for patio and moving rooms",
+      compareNamedPortablePro2: "Weather-ready for outdoor use",
+      compareNamedPortableTradeoff: "Not a spatial or home-theater setup",
       learningSurroundTitle: "Surround vs stereo",
       learningSurroundBody:
         "A home theater set adds rear channels; stereo pairs shine for music in one room.",
@@ -424,6 +445,10 @@ export const enMessages = {
       learningPortableBody:
         "Trail Mini and Trail Max are built to move; Horizon models anchor a room with fuller output.",
       learningPortableTag: "Quick guide",
+      learningSetupsTitle: "Room, TV, or take it with you",
+      learningSetupsBody:
+        "A standalone speaker fills one space. A soundbar is built for dialogue on the TV. A portable trades some output for battery and weather resistance.",
+      learningSetupsTag: "Quick guide",
     },
     chatAssistant: {
       narrativeEmptyIntro: "We couldn’t rank speakers from the catalog for that yet.",
@@ -440,6 +465,12 @@ export const enMessages = {
       narrativeSortPriceDesc: "Sorted by highest price first.",
       narrativeFooter:
         "The source chips cite those editorial standards; the product cards are Future Store picks aligned with them.\n\nOpen a card for the full PDP, or refine your ask below.",
+      narrativeInfoAskLine: "You asked: “{preview}”",
+      narrativeInfoAboutLine: "About {title}.",
+      narrativeInfoBody:
+        "{blurb}\n\nFrom the catalog: {strengths}\n\nOpen the product page for full specs, or ask a follow-up below.",
+      narrativeInfoBodyNoProduct:
+        "Here’s a concise answer based on Future Store’s catalog. Ask a follow-up if you want picks, comparisons, or a deeper dive.",
       ctxBudget: "budget ~{amount}",
       ctxRoom: "{room}",
       ctxPriority: "{priority}",
@@ -470,6 +501,12 @@ export const enMessages = {
       pdpComparisonPricier: "{amount} more than what you’re viewing",
       pdpComparisonSamePrice: "Same price tier as what you’re viewing",
       pdpComparisonNoAlts: "No other catalog matches yet — refine your ask (room, budget, or form factor).",
+      namedCompareIntro:
+        "Here are {count} Future Store models to compare — different ways to listen, not versions of the same setup.",
+      namedCompareAskLine: "You asked: “{preview}”",
+      namedCompareBullet: "• {title} — {role}",
+      namedCompareFooter:
+        "Choose by where you listen most: one room, the TV, or taking sound with you. Open a card for the full PDP, or ask a follow-up below.",
     },
     searchAiPanel: {
       reasoning: "Reasoning",
@@ -479,8 +516,50 @@ export const enMessages = {
       ariaMessage: "AI mode message",
       sendAria: "Send message",
       topMatches: "Top matches",
+      comparedForYou: "Side by side",
+      /** Below Sources when the shopper attached a product via Ask / prompt chip. */
+      askProductHighlight: "Product you asked about",
       followUpHeading: "Follow up",
       sourcesLabel: "Sources",
+      /** Contextual follow-up chips under the latest assistant reply (`getChatFollowUpSuggestions`). */
+      followUps: {
+        productFallback: "this speaker",
+        trueplayHow: "How do I run Trueplay on {product}?",
+        trueplayRerun: "When should I re-run Trueplay?",
+        trueplayMusicMovies: "Does Trueplay help more for music or movies?",
+        trueplayWhich: "Which speakers support Trueplay?",
+        trueplayPlacement: "Best placement tips for {product}",
+        spatialWorthIt: "Is spatial audio worth it for music only?",
+        spatialVsSoundbar: "Soundbar or {product} for TV nights?",
+        spatialVsStereo: "How does spatial audio differ from a stereo pair?",
+        spatialRoom: "What room size fits {product} best?",
+        portableBattery: "How long does the battery last outdoors?",
+        portablePair: "Can I stereo-pair portable speakers?",
+        portableVsRoom: "Portable speaker or room speaker for everyday listening?",
+        waterproofPatio: "Best waterproof pick for a patio?",
+        compareDiff: "What are the main differences between these two?",
+        compareRoom: "Which is better for a ~3 m living room?",
+        compareValue: "Which is the better value right now?",
+        budgetUnder: "What are the strongest options under R$ 3.000?",
+        budgetTradeoff: "What do I give up at a lower price?",
+        budgetInstallments: "Any strong picks with easy installments?",
+        warrantyReturns: "What’s the warranty and return window?",
+        warrantyService: "How does service work if something fails?",
+        cinemaSetup: "Soundbar + surrounds or a flagship speaker?",
+        cinemaDialogue: "Which option is clearer for dialogue?",
+        cinemaExpand: "Can I expand this into a full home theater later?",
+        bassStrongest: "Which has the strongest bass in this range?",
+        bassSub: "Do I need a subwoofer with {product}?",
+        productVsHorizonOne: "How does {product} compare to Horizon One?",
+        productPairsWith: "What pairs well with {product}?",
+        productWhoFor: "Who is {product} best for?",
+        productAlternatives: "Show closer alternatives to {product}",
+        defaultCompareTop: "Compare the top two for my room",
+        defaultMoviesMusic: "Best for movies vs music here?",
+        defaultBundles: "Any bundles that pair with these?",
+        defaultBass: "Which has the strongest bass?",
+        defaultWarranty: "What’s the warranty on these models?",
+      },
     },
     pdp: {
       ask: "Ask",

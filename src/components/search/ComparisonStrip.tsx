@@ -10,7 +10,7 @@ import type { ComparisonCardModel, ComparisonFitKey } from "@/lib/recommendation
 import { localizeProduct } from "@/lib/product-i18n";
 import { useT } from "@/lib/useT";
 import { ui } from "@/lib/ui-tokens";
-import { cn, hasMediaUrl } from "@/lib/utils";
+import { cn, formatBRL, hasMediaUrl } from "@/lib/utils";
 import type { ShopperProfileId } from "@/types";
 import Image from "next/image";
 
@@ -20,6 +20,9 @@ const FIT_KEY_TO_MSG: Record<ComparisonFitKey, string> = {
   marina_balanced: "searchSerp.compareFitMarinaBalanced",
   ricardo_budget: "searchSerp.compareFitRicardoBudget",
   ricardo_mid: "searchSerp.compareFitRicardoMid",
+  named_room: "searchSerp.compareFitNamedRoom",
+  named_tv: "searchSerp.compareFitNamedTv",
+  named_portable: "searchSerp.compareFitNamedPortable",
 };
 
 function ComparisonCard({ row }: { row: ComparisonCardModel }) {
@@ -46,6 +49,12 @@ function ComparisonCard({ row }: { row: ComparisonCardModel }) {
       <div className="flex min-h-0 flex-1 flex-col p-4">
         <EyebrowPill>{t(FIT_KEY_TO_MSG[row.fitKey])}</EyebrowPill>
         <p className="mt-2 text-[15px] font-semibold leading-snug text-stone-900">{p.title}</p>
+        <div className="mt-1.5 flex flex-wrap items-baseline gap-1.5">
+          <span className="text-[15px] font-semibold tabular-nums text-stone-900">{formatBRL(p.price)}</span>
+          {p.oldPrice ? (
+            <span className="text-[13px] tabular-nums text-stone-400 line-through">{formatBRL(p.oldPrice)}</span>
+          ) : null}
+        </div>
         <ul className="mt-3 space-y-1.5 text-[15px] leading-relaxed text-stone-600">
           {row.pros.map((x) => (
             <li key={x}>+ {x}</li>
@@ -85,17 +94,31 @@ function ComparisonCard({ row }: { row: ComparisonCardModel }) {
   );
 }
 
-export function ComparisonStrip({ items, profile }: { items: ComparisonCardModel[]; profile: ShopperProfileId }) {
+export function ComparisonStrip({
+  items,
+  profile,
+  hideHeading = false,
+}: {
+  items: ComparisonCardModel[];
+  profile: ShopperProfileId;
+  /** When the page H1 already states the comparison, skip the repeated section title. */
+  hideHeading?: boolean;
+}) {
   const t = useT();
   const title =
     profile === "marina" ? t("searchSerp.compareTitleMarina") : t("searchSerp.compareTitleRicardo");
 
   return (
-    <section aria-label={`${t("searchSerp.compareEyebrow")} — ${title}`} className="min-w-0">
-      <div className="mb-4 min-w-0 sm:mb-5">
-        <p className={ui.searchSerpSectionKicker}>{t("searchSerp.compareEyebrow")}</p>
-        <h2 className={cn("mt-2", ui.home.sectionTitle)}>{title}</h2>
-      </div>
+    <section
+      aria-label={hideHeading ? t("searchSerp.compareListingTitle") : `${t("searchSerp.compareEyebrow")} — ${title}`}
+      className="min-w-0"
+    >
+      {hideHeading ? null : (
+        <div className="mb-4 min-w-0 sm:mb-5">
+          <p className={ui.searchSerpSectionKicker}>{t("searchSerp.compareEyebrow")}</p>
+          <h2 className={cn("mt-2", ui.home.sectionTitle)}>{title}</h2>
+        </div>
+      )}
       <HorizontalScroll fillRowFromMd className="pb-0.5">
         {items.map((row) => (
           <div

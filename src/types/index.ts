@@ -95,6 +95,11 @@ export type SearchIntent = {
    * (e.g. “cheapest”, “lowest price”, “most expensive”).
    */
   sortBy?: SearchIntentSortBy;
+  /**
+   * Catalog products the shopper attached via Ask / `About:` chips — pinned in Results and
+   * preferred as the best-match hero when present.
+   */
+  focusProductIds?: string[];
 };
 
 export type AgentSurface = {

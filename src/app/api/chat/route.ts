@@ -55,6 +55,18 @@ function isHistoryFixed(v: unknown): v is { role: "user" | "assistant"; content:
 
 type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 
+const CATALOG_COMPARE_MODE = [
+  "",
+  "Named catalog comparison:",
+  "The customer named specific Future Store products to compare (often Horizon Three, Stage Compact, and Trail Max).",
+  "Keep the entire reply about Future Store only — no other retailers or off-topic content.",
+  "Only discuss the products they named that appear in the AUTHORITATIVE CATALOG. Do not introduce other SKUs.",
+  "Open with 1-2 sentences on how they differ as listening setups (for example: room speaker vs TV soundbar vs portable), not as three versions of the same product.",
+  "Then one short bullet per named product: who it is for + one concrete trade-off.",
+  "Close with one sentence on how to choose (one room, the TV, or taking sound with you). Do not hard-sell the most expensive option.",
+  "Do not use the SERP-style intro (\"Here are 4 top matches\") or PDP comparison lines about what they are viewing.",
+].join("\n");
+
 const PDP_COMPARISON_MODE = [
   "",
   "PDP comparison mode:",
@@ -92,7 +104,12 @@ function buildMessages(
     "Reply in the same language as the customer's message. Be helpful, but only within Future Store: product guidance, comparisons, and how to use this site — not generic advice unrelated to shopping here.",
     "Only discuss, recommend, or compare products that appear in the AUTHORITATIVE CATALOG above. Never suggest or name products from outside that list.",
     "If you lack product specs or prices, say the catalog or PDP lists details and avoid inventing numbers.",
-    responseStyle === "pdpComparison" ? PDP_COMPARISON_MODE : "",
+    "If the customer asks an informational question (what/how/when/why a feature works, e.g. Trueplay), answer that question directly. Do not open with “top matches” or push a product list unless they ask for options or comparisons.",
+    responseStyle === "pdpComparison"
+      ? PDP_COMPARISON_MODE
+      : responseStyle === "catalogCompare"
+        ? CATALOG_COMPARE_MODE
+        : "",
   ]
     .filter(Boolean)
     .join("\n");
@@ -283,6 +300,8 @@ export async function POST(req: Request) {
     responseStyle = undefined;
   } else if (b.responseStyle === "pdpComparison") {
     responseStyle = "pdpComparison";
+  } else if (b.responseStyle === "catalogCompare") {
+    responseStyle = "catalogCompare";
   } else {
     return NextResponse.json({ error: "invalid_response_style", reply: null }, { status: 400 });
   }
@@ -304,7 +323,7 @@ export async function POST(req: Request) {
         geminiKey,
         model,
         chatMessages,
-        responseStyle === "pdpComparison"
+        responseStyle === "pdpComparison" || responseStyle === "catalogCompare"
           ? { maxOutputTokens: CHAT_GEMINI_MAX_OUTPUT_PDP_COMPARISON }
           : undefined,
       );
@@ -319,7 +338,9 @@ export async function POST(req: Request) {
       openAiKey!,
       model,
       chatMessages,
-      responseStyle === "pdpComparison" ? CHAT_OPENAI_MAX_TOKENS_PDP_COMPARISON : undefined,
+      responseStyle === "pdpComparison" || responseStyle === "catalogCompare"
+        ? CHAT_OPENAI_MAX_TOKENS_PDP_COMPARISON
+        : undefined,
     );
     if (!out.ok) {
       return NextResponse.json({ reply: null, error: out.detail }, { status: out.status });

@@ -11,8 +11,6 @@ const AI_FOLLOWUP_SELECTOR = "[data-ai-followup-input]";
 export function FloatingSearchDock() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const cartDrawerOpen = useDemoStore((s) => s.cartDrawerOpen);
-  const pdpSearchOverlayOpen = useDemoStore((s) => s.pdpSearchOverlayOpen);
   const pdpChatOverlayOpen = useDemoStore((s) => s.pdpChatOverlayOpen);
   const setQuery = useDemoStore((s) => s.setQuery);
   const clearPromptProductRefs = useDemoStore((s) => s.clearPromptProductRefs);
@@ -73,9 +71,7 @@ export function FloatingSearchDock() {
   }, [hideFloatingPill]);
 
   if (hideFloatingPill) return null;
-  /** Prompt is rendered below the cart bottom sheet inside {@link StorefrontCartOverlay} (same z layer). */
-  if (cartDrawerOpen) return null;
-  if (pdpSearchOverlayOpen) return null;
+  /** Cart / PDP search sheets sit at z-[75]; this dock stays at z-[85] so the prompt never remounts. */
   if (pdpChatOverlayOpen) return null;
 
   return (

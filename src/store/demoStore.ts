@@ -193,11 +193,14 @@ export const useDemoStore = create<DemoState>()(
     const pdpProduct = pdpPin ? getProductById(pdpPin) : undefined;
     const nextRefs: PromptProductRef[] =
       pdpProduct ? [{ key: pdpProduct.id, productId: pdpProduct.id, label: pdpProduct.title }] : [];
+    const focusHintIds = refs
+      .map((r) => r.productId)
+      .filter((id): id is string => Boolean(id));
     set({
       /** Mesma string que o intent e o painel Chat — senão “Ask” só com chip deixava `currentQuery` vazio e o Chat em branco. */
       currentQuery: merged,
       promptProductRefs: nextRefs,
-      parsedIntent: parseIntent(merged),
+      parsedIntent: parseIntent(merged, focusHintIds),
       plpLlmRankIds: null,
       plpLlmIntentPatch: null,
       plpLlmCollectionTitle: null,

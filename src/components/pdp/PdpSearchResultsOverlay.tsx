@@ -127,7 +127,7 @@ function PdpSearchOverlayBody({
 
   useEffect(() => {
     if (!open) return;
-    const timer = window.setTimeout(() => closeBtnRef.current?.focus(), 0);
+    const timer = window.setTimeout(() => closeBtnRef.current?.focus({ preventScroll: true }), 520);
     return () => clearTimeout(timer);
   }, [open]);
 
@@ -151,7 +151,7 @@ function PdpSearchOverlayBody({
     [results, plpLlmRankIds, intent],
   );
   const best = getBestMatch(profile, displayResults, intent);
-  const compare = getComparisonCards(profile, displayResults);
+  const compare = getComparisonCards(profile, displayResults, intent);
   const learningVariant = getLearningWidgetVariant(intent);
 
   const quickSearches = useMemo(() => getQuickSearchQueries(), [uiLocale]);

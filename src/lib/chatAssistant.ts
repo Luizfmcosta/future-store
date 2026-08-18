@@ -1,6 +1,9 @@
 import { getProductById } from "@/data/products";
+import { isCatalogCompareQuery, isInformationalProductQuery } from "@/lib/focusProducts";
 import { formatMessage, getMessage } from "@/lib/messages";
 import { parseIntent } from "@/lib/parseIntent";
+import { localizeProduct } from "@/lib/product-i18n";
+import { splitAboutQuery } from "@/lib/promptProductRefs";
 import { getSearchResults } from "@/lib/search";
 import type { Product } from "@/types";
 import type { SearchIntent } from "@/types";
@@ -142,6 +145,42 @@ export function buildAssistantSources(products: Product[], intent: SearchIntent)
   }));
 }
 
+function narrativeForInformational(userText: string, product: Product | undefined): string {
+  const { ask, aboutLabels } = splitAboutQuery(userText);
+  const askText = (ask || userText).trim();
+  const preview = askText.length > 120 ? `${askText.slice(0, 117)}…` : askText;
+  const lines: string[] = [
+    formatMessage(getMessage("chatAssistant.narrativeInfoAskLine") ?? "", { preview }),
+  ];
+
+  if (product) {
+    lines.push(
+      "",
+      formatMessage(getMessage("chatAssistant.narrativeInfoAboutLine") ?? "", {
+        title: product.title,
+      }),
+      "",
+      formatMessage(getMessage("chatAssistant.narrativeInfoBody") ?? "", {
+        blurb: product.description.slice(0, 320).trim(),
+        strengths: product.reviewStrengths.slice(0, 3).join("; "),
+      }),
+    );
+  } else if (aboutLabels) {
+    lines.push(
+      "",
+      formatMessage(getMessage("chatAssistant.narrativeInfoAboutLine") ?? "", {
+        title: aboutLabels,
+      }),
+      "",
+      getMessage("chatAssistant.narrativeInfoBodyNoProduct") ?? "",
+    );
+  } else {
+    lines.push("", getMessage("chatAssistant.narrativeInfoBodyNoProduct") ?? "");
+  }
+
+  return lines.join("\n");
+}
+
 function narrativeForResults(
   userText: string,
   intent: SearchIntent,
@@ -236,10 +275,54 @@ function narrativePdpComparison(anchor: Product, alternatives: Product[], intent
   return [intro, "", profileLine, "", ...bullets].join("\n");
 }
 
+function roleForNamedCompare(p: Product): string {
+  return p.bestFor[0] ?? p.reviewStrengths[0] ?? p.deliveryETA;
+}
+
+/** Fallback when the shopper named specific catalog products to compare. */
+function narrativeNamedCompare(userText: string, products: Product[]): string {
+  const t = userText.trim();
+  const preview = t.length > 120 ? `${t.slice(0, 117)}…` : t;
+  const intro = formatMessage(getMessage("chatAssistant.namedCompareIntro") ?? "", {
+    count: String(products.length),
+  });
+  const askLine = formatMessage(getMessage("chatAssistant.namedCompareAskLine") ?? "", {
+    preview,
+  });
+  const bullets = products.map((p) => {
+    const loc = localizeProduct(p);
+    return formatMessage(getMessage("chatAssistant.namedCompareBullet") ?? "", {
+      title: loc.title,
+      role: roleForNamedCompare(loc),
+    });
+  });
+  const footer = getMessage("chatAssistant.namedCompareFooter") ?? "";
+  return [intro, "", askLine, "", ...bullets, "", footer].filter(Boolean).join("\n");
+}
+
 export type AssistantReplyOptions = {
   /** When set, reply is shaped as a PDP comparison vs this catalog product (fallback when LLM is off). */
   comparisonAnchorProductId?: string;
 };
+
+export type AssistantReply = {
+  text: string;
+  products: Product[];
+  sources: AssistantSource[];
+  /**
+   * Product the shopper attached via Ask / prompt chip (`About:`). Shown under Sources in Chat —
+   * not a Top matches ranking pick.
+   */
+  highlightedProduct?: Product;
+  /** Named catalog compare (home “View comparison”, or “A vs B vs C” in chat). */
+  layout?: "compare";
+};
+
+/** Product selected in the prompt (Ask chip / `About:`) — not inferred ranking. */
+function askHighlightedProduct(intent: SearchIntent): Product | undefined {
+  const id = intent.focusProductIds?.[0];
+  return id ? (getProductById(id) ?? undefined) : undefined;
+}
 
 /** Demo assistant: same ranking as SERP, as chat + product cards + editorial sources. */
 export function assistantReplyForQuery(
@@ -247,29 +330,56 @@ export function assistantReplyForQuery(
   profile: ShopperProfileId,
   aiMode: boolean,
   opts?: AssistantReplyOptions,
-): { text: string; products: Product[]; sources: AssistantSource[] } {
+): AssistantReply {
+  const intent = parseIntent(userText);
+  const informational = isInformationalProductQuery(userText);
   const anchorId = opts?.comparisonAnchorProductId?.trim();
+  const highlightedProduct = askHighlightedProduct(intent);
+
+  /** Feature / “what is…” questions: answer in text — no Top matches; Ask product may still highlight. */
+  if (informational) {
+    const focusProduct =
+      highlightedProduct ?? (anchorId ? getProductById(anchorId) ?? undefined : undefined);
+    const text = narrativeForInformational(userText, focusProduct);
+    const sources = buildAssistantSources([], intent);
+    return { text, products: [], sources, highlightedProduct };
+  }
+
+  /** Home “View comparison” and any named A vs B (vs C) ask — pin those SKUs, don’t rank the whole catalog. */
+  if (!anchorId && isCatalogCompareQuery(userText)) {
+    const named = (intent.focusProductIds ?? [])
+      .map((id) => getProductById(id))
+      .filter((p): p is Product => Boolean(p))
+      .slice(0, MAX_PRODUCTS);
+    if (named.length >= 2) {
+      const text = narrativeNamedCompare(userText, named);
+      const sources = buildAssistantSources(named, intent);
+      return { text, products: named, sources, layout: "compare" };
+    }
+  }
+
   if (anchorId) {
     const anchor = getProductById(anchorId);
     if (anchor) {
-      const intent = parseIntent(userText);
       const results = getSearchResults(profile, intent);
       const pool = poolForPdpComparison(anchor, results);
       const products = pickPdpComparisonAlternatives(anchor, pool);
       const text = narrativePdpComparison(anchor, products, intent);
       const sources = buildAssistantSources(products, intent);
-      return { text, products, sources };
+      return { text, products, sources, highlightedProduct };
     }
   }
 
-  const intent = parseIntent(userText);
   const results = getSearchResults(profile, intent);
   const ordered =
     aiMode || intent.sortBy === "price_asc" || intent.sortBy === "price_desc"
       ? results
       : [...results].sort((a, b) => a.title.localeCompare(b.title));
-  const products = ordered.slice(0, MAX_PRODUCTS);
+  const highlightId = highlightedProduct?.id;
+  const products = ordered
+    .filter((p) => p.id !== highlightId)
+    .slice(0, MAX_PRODUCTS);
   const text = narrativeForResults(userText, intent, products);
   const sources = buildAssistantSources(products, intent);
-  return { text, products, sources };
+  return { text, products, sources, highlightedProduct };
 }

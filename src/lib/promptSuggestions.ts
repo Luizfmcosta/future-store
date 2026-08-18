@@ -22,19 +22,7 @@ export function getPromptSuggestionPool(): string[] {
   return [...getQuickSearchQueries(), ...EXTRA_PROMPTS];
 }
 
-/** Short follow-up prompts shown under chat “top matches” (not filtered by composer text). */
-const CHAT_FOLLOW_UP: string[] = [
-  "Compare the top two for my room",
-  "Best for movies vs music here?",
-  "Any bundles that pair with these?",
-  "Which has the strongest bass?",
-  "Waterproof options at a similar price",
-  "What’s the warranty on these models?",
-];
-
-export function getChatFollowUpSuggestions(): readonly string[] {
-  return CHAT_FOLLOW_UP;
-}
+export { getChatFollowUpSuggestions } from "@/lib/chatFollowUps";
 
 /**
  * Returns suggestions whose text contains `query` (case-insensitive), best matches first.

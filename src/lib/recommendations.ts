@@ -1,4 +1,6 @@
 import { products } from "@/data/products";
+import { isCatalogCompareQuery } from "@/lib/focusProducts";
+import { getMessage } from "@/lib/messages";
 import type { Product } from "@/types";
 import type { SearchIntent } from "@/types";
 import type { ShopperProfileId } from "@/types";
@@ -10,6 +12,13 @@ export function getBestMatch(
 ): Product | undefined {
   const audio = results.filter((p) => p.category === "speaker" || p.category === "soundbar");
   if (!audio.length) return undefined;
+
+  const focusId = intent.focusProductIds?.[0];
+  if (focusId) {
+    const focused = audio.find((p) => p.id === focusId) ?? results.find((p) => p.id === focusId);
+    if (focused) return focused;
+  }
+
   if (profile === "marina") {
     const theater =
       intent.priority === "cinema" ||
@@ -36,7 +45,10 @@ export type ComparisonFitKey =
   | "marina_portable"
   | "marina_balanced"
   | "ricardo_budget"
-  | "ricardo_mid";
+  | "ricardo_mid"
+  | "named_room"
+  | "named_tv"
+  | "named_portable";
 
 export type ComparisonCardModel = {
   product: Product;
@@ -45,7 +57,63 @@ export type ComparisonCardModel = {
   fitKey: ComparisonFitKey;
 };
 
-export function getComparisonCards(profile: ShopperProfileId, results: Product[]): ComparisonCardModel[] {
+function msgList(...keys: string[]): string[] {
+  return keys.map((k) => getMessage(k) ?? "").filter(Boolean);
+}
+
+function isPortableSpeaker(p: Product): boolean {
+  return (
+    p.id.includes("move") ||
+    p.id.includes("roam") ||
+    p.bestFor.some((x) => /patio|portable|outdoor|pátio|portátil/i.test(x))
+  );
+}
+
+function namedCompareCard(product: Product): ComparisonCardModel {
+  if (product.id === "sb-beam-g2" || product.category === "soundbar") {
+    return {
+      product,
+      fitKey: "named_tv",
+      pros: msgList("searchSerp.compareNamedTvPro1", "searchSerp.compareNamedTvPro2"),
+      tradeoffs: msgList("searchSerp.compareNamedTvTradeoff"),
+    };
+  }
+  if (product.id === "sp-move-2" || isPortableSpeaker(product)) {
+    return {
+      product,
+      fitKey: "named_portable",
+      pros: msgList("searchSerp.compareNamedPortablePro1", "searchSerp.compareNamedPortablePro2"),
+      tradeoffs: msgList("searchSerp.compareNamedPortableTradeoff"),
+    };
+  }
+  return {
+    product,
+    fitKey: "named_room",
+    pros: msgList("searchSerp.compareNamedRoomPro1", "searchSerp.compareNamedRoomPro2"),
+    tradeoffs: msgList("searchSerp.compareNamedRoomTradeoff"),
+  };
+}
+
+export function getComparisonCards(
+  profile: ShopperProfileId,
+  results: Product[],
+  intent?: SearchIntent | null,
+): ComparisonCardModel[] {
+  const focusIds = (intent?.focusProductIds ?? []).filter(Boolean);
+  if (focusIds.length >= 2) {
+    const named: Product[] = [];
+    const seen = new Set<string>();
+    for (const id of focusIds) {
+      if (seen.has(id)) continue;
+      const p = results.find((x) => x.id === id) ?? products.find((x) => x.id === id);
+      if (!p) continue;
+      named.push(p);
+      seen.add(id);
+      if (named.length >= 3) break;
+    }
+    if (named.length >= 2) return named.map(namedCompareCard);
+  }
+
   const catalog = results.filter((p) => p.category === "speaker" || p.category === "soundbar");
   const pick =
     profile === "marina"
@@ -90,9 +158,10 @@ export function getComparisonCards(profile: ShopperProfileId, results: Product[]
   });
 }
 
-export type LearningWidgetVariant = "surround" | "portable";
+export type LearningWidgetVariant = "surround" | "portable" | "setups";
 
 export function getLearningWidgetVariant(intent: SearchIntent): LearningWidgetVariant {
+  if (isCatalogCompareQuery(intent.rawQuery)) return "setups";
   if (intent.priority === "cinema" || intent.useCase?.includes("spatial_audio")) {
     return "surround";
   }

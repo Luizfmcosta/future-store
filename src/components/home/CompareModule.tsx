@@ -99,7 +99,12 @@ export function CompareModule() {
 
           <motion.div variants={fadeUp}>
             <Link
-              href={`/product/${product.id}`}
+              href={
+                profile === "marina"
+                  ? `/search?m=${encodeURIComponent(t("compare.marinaResultsSeed"))}`
+                  : `/product/${product.id}`
+              }
+              scroll={false}
               className={cn(
                 ui.home.focusRing,
                 ui.home.ctaPrimaryFill,

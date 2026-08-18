@@ -2,6 +2,8 @@
 
 import { Card } from "@/components/shared/Card";
 import { EyebrowPill } from "@/components/shared/EyebrowPill";
+import { splitAboutQuery } from "@/lib/promptProductRefs";
+import { isCatalogCompareQuery } from "@/lib/focusProducts";
 import { ui } from "@/lib/ui-tokens";
 import { useT } from "@/lib/useT";
 import { cn, formatBRL } from "@/lib/utils";
@@ -138,20 +140,42 @@ export function IntentSummary({
 }) {
   const t = useT();
 
-  if (!aiMode) {
-    const raw = intent.rawQuery.trim();
-    const curated = typeof curatedListingTitle === "string" ? curatedListingTitle.trim() : "";
-    const headline =
-      curated.length >= 4
+  const raw = intent.rawQuery.trim();
+  const { aboutLabels, ask } = splitAboutQuery(raw);
+  const curated = typeof curatedListingTitle === "string" ? curatedListingTitle.trim() : "";
+  const namedCompare = isCatalogCompareQuery(raw);
+  /** Prefer the shopper’s typed ask over LLM collection titles (Ask-from-image Q&A). */
+  const promptHeadline = namedCompare
+    ? t("searchSerp.compareListingTitle")
+    : ask
+      ? ask
+      : curated.length >= 4
         ? curated
         : normalizeQueryForSerpTitle(raw) === "cheap headphones"
           ? t("searchSerp.plpTitleCheapHeadphones")
-          : raw || t("searchSerp.browseFallback");
+          : aboutLabels || raw || t("searchSerp.browseFallback");
+
+  if (!aiMode || ask || aboutLabels) {
     return (
       <div className="flex w-full min-w-0 flex-col gap-3">
-        <h1 className="pt-12 text-pretty text-xl font-semibold leading-snug tracking-tight text-stone-900 sm:pt-14 sm:text-2xl">
-          {headline}
+        {aboutLabels && ask ? (
+          <p className="pt-12 text-[13px] leading-snug text-stone-500 sm:pt-14">
+            {t("searchSerp.aboutProductLine", { product: aboutLabels })}
+          </p>
+        ) : null}
+        <h1
+          className={cn(
+            "text-pretty text-xl font-semibold leading-snug tracking-tight text-stone-900 sm:text-2xl",
+            !(aboutLabels && ask) && "pt-12 sm:pt-14",
+          )}
+        >
+          {promptHeadline}
         </h1>
+        {namedCompare ? (
+          <p className="max-w-[42rem] text-pretty text-[15px] leading-relaxed text-stone-600 sm:text-[16px]">
+            {t("searchSerp.compareListingDek")}
+          </p>
+        ) : null}
         <SerpFilterChipStrip resultsCount={resultsCount} />
       </div>
     );

@@ -17,7 +17,7 @@ export async function fetchAssistantLlmReply(args: {
   history: ChatTurn[];
   signal?: AbortSignal;
   /** When `pdpComparison`, the API uses a comparison-style system prompt for PDP assistant. */
-  responseStyle?: "pdpComparison";
+  responseStyle?: "pdpComparison" | "catalogCompare";
 }): Promise<AssistantLlmResult> {
   let res: Response;
   try {

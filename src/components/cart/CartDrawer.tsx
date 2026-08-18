@@ -66,9 +66,10 @@ function CartDrawerBody({ titleId, onClose }: { titleId: string; onClose: () => 
   useEffect(() => {
     if (!open) return;
     const timer = window.setTimeout(() => {
-      if (product) closeBtnRef.current?.focus();
-      else continueShoppingRef.current?.focus();
-    }, 0);
+      const opts = { preventScroll: true } as const;
+      if (product) closeBtnRef.current?.focus(opts);
+      else continueShoppingRef.current?.focus(opts);
+    }, 520);
     return () => window.clearTimeout(timer);
   }, [open, product]);
 

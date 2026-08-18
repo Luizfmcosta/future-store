@@ -14,14 +14,24 @@ import type { ShopperProfileId } from "@/types";
 import { SlidersHorizontal } from "lucide-react";
 import Image from "next/image";
 
-export function ResultsGrid({ products, profile }: { products: Product[]; profile: ShopperProfileId }) {
+export function ResultsGrid({
+  products,
+  profile,
+  heading,
+}: {
+  products: Product[];
+  profile: ShopperProfileId;
+  heading?: string;
+}) {
   const t = useT();
   const setRefineOpen = useDemoStore((s) => s.setRefineOpen);
 
   return (
     <section className="space-y-4">
       <div className="flex items-center justify-between gap-3">
-        <h3 className="min-w-0 text-lg font-semibold text-stone-900">{t("searchSerp.resultsAllMatches")}</h3>
+        <h3 className="min-w-0 text-lg font-semibold text-stone-900">
+          {heading ?? t("searchSerp.resultsAllMatches")}
+        </h3>
         <button
           type="button"
           onClick={() => setRefineOpen(true)}

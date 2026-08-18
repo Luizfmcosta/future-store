@@ -20,6 +20,7 @@ import { defaultSearchQuery } from "@/lib/defaultSearchQuery";
 import { scrollSearchSubmitSurfacesToTop, scrollStorefrontMainToTop } from "@/lib/scrollStorefrontMain";
 import { getSearchResults } from "@/lib/search";
 import { getQuickSearchQueries } from "@/lib/searchCopy";
+import { isCatalogCompareQuery } from "@/lib/focusProducts";
 import { ui } from "@/lib/ui-tokens";
 import { cn } from "@/lib/utils";
 import { useT } from "@/lib/useT";
@@ -99,8 +100,9 @@ export function SearchPageContent() {
     const m = mParam?.trim();
     if (!m) return;
     runSearch(m);
-    router.replace("/search?view=ai", { scroll: false });
-  }, [mParam, runSearch, router]);
+    const keepAi = getSearchViewParam(searchParams) === "ai";
+    router.replace(keepAi ? "/search?view=ai" : "/search", { scroll: false });
+  }, [mParam, runSearch, router, searchParams]);
 
   useLayoutEffect(() => {
     if (pathname !== "/search") {
@@ -176,8 +178,13 @@ export function SearchPageContent() {
     [results, plpLlmRankIds, intent],
   );
   const best = getBestMatch(profile, displayResults, intent);
-  const compare = getComparisonCards(profile, displayResults);
+  const compare = getComparisonCards(profile, displayResults, intent);
   const learningVariant = getLearningWidgetVariant(intent);
+  const namedCompare = isCatalogCompareQuery(intent.rawQuery);
+  const namedCompareIds = namedCompare ? new Set(compare.map((row) => row.product.id)) : null;
+  const gridProducts = namedCompareIds
+    ? displayResults.filter((p) => !namedCompareIds.has(p.id))
+    : displayResults;
 
   const quickSearches = useMemo(() => getQuickSearchQueries(), [uiLocale]);
   const trendingProducts = useMemo(
@@ -199,6 +206,37 @@ export function SearchPageContent() {
 
   const serpAwaitingPlpAdapt =
     view === "results" && plpAdaptPending && plpAnchorQuery.length > 0;
+
+  const refineChips = (
+    <section aria-labelledby="search-refine-heading" className="min-w-0">
+      <h2 id="search-refine-heading" className={cn(ui.searchSerpSectionKicker, "mb-2")}>
+        {t("searchOverlay.refineSearch")}
+      </h2>
+      <div className="-mx-4 min-w-0 sm:-mx-6">
+        <ul
+          className="flex flex-nowrap gap-2.5 overflow-x-auto overscroll-x-contain px-4 pb-1 pt-0.5 scrollbar-none sm:px-6"
+          role="list"
+        >
+          {quickSearches.map((q) => (
+            <li key={q} className="shrink-0">
+              <button
+                type="button"
+                onClick={() => applyDiscoveryQuery(q)}
+                className={cn(
+                  ui.searchSerpFilterPill,
+                  "max-w-[min(22rem,88vw)] truncate text-left",
+                  ui.home.focusRing,
+                  "focus-visible:rounded-full",
+                )}
+              >
+                {q.length > 42 ? `${q.slice(0, 40)}…` : q}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3">
@@ -224,42 +262,32 @@ export function SearchPageContent() {
                 curatedListingTitle={plpLlmCollectionTitle}
               />
 
-              <BestMatchCard product={best} profile={profile} aiMode={aiMode} />
+              {namedCompare ? (
+                <ComparisonStrip items={compare} profile={profile} hideHeading />
+              ) : (
+                <BestMatchCard
+                  product={best}
+                  profile={profile}
+                  aiMode={aiMode}
+                  focused={Boolean(
+                    best && intent.focusProductIds?.length && intent.focusProductIds[0] === best.id,
+                  )}
+                />
+              )}
 
-              <section aria-labelledby="search-refine-heading" className="min-w-0">
-                <h2 id="search-refine-heading" className={cn(ui.searchSerpSectionKicker, "mb-2")}>
-                  {t("searchOverlay.refineSearch")}
-                </h2>
-                <div className="-mx-4 min-w-0 sm:-mx-6">
-                  <ul
-                    className="flex flex-nowrap gap-2.5 overflow-x-auto overscroll-x-contain px-4 pb-1 pt-0.5 scrollbar-none sm:px-6"
-                    role="list"
-                  >
-                    {quickSearches.map((q) => (
-                      <li key={q} className="shrink-0">
-                        <button
-                          type="button"
-                          onClick={() => applyDiscoveryQuery(q)}
-                          className={cn(
-                            ui.searchSerpFilterPill,
-                            "max-w-[min(22rem,88vw)] truncate text-left",
-                            ui.home.focusRing,
-                            "focus-visible:rounded-full",
-                          )}
-                        >
-                          {q.length > 42 ? `${q.slice(0, 40)}…` : q}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </section>
+              {namedCompare ? null : refineChips}
 
-              <ComparisonStrip items={compare} profile={profile} />
+              {namedCompare ? null : <ComparisonStrip items={compare} profile={profile} />}
 
-              {aiMode ? <LearningWidget variant={learningVariant} /> : null}
+              {aiMode || namedCompare ? <LearningWidget variant={learningVariant} /> : null}
 
-              <ResultsGrid products={displayResults} profile={profile} />
+              <ResultsGrid
+                products={gridProducts}
+                profile={profile}
+                heading={namedCompare ? t("searchSerp.compareMoreMatches") : undefined}
+              />
+
+              {namedCompare ? refineChips : null}
             </>
           )}
 

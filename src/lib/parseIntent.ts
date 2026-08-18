@@ -1,7 +1,8 @@
+import { resolveFocusProductIds } from "@/lib/focusProducts";
 import type { SearchIntent } from "@/types";
 
 /** Deterministic NL → intent parsing for demo (rule-based), speaker-first catalog. */
-export function parseIntent(rawQuery: string): SearchIntent {
+export function parseIntent(rawQuery: string, focusHintIds: string[] = []): SearchIntent {
   const q = rawQuery.trim();
   const lower = q.toLowerCase();
 
@@ -55,6 +56,7 @@ export function parseIntent(rawQuery: string): SearchIntent {
   if (
     lower.includes("atmos") ||
     lower.includes("espacial") ||
+    lower.includes("spatial") ||
     lower.includes("dolby") ||
     lower.includes("surround")
   ) {
@@ -121,6 +123,9 @@ export function parseIntent(rawQuery: string): SearchIntent {
   } else if (wantsCheapest) {
     intent.sortBy = "price_asc";
   }
+
+  const focusProductIds = resolveFocusProductIds(q, focusHintIds);
+  if (focusProductIds.length) intent.focusProductIds = focusProductIds;
 
   return intent;
 }

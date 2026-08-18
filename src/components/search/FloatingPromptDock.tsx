@@ -5,7 +5,7 @@ import { ui } from "@/lib/ui-tokens";
 import { cn } from "@/lib/utils";
 
 /**
- * Bottom-fixed prompt row (shared by {@link FloatingSearchDock} and cart overlay).
+ * Bottom-fixed prompt row used by {@link FloatingSearchDock}.
  * Parent supplies positioning / z-index / `pointer-events`.
  */
 export function FloatingPromptDock({ className }: { className?: string }) {

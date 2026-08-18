@@ -13,7 +13,12 @@ export function mergeSearchIntentWithLlmPatch(
   patch: Partial<SearchIntent> | null | undefined,
 ): SearchIntent {
   if (!patch) return base;
-  const next: SearchIntent = { ...base, rawQuery: base.rawQuery };
+  const next: SearchIntent = {
+    ...base,
+    rawQuery: base.rawQuery,
+    /** Ask chip focus must survive PLP LLM patches. */
+    focusProductIds: base.focusProductIds,
+  };
 
   if (typeof patch.budget === "number" && Number.isFinite(patch.budget) && patch.budget > 0) {
     next.budget = Math.min(patch.budget, 500_000);
@@ -50,23 +55,33 @@ const SORT_BY_SKIP_LLM_REORDER = new Set<string>(["price_asc", "price_desc"]);
 export function applyLlmProductRankOrder(
   results: Product[],
   llmIds: string[] | null | undefined,
-  intent?: { sortBy?: SearchIntent["sortBy"] } | null,
+  intent?: Pick<SearchIntent, "sortBy" | "focusProductIds"> | null,
 ): Product[] {
   if (intent?.sortBy && SORT_BY_SKIP_LLM_REORDER.has(intent.sortBy)) return results;
-  if (!llmIds?.length) return results;
-  const byId = new Map(results.map((p) => [p.id, p] as const));
-  const seen = new Set<string>();
-  const ordered: Product[] = [];
-  for (const id of llmIds) {
-    if (seen.has(id)) continue;
-    const p = byId.get(id);
-    if (p) {
-      ordered.push(p);
-      seen.add(id);
+  let ordered = results;
+  if (llmIds?.length) {
+    const byId = new Map(results.map((p) => [p.id, p] as const));
+    const seen = new Set<string>();
+    const next: Product[] = [];
+    for (const id of llmIds) {
+      if (seen.has(id)) continue;
+      const p = byId.get(id);
+      if (p) {
+        next.push(p);
+        seen.add(id);
+      }
     }
+    for (const p of results) {
+      if (!seen.has(p.id)) next.push(p);
+    }
+    ordered = next;
   }
-  for (const p of results) {
-    if (!seen.has(p.id)) ordered.push(p);
-  }
-  return ordered;
+
+  const focusIds = (intent?.focusProductIds ?? []).filter((id) => ordered.some((p) => p.id === id));
+  if (!focusIds.length) return ordered;
+  const focused = focusIds
+    .map((id) => ordered.find((p) => p.id === id))
+    .filter((p): p is Product => Boolean(p));
+  const rest = ordered.filter((p) => !focusIds.includes(p.id));
+  return [...focused, ...rest];
 }

@@ -39,13 +39,11 @@ export function formatPromptPageContextForLlm(ctx: PromptSubmitPageContext | nul
   }
 }
 
-export function shouldOpenAiSearchTab(opts: {
+/** Prompt submit always opens Chat first; Results stays available as a tab. */
+export function shouldOpenAiSearchTab(_opts: {
   pathname: string;
   searchView: "results" | "ai";
   cartDrawerOpen: boolean;
 }): boolean {
-  if (opts.cartDrawerOpen) return true;
-  if (opts.pathname.startsWith("/product/")) return true;
-  if (opts.pathname === "/search" && opts.searchView === "results") return true;
-  return false;
+  return true;
 }

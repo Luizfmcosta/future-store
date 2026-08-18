@@ -1,5 +1,6 @@
 "use client";
 
+import { ChatAskProductHighlight } from "@/components/chat/ChatAskProductHighlight";
 import { ChatAssistantSources } from "@/components/chat/ChatAssistantSources";
 import { ChatProductResults } from "@/components/chat/ChatProductResults";
 import {
@@ -15,6 +16,7 @@ import { PromptInput, PromptInputTextarea } from "@/components/ui/prompt-input";
 import { defaultSearchQuery } from "@/lib/defaultSearchQuery";
 import { assistantReplyForQuery, type AssistantSource } from "@/lib/chatAssistant";
 import { fetchAssistantLlmReply, type ChatTurn } from "@/lib/fetchAssistantLlm";
+import { isCatalogCompareQuery } from "@/lib/focusProducts";
 import { getChatFollowUpSuggestions, getPromptSuggestionPool } from "@/lib/promptSuggestions";
 import { ui } from "@/lib/ui-tokens";
 import { useT } from "@/lib/useT";
@@ -30,7 +32,15 @@ import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useSta
 
 type Msg =
   | { role: "user"; content: string }
-  | { role: "assistant"; content: string; products: Product[]; sources: AssistantSource[] };
+  | {
+      role: "assistant";
+      content: string;
+      products: Product[];
+      sources: AssistantSource[];
+      /** Ask / prompt-chip product — shown under Sources (not Top matches). */
+      highlightedProduct?: Product;
+      layout?: "compare";
+    };
 
 function messagesToApiHistory(msgs: Msg[]): ChatTurn[] {
   return msgs.map((m) =>
@@ -121,7 +131,6 @@ export function SearchAiPanel({
   }, [messages]);
 
   const suggestionPool = useMemo(() => getPromptSuggestionPool(), [uiLocale]);
-  const chatFollowUps = useMemo(() => getChatFollowUpSuggestions(), []);
 
   /**
    * Chat tab clears `currentQuery` on Results; PLP intent still holds the active query (`rawQuery`).
@@ -132,6 +141,20 @@ export function SearchAiPanel({
     const fromResults = parsedIntent?.rawQuery?.trim() ?? "";
     return fromComposer || fromResults || defaultSearchQuery(uiLocale);
   }, [currentQuery, parsedIntent, uiLocale]);
+
+  /** Latest shopper ask — drives contextual follow-up chips under the assistant reply. */
+  const lastUserAsk = useMemo(() => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const m = messages[i];
+      if (m?.role === "user") return m.content;
+    }
+    return plpSeedQuery;
+  }, [messages, plpSeedQuery]);
+
+  const chatFollowUps = useMemo(
+    () => getChatFollowUpSuggestions(lastUserAsk),
+    [lastUserAsk, uiLocale],
+  );
 
   const pdpAnchorProductId = useMemo(() => {
     if (variant !== "pdp" || !pathname?.startsWith("/product/")) return undefined;
@@ -183,7 +206,12 @@ export function SearchAiPanel({
           pageContext: ctxSnapshot,
           history: [],
           signal: ac.signal,
-          responseStyle: variant === "pdp" ? "pdpComparison" : undefined,
+          responseStyle:
+            variant === "pdp"
+              ? "pdpComparison"
+              : isCatalogCompareQuery(q)
+                ? "catalogCompare"
+                : undefined,
         });
         if (ac.signal.aborted) {
           /* keep fallback */
@@ -209,6 +237,8 @@ export function SearchAiPanel({
           content: assistantText,
           products: fallback.products,
           sources: fallback.sources,
+          highlightedProduct: fallback.highlightedProduct,
+          layout: fallback.layout,
         },
       ]);
       setReplying(false);
@@ -260,7 +290,12 @@ export function SearchAiPanel({
           pageContext: threadOriginContextRef.current,
           history,
           signal: ac.signal,
-          responseStyle: variant === "pdp" ? "pdpComparison" : undefined,
+          responseStyle:
+            variant === "pdp"
+              ? "pdpComparison"
+              : isCatalogCompareQuery(merged)
+                ? "catalogCompare"
+                : undefined,
         });
         if (ac.signal.aborted) {
           /* keep fallback */
@@ -280,6 +315,8 @@ export function SearchAiPanel({
           content: assistantText,
           products: fallback.products,
           sources: fallback.sources,
+          highlightedProduct: fallback.highlightedProduct,
+          layout: fallback.layout,
         },
       ]);
       setReplying(false);
@@ -379,6 +416,12 @@ export function SearchAiPanel({
                   >
                     <p className="whitespace-pre-wrap text-pretty">{m.content}</p>
                     {variant !== "pdp" ? <ChatAssistantSources sources={m.sources} /> : null}
+                    {variant !== "pdp" && m.highlightedProduct ? (
+                      <ChatAskProductHighlight
+                        product={m.highlightedProduct}
+                        profile={profile}
+                      />
+                    ) : null}
                     <ChatProductResults
                       products={m.products}
                       profile={profile}
@@ -386,7 +429,13 @@ export function SearchAiPanel({
                       onFollowUp={setDraft}
                       followUpDisabled={replying}
                       showFollowUpSection={followUpChipsActive}
-                      presentation={variant === "pdp" ? "pdpChat" : "default"}
+                      presentation={
+                        variant === "pdp"
+                          ? "pdpChat"
+                          : m.layout === "compare"
+                            ? "compare"
+                            : "default"
+                      }
                       anchorProduct={variant === "pdp" ? pdpAnchorProduct : undefined}
                     />
                   </div>

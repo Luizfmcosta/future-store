@@ -51,7 +51,6 @@ export function PdpChatOverlay() {
       <StorefrontCartOverlay
         open={open}
         modalKey="pdp-chat"
-        showFloatingPromptDock={false}
         onDismiss={onClose}
         backdropLabel={t("pdp.chatCloseAria")}
         role="dialog"

@@ -18,10 +18,13 @@ export function BestMatchCard({
   product,
   profile,
   aiMode,
+  focused = false,
 }: {
   product: Product | undefined;
   profile: ShopperProfileId;
   aiMode: boolean;
+  /** Ask chip / `About:` product — hero is the product the shopper asked about. */
+  focused?: boolean;
 }) {
   const t = useT();
   if (!product) return null;
@@ -32,6 +35,11 @@ export function BestMatchCard({
       ? `${p.technology} · ${p.inches}" · ${p.compatibilityTags.slice(0, 2).join(" · ")}`
       : p.compatibilityTags.slice(0, 3).join(" · ");
   const detailRicardo = `${p.installmentText} · ${p.deliveryETA}`;
+  const eyebrow = focused
+    ? t("searchSerp.bestMatchFocusedEyebrow")
+    : aiMode
+      ? t("searchSerp.bestMatchAiEyebrow")
+      : t("searchSerp.bestMatchSerpEyebrow");
 
   return (
     <motion.div layout>
@@ -59,11 +67,7 @@ export function BestMatchCard({
           </AskImageButton>
           <div className="flex min-h-0 min-w-0 flex-col items-stretch border-t border-stone-200/90 p-5 @md:h-full @md:min-h-0 @md:border-t-0 @md:border-l @md:px-6 @md:pt-4 @md:pb-6">
             <div className="min-w-0 shrink-0">
-              {aiMode ? (
-                <EyebrowPill>{t("searchSerp.bestMatchAiEyebrow")}</EyebrowPill>
-              ) : (
-                <EyebrowPill>{t("searchSerp.bestMatchSerpEyebrow")}</EyebrowPill>
-              )}
+              <EyebrowPill>{eyebrow}</EyebrowPill>
               <h3 className="mt-1.5 text-lg font-semibold leading-snug text-stone-900 sm:text-xl">{p.title}</h3>
               <p className="mt-2 text-[15px] leading-snug text-stone-600 @md:mt-1.5 sm:text-[16px] sm:leading-relaxed">
                 {profile === "marina" ? detailMarina : detailRicardo}

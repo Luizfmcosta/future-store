@@ -33,13 +33,15 @@ export function ChatProductResults({
   /** When false, hides follow-up chips (e.g. after the shopper sent another message). */
   showFollowUpSection?: boolean;
   /** PDP chat: larger cards, minimal copy; no top-matches label (follow-ups still shown). */
-  presentation?: "default" | "pdpChat";
+  presentation?: "default" | "pdpChat" | "compare";
   /** PDP comparison: product being viewed — shown on its own row above alternatives. */
   anchorProduct?: Product;
 }) {
   const t = useT();
   const isPdpChat = presentation === "pdpChat";
-  const shown = products.slice(0, isPdpChat ? 3 : 4);
+  const isCompare = presentation === "compare";
+  const largeCards = isPdpChat || isCompare;
+  const shown = products.slice(0, largeCards ? 3 : 4);
   const followUps = followUpSuggestions?.length ? followUpSuggestions : [];
 
   const topMatchesHeadingId = "chat-top-matches-heading";
@@ -47,14 +49,15 @@ export function ChatProductResults({
   const altsEyebrowId = "chat-pdp-alts-eyebrow";
 
   const anchorP = anchorProduct && isPdpChat ? localizeProduct(anchorProduct) : null;
+  const showFollowUps = Boolean(onFollowUp && followUps.length > 0 && showFollowUpSection);
 
-  if (shown.length === 0 && !anchorP) return null;
+  if (shown.length === 0 && !anchorP && !showFollowUps) return null;
 
   return (
     <div
       className={cn(
         "w-full min-w-0",
-        isPdpChat && anchorP ? "space-y-4" : isPdpChat ? "space-y-0" : "space-y-2",
+        isPdpChat && anchorP ? "space-y-4" : isPdpChat || isCompare ? "space-y-0" : "space-y-2",
       )}
     >
       {anchorP ? (
@@ -78,7 +81,9 @@ export function ChatProductResults({
       {shown.length > 0 ? (
         <div className="space-y-2">
           {!isPdpChat ? (
-            <EyebrowPill id={topMatchesHeadingId}>{t("searchAiPanel.topMatches")}</EyebrowPill>
+            <EyebrowPill id={topMatchesHeadingId}>
+              {isCompare ? t("searchAiPanel.comparedForYou") : t("searchAiPanel.topMatches")}
+            </EyebrowPill>
           ) : anchorP ? (
             <EyebrowPill id={altsEyebrowId} as="p">
               {t("pdp.chatComparisonAlternativesEyebrow")}
@@ -101,7 +106,7 @@ export function ChatProductResults({
             <ul
               className={cn(
                 "flex w-max list-none items-stretch pb-1 pr-1 pt-0.5",
-                isPdpChat ? "gap-3.5" : "gap-3",
+                isPdpChat || isCompare ? "gap-3.5" : "gap-3",
               )}
             >
               {shown.map((raw) => {
@@ -111,7 +116,7 @@ export function ChatProductResults({
                     key={p.id}
                     className={cn(
                       "flex shrink-0 snap-start snap-always self-stretch",
-                      isPdpChat
+                      isPdpChat || isCompare
                         ? "w-[200px] sm:w-[228px]"
                         : "w-[156px] sm:w-[176px]",
                     )}
@@ -120,7 +125,8 @@ export function ChatProductResults({
                       product={p}
                       profile={profile}
                       presentation={presentation}
-                      showPdpAlternativesCtas={Boolean(anchorP && isPdpChat)}
+                      showPdpAlternativesCtas={Boolean((anchorP && isPdpChat) || isCompare)}
+                      showCompareMeta={isCompare}
                     />
                   </li>
                 );
@@ -130,8 +136,8 @@ export function ChatProductResults({
         </div>
       ) : null}
 
-      {onFollowUp && followUps.length > 0 && showFollowUpSection ? (
-        <div className={cn("space-y-2", isPdpChat ? "pt-4 pb-4" : "pt-3")}>
+      {showFollowUps ? (
+        <div className={cn("space-y-2", isPdpChat || isCompare ? "pt-4 pb-4" : "pt-3")}>
           <EyebrowPill id="chat-followup-heading">
             {t("searchAiPanel.followUpHeading")}
           </EyebrowPill>
@@ -147,7 +153,7 @@ export function ChatProductResults({
                     type="button"
                     title={text}
                     disabled={followUpDisabled}
-                    onClick={() => onFollowUp(text)}
+                    onClick={() => onFollowUp?.(text)}
                     className={cn(
                       "max-w-[min(85vw,22rem)] truncate rounded-full border border-stone-200/95 bg-white px-2.5 py-1 text-left text-[14px] font-medium text-stone-800 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-colors hover:bg-stone-50",
                       "sm:max-w-[min(75vw,24rem)] sm:px-3 sm:py-1.5",
@@ -174,35 +180,40 @@ function ProductRowCard({
   presentation = "default",
   showPdpAlternativesCtas = false,
   showPdpAnchorBuyNow = false,
+  showCompareMeta = false,
 }: {
   product: Product;
   profile: ShopperProfileId;
-  presentation?: "default" | "pdpChat";
+  presentation?: "default" | "pdpChat" | "compare";
   /** PDP comparison “Other options” row — Buy now + Explore under the price. */
   showPdpAlternativesCtas?: boolean;
   /** PDP comparison “You’re viewing” anchor — Buy now under the price. */
   showPdpAnchorBuyNow?: boolean;
+  /** Named compare: show best-for line on larger cards. */
+  showCompareMeta?: boolean;
 }) {
   const t = useT();
   const isPdpChat = presentation === "pdpChat";
-  const meta = profile === "marina" ? p.bestFor[0] : p.deliveryETA;
+  const isCompare = presentation === "compare";
+  const largeCards = isPdpChat || isCompare;
+  const meta = isCompare || profile === "marina" ? p.bestFor[0] : p.deliveryETA;
   const label = [p.title, "—", p.brand, "—", formatBRL(p.price), "—", "view product details"].join(" ");
 
   const titleClass = cn(
     "shrink-0 text-pretty font-semibold text-stone-900",
-    isPdpChat ? "line-clamp-2 text-[13px] leading-snug sm:text-[14px]" : "text-[14px] leading-snug",
+    isPdpChat || isCompare ? "line-clamp-2 text-[13px] leading-snug sm:text-[14px]" : "text-[14px] leading-snug",
   );
 
   const priceBlock = (
-    <div className={cn("mt-auto", !isPdpChat && "space-y-1 pt-0.5")}>
-      {!isPdpChat ? (
+    <div className={cn("mt-auto", (!isPdpChat || showCompareMeta) && "space-y-1 pt-0.5")}>
+      {!isPdpChat || showCompareMeta ? (
         <p className="text-pretty text-[14px] leading-snug text-stone-600">{meta}</p>
       ) : null}
       <div className="flex flex-wrap items-baseline gap-1.5">
         <span
           className={cn(
             "font-semibold tabular-nums leading-none text-stone-900",
-            isPdpChat ? "text-[15px] sm:text-base" : "text-[14px]",
+            isPdpChat || isCompare ? "text-[15px] sm:text-base" : "text-[14px]",
           )}
         >
           {formatBRL(p.price)}
@@ -211,7 +222,7 @@ function ProductRowCard({
           <span
             className={cn(
               "tabular-nums leading-none text-stone-400 line-through",
-              isPdpChat ? "text-[13px]" : "text-[14px]",
+              isPdpChat || isCompare ? "text-[13px]" : "text-[14px]",
             )}
           >
             {formatBRL(p.oldPrice)}
@@ -228,7 +239,7 @@ function ProductRowCard({
   );
 
   const pdpAlternativesCtas =
-    showPdpAlternativesCtas && isPdpChat ? (
+    showPdpAlternativesCtas && (isPdpChat || isCompare) ? (
       <div className="mt-2 flex min-w-0 gap-1.5">
         <ProductBuyNowButton productId={p.id} className={cn(pdpChatBuyNowClass, "min-w-0 flex-1")}>
           {t("common.buyNow")}
@@ -262,7 +273,7 @@ function ProductRowCard({
         productId={p.id}
         className={cn(
           "w-full shrink-0 bg-[#f5f5f5]",
-          isPdpChat ? "h-[7.25rem] sm:h-32" : "h-16 sm:h-[4.75rem]",
+          isPdpChat || isCompare ? "h-[7.25rem] sm:h-32" : "h-16 sm:h-[4.75rem]",
         )}
       >
         <div className="relative h-full w-full">
@@ -272,7 +283,7 @@ function ProductRowCard({
               alt=""
               fill
               className="object-contain p-1"
-              sizes={isPdpChat ? "(max-width:640px) 200px, 228px" : "(max-width:640px) 156px, 176px"}
+              sizes={isPdpChat || isCompare ? "(max-width:640px) 200px, 228px" : "(max-width:640px) 156px, 176px"}
               unoptimized
             />
           ) : (
@@ -280,14 +291,14 @@ function ProductRowCard({
           )}
         </div>
       </AskImageButton>
-      {showPdpAlternativesCtas && isPdpChat ? (
+      {showPdpAlternativesCtas && (isPdpChat || isCompare) ? (
         <div
           className={cn(
             "flex min-h-0 flex-1 flex-col outline-none",
-            isPdpChat ? "p-2.5" : "p-2",
+            largeCards ? "p-2.5" : "p-2",
           )}
         >
-          <div className={cn("flex min-h-0 flex-1 flex-col", isPdpChat ? "gap-1.5" : "gap-1")}>
+          <div className={cn("flex min-h-0 flex-1 flex-col", largeCards ? "gap-1.5" : "gap-1")}>
             <Link
               href={`/product/${p.id}`}
               aria-label={label}
@@ -319,12 +330,12 @@ function ProductRowCard({
           aria-label={label}
           className={cn(
             "flex min-h-0 flex-1 flex-col outline-none",
-            isPdpChat ? "p-2.5" : "p-2",
+            largeCards ? "p-2.5" : "p-2",
             ui.home.focusRing,
             "focus-visible:rounded-b-xl",
           )}
         >
-          <div className={cn("flex min-h-0 flex-1 flex-col", isPdpChat ? "gap-1.5" : "gap-1")}>
+          <div className={cn("flex min-h-0 flex-1 flex-col", largeCards ? "gap-1.5" : "gap-1")}>
             <p className={titleClass}>{p.title}</p>
             {priceBlock}
           </div>

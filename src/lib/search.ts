@@ -77,6 +77,16 @@ export function getSearchResults(profile: ShopperProfileId, intent: SearchIntent
   const ranked = [...pool].sort(
     (a, b) => scoreAudioProduct(b, intent, profile) - scoreAudioProduct(a, intent, profile),
   );
+
+  const focusIds = (intent.focusProductIds ?? []).filter((id) => ranked.some((p) => p.id === id));
+  if (focusIds.length) {
+    const focused = focusIds
+      .map((id) => ranked.find((p) => p.id === id))
+      .filter((p): p is Product => Boolean(p));
+    const rest = ranked.filter((p) => !focusIds.includes(p.id));
+    return [...focused, ...rest];
+  }
+
   /* Demo lead SKU — keep Horizon Three first in relevance ranking (AI cards + SERP). */
   const pinId = "sp-era-300";
   const pinned = ranked.find((p) => p.id === pinId);
